@@ -3,6 +3,7 @@ Game.talents_values = {}
 
 GameEvents.OnLoaded(() => {
 	const hero_list = CustomNetTables.GetTableValue("custom_pick", "hero_list")
+
 	for (const hero_name of Object.keys(hero_list))
 		Game.upgrades_data[hero_name] = CustomNetTables.GetTableValue("all_upgrades", hero_name)
 

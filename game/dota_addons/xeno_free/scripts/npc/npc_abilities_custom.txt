@@ -20758,9 +20758,9 @@
 	}
 
 
-}
 
-#base "../vscripts/cheats/cheateabilities.txt"gre_passive"
+
+	"npc_muerta_ogre_passive"
 	{
 		// General
 		//-------------------------------------------------------------------------------------------------------------
@@ -20782,5 +20782,3 @@
 
 
 }
-
-#base "../vscripts/cheats/cheateabilities.txt"
