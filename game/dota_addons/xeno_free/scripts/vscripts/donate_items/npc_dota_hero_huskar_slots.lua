@@ -1,0 +1,94 @@
+return
+{
+    ["arms"] = 
+    {
+        'models/items/huskar/huskar_explosive_maniac_arms/huskar_explosive_maniac_arms.vmdl',
+        'models/items/huskar/armor_of_reckless_vigor_arms/armor_of_reckless_vigor_arms.vmdl',
+        'models/items/huskar/huskar_poseidon_arms/huskar_poseidon_arms.vmdl',
+        'models/items/huskar/charred_berserker_arms/charred_berserker_arms.vmdl',
+        'models/items/huskar/winter_hunting_arms/winter_hunting_arms.vmdl',
+        'models/items/huskar/ti9_cache_huskar_darkclaw_berserker_arms/ti9_cache_huskar_darkclaw_berserker_arms.vmdl',
+        'models/items/huskar/obsidian_claw_of_the_jaguar_arms/obsidian_claw_of_the_jaguar_arms.vmdl',
+        'models/items/huskar/sacred_bones_arms/sacred_bones_arms.vmdl',
+        'models/items/huskar/the_ironbound_hunter_arms/the_ironbound_hunter_arms.vmdl',
+        'models/items/huskar/huskar_pharaohs_guard_arms/huskar_pharaohs_guard_arms.vmdl',
+        'models/items/huskar/frostivus2018_huskar_ice_age_hunter_arms/frostivus2018_huskar_ice_age_hunter_arms.vmdl',
+        'models/items/huskar/frostivus2018_huskar_ice_age_hunter_arms/frostivus2018_huskar_ice_age_hunter_arms.vmdl',
+        'models/items/huskar/ti9_cache_huskar_baptism_of_melting_fire_arms/ti9_cache_huskar_baptism_of_melting_fire_arms.vmdl',
+        'models/heroes/huskar/huskar_bracer.vmdl'
+    },
+    ["offhand_weapon"] =
+    {
+        'models/items/huskar/huskar_explosive_maniac_off_hand/huskar_explosive_maniac_off_hand.vmdl',
+        'models/items/huskar/the_ironbound_hunter_off_hand/the_ironbound_hunter_off_hand.vmdl',
+        'models/items/huskar/armor_of_reckless_vigor_offhand/armor_of_reckless_vigor_offhand.vmdl',
+        'models/items/huskar/huskar_poseidon_off_hand/huskar_poseidon_off_hand.vmdl',
+        'models/items/huskar/charred_berserker_offhand/charred_berserker_offhand.vmdl',
+        'models/items/huskar/winter_hunting_off_hand/winter_hunting_off_hand.vmdl',
+        'models/items/huskar/frostivus2018_huskar_ice_age_hunter_off_hand/frostivus2018_huskar_ice_age_hunter_off_hand.vmdl',
+        'models/items/huskar/ti9_cache_huskar_darkclaw_berserker_off_hand/ti9_cache_huskar_darkclaw_berserker_off_hand.vmdl',
+        'models/items/huskar/obsidian_claw_of_the_jaguar_dagger/obsidian_claw_of_the_jaguar_dagger.vmdl',
+        'models/items/huskar/huskar_pharaohs_guard_offhand_weapon/huskar_pharaohs_guard_offhand_weapon.vmdl',
+        'models/items/huskar/sacred_bones_offhand_weapon/sacred_bones_offhand_weapon.vmdl',
+        'models/items/huskar/frostivus2018_huskar_ice_age_hunter_off_hand/frostivus2018_huskar_ice_age_hunter_off_hand.vmdl',
+        'models/items/huskar/ti9_cache_huskar_baptism_of_melting_fire_off_hand/ti9_cache_huskar_baptism_of_melting_fire_off_hand.vmdl',
+        'models/heroes/huskar/huskar_dagger.vmdl'
+    },
+    ["head"] = 
+    {
+        'models/items/huskar/huskar_explosive_maniac_head/huskar_explosive_maniac_head.vmdl',
+        'models/items/huskar/the_ironbound_hunter_head/the_ironbound_hunter_head.vmdl',
+        'models/items/huskar/husk_2022_immortal/husk_2022_immortal.vmdl',
+        'models/items/huskar/armor_of_reckless_vigor_head/armor_of_reckless_vigor_head.vmdl',
+        'models/items/huskar/huskar_poseidon_head/huskar_poseidon_head.vmdl',
+        'models/items/huskar/charred_berserker_head/charred_berserker_head.vmdl',
+        'models/items/huskar/winter_hunting_head/winter_hunting_head.vmdl',
+        'models/items/huskar/frostivus2018_huskar_ice_age_hunter_head/frostivus2018_huskar_ice_age_hunter_head.vmdl',
+        'models/items/huskar/ti9_cache_huskar_darkclaw_berserker_head/ti9_cache_huskar_darkclaw_berserker_head.vmdl',
+        'models/items/huskar/obsidian_claw_of_the_jaguar_helmet/obsidian_claw_of_the_jaguar_helmet.vmdl',
+        'models/items/huskar/huskar_pharaohs_guard_head/huskar_pharaohs_guard_head.vmdl',
+        'models/items/huskar/searing_dominator/searing_dominator.vmdl',
+        'models/items/huskar/frostivus2018_huskar_ice_age_hunter_head/frostivus2018_huskar_ice_age_hunter_head.vmdl',
+        'models/items/huskar/sacred_bones_helmet/sacred_bones_helmet.vmdl',
+        'models/items/huskar/ti9_cache_huskar_baptism_of_melting_fire_head/ti9_cache_huskar_baptism_of_melting_fire_head.vmdl',
+        'models/heroes/huskar/huskar_helmet.vmdl'
+    },
+    ["shoulder"] = 
+    {
+        'models/items/huskar/the_ironbound_hunter_shoulder/the_ironbound_hunter_shoulder.vmdl',
+        'models/items/huskar/armor_of_reckless_vigor_shoulder/armor_of_reckless_vigor_shoulder.vmdl',
+        'models/items/huskar/huskar_poseidon_shoulder/huskar_poseidon_shoulder.vmdl',
+        'models/items/huskar/charred_berserker_shoulder/charred_berserker_shoulder.vmdl',
+        'models/items/huskar/winter_hunting_shoulder/winter_hunting_shoulder.vmdl',
+        'models/items/huskar/frostivus2018_huskar_ice_age_hunter_shoulder/frostivus2018_huskar_ice_age_hunter_shoulder.vmdl',
+        'models/items/huskar/ti9_cache_huskar_darkclaw_berserker_shoulder/ti9_cache_huskar_darkclaw_berserker_shoulder.vmdl',
+        'models/items/huskar/obsidian_claw_of_the_jaguar_shoulder/obsidian_claw_of_the_jaguar_shoulder.vmdl',
+        'models/items/huskar/huskar_pharaohs_guard_shoulder/huskar_pharaohs_guard_shoulder.vmdl',
+        'models/items/huskar/sacred_bones_shoulder/sacred_bones_shoulder.vmdl',
+        'models/items/huskar/huskar_ti8_immortal_shoulders/huskar_ti8_immortal_shoulders.vmdl',
+        'models/items/huskar/huskar_explosive_maniac_shoulder/huskar_explosive_maniac_shoulder.vmdl',
+        'models/items/huskar/frostivus2018_huskar_ice_age_hunter_shoulder/frostivus2018_huskar_ice_age_hunter_shoulder.vmdl',
+        'models/items/huskar/ti9_cache_huskar_baptism_of_melting_fire_shoulder/ti9_cache_huskar_baptism_of_melting_fire_shoulder.vmdl',
+        'models/heroes/huskar/huskar_shoulder.vmdl'
+    },
+    ["weapon"] = 
+    {
+        'models/items/huskar/winter_hunting_weapon/winter_hunting_weapon.vmdl',
+        'models/items/huskar/huskar_pharaohs_guard_weapon/huskar_pharaohs_guard_weapon.vmdl',
+        'models/items/huskar/huskar_explosive_maniac_weapon/huskar_explosive_maniac_weapon.vmdl',
+        'models/items/huskar/huskar_poseidon_weapon/huskar_poseidon_weapon.vmdl',
+        'models/items/huskar/sacred_bones_spear/sacred_bones_spear.vmdl',
+        'models/items/huskar/frostivus2018_huskar_ice_age_hunter_weapon/frostivus2018_huskar_ice_age_hunter_weapon.vmdl',
+        'models/items/huskar/burning_spear/burning_spear.vmdl',
+        'models/items/huskar/frostivus2018_huskar_ice_age_hunter_weapon/frostivus2018_huskar_ice_age_hunter_weapon.vmdl',
+        'models/items/huskar/armor_of_reckless_vigor_weapon/armor_of_reckless_vigor_weapon.vmdl',
+        'models/items/huskar/husk_2021_immortal/husk_2021_immortal.vmdl',
+        'models/items/huskar/charred_berserker_weapon/charred_berserker_weapon.vmdl',
+        'models/items/huskar/ti9_cache_huskar_darkclaw_berserker_weapon/ti9_cache_huskar_darkclaw_berserker_weapon.vmdl',
+        'models/items/huskar/the_ironbound_hunter_weapon/the_ironbound_hunter_weapon.vmdl',
+        'models/items/huskar/obsidian_blade_spear/obsidian_blade_spear.vmdl',
+        'models/items/huskar/ti9_cache_huskar_baptism_of_melting_fire_weapon/ti9_cache_huskar_baptism_of_melting_fire_weapon.vmdl',
+        'models/items/huskar/husk_2021_immortal/husk_2021_immortal.vmdl',
+        'models/heroes/huskar/huskar_spear.vmdl'
+    },
+}

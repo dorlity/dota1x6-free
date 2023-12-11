@@ -1,0 +1,1 @@
+custom_bkb_effects = class({})

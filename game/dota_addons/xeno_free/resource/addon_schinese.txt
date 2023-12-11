@@ -1,0 +1,14 @@
+"lang"
+{
+"Language"		"schinese"
+"Tokens"
+{	
+
+"addon_game_name"			"DOTA 1x6"
+
+
+"show_sponsor"	"0"
+
+}
+
+}

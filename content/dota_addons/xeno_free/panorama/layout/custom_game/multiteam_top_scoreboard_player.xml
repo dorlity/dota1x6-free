@@ -1,0 +1,36 @@
+<!-- xml reconstructed by Source 2 Viewer 7.0.0.0 - https://valveresourceformat.github.io -->
+<root>
+	<styles>
+		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
+		<include src="s2r://panorama/styles/custom_game/multiteam_top_scoreboard.vcss_c" />
+		<include src="s2r://panorama/styles/custom_game/shared_scoreboard_styles.vcss_c" />
+	</styles>
+	<script><![CDATA[
+	function PortraitClicked()
+	{
+		// TODO: ctrl and alt click support
+		Players.PlayerPortraitClicked( $.GetContextPanel().GetAttributeInt( "player_id", -1 ), false, false );
+	}
+	]]></script>
+	<Panel hittest="false" class="ScoreboardPlayerWrapper">
+		<Panel hittest="false" id="RespawnIndicator">
+			<Label hittest="false" id="RespawnTimer" />
+		</Panel>
+		<Panel hittest="false" class="ScoreboardPlayer" id="TopHero">
+			<Button class="PlayerPortraitWrapper">
+				<Panel hittest="false" id="PlayerColorBar" />
+				<Image hittest="false" id="HeroIcon">
+					<Panel hittest="false" id="AegisIndicator" />
+					<Panel hittest="false" id="BuybackIndicator" />
+					<Panel hittest="false" id="PurpleIndicator" />
+					<DOTAParticleScenePanel id="ParticleAegis" hittest="false" particleName="particles/ui/topabar/aegis_bg.vpcf" particleonly="true" startActive="true" cameraOrigin="0 0 150" lookAt="0 90 0" fov="60" squarePixels="true" />
+				</Image>
+			</Button>
+			<Image hittest="false" id="DisconnectionIndicator" src="s2r://panorama/images/custom_game/icon_disconnect_png.vtex" />
+		</Panel>
+		<Panel hittest="false" id="UltimateIndicatorContainer">
+			<Panel hittest="false" id="UltimateIndicatorBG" class="UltimateIndicatorShared" />
+			<Panel hittest="false" id="UltimateIndicator" class="UltimateIndicatorShared" />
+		</Panel>
+	</Panel>
+</root>

@@ -1,0 +1,8 @@
+ranked_0-500
+{
+	material materials/overviews/ranked_0-500.vmat
+	pos_x -8040
+	pos_y 8181
+	scale 16.000
+}
+

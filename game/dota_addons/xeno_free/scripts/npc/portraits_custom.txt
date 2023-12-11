@@ -1,0 +1,288 @@
+"Portraits"
+{
+	"Version"		"1"
+	"PreferModelNames"		"1"
+	"DefaultActivity"		"ACT_DOTA_CAPTURE"
+	"CannotChangeActivity"		"1"
+	"default"
+	{
+		"PortraitLightPosition"		"202.70 -23.15 308.17"
+		"PortraitLightAngles"		"54.79 171.70 0.00"
+		"PortraitLightFOV"		"69"
+		"PortraitLightDistance"		"377"
+		"PortraitLightColor"		"254 248 242"
+		"PortraitShadowColor"		"74 74 74"
+		"PortraitShadowScale"		"5.000000"
+		"PortraitAmbientColor"		"79 108 108"
+		"PortraitAmbientScale"		"5.000000"
+		"PortraitSpecularColor"		"251 74 84"
+		"PortraitBackgroundTexture"		"materials/vgui/hud/heroportraits/portraitbackground_gradient_top.vmat"
+		"PortraitBackgroundColor1"		"1 1 1"
+		"PortraitBackgroundColor2"		"1 1 1"
+		"PortraitBackgroundColor3"		"1 1 1"
+		"PortraitBackgroundColor4"		"1 1 1"
+		"PortraitLightScale"		"4.500000"
+		"PortraitGroundShadowScale"		"1.500000"
+		"PortraitAmbientDirection"		"-79.070 -84.150 -25.320"
+		"PortraitAnimationActivity"		"ACT_DOTA_IDLE"
+		"cameras"
+		{
+			"default"
+			{
+				"PortraitPosition"		"446.17 -88.29 -22.69"
+				"PortraitAngles"		"334.89 166.83 0.00"
+				"PortraitFOV"		"16"
+			}
+		}
+	}
+	"models/heroes/juggernaut/juggernaut.vmdl"
+	{
+		"PortraitLightPosition"		"106.913757 -64.295067 186.072372"
+		"PortraitLightAngles"		"48.081665 135.670166 0.000000"
+		"PortraitLightFOV"		"90.000000"
+		"PortraitLightDistance"		"133.000000"
+		"PortraitLightColor"		"229 239 255"
+		"PortraitShadowColor"		"33 33 33"
+		"PortraitShadowScale"		"5.000000"
+		"PortraitAmbientColor"		"99 50 38"
+		"PortraitAmbientScale"		"6.202000"
+		"PortraitSpecularColor"		"251 74 84"
+		"PortraitParticle"		"particles/units/heroes/hero_juggernaut/juggernaut_portrait.vpcf"
+		"PortraitBackgroundTexture"		"materials/portraits_card/portrait_backgrounds/juggernaut.vmat"
+		"PortraitLightScale"		"1.950000"
+		"PortraitGroundShadowScale"		"1.500000"
+		"PortraitAmbientDirection"		"-0.546 0.791 0.276"
+		"PortraitAnimationActivity"		"ACT_DOTA_CAPTURE"
+		"cameras"
+		{
+			"default"
+			{
+				"PortraitPosition"		"0 0 -150"
+				"PortraitAngles"		"0 0 0"
+				"PortraitFOV"		"10000.000000"
+				"PortraitFar"		"1000.000000"
+			}
+		}
+		"PortraitSpecularDirection"		"0.000000 0.000000 -1.000000"
+		"PortraitSpecularPower"		"16.000000"
+		"PortraitBackgroundColor1"		"1.000000 1.000000 1.000000"
+		"PortraitBackgroundColor2"		"1.000000 1.000000 1.000000"
+		"PortraitBackgroundColor3"		"1.000000 1.000000 1.000000"
+		"PortraitBackgroundColor4"		"1.000000 1.000000 1.000000"
+		"PortraitAnimationCycle"		"0.000000"
+		"PortraitAnimationRate"		"1.000000"
+		"PortraitHideHero"		"0"
+		"PortraitHideParticles"		"0"
+		"PortraitHideDropShadow"		"0"
+		"PortraitDesaturateParticles"		"0"
+	}
+	"models/heroes/juggernaut/juggernaut_arcana.vmdl"
+	{
+		"PortraitLightPosition"		"106.913757 -64.295067 186.072372"
+		"PortraitLightAngles"		"48.081665 135.670166 0.000000"
+		"PortraitLightFOV"		"90.000000"
+		"PortraitLightDistance"		"133.000000"
+		"PortraitLightColor"		"229 239 255"
+		"PortraitShadowColor"		"33 33 33"
+		"PortraitShadowScale"		"5.000000"
+		"PortraitAmbientColor"		"99 50 38"
+		"PortraitAmbientScale"		"6.202000"
+		"PortraitSpecularColor"		"251 74 84"
+		"PortraitParticle"		"particles/units/heroes/hero_juggernaut/juggernaut_portrait.vpcf"
+		"PortraitBackgroundTexture"		"materials/portraits_card/portrait_backgrounds/juggernaut.vmat"
+		"PortraitLightScale"		"1.950000"
+		"PortraitGroundShadowScale"		"1.500000"
+		"PortraitAmbientDirection"		"-0.546 0.791 0.276"
+		"PortraitAnimationActivity"		"ACT_DOTA_CAPTURE"
+		"cameras"
+		{
+			"default"
+			{
+				"PortraitPosition"		"0 0 -150"
+				"PortraitAngles"		"0 0 0"
+				"PortraitFOV"		"1000000.000000"
+				"PortraitFar"		"1000.000000"
+			}
+		}
+		"PortraitSpecularDirection"		"0.000000 0.000000 -1.000000"
+		"PortraitSpecularPower"		"16.000000"
+		"PortraitBackgroundColor1"		"1.000000 1.000000 1.000000"
+		"PortraitBackgroundColor2"		"1.000000 1.000000 1.000000"
+		"PortraitBackgroundColor3"		"1.000000 1.000000 1.000000"
+		"PortraitBackgroundColor4"		"1.000000 1.000000 1.000000"
+		"PortraitAnimationCycle"		"0.000000"
+		"PortraitAnimationRate"		"1.000000"
+		"PortraitHideHero"		"0"
+		"PortraitHideParticles"		"0"
+		"PortraitHideDropShadow"		"0"
+		"PortraitDesaturateParticles"		"0"
+	}
+
+
+	"models/heroes/phantom_assassin/phantom_assassin.vmdl"
+	{
+		"PortraitLightPosition"		"106.913757 -64.295067 186.072372"
+		"PortraitLightAngles"		"48.081665 135.670166 0.000000"
+		"PortraitLightFOV"		"90.000000"
+		"PortraitLightDistance"		"133.000000"
+		"PortraitLightColor"		"229 239 255"
+		"PortraitShadowColor"		"33 33 33"
+		"PortraitShadowScale"		"5.000000"
+		"PortraitAmbientColor"		"99 50 38"
+		"PortraitAmbientScale"		"6.202000"
+		"PortraitSpecularColor"		"251 74 84"
+		"PortraitBackgroundTexture"		"materials/portraits_card/portrait_backgrounds/phantom_assassin.vmat"
+		"PortraitLightScale"		"1.950000"
+		"PortraitGroundShadowScale"		"1.500000"
+		"PortraitAmbientDirection"		"-0.546 0.791 0.276"
+		"PortraitAnimationActivity"		"ACT_DOTA_CAPTURE"
+		"cameras"
+		{
+			"default"
+			{
+				"PortraitPosition"		"0 0 -150"
+				"PortraitAngles"		"0 0 0"
+				"PortraitFOV"		"10000.000000"
+				"PortraitFar"		"1000.000000"
+			}
+		}
+		"PortraitSpecularDirection"		"0.000000 0.000000 -1.000000"
+		"PortraitSpecularPower"		"16.000000"
+		"PortraitBackgroundColor1"		"1.000000 1.000000 1.000000"
+		"PortraitBackgroundColor2"		"1.000000 1.000000 1.000000"
+		"PortraitBackgroundColor3"		"1.000000 1.000000 1.000000"
+		"PortraitBackgroundColor4"		"1.000000 1.000000 1.000000"
+		"PortraitAnimationCycle"		"0.000000"
+		"PortraitAnimationRate"		"1.000000"
+		"PortraitHideHero"		"0"
+		"PortraitHideParticles"		"0"
+		"PortraitHideDropShadow"		"0"
+		"PortraitDesaturateParticles"		"0"
+	}
+
+
+	"models/heroes/phantom_assassin/pa_arcana.vmdl"
+	{
+		"PortraitLightPosition"		"106.913757 -64.295067 186.072372"
+		"PortraitLightAngles"		"48.081665 135.670166 0.000000"
+		"PortraitLightFOV"		"90.000000"
+		"PortraitLightDistance"		"133.000000"
+		"PortraitLightColor"		"229 239 255"
+		"PortraitShadowColor"		"33 33 33"
+		"PortraitShadowScale"		"5.000000"
+		"PortraitAmbientColor"		"99 50 38"
+		"PortraitAmbientScale"		"6.202000"
+		"PortraitSpecularColor"		"251 74 84"
+		"PortraitBackgroundTexture"		"materials/portraits_card/portrait_backgrounds/phantom_assassin.vmat"
+		"PortraitLightScale"		"1.950000"
+		"PortraitGroundShadowScale"		"1.500000"
+		"PortraitAmbientDirection"		"-0.546 0.791 0.276"
+		"PortraitAnimationActivity"		"ACT_DOTA_CAPTURE"
+		"cameras"
+		{
+			"default"
+			{
+				"PortraitPosition"		"0 0 -150"
+				"PortraitAngles"		"0 0 0"
+				"PortraitFOV"		"1000000.000000"
+				"PortraitFar"		"1000.000000"
+			}
+		}
+		"PortraitSpecularDirection"		"0.000000 0.000000 -1.000000"
+		"PortraitSpecularPower"		"16.000000"
+		"PortraitBackgroundColor1"		"1.000000 1.000000 1.000000"
+		"PortraitBackgroundColor2"		"1.000000 1.000000 1.000000"
+		"PortraitBackgroundColor3"		"1.000000 1.000000 1.000000"
+		"PortraitBackgroundColor4"		"1.000000 1.000000 1.000000"
+		"PortraitAnimationCycle"		"0.000000"
+		"PortraitAnimationRate"		"1.000000"
+		"PortraitHideHero"		"0"
+		"PortraitHideParticles"		"0"
+		"PortraitHideDropShadow"		"0"
+		"PortraitDesaturateParticles"		"0"
+	}
+
+
+	"models/heroes/phantom_assassin_persona/phantom_assassin_persona.vmdl"
+	{
+		"PortraitLightPosition"		"88.029999 -71.478027 189.253479"
+		"PortraitLightAngles"		"32.563118 173.493591 19.350775"
+		"PortraitLightFOV"		"46.000000"
+		"PortraitLightDistance"		"138.000000"
+		"PortraitLightColor"		"241 250 254"
+		"PortraitShadowColor"		"56 56 56"
+		"PortraitShadowScale"		"1.500000"
+		"PortraitAmbientColor"		"56 63 74"
+		"PortraitAmbientScale"		"2.750000"
+		"PortraitSpecularColor"		"251 74 84"
+		"PortraitSpecularDirection"		"0.000000 0.000000 -1.000000"
+		"PortraitSpecularPower"		"16.000000"
+		"PortraitBackgroundColor1"		"1.000000 1.000000 1.000000"
+		"PortraitBackgroundColor2"		"1.000000 1.000000 1.000000"
+		"PortraitBackgroundColor3"		"1.000000 1.000000 1.000000"
+		"PortraitBackgroundColor4"		"1.000000 1.000000 1.000000"
+		"PortraitBackgroundTexture"		"materials/portraits_card/portrait_backgrounds/phantom_assassin.vmat"
+		"PortraitAnimationActivity"		"ACT_DOTA_CAPTURE"
+		"PortraitAnimationCycle"		"0.000000"
+		"PortraitAnimationRate"		"1.000000"
+		"PortraitHideHero"		"0"
+		"PortraitLightScale"		"1.250000"
+		"PortraitGroundShadowScale"		"1.500000"
+		"PortraitAmbientDirection"		"197.900 4.530 -33.190"
+		"cameras"
+		{
+			"default"
+			{
+				"PortraitPosition"		"0 0 -150"
+				"PortraitAngles"		"0 0 0"
+				"PortraitFOV"		"1000000.000000"
+				"PortraitFar"		"1000.000000"
+			}
+		}
+		"PortraitPlayIdleExpression"		"0"
+		"PortraitHideParticles"		"0"
+		"PortraitHideDropShadow"		"0"
+		"PortraitDesaturateParticles"		"0"
+		"PortraitDesaturateHero"		"1"
+		"PortraitVignetteItem"		"0"
+		"SummonAngles"		"-33.900509 0.000000 0.000000"
+	}
+
+	"models/heroes/huskar/huskar.vmdl"
+	{
+		"PortraitLightPosition"		"0 0 0"
+		"PortraitLightAngles"		"0 0 0"
+		"PortraitLightFOV"		"0"
+		"PortraitLightDistance"		"0"
+		"PortraitLightColor"		"0 0 0"
+		"PortraitShadowColor"		"0 0 0"
+		"PortraitShadowScale"		"0.000000"
+		"PortraitAmbientColor"		"0 0 0"
+		"PortraitAmbientScale"		"0"
+		"PortraitSpecularColor"		"0 0 0"
+		"PortraitBackgroundTexture"		"materials/vgui/hud/heroportraits/portraitbackground_darkclouds.vmat"
+		"PortraitBackgroundColor1"		"0 0 0"
+		"PortraitBackgroundColor2"		"0 0 0"
+		"PortraitBackgroundColor3"		"1 .5 .1"
+		"PortraitBackgroundColor4"		"1 .5 .1"
+		"PortraitLightScale"		"0"
+		"PortraitGroundShadowScale"		"0"
+		"PortraitAmbientDirection"		"0 0 0"
+		"PortraitAnimationActivity"		"ACT_DOTA_IDLE"
+		"cameras"
+		{
+			"default"
+			{
+				"PortraitPosition"		"0 0 -150"
+				"PortraitAngles"		"0 0 0"
+				"PortraitFOV"		"1000000.000000"
+				"PortraitFar"		"1000.000000"
+			}
+		}
+	}
+
+
+}
+
+
+

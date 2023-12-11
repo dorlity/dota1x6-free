@@ -1,0 +1,493 @@
+/* Prettified by Source 2 Viewer 7.0.0.0 - https://valveresourceformat.github.io */
+
+@keyframes 'CardAnimationPurple'
+{
+	0%
+	{
+		box-shadow: fill #a943eb 0px 0px 2px -2px;
+	}
+	
+	50%
+	{
+		box-shadow: fill #a943eb 0px 0px 6px 0px;
+	}
+	
+	100%
+	{
+		box-shadow: fill #a943eb 0px 0px 2px -2px;
+	}
+	
+}
+
+@keyframes 'CardAnimationBlue'
+{
+	0%
+	{
+		box-shadow: fill #3485f2 0px 0px 2px -2px;
+	}
+	
+	50%
+	{
+		box-shadow: fill #3485f2 0px 0px 6px 0px;
+	}
+	
+	100%
+	{
+		box-shadow: fill #3485f2 0px 0px 2px -2px;
+	}
+	
+}
+
+@keyframes 'CardAnimationOrange'
+{
+	0%
+	{
+		box-shadow: fill #f7942b 0px 0px 2px -2px;
+	}
+	
+	50%
+	{
+		box-shadow: fill #f7942b 0px 0px 6px 0px;
+	}
+	
+	100%
+	{
+		box-shadow: fill #f7942b 0px 0px 2px -2px;
+	}
+	
+}
+
+@keyframes 'CardAnimationOpen'
+{
+	0%
+	{
+		transform: translate3d( 0, 0, 0px );
+		opacity: 1;
+	}
+	
+	100%
+	{
+		transform: translate3d( 0, 10%, 0px );
+		opacity: 0;
+	}
+	
+	80%
+	{
+		opacity: 0;
+	}
+	
+}
+
+@keyframes 'CardAnimationClose'
+{
+	100%
+	{
+		transform: translate3d( 0, 0, 0px );
+		opacity: 1;
+	}
+	
+	0%
+	{
+		transform: translate3d( 0, 10%, 0px );
+		opacity: 0;
+	}
+	
+	20%
+	{
+		opacity: 0;
+	}
+	
+}
+
+@keyframes 'GrayAnimationOpen'
+{
+	0%
+	{
+		transform: translate3d( 0, 0, 0px );
+		opacity: 1;
+	}
+	
+	100%
+	{
+		transform: translate3d( -10%, 0, 0px );
+		opacity: 0;
+	}
+	
+	80%
+	{
+		opacity: 0;
+	}
+	
+}
+
+@keyframes 'GrayAnimationClose'
+{
+	100%
+	{
+		transform: translate3d( 0, 0, 0px );
+		opacity: 1;
+	}
+	
+	0%
+	{
+		transform: translate3d( -10%, 0, 0px );
+		opacity: 0;
+	}
+	
+	20%
+	{
+		opacity: 0;
+	}
+	
+}
+
+.MainUpgrades_show
+{
+	width: 100%;
+	height: 100%;
+}
+
+#LayerGeneral
+{
+	width: 950px;
+	height: 308.7px;
+	align: center center;
+	margin-top: 29%;
+	margin-right: 5%;
+	visibility: collapse;
+	z-index: 10;
+	background-color: white;
+	flow-children: right;
+}
+
+.LayerPlayer_Skills
+{
+	width: 74.74%;
+	height: 100%;
+	align: center center;
+	visibility: visible;
+	z-index: 11;
+	background-image: url("s2r://panorama/images/custom_game/talents_png.vtex");
+	background-size: contain;
+	flow-children: down;
+}
+
+.LayerGray_left
+{
+	width: 12.62%;
+	height: 100%;
+	visibility: visible;
+	z-index: 5;
+	flow-children: left;
+	background-image: url("s2r://panorama/images/custom_game/layergray_left_png.vtex");
+}
+
+.LayerGray_right
+{
+	width: 12.62%;
+	height: 100%;
+	visibility: visible;
+	z-index: 5;
+	flow-children: right;
+	background-image: url("s2r://panorama/images/custom_game/layergray_right_png.vtex");
+}
+
+.LayerOrange
+{
+	width: 100%;
+	height: 40%;
+	margin-top: 0%;
+	margin-right: 0%;
+	visibility: visible;
+	z-index: 5;
+	flow-children: right;
+}
+
+.LayerPurple
+{
+	width: 100%;
+	height: 30%;
+	margin-top: 0%;
+	margin-right: 0%;
+	visibility: visible;
+	z-index: 5;
+	flow-children: right;
+}
+
+.LayerBlue
+{
+	width: 100%;
+	height: 30%;
+	margin-top: 0%;
+	margin-right: 0%;
+	visibility: visible;
+	z-index: 6;
+	flow-children: right;
+}
+
+.LayerGeneralClose
+{
+	animation-name: CardAnimationClose;
+	animation-duration: 0.45s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: 1;
+	animation-direction: reverse;
+}
+
+.LayerGeneralOpen
+{
+	animation-name: CardAnimationOpen;
+	animation-duration: 0.45s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: 1;
+	animation-direction: reverse;
+}
+
+.orange_card
+{
+	width: 13%;
+	height: 90%;
+	z-index: 5;
+	margin-left: 6%;
+	margin-right: 5.5%;
+	margin-top: 10%;
+}
+
+.orange_content_anim
+{
+	animation-name: CardAnimationOrange;
+	animation-iteration-count: infinite;
+	animation-duration: 3s;
+	transition-property: opacity, transform;
+	transition-duration: .24s;
+	width: 82%;
+	height: 81%;
+	margin-left: 11%;
+	margin-top: 6%;
+	background-size: contain;
+	background-color: black;
+	box-shadow: fill #f7942b 0px 0px 1px 0px;
+}
+
+.orange_content
+{
+	width: 82%;
+	height: 81%;
+	margin-left: 11%;
+	margin-top: 6%;
+	background-size: contain;
+	background-color: black;
+	box-shadow: fill #f7942b 0px 0px 2px -1px;
+}
+
+.card_icon_orange
+{
+	width: 78%;
+	height: 65%;
+	margin-top: 5%;
+	margin-left: 11%;
+	box-shadow: fill #3a3632 0px 0px 2px 0px;
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+
+.orange_lvl
+{
+	width: 90%;
+	height: 17%;
+	margin-top: 78%;
+	margin-left: 5%;
+	background-image: url("s2r://panorama/images/custom_game/olevel_0_png.vtex");
+	background-repeat: no-repeat;
+}
+
+.Skill
+{
+	width: 22%;
+	height: 100%;
+	margin-top: 0%;
+	margin-left: 2.4%;
+	visibility: visible;
+	z-index: 5;
+	flow-children: right;
+}
+
+.purple_card
+{
+	width: 33%;
+	height: 100%;
+	z-index: 13;
+	margin-top: 10%;
+}
+
+.card_content_purple
+{
+	width: 90%;
+	height: 82%;
+	margin-top: 6%;
+	background-color: black;
+	box-shadow: fill #a943eb 0px 0px 1px 0px;
+}
+
+.card_content_blue
+{
+	width: 90%;
+	height: 82%;
+	margin-top: 6%;
+	background-color: black;
+	box-shadow: fill #3485f2 0px 0px 1px 0px;
+}
+
+.card_content_purple_anim
+{
+	animation-name: CardAnimationPurple;
+	animation-iteration-count: infinite;
+	animation-duration: 3s;
+	transition-property: opacity, transform;
+	transition-duration: .24s;
+	width: 90%;
+	height: 82%;
+	margin-top: 6%;
+	background-color: black;
+	box-shadow: fill #a943eb 0px 0px 1px 0px;
+}
+
+.card_content_blue_anim
+{
+	animation-name: CardAnimationBlue;
+	animation-iteration-count: infinite;
+	animation-duration: 3s;
+	transition-property: opacity, transform;
+	transition-duration: .24s;
+	width: 90%;
+	height: 82%;
+	margin-top: 6%;
+	background-color: black;
+	box-shadow: fill #3485f2 0px 0px 1px 0px;
+}
+
+.card_icon
+{
+	width: 75%;
+	height: 52%;
+	margin-top: 12%;
+	margin-left: 12.5%;
+	background-repeat: no-repeat;
+}
+
+.card_lvl
+{
+	width: 90%;
+	height: 20%;
+	margin-top: 72%;
+	margin-left: 5%;
+	background-image: url("s2r://panorama/images/custom_game/epic_level_21_png.vtex");
+	background-repeat: no-repeat;
+}
+
+.Gray_Skill
+{
+	width: 50%;
+	height: 100%;
+	margin-top: 0%;
+	margin-left: 0%;
+	visibility: visible;
+	z-index: 5;
+	flow-children: down;
+}
+
+.general_border
+{
+	width: 100%;
+	height: 2%;
+	z-index: 5;
+}
+
+.general_border_right
+{
+	width: 3%;
+	height: 100%;
+	z-index: 5;
+}
+
+.general_card
+{
+	width: 82.35%;
+	height: 16%;
+	z-index: 5;
+	margin-left: 8.825%;
+	box-shadow: fill #00000099 0px 0px 4px 0px;
+}
+
+.general_image_gray
+{
+	width: 100%;
+	height: 100%;
+	margin-left: 2px;
+	margin-right: 2px;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	border: 3px solid #c2bfbc;
+	border-radius: 5%;
+	box-shadow: inset #000000aa 0px 2px 3px 2px;
+}
+
+.general_image_blue
+{
+	width: 100%;
+	height: 100%;
+	margin-left: 2px;
+	margin-right: 2px;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	border: 3px solid #57c2ee;
+	border-radius: 5%;
+	box-shadow: inset #000000aa 0px 2px 3px 2px;
+}
+
+.general_image_purple
+{
+	width: 100%;
+	height: 100%;
+	margin-left: 2px;
+	margin-right: 2px;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	border: 3px solid #b855dd;
+	border-radius: 5%;
+	box-shadow: inset #000000aa 0px 2px 3px 2px;
+}
+
+.general_shadow
+{
+	width: 100%;
+	height: 100%;
+}
+
+.general_color
+{
+	width: 100%;
+	height: 100%;
+	z-index: 5;
+	background-size: 100% 100%;
+}
+
+.general_stack
+{
+	text-shadow: 0px 0px 4px 6 #000000;
+	color: white;
+	margin-left: 2px;
+	margin-top: 2px;
+	horizontal-align: center;
+	vertical-align: center;
+	font-family: monospaceNumbersFont;
+	font-size: 25px;
+	overflow: noclip noclip;
+}
+
+.Panel_close
+{
+	width: 100%;
+	height: 100%;
+}
+
