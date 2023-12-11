@@ -1,6 +1,5 @@
 LinkLuaModifier( "modifier_alchemist_goblins_greed_custom", "abilities/alchemist/alchemist_goblins_greed_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_alchemist_goblins_greed_custom_stack", "abilities/alchemist/alchemist_goblins_greed_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_alchemist_goblins_greed_custom_inventory_attribute", "abilities/alchemist/alchemist_goblins_greed_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_alchemist_goblins_greed_custom_scepter", "abilities/alchemist/alchemist_goblins_greed_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_alchemist_goblins_greed_custom_haste", "abilities/alchemist/alchemist_goblins_greed_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_alchemist_goblins_greed_custom_dd", "abilities/alchemist/alchemist_goblins_greed_custom", LUA_MODIFIER_MOTION_NONE )
@@ -8,42 +7,22 @@ LinkLuaModifier( "modifier_alchemist_goblins_greed_custom_regen", "abilities/alc
 LinkLuaModifier( "modifier_alchemist_goblins_greed_custom_arcane", "abilities/alchemist/alchemist_goblins_greed_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_alchemist_goblins_greed_custom_orbs", "abilities/alchemist/alchemist_goblins_greed_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_alchemist_goblins_greed_custom_runes", "abilities/alchemist/alchemist_goblins_greed_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_alchemist_goblins_greed_custom_kills", "abilities/alchemist/alchemist_goblins_greed_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_alchemist_goblins_greed_custom_gold", "abilities/alchemist/alchemist_goblins_greed_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_alchemist_goblins_greed_custom_statue", "abilities/alchemist/alchemist_goblins_greed_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_alchemist_goblins_greed_custom_statue_cd", "abilities/alchemist/alchemist_goblins_greed_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_alchemist_goblins_greed_custom_stats", "abilities/alchemist/alchemist_goblins_greed_custom", LUA_MODIFIER_MOTION_NONE )
 
 alchemist_goblins_greed_custom = class({})
 
 alchemist_goblins_greed_custom.current_items = 0
-
-alchemist_goblins_greed_custom.gold_inc = {2, 4, 6}
-
-alchemist_goblins_greed_custom.bonus_damage_fromgold = 5
-
-alchemist_goblins_greed_custom.gold_to_attribute = 200
-alchemist_goblins_greed_custom.bonus_attribute = {1, 1.5}
-alchemist_goblins_greed_custom.bonus_resist = {10, 15}
-alchemist_goblins_greed_custom.bonus_attribute_maxstacks = 25
-
-alchemist_goblins_greed_custom.blue = {2,3,4}
-
-alchemist_goblins_greed_custom.kills_max = 10
-alchemist_goblins_greed_custom.kills_attack = {4, 6, 8}
-alchemist_goblins_greed_custom.kills_move = {4, 6, 8}
-alchemist_goblins_greed_custom.kills_duration = 12
 
 
 alchemist_goblins_greed_custom.scepter_k = 150
 alchemist_goblins_greed_custom.scepter_max_per_creep = 15
 alchemist_goblins_greed_custom.scepter_max = 150
 
-alchemist_goblins_greed_custom.rune_duration = 30
-alchemist_goblins_greed_custom.rune_haste = 100
-alchemist_goblins_greed_custom.rune_arcane = 25
-alchemist_goblins_greed_custom.rune_regen = 3
-alchemist_goblins_greed_custom.rune_dd = 25
 
-alchemist_goblins_greed_custom.runes_max = 35
-alchemist_goblins_greed_custom.runes_damage = 50
-alchemist_goblins_greed_custom.runes_speed = 2
+
 
 
 function alchemist_goblins_greed_custom:OnInventoryContentsChanged()
@@ -70,6 +49,48 @@ end
 
 
 
+function alchemist_goblins_greed_custom:GiveBuff()
+
+local caster = self:GetCaster()
+
+local buffs =
+{
+	"modifier_alchemist_goblins_greed_custom_dd",
+	"modifier_alchemist_goblins_greed_custom_regen",
+	"modifier_alchemist_goblins_greed_custom_haste",
+	"modifier_alchemist_goblins_greed_custom_arcane",
+}
+
+local all_buffs = true
+local buff = nil
+
+for i = 1,#buffs do 
+	if not caster:HasModifier(buffs[i]) then 
+		all_buffs = false
+		break
+	end
+end 
+
+if all_buffs == true then 
+	buff = buffs[RandomInt(1, #buffs)]
+else 
+	local random = 1
+
+	repeat random = RandomInt(1, #buffs)
+		buff = buffs[random]
+	until not caster:HasModifier(buff)
+
+end 
+
+if buff == nil then return end 
+
+self:GetCaster():AddNewModifier(self:GetCaster(), self, buff, {duration = self:GetCaster():GetTalentValue("modifier_alchemist_greed_5", "duration")})
+
+end
+
+
+
+
 modifier_alchemist_goblins_greed_custom = class({})
 
 function modifier_alchemist_goblins_greed_custom:IsPurgable()
@@ -81,34 +102,46 @@ function modifier_alchemist_goblins_greed_custom:AllowIllusionDuplicate()
 end
 
 function modifier_alchemist_goblins_greed_custom:OnCreated( kv )
-	self.base_gold = self:GetAbility():GetSpecialValueFor( "bonus_gold" )
-	self.bonus_gold = self:GetAbility():GetSpecialValueFor( "bonus_bonus_gold" )
-	self.max_gold = self:GetAbility():GetSpecialValueFor( "bonus_gold_cap" )
-	self.duration = self:GetAbility():GetSpecialValueFor( "duration" )
-	if not IsServer() then return end
 
-	self.legendary_recipes = {
-		"item_recipe_alchemist_gold_skadi",
-		"item_recipe_alchemist_gold_daedalus",
-		"item_recipe_alchemist_gold_cuirass",
-		"item_recipe_alchemist_gold_octarine",
-		"item_recipe_alchemist_gold_heart",
-		"item_recipe_alchemist_gold_bfury",
-	}
+self.weaponry = self:GetCaster():FindAbilityByName("alchemist_corrosive_weaponry_custom")
+
+self.lowhp_health = 1--self:GetCaster():GetTalentValue("modifier_alchemist_greed_6", "health", true)
+self.lowhp_radius = self:GetCaster():GetTalentValue("modifier_alchemist_greed_6", "radius", true)
+self.lowhp_cd = self:GetCaster():GetTalentValue("modifier_alchemist_greed_6", "cd", true)
+self.lowhp_duration = self:GetCaster():GetTalentValue("modifier_alchemist_greed_6", "duration", true)
+self.lowhp_heal = self:GetCaster():GetTalentValue("modifier_alchemist_greed_6", "heal", true)/100
+
+self.gold_max = self:GetCaster():GetTalentValue("modifier_alchemist_greed_2", "max", true)
+
+self.stats_gold = self:GetCaster():GetTalentValue("modifier_alchemist_greed_3", "gold", true)
 
 
+self.base_gold = self:GetAbility():GetSpecialValueFor( "bonus_gold" )
+self.bonus_gold = self:GetAbility():GetSpecialValueFor( "bonus_bonus_gold" )
+self.max_gold = self:GetAbility():GetSpecialValueFor( "bonus_gold_cap" )
+self.duration = self:GetAbility():GetSpecialValueFor( "duration" )
+if not IsServer() then return end
 
-	if self:GetCaster():IsIllusion() then self:Destroy() return end
-	self.actual_stack = 0
+self.legendary_recipes = {
+	"item_recipe_alchemist_gold_skadi",
+	"item_recipe_alchemist_gold_daedalus",
+	"item_recipe_alchemist_gold_cuirass",
+	"item_recipe_alchemist_gold_octarine",
+	"item_recipe_alchemist_gold_heart",
+	"item_recipe_alchemist_gold_bfury",
+}
 
-	self.legendary_gold_reach = 0
-	self.legendary_gold_maximum = 4500
-	self.item_droppable = true
-
-	self:CalculateStack()
-	self:StartIntervalThink(FrameTime())
 
 
+if self:GetCaster():IsIllusion() then self:Destroy() return end
+self.actual_stack = 0
+
+self.legendary_gold_reach = 0
+self.legendary_gold_maximum = 4500
+self.item_droppable = true
+
+self:CalculateStack()
+self:StartIntervalThink(0.1)
 
 end
 
@@ -122,195 +155,275 @@ function modifier_alchemist_goblins_greed_custom:OnRefresh( kv )
 end
 
 function modifier_alchemist_goblins_greed_custom:OnIntervalThink()
-	if not IsServer() then return end
-	if self:GetParent():HasModifier("modifier_alchemist_greed_4") then
+if not IsServer() then return end
 
-		if not self:GetParent():HasModifier("modifier_alchemist_goblins_greed_custom_inventory_attribute") then
-			self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_alchemist_goblins_greed_custom_inventory_attribute", {})
-		end
+if self:GetParent():HasModifier("modifier_alchemist_greed_3") then
 
-		local modifier = self:GetParent():FindModifierByName("modifier_alchemist_goblins_greed_custom_inventory_attribute")
-		if modifier then
+	if not self:GetParent():HasModifier("modifier_alchemist_goblins_greed_custom_stats") then
+		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_alchemist_goblins_greed_custom_stats", {})
+	end
 
-			local prev_stack = modifier:GetStackCount()
+	local modifier = self:GetParent():FindModifierByName("modifier_alchemist_goblins_greed_custom_stats")
+	if modifier then
+		local stats_max = self:GetCaster():GetTalentValue("modifier_alchemist_greed_3", "max")
+		local prev_stack = modifier:GetStackCount()
 
-			local price = 0
-			price = self:GetCaster():GetGold()
-			local stack = math.floor(price / self:GetAbility().gold_to_attribute)
+		local price = 0
+		price = self:GetCaster():GetGold()
+		local stack = math.floor(price / self.stats_gold)
+	
+		local new_stack = math.min(stack,stats_max)
+
+		modifier:SetStackCount(new_stack)
 		
-			local new_stack = math.min(stack,self:GetAbility().bonus_attribute_maxstacks)
-
-			modifier:SetStackCount(new_stack)
-			
-			if new_stack ~= prev_stack then 
-				self:GetParent():CalculateStatBonus(true)
-			end
-
-		end
-	end
-	if self:GetParent():HasModifier("modifier_alchemist_greed_legendary") then
-		if self.item_droppable then
-			self.legendary_gold_reach = self:GetCaster():GetGold()
-			if self.legendary_gold_reach < self.legendary_gold_maximum then
-				CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), "alchemist_progress_update", {current_gold = self.legendary_gold_reach, max_gold = self.legendary_gold_maximum})
-			else
-				CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), "alchemist_progress_update", {current_gold = self.legendary_gold_maximum, max_gold = self.legendary_gold_maximum})
-			end
-		end
-
-
-		if self.legendary_gold_reach >= self.legendary_gold_maximum and self.item_droppable then
-			local recipe_name = 'item_alchemist_recipe'--table.remove(self.legendary_recipes, RandomInt(1, #self.legendary_recipes))
-
-			self.item_droppable = false
-			self.legendary_gold_maximum = 6000
-
-			self:GetAbility().current_items = self:GetAbility().current_items + 1
-
-
-			local hero = self:GetParent()
-
-			local item = CreateItem(recipe_name, hero, hero)
-
- 			item_effect = ParticleManager:CreateParticle( "particles/orange_drop.vpcf", PATTACH_WORLDORIGIN, nil )
-
-			local point = Vector(0,0,0)
-
- 			if self:GetCaster():IsAlive() then
-
- 				point = hero:GetAbsOrigin() + hero:GetForwardVector()*150 
-
-			else
-
- 				if towers[hero:GetTeamNumber()] ~= nil then 
- 					point = towers[hero:GetTeamNumber()]:GetAbsOrigin() + towers[hero:GetTeamNumber()]:GetForwardVector()*300
- 				end
-
- 			end
-
-    		ParticleManager:SetParticleControl( item_effect, 0, point )
-       
-    		EmitSoundOnEntityForPlayer("powerup_02", hero,  hero:GetPlayerOwnerID())
-
-
-			Timers:CreateTimer(0.4,function()
- 				CreateItemOnPositionSync(GetGroundPosition(point, unit), item)
-			end)
-
-			CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), "alchemist_progress_close", {})
+		if new_stack ~= prev_stack then 
+			self:GetParent():CalculateStatBonus(true)
 		end
 
 	end
+end
+
+if self:GetParent():HasModifier("modifier_alchemist_greed_legendary") then
+	if self.item_droppable then
+		self.legendary_gold_reach = self:GetCaster():GetGold()
+		if self.legendary_gold_reach < self.legendary_gold_maximum then
+			CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), "alchemist_progress_update", {current_gold = self.legendary_gold_reach, max_gold = self.legendary_gold_maximum})
+		else
+			CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), "alchemist_progress_update", {current_gold = self.legendary_gold_maximum, max_gold = self.legendary_gold_maximum})
+		end
+	end
+
+
+	if self.legendary_gold_reach >= self.legendary_gold_maximum and self.item_droppable then
+		local recipe_name = 'item_alchemist_recipe'--table.remove(self.legendary_recipes, RandomInt(1, #self.legendary_recipes))
+
+		self.item_droppable = false
+		self.legendary_gold_maximum = 6000
+
+		self:GetAbility().current_items = self:GetAbility().current_items + 1
+
+
+		local hero = self:GetParent()
+
+		local item = CreateItem(recipe_name, hero, hero)
+
+			item_effect = ParticleManager:CreateParticle( "particles/orange_drop.vpcf", PATTACH_WORLDORIGIN, nil )
+
+		local point = Vector(0,0,0)
+
+			if self:GetCaster():IsAlive() then
+
+				point = hero:GetAbsOrigin() + hero:GetForwardVector()*150 
+
+		else
+
+				if towers[hero:GetTeamNumber()] ~= nil then 
+					point = towers[hero:GetTeamNumber()]:GetAbsOrigin() + towers[hero:GetTeamNumber()]:GetForwardVector()*300
+				end
+
+			end
+
+		ParticleManager:SetParticleControl( item_effect, 0, point )
+   
+		EmitSoundOnEntityForPlayer("powerup_02", hero,  hero:GetPlayerOwnerID())
+
+
+		Timers:CreateTimer(0.4,function()
+				CreateItemOnPositionSync(GetGroundPosition(point, unit), item)
+		end)
+
+		CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), "alchemist_progress_close", {})
+	end
+
+end
+
 end
 
 function modifier_alchemist_goblins_greed_custom:DeclareFunctions()
 	local funcs = {
 		MODIFIER_EVENT_ON_DEATH,
+		MODIFIER_EVENT_ON_ATTACK_LANDED,
+		MODIFIER_PROPERTY_MIN_HEALTH,
+		MODIFIER_EVENT_ON_TAKEDAMAGE
 	}
 
 	return funcs
 end
 
+function modifier_alchemist_goblins_greed_custom:GetMinHealth()
+if not IsServer() then return end
+--if not self.weaponry or self.weaponry:GetAutoCastState() == false then return end
+if not self:GetParent():HasModifier("modifier_alchemist_greed_6") then return end 
+if self:GetParent():HasModifier("modifier_alchemist_goblins_greed_custom_statue_cd") then return end
+if not self:GetParent():IsRealHero() then return end 
+if self:GetParent():PassivesDisabled() then return end 
+if self:GetParent():HasModifier("modifier_death") then return end
+if not self:GetParent():IsAlive() then return end
+
+return 1
+end
+
+function modifier_alchemist_goblins_greed_custom:OnTakeDamage(params)
+if not IsServer() then return end
+--if not self.weaponry or self.weaponry:GetAutoCastState() == false then return end
+if not self:GetParent():HasModifier("modifier_alchemist_greed_6") then return end 
+if self:GetParent():HasModifier("modifier_alchemist_goblins_greed_custom_statue_cd") then return end
+if self:GetParent() ~= params.unit then return end 
+if not self:GetParent():IsRealHero() then return end 
+if self:GetParent():PassivesDisabled() then return end 
+if self:GetParent():GetHealthPercent() > self.lowhp_health then return end
+if self:GetParent():HasModifier("modifier_death") then return end
+
+local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_oracle/oracle_false_promise_heal.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
+ParticleManager:ReleaseParticleIndex( particle )
 
 
+local wave_particle = ParticleManager:CreateParticle( "particles/lc_wave.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
+ParticleManager:SetParticleControl( wave_particle, 1, self:GetCaster():GetAbsOrigin() )
+ParticleManager:ReleaseParticleIndex(wave_particle)
+
+self:GetCaster():EmitSound("Alch.Statue_caster")
+
+self:GetParent():GenericHeal(self:GetParent():GetMaxHealth()*self.lowhp_heal, self:GetAbility())
+
+self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_alchemist_goblins_greed_custom_statue_cd", {duration = self.lowhp_cd})
+
+local targets = self:GetParent():FindTargets(self.lowhp_radius)
+
+for _,target in pairs(targets) do 
+	if not target:IsDebuffImmune() then 
+		target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_alchemist_goblins_greed_custom_statue", {duration = (1 - target:GetStatusResistance())*self.lowhp_duration})
+	end 
+end 
+
+
+end 
+
+
+
+function modifier_alchemist_goblins_greed_custom:OnAttackLanded(params)
+if not IsServer() then return end 
+if not self:GetParent():HasModifier("modifier_alchemist_greed_2") then return end
+if not self:GetParent():IsRealHero() then return end 
+if self:GetParent() ~= params.attacker then return end 
+if not params.target:IsHero() and not params.target:IsCreep() then return end 
+
+local mod = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_alchemist_goblins_greed_custom_gold", {})
+
+if mod and  mod:GetStackCount() >= self.gold_max then 
+
+	local gold = self:GetCaster():GetTalentValue("modifier_alchemist_greed_2", "gold")
+	if params.target:IsCreep() then 
+		gold = gold/self:GetCaster():GetTalentValue("modifier_alchemist_greed_2", 'creeps')
+	end 
+
+
+	params.target:EmitSound("Alch.gold_attack")
+	local item_effect = ParticleManager:CreateParticle( "particles/items2_fx/hand_of_midas.vpcf", PATTACH_ABSORIGIN_FOLLOW, params.target)
+	ParticleManager:SetParticleControl( item_effect, 0, params.target:GetAbsOrigin() )
+	ParticleManager:SetParticleControlEnt(item_effect, 1, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetCaster():GetOrigin(), true )
+	  
+	ParticleManager:ReleaseParticleIndex(item_effect)
+
+	mod:Destroy()
+	self:GetParent():ModifyGold(gold, true, DOTA_ModifyGold_Unspecified)
+    SendOverheadEventMessage(self:GetCaster(), 0, self:GetCaster(), gold, nil)
+end 
+
+
+end 
 
 function modifier_alchemist_goblins_greed_custom:OnDeath( params )
-	if not IsServer() then return end
-	if params.attacker~=self:GetParent() then return end
-	if self:GetCaster():GetTeamNumber()==params.unit:GetTeamNumber() then return end
-	if params.unit:IsBuilding() then return end
-	if not self:GetParent():IsAlive() then return end
+if not IsServer() then return end
+if params.attacker~=self:GetParent() then return end
+if self:GetCaster():GetTeamNumber()==params.unit:GetTeamNumber() then return end
+if not params.unit:IsHero() and not params.unit:IsCreep() then return end
+if not self:GetParent():IsAlive() then return end
 
 
-	local gold = self:GetStackCount()
+local gold = self:GetStackCount()
 
-	if self:GetParent():GetQuest() == "Alch.Quest_7" and self:GetParent():QuestCompleted() == false then 
-		self:GetParent():UpdateQuest(gold)
+if self:GetParent():GetQuest() == "Alch.Quest_7" and self:GetParent():QuestCompleted() == false then 
+	self:GetParent():UpdateQuest(gold)
+end
+
+PlayerResource:ModifyGold( self:GetParent():GetPlayerOwnerID(), gold, false, DOTA_ModifyGold_Unspecified )
+
+self:AddStack()
+
+local target = params.unit
+
+if target:GetTeam() == DOTA_TEAM_NEUTRALS and self:GetCaster():HasScepter() and self:GetParent():IsRealHero()  then 
+	local inc = math.min(self:GetAbility().scepter_max_per_creep, target:GetMaxHealth()/self:GetAbility().scepter_k)
+
+	local mod = self:GetCaster():FindModifierByName("modifier_alchemist_goblins_greed_custom_scepter")
+
+	if not mod then 
+		mod = self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_alchemist_goblins_greed_custom_scepter", {})
 	end
 
-	PlayerResource:ModifyGold( self:GetParent():GetPlayerOwnerID(), gold, false, DOTA_ModifyGold_Unspecified )
+	local max = self:GetAbility():GetSpecialValueFor("scepter_max")
 
-	self:AddStack()
+	if mod:GetStackCount() + inc < max then 
+		mod:SetStackCount(mod:GetStackCount() + inc)
+	else 
+		mod:SetStackCount(inc - (max - mod:GetStackCount()))
 
-	local target = params.unit
-
-	if target:IsCreep() and self:GetParent():HasModifier("modifier_alchemist_greed_3") then 
-		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_alchemist_goblins_greed_custom_kills", {duration = self:GetAbility().kills_duration})
-	end
-
-
-
-	if target:GetTeam() == DOTA_TEAM_NEUTRALS and self:GetCaster():HasScepter() and self:GetParent():IsRealHero()  then 
-		local inc = math.min(self:GetAbility().scepter_max_per_creep, target:GetMaxHealth()/self:GetAbility().scepter_k)
-
-		local mod = self:GetCaster():FindModifierByName("modifier_alchemist_goblins_greed_custom_scepter")
-
-		if not mod then 
-			mod = self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_alchemist_goblins_greed_custom_scepter", {})
+		local mod_o = self:GetParent():FindModifierByName("modifier_alchemist_goblins_greed_custom_orbs")
+		if mod_o then 
+			mod_o:IncrementStackCount()
 		end
 
-		local max = self:GetAbility():GetSpecialValueFor("scepter_max")
+		local hero = self:GetParent()
 
-		if mod:GetStackCount() + inc < max then 
-			mod:SetStackCount(mod:GetStackCount() + inc)
-		else 
-			mod:SetStackCount(inc - (max - mod:GetStackCount()))
+		local item = CreateItem("item_gray_upgrade", hero, hero)
 
-			local mod_o = self:GetParent():FindModifierByName("modifier_alchemist_goblins_greed_custom_orbs")
-			if mod_o then 
-				mod_o:IncrementStackCount()
+			item_effect = ParticleManager:CreateParticle( "particles/gray_drop.vpcf", PATTACH_WORLDORIGIN, nil )
+
+		local point = Vector(0,0,0)
+
+
+
+			if self:GetCaster():IsAlive() then
+
+				point = hero:GetAbsOrigin() + hero:GetForwardVector()*150 
+
+		else
+
+				if towers[hero:GetTeamNumber()] ~= nil then 
+					point = towers[hero:GetTeamNumber()]:GetAbsOrigin() + towers[hero:GetTeamNumber()]:GetForwardVector()*300
+				end
+
 			end
 
-			local hero = self:GetParent()
-
-			local item = CreateItem("item_gray_upgrade", hero, hero)
-
- 			item_effect = ParticleManager:CreateParticle( "particles/gray_drop.vpcf", PATTACH_WORLDORIGIN, nil )
-
-			local point = Vector(0,0,0)
+		ParticleManager:SetParticleControl( item_effect, 0, point )
+   
+		EmitSoundOnEntityForPlayer("powerup_04", hero,  hero:GetPlayerOwnerID())
 
 
-
- 			if self:GetCaster():IsAlive() then
-
- 				point = hero:GetAbsOrigin() + hero:GetForwardVector()*150 
-
-			else
-
- 				if towers[hero:GetTeamNumber()] ~= nil then 
- 					point = towers[hero:GetTeamNumber()]:GetAbsOrigin() + towers[hero:GetTeamNumber()]:GetForwardVector()*300
- 				end
-
- 			end
-
-    		ParticleManager:SetParticleControl( item_effect, 0, point )
-       
-    		EmitSoundOnEntityForPlayer("powerup_04", hero,  hero:GetPlayerOwnerID())
-
-
-			Timers:CreateTimer(0.8,function()
- 				CreateItemOnPositionSync(GetGroundPosition(point, unit), item)
-			end)
-		end
-
+		Timers:CreateTimer(0.8,function()
+				CreateItemOnPositionSync(GetGroundPosition(point, unit), item)
+		end)
 	end
 
+end
 
 
 
-	local effect_cast = ParticleManager:CreateParticleForPlayer( "particles/units/heroes/hero_alchemist/alchemist_lasthit_coins.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent(), self:GetParent():GetPlayerOwner() )
-	ParticleManager:SetParticleControl( effect_cast, 1, self:GetParent():GetOrigin() )
-	ParticleManager:ReleaseParticleIndex( effect_cast )
 
-	local digit = string.len(tostring(math.floor(gold))) + 1
-	local effect_cast_2 = ParticleManager:CreateParticleForPlayer( "particles/units/heroes/hero_alchemist/alchemist_lasthit_msg_gold.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent(), self:GetParent():GetPlayerOwner() )
-	ParticleManager:SetParticleControl( effect_cast_2, 1, Vector( 0, gold, 0 ) )
-	ParticleManager:SetParticleControl( effect_cast_2, 2, Vector( 1, digit, 0 ) )
-	ParticleManager:SetParticleControl( effect_cast_2, 3, Vector( 255, 255, 0 ) )
-	ParticleManager:ReleaseParticleIndex( effect_cast_2 )
+local effect_cast = ParticleManager:CreateParticleForPlayer( "particles/units/heroes/hero_alchemist/alchemist_lasthit_coins.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent(), self:GetParent():GetPlayerOwner() )
+ParticleManager:SetParticleControl( effect_cast, 1, self:GetParent():GetOrigin() )
+ParticleManager:ReleaseParticleIndex( effect_cast )
+
+local digit = string.len(tostring(math.floor(gold))) + 1
+local effect_cast_2 = ParticleManager:CreateParticleForPlayer( "particles/units/heroes/hero_alchemist/alchemist_lasthit_msg_gold.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent(), self:GetParent():GetPlayerOwner() )
+ParticleManager:SetParticleControl( effect_cast_2, 1, Vector( 0, gold, 0 ) )
+ParticleManager:SetParticleControl( effect_cast_2, 2, Vector( 1, digit, 0 ) )
+ParticleManager:SetParticleControl( effect_cast_2, 3, Vector( 255, 255, 0 ) )
+ParticleManager:ReleaseParticleIndex( effect_cast_2 )
 
 
-	
+
 end
 
 function modifier_alchemist_goblins_greed_custom:AddStack()
@@ -329,11 +442,9 @@ function modifier_alchemist_goblins_greed_custom:RemoveStack()
 end
 
 function modifier_alchemist_goblins_greed_custom:CalculateStack()
-	local max_gold_bonus = self.max_gold
+	local max_gold_bonus = self.max_gold + self:GetCaster():GetTalentValue("modifier_alchemist_greed_1", "gold")
 
-	if self:GetParent():HasModifier("modifier_alchemist_greed_1") then
-		max_gold_bonus = max_gold_bonus + (self:GetAbility().gold_inc[self:GetCaster():GetUpgradeStack("modifier_alchemist_greed_1")])
-	end
+
 
 	local stack = math.min( self.base_gold + self.actual_stack*self.bonus_gold, max_gold_bonus )
 	self:SetStackCount( stack )
@@ -363,31 +474,6 @@ end
 function modifier_alchemist_goblins_greed_custom_stack:OnDestroy()
 	if not IsServer() then return end
 	self.parent_modifier:RemoveStack()
-end
-
-modifier_alchemist_goblins_greed_custom_inventory_attribute = class({})
-
-function modifier_alchemist_goblins_greed_custom_inventory_attribute:IsPurgable() return false end
-function modifier_alchemist_goblins_greed_custom_inventory_attribute:RemoveOnDeath() return false end
-function modifier_alchemist_goblins_greed_custom_inventory_attribute:GetTexture() return "buffs/greed_gold" end
-
-
-
-function modifier_alchemist_goblins_greed_custom_inventory_attribute:DeclareFunctions() 
-	return {
-		MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
-		MODIFIER_PROPERTY_STATS_AGILITY_BONUS,
-		MODIFIER_PROPERTY_STATS_INTELLECT_BONUS,
-  		MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
-	}
-end
-function modifier_alchemist_goblins_greed_custom_inventory_attribute:GetModifierBonusStats_Strength() return self:GetStackCount() * self:GetAbility().bonus_attribute[self:GetParent():GetUpgradeStack("modifier_alchemist_greed_4")] end
-function modifier_alchemist_goblins_greed_custom_inventory_attribute:GetModifierBonusStats_Agility() return self:GetStackCount() * self:GetAbility().bonus_attribute[self:GetParent():GetUpgradeStack("modifier_alchemist_greed_4")] end
-function modifier_alchemist_goblins_greed_custom_inventory_attribute:GetModifierBonusStats_Intellect() return self:GetStackCount() * self:GetAbility().bonus_attribute[self:GetParent():GetUpgradeStack("modifier_alchemist_greed_4")]  end
-
-function modifier_alchemist_goblins_greed_custom_inventory_attribute:GetModifierStatusResistanceStacking() 
-if self:GetStackCount() < self:GetAbility().bonus_attribute_maxstacks then return end
-	return self:GetAbility().bonus_resist[self:GetParent():GetUpgradeStack("modifier_alchemist_greed_4")]
 end
 
 
@@ -441,6 +527,10 @@ return "particles/generic_gameplay/rune_haste_owner.vpcf"
 end
 
 function modifier_alchemist_goblins_greed_custom_haste:OnCreated(table)
+
+self.speed = self:GetCaster():GetTalentValue("modifier_alchemist_greed_5", "speed")
+self.status = self:GetCaster():GetTalentValue("modifier_alchemist_greed_5", "status")
+
 if not IsServer() then return end
 self:GetParent():EmitSound("Alch.Rune_haste")
 self.RemoveForDuel = true
@@ -455,13 +545,21 @@ end
 function modifier_alchemist_goblins_greed_custom_haste:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT,
+  	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
 }
 end
 
 function modifier_alchemist_goblins_greed_custom_haste:GetModifierMoveSpeedBonus_Constant()
-return self:GetAbility().rune_haste
+return self.speed
 end
+
+
+function modifier_alchemist_goblins_greed_custom_haste:GetModifierStatusResistanceStacking() 
+return self.status
+end
+
+
 
 
 
@@ -476,6 +574,9 @@ return "particles/generic_gameplay/rune_doubledamage_owner.vpcf"
 end
 
 function modifier_alchemist_goblins_greed_custom_dd:OnCreated(table)
+
+self.damage = self:GetCaster():GetTalentValue("modifier_alchemist_greed_5", "damage")
+
 if not IsServer() then return end
 self:GetParent():EmitSound("Alch.Rune_dd")
 self.RemoveForDuel = true
@@ -495,7 +596,7 @@ return
 end
 
 function modifier_alchemist_goblins_greed_custom_dd:GetModifierDamageOutgoing_Percentage()
-return self:GetAbility().rune_dd
+return self.damage
 end
 
 
@@ -511,6 +612,8 @@ return "particles/generic_gameplay/rune_regen_owner.vpcf"
 end
 
 function modifier_alchemist_goblins_greed_custom_regen:OnCreated(table)
+self.regen = self:GetCaster():GetTalentValue("modifier_alchemist_greed_5", "regen")
+
 if not IsServer() then return end
 self:GetParent():EmitSound("Alch.Rune_regen")
 self.RemoveForDuel = true
@@ -530,7 +633,7 @@ return
 end
 
 function modifier_alchemist_goblins_greed_custom_regen:GetModifierHealthRegenPercentage()
-return self:GetAbility().rune_regen
+return self.regen
 end
 
 
@@ -545,6 +648,8 @@ return "particles/generic_gameplay/rune_arcane_owner.vpcf"
 end
 
 function modifier_alchemist_goblins_greed_custom_arcane:OnCreated(table)
+
+self.arcane = self:GetCaster():GetTalentValue("modifier_alchemist_greed_5", "arcane")
 if not IsServer() then return end
 self:GetParent():EmitSound("Alch.Rune_arcane")
 self.RemoveForDuel = true
@@ -564,7 +669,7 @@ return
 end
 
 function modifier_alchemist_goblins_greed_custom_arcane:GetModifierPercentageCooldown()
-return self:GetAbility().rune_arcane
+return self.arcane
 end
 
 modifier_alchemist_goblins_greed_custom_orbs = class({})
@@ -575,35 +680,42 @@ function modifier_alchemist_goblins_greed_custom_orbs:IsPurgable() return false 
 
 
 modifier_alchemist_goblins_greed_custom_runes = class({})
-function modifier_alchemist_goblins_greed_custom_runes:IsHidden() return not self:GetParent():HasModifier("modifier_alchemist_greed_6") end
+function modifier_alchemist_goblins_greed_custom_runes:IsHidden() return not self:GetParent():HasModifier("modifier_alchemist_greed_4") end
 function modifier_alchemist_goblins_greed_custom_runes:IsPurgable() return false end
 function modifier_alchemist_goblins_greed_custom_runes:RemoveOnDeath() return false end
 function modifier_alchemist_goblins_greed_custom_runes:GetTexture() return "buffs/greed_rune" end
 function modifier_alchemist_goblins_greed_custom_runes:OnCreated(table)
+
+
+self.max = self:GetCaster():GetTalentValue("modifier_alchemist_greed_4", "max", true)
+
 if not IsServer() then return end
 
 self:SetStackCount(1)
-
-
+self:StartIntervalThink(0.5)
 end
 
+function modifier_alchemist_goblins_greed_custom_runes:OnIntervalThink()
+if not IsServer() then return end 
+if not self:GetCaster():HasModifier("modifier_alchemist_greed_4") then return end 
+if self:GetStackCount() < self.max then return end
+
+
+local particle_peffect = ParticleManager:CreateParticle("particles/lc_odd_proc_.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+ParticleManager:SetParticleControl(particle_peffect, 0, self:GetParent():GetAbsOrigin())
+ParticleManager:SetParticleControl(particle_peffect, 2, self:GetParent():GetAbsOrigin())
+ParticleManager:ReleaseParticleIndex(particle_peffect)
+
+self:GetCaster():EmitSound("BS.Thirst_legendary_active")
+
+self:StartIntervalThink(-1)
+end 
 
 function modifier_alchemist_goblins_greed_custom_runes:OnRefresh(table)
 if not IsServer() then return end
-if self:GetStackCount() >= self:GetAbility().runes_max then return end
+if self:GetStackCount() >= self.max then return end
 
 self:IncrementStackCount()
-
-if self:GetStackCount() >= self:GetAbility().runes_max then 
-
-
-	local particle_peffect = ParticleManager:CreateParticle("particles/lc_odd_proc_.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-    ParticleManager:SetParticleControl(particle_peffect, 0, self:GetParent():GetAbsOrigin())
-    ParticleManager:SetParticleControl(particle_peffect, 2, self:GetParent():GetAbsOrigin())
-   	ParticleManager:ReleaseParticleIndex(particle_peffect)
-
-self:GetCaster():EmitSound("BS.Thirst_legendary_active")
-end
 
 end
 
@@ -618,15 +730,15 @@ end
 
 
 function modifier_alchemist_goblins_greed_custom_runes:GetModifierAttackSpeedBonus_Constant()
-if not self:GetParent():HasModifier("modifier_alchemist_greed_6") then return end
-return self:GetAbility().runes_speed*self:GetStackCount()
+if not self:GetParent():HasModifier("modifier_alchemist_greed_4") then return end
+return self:GetCaster():GetTalentValue("modifier_alchemist_greed_4", "speed")*self:GetStackCount()
 end
 
 
 function modifier_alchemist_goblins_greed_custom_runes:GetModifierPreAttack_BonusDamage()
-if not self:GetParent():HasModifier("modifier_alchemist_greed_6") then return end
-if self:GetStackCount() < self:GetAbility().runes_max then return end
-return self:GetAbility().runes_damage
+if not self:GetParent():HasModifier("modifier_alchemist_greed_4") then return end
+if self:GetStackCount() < self.max then return end
+return self:GetCaster():GetTalentValue("modifier_alchemist_greed_4", "damage")
 end
 
 
@@ -635,36 +747,137 @@ return self:GetStackCount()
 end
 
 
-modifier_alchemist_goblins_greed_custom_kills = class({})
-function modifier_alchemist_goblins_greed_custom_kills:IsHidden() return false end
-function modifier_alchemist_goblins_greed_custom_kills:IsPurgable() return false end
-function modifier_alchemist_goblins_greed_custom_kills:GetTexture() return "buffs/greed_kills" end
-function modifier_alchemist_goblins_greed_custom_kills:OnCreated(table)
-if not IsServer() then return end
+
+
+modifier_alchemist_goblins_greed_custom_gold = class({})
+function modifier_alchemist_goblins_greed_custom_gold:IsHidden() return true end
+function modifier_alchemist_goblins_greed_custom_gold:IsPurgable() return false end
+function modifier_alchemist_goblins_greed_custom_gold:OnCreated()
+
+self.max = self:GetCaster():GetTalentValue("modifier_alchemist_greed_2", "max")
+self.damage = self:GetCaster():GetTalentValue("modifier_alchemist_greed_2", "damage")
+if not IsServer() then return end 
+
 self:SetStackCount(1)
-end
+end 
 
-function modifier_alchemist_goblins_greed_custom_kills:OnRefresh(table)
-if not IsServer() then return end
-if self:GetStackCount() >= self:GetAbility().kills_max then return end
+function modifier_alchemist_goblins_greed_custom_gold:OnRefresh()
+if not IsServer() then return end 
+
 self:IncrementStackCount()
-end
+end 
 
-
-function modifier_alchemist_goblins_greed_custom_kills:DeclareFunctions()
+function modifier_alchemist_goblins_greed_custom_gold:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT,
-	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
+	MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE
+}
+end
+function modifier_alchemist_goblins_greed_custom_gold:GetModifierPreAttack_BonusDamage()
+if self:GetStackCount() ~= self.max - 1 then return end 
+
+return self.damage
+end
+
+
+
+modifier_alchemist_goblins_greed_custom_statue = class({})
+function modifier_alchemist_goblins_greed_custom_statue:IsHidden() return true end
+function modifier_alchemist_goblins_greed_custom_statue:IsPurgable() return false end
+function modifier_alchemist_goblins_greed_custom_statue:OnCreated()
+if not IsServer() then return end
+
+self:GetParent():EmitSound("Alch.Statue_target")
+self:GetParent():EmitSound("Alch.Statue_target2")
+
+local item_effect = ParticleManager:CreateParticle( "particles/items2_fx/hand_of_midas.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
+ParticleManager:SetParticleControl( item_effect, 0, self:GetCaster():GetAbsOrigin() )
+ParticleManager:SetParticleControlEnt(item_effect, 1, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetOrigin(), true )
+
+ParticleManager:ReleaseParticleIndex(item_effect)
+
+end 
+
+function modifier_alchemist_goblins_greed_custom_statue:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PHYSICAL,
+	MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PURE,
+	MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_MAGICAL,
+}
+end
+
+function modifier_alchemist_goblins_greed_custom_statue:GetAbsoluteNoDamagePhysical()
+return 1
+end
+
+function modifier_alchemist_goblins_greed_custom_statue:GetAbsoluteNoDamageMagical()
+return 1
+end
+
+function modifier_alchemist_goblins_greed_custom_statue:GetAbsoluteNoDamagePure()
+return 1
+end
+
+
+function modifier_alchemist_goblins_greed_custom_statue:CheckState()
+return
+{
+	[MODIFIER_STATE_FROZEN] = true,
+	[MODIFIER_STATE_STUNNED] = true
 }
 end
 
 
-function modifier_alchemist_goblins_greed_custom_kills:GetModifierAttackSpeedBonus_Constant()
-return self:GetStackCount()*self:GetAbility().kills_attack[self:GetCaster():GetUpgradeStack("modifier_alchemist_greed_3")]
+function modifier_alchemist_goblins_greed_custom_statue:GetStatusEffectName()
+return "particles/econ/items/effigies/status_fx_effigies/status_effect_effigy_gold_lvl2.vpcf"
+end
+
+function modifier_alchemist_goblins_greed_custom_statue:StatusEffectPriority()
+return 9999999
+end
+
+function modifier_alchemist_goblins_greed_custom_statue:GetEffectName()
+return "particles/econ/items/effigies/status_fx_effigies/gold_effigy_ambient_dire_lvl2.vpcf"
 end
 
 
-function modifier_alchemist_goblins_greed_custom_kills:GetModifierMoveSpeedBonus_Constant()
-return self:GetStackCount()*self:GetAbility().kills_move[self:GetCaster():GetUpgradeStack("modifier_alchemist_greed_3")]
+modifier_alchemist_goblins_greed_custom_statue_cd = class({})
+function modifier_alchemist_goblins_greed_custom_statue_cd:IsHidden() return false end
+function modifier_alchemist_goblins_greed_custom_statue_cd:IsPurgable() return false end
+function modifier_alchemist_goblins_greed_custom_statue_cd:RemoveOnDeath() return false end
+function modifier_alchemist_goblins_greed_custom_statue_cd:IsDebuff() return true end
+function modifier_alchemist_goblins_greed_custom_statue_cd:OnCreated()
+
+self.RemoveForDuel = true
+end
+function modifier_alchemist_goblins_greed_custom_statue_cd:GetTexture() return "buffs/greed_statue" end
+
+
+
+modifier_alchemist_goblins_greed_custom_stats = class({})
+function modifier_alchemist_goblins_greed_custom_stats:IsHidden() return false end
+function modifier_alchemist_goblins_greed_custom_stats:IsPurgable() return false end
+function modifier_alchemist_goblins_greed_custom_stats:RemoveOnDeath() return false end
+function modifier_alchemist_goblins_greed_custom_stats:GetTexture() return 'buffs/greed_stats' end
+
+function modifier_alchemist_goblins_greed_custom_stats:OnCreated()
+self.stats = self:GetCaster():GetTalentValue("modifier_alchemist_greed_3", "stats", true)
+end
+
+function modifier_alchemist_goblins_greed_custom_stats:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
+	MODIFIER_PROPERTY_STATS_AGILITY_BONUS
+}
+
+end
+
+
+function modifier_alchemist_goblins_greed_custom_stats:GetModifierBonusStats_Strength()
+return self:GetStackCount()*self.stats 
+end
+function modifier_alchemist_goblins_greed_custom_stats:GetModifierBonusStats_Agility()
+return self:GetStackCount()*self.stats 
 end

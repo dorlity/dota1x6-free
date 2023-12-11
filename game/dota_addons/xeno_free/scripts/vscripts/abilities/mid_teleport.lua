@@ -88,10 +88,10 @@ self:GetCaster():RemoveModifierByName("modifier_mid_teleport_cast")
 
 --ParticleManager:DestroyParticle(self.teleportFromEffect, false)
 --  ParticleManager:ReleaseParticleIndex(self.teleportFromEffect)
-  ParticleManager:DestroyParticle(self.teleportToEffect, false)
-  ParticleManager:ReleaseParticleIndex(self.teleportToEffect)
-  ParticleManager:DestroyParticle(self.blight_spot, false)
-  ParticleManager:ReleaseParticleIndex(self.blight_spot)
+ParticleManager:DestroyParticle(self.teleportToEffect, false)
+ParticleManager:ReleaseParticleIndex(self.teleportToEffect)
+ParticleManager:DestroyParticle(self.blight_spot, false)
+ParticleManager:ReleaseParticleIndex(self.blight_spot)
 
   
 local hero = self:GetCaster()
@@ -99,7 +99,7 @@ teleports[hero:GetTeamNumber()]:StopSound("Portal.Channel")
 
 
 StopSoundOn("Portal.Loop_Appear", self.teleport_center)
-  self.teleport_center:Destroy()
+self.teleport_center:Destroy()
 
 local ability_name = self:GetAbilityName()
 for i = 0,23 do
@@ -166,12 +166,24 @@ function modifier_mid_teleport_cast:IsPurgable() return false end
 function modifier_mid_teleport_cast:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_OVERRIDE_ANIMATION
+	MODIFIER_PROPERTY_OVERRIDE_ANIMATION,
+	MODIFIER_EVENT_ON_TAKEDAMAGE
 }
 end
 
 function modifier_mid_teleport_cast:GetOverrideAnimation()
 return ACT_DOTA_TELEPORT
+end
+
+
+function modifier_mid_teleport_cast:OnTakeDamage(params)
+if not IsServer() then return end 
+if self:GetParent() ~= params.unit then return end 
+if not params.attacker then return end 
+if params.attacker == self:GetParent() then return end 
+if not params.attacker:IsHero() then return end
+
+self:GetParent():Interrupt()
 end
 
 

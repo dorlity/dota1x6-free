@@ -68,10 +68,19 @@ end
 function modifier_razor_tower_custom:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE
+	MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
+	MODIFIER_EVENT_ON_DEATH
 }
 end
 function modifier_razor_tower_custom:GetModifierIncomingDamage_Percentage()
 return self.damage
 end
 
+
+function modifier_razor_tower_custom:OnDeath(params)
+if not IsServer() then return end 
+if self:GetCaster() ~= params.unit then return end
+if self:GetCaster():IsReincarnating() then return end 
+
+self:Destroy()
+end 

@@ -21,15 +21,17 @@ PrecacheResource( "particle", "particles/razor/surge_damage_stack.vpcf", context
 
 end
 
-
-
-
 function razor_unstable_current_custom:GetAbilityTextureName()
-if self:GetCaster():HasModifier("modifier_razor_unstable_current_custom_legendary") then 
-	return "unstable_current_stop"
-end 
-
-return "razor_unstable_current"
+    if self:GetCaster():HasModifier("modifier_razor_unstable_current_custom_legendary") then 
+        return "unstable_current_stop"
+    end 
+    if self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
+        return "razor/arcana/razor_unstable_current_alt2"
+    end
+    if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
+        return "razor/arcana/razor_unstable_current_alt1"
+    end
+    return "razor_unstable_current"
 end 
 
 
@@ -243,10 +245,17 @@ end
 local count = 0
 
 local damage_table = {attacker = self.caster, ability = self:GetAbility(), damage_type = DAMAGE_TYPE_MAGICAL}
-
+local particle_name = "particles/units/heroes/hero_razor/razor_unstable_current.vpcf"
+if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
+    particle_name = "particles/econ/items/razor/razor_arcana/razor_arcana_unstable_current.vpcf"
+elseif self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
+    particle_name = "particles/econ/items/razor/razor_arcana/razor_arcana_v2_unstable_current.vpcf"
+end
 for _,target in pairs(targets) do 
 
-	local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_razor/razor_unstable_current.vpcf", PATTACH_CUSTOMORIGIN_FOLLOW, self.caster )
+    
+
+	local effect_cast = ParticleManager:CreateParticle( particle_name, PATTACH_CUSTOMORIGIN_FOLLOW, self.caster )
 	ParticleManager:SetParticleControlEnt(effect_cast, 0, self.caster, PATTACH_POINT_FOLLOW, "attach_hitloc", self.caster:GetAbsOrigin(), true)
 	ParticleManager:SetParticleControlEnt(effect_cast, 1, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true)
 	ParticleManager:ReleaseParticleIndex( effect_cast )

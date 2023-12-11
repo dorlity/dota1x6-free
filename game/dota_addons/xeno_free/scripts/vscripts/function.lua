@@ -24,6 +24,15 @@ self:AddExperience(exp, 0, false, false)
 end 
 
 
+function CDOTA_BaseNPC:TargetLockedOnBase(target)
+
+local target_mod = target:FindModifierByName("modifier_backdoor_knock_aura_damage")
+
+if not target_mod or not target_mod.target then return false end
+if target_mod.target == self then return false end
+
+return true
+end 
 
 
 

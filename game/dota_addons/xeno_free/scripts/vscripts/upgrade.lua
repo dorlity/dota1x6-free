@@ -93,6 +93,7 @@ skills = {
 		{"modifier_patrol_reward_fortifier",0, "blue", 1, "purple_item", "patrol_fortifier", 22, 0},
 	--	{"modifier_patrol_reward_grenade",0, "blue", 1, "purple_item", "patrol_grenade", 22, 0},
 		{"modifier_patrol_reward_ash",0, "blue", 1, "purple_skill", "Phoenix_Ash", 22, 0},
+		{"modifier_patrol_reward_refresh",0, "blue", 1, "purple_item", "Refresher_Shard", 22, 0},
 	},
 
 
@@ -775,36 +776,36 @@ skills = {
 	},
 
 	npc_dota_hero_alchemist = {
-		{"modifier_alchemist_spray_1",1,"blue",3,"blue_skill","acid",25,1,"unstable_4",0},
+		{"modifier_alchemist_spray_1",1,"blue",3,"blue_skill","acid",25,1,"acid_1",0},
 		{"modifier_alchemist_spray_2",1,"blue",3,"blue_skill","acid",25,1,"acid_2",0},
 		{"modifier_alchemist_spray_3",1,"blue",3,"blue_skill","acid",25,1,"acid_3",0},
 	
 		{"modifier_alchemist_unstable_1",1,"blue",3,"blue_skill","unstable",25,2,"unstable_1",0},
-		{"modifier_alchemist_unstable_2",1,"blue",3,"blue_skill","unstable",25,2,"unstable_2",1},
+		{"modifier_alchemist_unstable_2",1,"blue",3,"blue_skill","unstable",25,2,"unstable_2",0},
 		{"modifier_alchemist_unstable_3",1,"blue",3,"blue_skill","unstable",25,2,"unstable_3",0},
 	
 		{"modifier_alchemist_greed_1",1,"blue",3,"blue_skill","greed",25,3,"greed_1",0},
 		{"modifier_alchemist_greed_2",1,"blue",3,"blue_skill","greed",25,3,"greed_2",0},
-		{"modifier_alchemist_greed_3",1,"blue",3,"blue_skill","greed",25,3,"greed_6",1},
+		{"modifier_alchemist_greed_3",1,"blue",3,"blue_skill","greed",25,3,"greed_3",0},
 	
 		{"modifier_alchemist_rage_1",1,"blue",3,"blue_skill","chemical",25,4,"chemical_1",0},
 		{"modifier_alchemist_rage_2",1,"blue",3,"blue_skill","chemical",25,4,"chemical_2",0},
 		{"modifier_alchemist_rage_3",1,"blue",3,"blue_skill","chemical",25,4,"chemical_3",0},
 
 		{"modifier_alchemist_spray_4",1,"purple",2,"purple_skill","acid",25,1,"acid_4",0},
-		{"modifier_alchemist_spray_5",1,"purple",1,"purple_skill","acid",25,1,"acid_5",1},
+		{"modifier_alchemist_spray_5",1,"purple",1,"purple_skill","acid",25,1,"acid_5",0},
 		{"modifier_alchemist_spray_6",1,"purple",1,"purple_skill","acid",25,1,"acid_6",1},
 	
-		{"modifier_alchemist_unstable_4",1,"purple",2,"purple_skill","unstable",25,2,"acid_1",0},
-		{"modifier_alchemist_unstable_5",1,"purple",1,"purple_skill","unstable",25,2,"unstable_5",1},
+		{"modifier_alchemist_unstable_4",1,"purple",2,"purple_skill","unstable",25,2,"unstable_4",0},
+		{"modifier_alchemist_unstable_5",1,"purple",1,"purple_skill","unstable",25,2,"unstable_5",0},
 		{"modifier_alchemist_unstable_6",1,"purple",1,"purple_skill","unstable",25,2,"unstable_6",1},
 	
 		{"modifier_alchemist_greed_4",1,"purple",2,"purple_skill","greed",25,3,"greed_4",0},
 		{"modifier_alchemist_greed_5",1,"purple",1,"purple_skill","greed",25,3,"greed_5",1},
-		{"modifier_alchemist_greed_6",1,"purple",1,"purple_skill","greed",25,3,"greed_3",0},
+		{"modifier_alchemist_greed_6",1,"purple",1,"purple_skill","greed",25,3,"greed_6",0},
 	
-		{"modifier_alchemist_rage_4",1,"purple",2,"purple_skill","chemical",25,4,"chemical_4",1},
-		{"modifier_alchemist_rage_5",1,"purple",1,"purple_skill","chemical",25,4,"chemical_5",1},
+		{"modifier_alchemist_rage_4",1,"purple",2,"purple_skill","chemical",25,4,"chemical_4",0},
+		{"modifier_alchemist_rage_5",1,"purple",1,"purple_skill","chemical",25,4,"chemical_5",0},
 		{"modifier_alchemist_rage_6",1,"purple",1,"purple_skill","chemical",25,4,"chemical_6",1},
 
 		{"modifier_alchemist_spray_legendary",1,"orange",0,"orange_skill","acid",18,1,1},
@@ -2057,6 +2058,8 @@ if	(unit:GetTeam() == DOTA_TEAM_NEUTRALS or unit:IsBuilding()) and not hero:IsBu
 			--k = k + BlueMorePoints
 		end
 
+
+
 		if killer_hero:HasModifier("modifier_item_alchemist_gold_bfury") then 
 			k = k + killer_hero:FindModifierByName("modifier_item_alchemist_gold_bfury").blue_bonus
 		else 
@@ -2068,10 +2071,10 @@ if	(unit:GetTeam() == DOTA_TEAM_NEUTRALS or unit:IsBuilding()) and not hero:IsBu
 		local points = BluePoints[unit:GetUnitName()]
 
 
-		if killer_hero:HasModifier("modifier_alchemist_greed_2") then
-			local ability = killer_hero:FindAbilityByName("alchemist_goblins_greed_custom")
-			points = points + ability.blue[killer_hero:GetUpgradeStack("modifier_alchemist_greed_2")]
-		end
+		if hero:HasModifier("modifier_alchemist_greed_1")  then 
+			points = points + hero:GetTalentValue("modifier_alchemist_greed_1", "blue")
+		end 
+
 
 		killer_hero.bluepoints = killer_hero.bluepoints + points * k
 
@@ -2303,19 +2306,23 @@ return {table_patrol[r_1][1], table_patrol[r_2][1]}
 end
 
 
-function upgrade:GetPatrol2()
+function upgrade:GetPatrol2(no_gadget)
 
 local table_patrol = skills['patrol_2']
 
 local r_1 = RandomInt(1, #table_patrol)
+
+repeat r_1 = RandomInt(1, #table_patrol)
+until (table_patrol[r_1][1] ~= "modifier_patrol_reward_razor" or not no_gadget)
+
 local r_2 = r_1
 local r_3 = r_1
 
 repeat r_2 = RandomInt(1, #table_patrol)
-until r_2 ~= r_1
+until (table_patrol[r_2][1] ~= "modifier_patrol_reward_razor" or not no_gadget) and r_2 ~= r_1
 
 repeat r_3 = RandomInt(1, #table_patrol)
-until (r_3 ~= r_1) and (r_3 ~= r_2)
+until (table_patrol[r_3][1] ~= "modifier_patrol_reward_razor" or not no_gadget) and (r_3 ~= r_1) and (r_3 ~= r_2)
 
 return {table_patrol[r_1][1], table_patrol[r_2][1], table_patrol[r_3][1]}
 end
@@ -2467,7 +2474,7 @@ function upgrade:find_legendary(player)
 end
 
 
-function upgrade:init_upgrade(player, rarity, can_refresh, after_legen, prev_choise, instant)
+function upgrade:init_upgrade(player, rarity, can_refresh, after_legen, prev_choise, instant, no_gadget)
 if not test then
 	players[player:GetTeamNumber()].IsChoosing = true
 	players[player:GetTeamNumber()]:AddNewModifier(players[player:GetTeamNumber()], nil, "modifier_end_choise", {duration = 120})
@@ -2482,7 +2489,7 @@ local legendary_info = false
 if rarity == 11 then 
 	players[player:GetTeamNumber()].choise = upgrade:GetPatrol1()
 elseif rarity == 12 then 
-	players[player:GetTeamNumber()].choise = upgrade:GetPatrol2()
+	players[player:GetTeamNumber()].choise = upgrade:GetPatrol2(no_gadget)
 elseif rarity == 13 then 
 	players[player:GetTeamNumber()].choise = upgrade:GetAlchemistItems(player)
 elseif rarity == 10 then

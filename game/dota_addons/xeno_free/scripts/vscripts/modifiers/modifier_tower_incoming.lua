@@ -214,10 +214,15 @@ if duel_data[player.duel_data] and duel_data[player.duel_data].stage ~= 1 and du
 end 
 
 
-if player:HasModifier("modifier_tower_incoming_duel_soon") then 
-	self:PlayEffect()
-	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(params.attacker:GetPlayerOwnerID()), "CreateIngameErrorMessage", {message = "#push_duel_soon"})
-	return
+if towers[params.attacker:GetTeamNumber()] then 
+	local mod = towers[params.attacker:GetTeamNumber()]:FindModifierByName("modifier_tower_incoming_duel_soon")
+
+	if mod and mod:GetRemainingTime() <= duel_push_time then 
+
+		self:PlayEffect()
+		CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(params.attacker:GetPlayerOwnerID()), "CreateIngameErrorMessage", {message = "#push_duel_soon"})
+		return
+	end 
 end 
 
 
@@ -691,7 +696,7 @@ end
 
 
 modifier_tower_incoming_duel_soon = class({})
-function modifier_tower_incoming_duel_soon:IsHidden() return true end
+function modifier_tower_incoming_duel_soon:IsHidden() return false end
 function modifier_tower_incoming_duel_soon:IsPurgable() return false end
 function modifier_tower_incoming_duel_soon:RemoveOnDeath() return false end
 

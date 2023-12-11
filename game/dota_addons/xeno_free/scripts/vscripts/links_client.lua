@@ -19,6 +19,7 @@ LinkLuaModifier( "modifier_patrolupgrade", "modifiers/modifier_patrolupgrade", L
 LinkLuaModifier( "modifier_test_hero_custom", "test_mode", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_portrait_donate_custom", "modifiers/hero_items/modifier_portrait_donate_custom", LUA_MODIFIER_MOTION_NONE )
 
+LinkLuaModifier( "modifier_duel_vision_thinker", "modifiers/modifier_duel_vision_thinker", LUA_MODIFIER_MOTION_NONE )
 
 LinkLuaModifier("modifier_tower_level", "modifiers/modifier_tower_level.lua", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_on_respawn", "modifiers/modifier_on_respawn.lua", LUA_MODIFIER_MOTION_NONE)
@@ -87,9 +88,16 @@ LinkLuaModifier( "modifier_recipe_gold_octarine", "upgrade/general/modifier_reci
 
 
 local items_data = {}
+
 items_data["npc_dota_hero_juggernaut"] = require("donate_items/npc_dota_hero_juggernaut")
 items_data["npc_dota_hero_phantom_assassin"] = require("donate_items/npc_dota_hero_phantom_assassin")
 items_data["npc_dota_hero_huskar"] = require("donate_items/npc_dota_hero_huskar")
+items_data["npc_dota_hero_razor"] = require("donate_items/npc_dota_hero_razor")
+items_data["npc_dota_hero_nevermore"] = require("donate_items/npc_dota_hero_nevermore")
+items_data["npc_dota_hero_legion_commander"] = require("donate_items/npc_dota_hero_legion_commander")
+
+
+
 
 
 for hero_name, info in pairs(items_data) do

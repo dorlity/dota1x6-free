@@ -10,6 +10,12 @@ function modifier_alchemist_unstable_5:IsPurgable() return false end
 
 function modifier_alchemist_unstable_5:OnCreated(table)
 if not IsServer() then return end
+
+local ability = self:GetCaster():FindAbilityByName("alchemist_unstable_concoction_custom")
+if ability then 
+  ability:ToggleAutoCast()
+end 
+
   self:SetStackCount(1)
 end
 

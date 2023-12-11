@@ -123,9 +123,10 @@ function hoodwink_sharpshooter_custom:OnProjectileHit_ExtraData( target, locatio
 		k = self:GetSpecialValueFor("creeps")/100
 	end
 
+	if not self:GetCaster():TargetLockedOnBase(target) then 
+		target:AddNewModifier( self:GetCaster(), self:GetCaster():BkbAbility(self,  self:GetCaster():HasModifier("modifier_hoodwink_sharp_legendary") and self:GetCaster():GetUpgradeStack("modifier_hoodwink_sharpshooter_custom_hits") >= self:GetCaster():GetTalentValue("modifier_hoodwink_sharp_legendary", "stack")), "modifier_hoodwink_sharpshooter_custom_debuff", { duration = ExtraData.duration*(1 - target:GetStatusResistance()), x = ExtraData.x, y = ExtraData.y } )
+	end 
 
-	target:AddNewModifier( self:GetCaster(), self:GetCaster():BkbAbility(self,  self:GetCaster():HasModifier("modifier_hoodwink_sharp_legendary") and self:GetCaster():GetUpgradeStack("modifier_hoodwink_sharpshooter_custom_hits") >= self:GetCaster():GetTalentValue("modifier_hoodwink_sharp_legendary", "stack")), "modifier_hoodwink_sharpshooter_custom_debuff", { duration = ExtraData.duration*(1 - target:GetStatusResistance()), x = ExtraData.x, y = ExtraData.y } )
-	
 	local damageTable = { victim = target, attacker = self:GetCaster(), damage = ExtraData.damage*k, damage_type = self:GetAbilityDamageType(), ability = self, damage_flags = DOTA_DAMAGE_FLAG_NONE }
 	local real = ApplyDamage(damageTable)
 

@@ -21,42 +21,67 @@
 			</Panel>
 		</Panel>
 		<Panel class="hero_pick panel_open_right hero_pick_width" id="hero_pick" onactivate="hide_chosen_hero();">
-			<Panel class="hero_attribute_info" id="InfoStr">
-				<Panel class="hero_icon_str" id="IconStr" />
-				<Label class="hero_attribute_text" id="TextStr" text="#DOTA_Tooltip_Ability_item_power_treads_str" />
-			</Panel>
-			<Panel class="hero_attribute_row" id="StrengthSelector" />
-			<Panel class="hero_attribute_info" id="InfoAgi">
-				<Panel class="hero_icon_agi" id="IconAgi" />
-				<Label class="hero_attribute_text" id="TextAgi" text="#DOTA_Tooltip_Ability_item_power_treads_agi" />
-			</Panel>
-			<Panel class="hero_attribute_row" id="AgilitySelector" />
-			<Panel class="hero_attribute_info" id="InfoInt">
-				<Panel class="hero_icon_int" id="IconInt" />
-				<Label class="hero_attribute_text" id="TextInt" text="#DOTA_Tooltip_Ability_item_power_treads_int" />
-			</Panel>
-			<Panel class="hero_attribute_row" id="IntellectSelector" />
-			<Panel class="hero_attribute_info" id="InfoAll">
-				<Panel class="hero_icon_all" id="IconAll" />
-				<Label class="hero_attribute_text" id="TextInt" text="#stats_all" />
-			</Panel>
-			<Panel class="hero_attribute_row" id="AllSelector" />
-			<Panel id="BanStagePanel" class="BanStagePanel_hidden">
-				<Label class="BanStagePanel_text" id="BanStagePanel_text" />
-				<Label class="BanStagePanel_timer" id="BanStagePanel_timer" />
-			</Panel>
-			<Panel id="SafeToLeave" class="SafeToLeave_hidden">
-				<Panel class="SafeToLeave_panel" id="SafeToLeave_panel">
-					<Label class="SafeToLeave_text" id="SafeToLeave_text" />
+			<Panel class="BadMap_hidden BadMap" id="BadMap" hittest="false">
+				<Panel class="BadMap_top" id="BadMap_top" hittest="false">
+					<Label class="BadMap_text" id="BadMap_top_text" hittest="false" />
+				</Panel>
+				<Panel class="BadMap_your_mmr" hittest="false">
+					<Label class="BadMap_text" id="BadMap_your_mmr_text" hittest="false" />
+				</Panel>
+				<Panel class="BadMap_map_mmr" hittest="false">
+					<Label class="BadMap_text" id="BadMap_map_mmr_text" hittest="false" />
+				</Panel>
+				<Panel class="BadMap_bottom" hittest="false">
+					<Label class="BadMap_text" id="BadMap_bottom_text" hittest="false" />
+				</Panel>
+				<Panel class="BadMap_image" id="BadMap_image" hittest="false" />
+				<Panel id="BadMap_leave_panel" hittest="false">
+					<Panel class="BadMap_leave_text" hittest="false">
+						<Label class="BadMap_text" id="BadMap_leave_text" hittest="false" />
+					</Panel>
+					<Panel class="BadMap_leave_button" hittest="true" onactivate="Game.Disconnect();">
+						<Label class="BadMap_text" id="BadMap_leave_button_text" hittest="false" />
+					</Panel>
 				</Panel>
 			</Panel>
-			<Panel id="SelectRandomHero_panel" class="SelectRandomHero_panel_hidden">
-				<Panel id="SelectRandomHero" class="SelectRandomHero">
-					<Panel class="IconDice" />
-					<Label class="RandomLabel" text="#DOTA_Hero_Selection_Random" />
+			<Panel id="hero_pick_content">
+				<Panel class="hero_attribute_info" id="InfoStr">
+					<Panel class="hero_icon_str" id="IconStr" />
+					<Label class="hero_attribute_text" id="TextStr" text="#DOTA_Tooltip_Ability_item_power_treads_str" />
 				</Panel>
-				<Panel class="SelectRandomHero_bonus" id="SelectRandomHero_bonus">
-					<Label class="RandomLabel_bonus" text="#shards_random_bonus_short" />
+				<Panel class="hero_attribute_row" id="StrengthSelector" />
+				<Panel class="hero_attribute_info" id="InfoAgi">
+					<Panel class="hero_icon_agi" id="IconAgi" />
+					<Label class="hero_attribute_text" id="TextAgi" text="#DOTA_Tooltip_Ability_item_power_treads_agi" />
+				</Panel>
+				<Panel class="hero_attribute_row" id="AgilitySelector" />
+				<Panel class="hero_attribute_info" id="InfoInt">
+					<Panel class="hero_icon_int" id="IconInt" />
+					<Label class="hero_attribute_text" id="TextInt" text="#DOTA_Tooltip_Ability_item_power_treads_int" />
+				</Panel>
+				<Panel class="hero_attribute_row" id="IntellectSelector" />
+				<Panel class="hero_attribute_info" id="InfoAll">
+					<Panel class="hero_icon_all" id="IconAll" />
+					<Label class="hero_attribute_text" id="TextInt" text="#stats_all" />
+				</Panel>
+				<Panel class="hero_attribute_row" id="AllSelector" />
+				<Panel id="BanStagePanel" class="BanStagePanel_hidden">
+					<Label class="BanStagePanel_text" id="BanStagePanel_text" />
+					<Label class="BanStagePanel_timer" id="BanStagePanel_timer" />
+				</Panel>
+				<Panel id="SafeToLeave" class="SafeToLeave_hidden">
+					<Panel class="SafeToLeave_panel" id="SafeToLeave_panel">
+						<Label class="SafeToLeave_text" id="SafeToLeave_text" />
+					</Panel>
+				</Panel>
+				<Panel id="SelectRandomHero_panel" class="SelectRandomHero_panel_hidden">
+					<Panel id="SelectRandomHero" class="SelectRandomHero">
+						<Panel class="IconDice" />
+						<Label class="RandomLabel" text="#DOTA_Hero_Selection_Random" />
+					</Panel>
+					<Panel class="SelectRandomHero_bonus" id="SelectRandomHero_bonus">
+						<Label class="RandomLabel_bonus" text="#shards_random_bonus_short" />
+					</Panel>
 				</Panel>
 			</Panel>
 		</Panel>

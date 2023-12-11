@@ -93,6 +93,7 @@
 				<Label class="NecroWaveText" id="NecroWaveText" hittest="false" />
 			</Panel>
 		</Panel>
+		<Panel class="patrol_refresher_status_main" id="patrol_refresher_status_main" hittest="false" />
 		<Panel class="legion_duel_alert" id="legion_duel_alert" hittest="false" />
 		<Panel class="legion_duel_status_main" id="legion_duel_status_main" hittest="false" />
 		<Panel class="muerta_quest_alert" id="muerta_quest_alert" hittest="false" />

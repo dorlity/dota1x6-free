@@ -129,6 +129,9 @@ end
 
 
 function custom_nevermore_dark_lord:GetAbilityTextureName()
+    if self:GetCaster():HasModifier("modifier_shadow_fiend_arcana_custom") then
+        return "nevermore_dark_lord_demon"
+    end
    return "nevermore_dark_lord"
 end
 

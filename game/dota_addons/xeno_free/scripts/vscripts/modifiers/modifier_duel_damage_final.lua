@@ -29,9 +29,9 @@ end
 
 
 function modifier_duel_damage_final:GetModifierIncomingDamage_Percentage()
-    return -10
+    return -8
 end
 
 function modifier_duel_damage_final:GetModifierTotalDamageOutgoing_Percentage()
-    return 10
-end
+    return 8
+endnd

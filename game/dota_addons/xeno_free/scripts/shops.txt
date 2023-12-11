@@ -115,11 +115,11 @@
 		"item"		"item_ring_of_basilius"
 		"item"		"item_headdress"
 		"item"		"item_urn_of_shadows_custom"
-		"item"		"item_tranquil_boots"
+		"item"		"item_tranquil_boots_custom"
 		"item"		"item_medallion_of_courage_custom"
 		"item"		"item_pavise_custom"
 		"item"		"item_arcane_boots_custom"
-		"item"		"item_ancient_janggo"
+		"item"		"item_ancient_janggo_custom"
 		"item"		"item_mekansm_custom"		
 		"item"		"item_holy_locket"			
 		"item"		"item_vladmir"		
@@ -127,7 +127,7 @@
 		"item"		"item_pipe_custom"			
 		"item"		"item_guardian_greaves_custom"
 		//"item"		"item_soul_keeper_custom"
-		"item"		"item_boots_of_bearing"
+		"item"		"item_boots_of_bearing_custom"
 	}
 				
 	"magics"			
@@ -192,7 +192,7 @@
 		"item"		"item_abyssal_blade"	
 		"item"		"item_meteor_hammer_custom"
 		"item"		"item_witchfury"
-		"item"		"item_revenants_brooch"
+		"item"		"item_revenants_brooch_custom"
 		"item"		"item_disperser"
 		"item"		"item_celestial_spear_custom"
 	}

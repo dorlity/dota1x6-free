@@ -7,6 +7,7 @@ LinkLuaModifier( "modifier_backdoor_knock_aura", "abilities/tower_abilities_back
 LinkLuaModifier( "modifier_backdoor_knock_aura_damage", "abilities/tower_abilities_backdoor.lua", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_backdoor_attack_stack", "abilities/tower_abilities_backdoor.lua", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_backdoor_attack_items_cd", "abilities/tower_abilities_backdoor.lua", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_backdoor_mute", "abilities/tower_abilities_backdoor.lua", LUA_MODIFIER_MOTION_NONE )
 
 
 tower_aura_backdoor = class({})
@@ -226,6 +227,7 @@ if not IsServer() then return end
 self:GetParent():EmitSound("Puck.Orb_wall")
 
 self.ending = false
+self.death_ending = false
 
 self.target = EntIndexToHScript(table.target)
 self:StartIntervalThink(FrameTime())
@@ -292,15 +294,25 @@ end
 function modifier_backdoor_knock_aura:OnIntervalThink()
 if not IsServer() then return end
 
+if self.target:IsAlive() or self.target:IsReincarnating() then 
+	self.death_ending = false
+end 
+
 
 if not self.target or
 	self.target:IsNull() or self.target:HasModifier("modifier_target") or
 	(not self.target:IsAlive() and not self.target:IsReincarnating()) or
 	(self.tower:GetAbsOrigin() - self.target:GetAbsOrigin()):Length2D() > self.radius or not self:GetParent():IsAlive() then 
 
-	if self.ending == false then 
+	if (not self.target:IsAlive() and not self.target:IsReincarnating() and self.death_ending == false) then 
 		self.ending = true
-		self:SetDuration(3, true)
+		self.death_ending = true
+		self:SetDuration(15, true)
+	else 
+		if self.ending == false then 
+			self.ending = true
+			self:SetDuration(3, true)
+		end
 	end
 else 
 	self.ending = false
@@ -308,13 +320,21 @@ else
 end
 
 
-local enemies = FindUnitsInRadius(self.tower:GetTeamNumber(), self:GetCaster():GetAbsOrigin(), nil, self.radius*(1.05), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_INVULNERABLE  + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD, FIND_CLOSEST, false)
+local enemies = FindUnitsInRadius(self.tower:GetTeamNumber(), self:GetCaster():GetAbsOrigin(), nil, 1500, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_INVULNERABLE  + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD, FIND_CLOSEST, false)
 
 for _,unit in pairs(enemies) do 
+
+
+	if unit:IsHero() and unit:GetTeamNumber() ~= self.target:GetTeamNumber() and unit:GetTeamNumber() ~= DOTA_TEAM_CUSTOM_5  then 
+		unit:AddNewModifier(unit, nil, "modifier_backdoor_mute", {duration = 0.2})
+	end 
+
 	if unit:GetTeamNumber() ~= self.target:GetTeamNumber() 
 		and unit:GetTeamNumber() ~= DOTA_TEAM_CUSTOM_5
 		and unit:GetAbsOrigin().z >= 300 
+		and (unit:GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D() <= self.radius*(1.05)
 		and not unit:IsCourier() 
+		and not unit:GetUnitName() ~= "npc_dota_donate_item_illusion" 
 		and not unit:HasModifier("modifier_unselect") 
 		and not unit:HasModifier("modifier_mars_arena_of_blood_custom_legendary")
 		and not unit:HasModifier("modifier_custom_terrorblade_reflection_unit")
@@ -508,4 +528,24 @@ for i = 0, 6 do
 end
 
 
+end
+
+
+modifier_backdoor_mute = class({})
+function modifier_backdoor_mute:IsHidden() return true end
+function modifier_backdoor_mute:IsPurgable() return false end
+function modifier_backdoor_mute:CheckState()
+return
+{
+	[MODIFIER_STATE_DISARMED] = true,
+	[MODIFIER_STATE_MUTED] = true,
+	[MODIFIER_STATE_SILENCED] = true
+}
+
+end
+function modifier_backdoor_mute:GetEffectName() 
+	return "particles/units/heroes/hero_demonartist/demonartist_engulf_disarm/items2_fx/heavens_halberd.vpcf"
+end
+function modifier_backdoor_mute:GetEffectAttachType()
+	return PATTACH_OVERHEAD_FOLLOW
 end

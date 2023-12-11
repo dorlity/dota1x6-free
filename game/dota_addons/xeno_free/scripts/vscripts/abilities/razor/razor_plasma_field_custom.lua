@@ -14,6 +14,19 @@ LinkLuaModifier("modifier_razor_plasma_field_custom_shield", "abilities/razor/ra
 
 razor_plasma_field_custom = class({})
 
+function razor_plasma_field_custom:GetAbilityTextureName()
+    if self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
+        return "razor/arcana/razor_plasma_field_alt2"
+    end
+    if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
+        return "razor/arcana/razor_plasma_field_alt1"
+    end
+    if self:GetCaster():HasModifier("modifier_razor_weapon_last_custom") then
+        return "razor/severing_lash/razor_plasma_field"
+    end
+    return "razor_plasma_field"  
+end
+
 function razor_plasma_field_custom:GetCooldown(level)
 local bonus = 0
 
@@ -130,13 +143,21 @@ if kv.more_damage then
 end 
 
 
-local particle =  "particles/units/heroes/hero_razor/razor_plasmafield.vpcf"
+local particle = "particles/units/heroes/hero_razor/razor_plasmafield.vpcf"
+if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
+    particle = "particles/razor/razor_arcana_plasma.vpcf"
+elseif self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
+    particle = "particles/razor/razor_arcana_plasma.vpcf"
+elseif self:GetCaster():HasModifier("modifier_razor_weapon_last_custom") then
+    particle = "particles/econ/items/razor/razor_ti6/razor_plasmafield_ti6.vpcf"
+end
 
-if self:GetCaster():GetModelName() == "models/items/razor/razor_arcana/razor_arcana.vmdl" then 
-	particle = "particles/razor/razor_arcana_plasma.vpcf"
-end 
+
 
 local sound = "Ability.PlasmaField"
+if self:GetCaster():HasModifier("modifier_razor_weapon_last_custom") then
+    sound = "Hero_Razor.PlasmaField.SeveringLash"
+end
 --[[
 
 particles/razor/razor_arcana_plasma_green.vpcf
@@ -184,6 +205,9 @@ function modifier_razor_plasma_field_custom:Stop()
 if not IsServer() then return end
 
 self:GetParent():StopSound("Ability.PlasmaField")
+if self:GetCaster():HasModifier("modifier_razor_weapon_last_custom") then
+    self:GetParent():StopSound("Hero_Razor.PlasmaField.SeveringLash")
+end
 
 local prev = self.speed
 self.speed = self.prev_speed

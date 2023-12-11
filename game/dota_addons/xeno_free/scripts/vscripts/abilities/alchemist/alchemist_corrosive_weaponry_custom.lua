@@ -4,24 +4,8 @@ LinkLuaModifier( "modifier_alchemist_goblins_greed_custom_anim", "abilities/alch
 
 alchemist_corrosive_weaponry_custom = class({})
 
-alchemist_corrosive_weaponry_custom.damage_tick = {6,9,12}
-alchemist_corrosive_weaponry_custom.damage_tick_interval = 0.5
-
-alchemist_corrosive_weaponry_custom.damage_reduction = {-1,-1.5,-2}
-alchemist_corrosive_weaponry_custom.damage_heal = {-1, -1.5, -2}
-
-alchemist_corrosive_weaponry_custom.weapon_damage = {2, 3}
 
 
-alchemist_corrosive_weaponry_custom.duration_inc = {1, 1.5, 2}
-alchemist_corrosive_weaponry_custom.max_inc = {2, 3, 4}
-
-alchemist_corrosive_weaponry_custom.armor_inc = {-0.8, -1.2, -1.6}
-
-
-alchemist_corrosive_weaponry_custom.active_manacost = 0
-alchemist_corrosive_weaponry_custom.active_cooldown = 100
-alchemist_corrosive_weaponry_custom.active_channel_time = 1.5
 
 
 function alchemist_corrosive_weaponry_custom:GetIntrinsicModifierName()
@@ -30,58 +14,67 @@ end
 
 
 function alchemist_corrosive_weaponry_custom:GetBehavior()
+local bonus = 0
+
+if self:GetCaster():HasModifier("modifier_alchemist_greed_6") then 
+	--bonus = DOTA_ABILITY_BEHAVIOR_AUTOCAST
+end 
+
 	if self:GetCaster():HasModifier("modifier_alchemist_greed_5") then
-		return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_CHANNELLED
+		return DOTA_ABILITY_BEHAVIOR_NO_TARGET + bonus
 	end
-    return DOTA_ABILITY_BEHAVIOR_PASSIVE
+    return DOTA_ABILITY_BEHAVIOR_PASSIVE + bonus
 end
 
 function alchemist_corrosive_weaponry_custom:GetManaCost(iLevel)
-	if self:GetCaster():HasModifier("modifier_alchemist_greed_5") then
-    	return self.active_manacost
-    end
     return 0
 end
 
 function alchemist_corrosive_weaponry_custom:GetCooldown(iLevel)
 	if self:GetCaster():HasModifier("modifier_alchemist_greed_5") then
-    	return self.active_cooldown
+    	return self:GetCaster():GetTalentValue("modifier_alchemist_greed_5", "cd")
     end
     return 0
 end
 
-function alchemist_corrosive_weaponry_custom:GetChannelTime()
+function alchemist_corrosive_weaponry_custom:GetCastPoint()
 	if self:GetCaster():HasModifier("modifier_alchemist_greed_5") then
-    	return self.active_channel_time
+    	return self:GetCaster():GetTalentValue("modifier_alchemist_greed_5", "cast")
     end
     return 0
+end
+
+
+
+function alchemist_corrosive_weaponry_custom:OnAbilityPhaseStart()
+
+
+self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_alchemist_goblins_greed_custom_anim", {})
+self:GetCaster():StartGesture(ACT_DOTA_TAUNT)
+return true
+end
+
+function alchemist_corrosive_weaponry_custom:OnAbilityPhaseInterrupted()
+self:GetCaster():RemoveModifierByName("modifier_alchemist_goblins_greed_custom_anim")
+self:GetCaster():FadeGesture(ACT_DOTA_TAUNT)
+
 end
 
 function alchemist_corrosive_weaponry_custom:OnSpellStart()
-	if not IsServer() then return end
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_alchemist_goblins_greed_custom_anim", {duration = self.active_channel_time})
-	self:GetCaster():StartGesture(ACT_DOTA_TAUNT)
-	self:EndCooldown()
+if not IsServer() then return end
+self:GetCaster():RemoveModifierByName("modifier_alchemist_goblins_greed_custom_anim")
+self:GetCaster():FadeGesture(ACT_DOTA_TAUNT)
+
+self:GetCaster():EmitSound("Alch.gold")
+
+
+CreateRune(self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector()*120, DOTA_RUNE_BOUNTY)  
+
+local effect_cast = ParticleManager:CreateParticleForPlayer( "particles/units/heroes/hero_alchemist/alchemist_lasthit_coins.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster(), self:GetCaster():GetPlayerOwner() )
+ParticleManager:SetParticleControl( effect_cast, 1, self:GetCaster():GetOrigin() )
+ParticleManager:ReleaseParticleIndex( effect_cast )
 end
 
-function alchemist_corrosive_weaponry_custom:OnChannelFinish(bInterrupted)
-	if not IsServer() then return end
-	self:GetCaster():FadeGesture(ACT_DOTA_TAUNT)
-	self:GetCaster():RemoveModifierByName("modifier_alchemist_goblins_greed_custom_anim")
-	self:UseResources(false, false, false, true)
-	if bInterrupted then return end
-	local particle = 4
-	self:GetCaster():EmitSound("Alch.gold")
-
-	
-	CreateRune(self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector()*120, DOTA_RUNE_BOUNTY)  
-
-	local effect_cast = ParticleManager:CreateParticleForPlayer( "particles/units/heroes/hero_alchemist/alchemist_lasthit_coins.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster(), self:GetCaster():GetPlayerOwner() )
-	ParticleManager:SetParticleControl( effect_cast, 1, self:GetCaster():GetOrigin() )
-	ParticleManager:ReleaseParticleIndex( effect_cast )
-
-
-end
 
 
 
@@ -90,8 +83,8 @@ if not IsServer() then return end
 
 local duration = self:GetSpecialValueFor("debuff_duration")
 
-if self:GetCaster():HasModifier("modifier_alchemist_unstable_1") then 
-	duration = duration + self.duration_inc[self:GetCaster():GetUpgradeStack("modifier_alchemist_unstable_1")]
+if self:GetCaster():HasModifier("modifier_alchemist_spray_5") then 
+	duration = duration + self:GetCaster():GetTalentValue("modifier_alchemist_spray_5", "duration")
 end
 
 target:AddNewModifier(self:GetCaster(), self, "modifier_alchemist_corrosive_weaponry_custom_debuff", {duration = duration})
@@ -129,19 +122,23 @@ self.move = self:GetAbility():GetSpecialValueFor("slow_per_stack")
 self.status = self:GetAbility():GetSpecialValueFor("status_resist_per_stack")
 self.bonus = self:GetAbility():GetSpecialValueFor("chemical_bonus")
 
+self.armor = self:GetCaster():GetTalentValue("modifier_alchemist_spray_4", "armor")
+self.damage = self:GetCaster():GetTalentValue("modifier_alchemist_spray_4", "damage")
+self.interval = self:GetCaster():GetTalentValue("modifier_alchemist_spray_4", "interval")
+
 if not IsServer() then return end
 
 self.max = self:GetAbility():GetSpecialValueFor("max_stacks")
 
-if self:GetCaster():HasModifier("modifier_alchemist_unstable_1") then 
-	self.max = self.max + self:GetAbility().max_inc[self:GetCaster():GetUpgradeStack("modifier_alchemist_unstable_1")]
+if self:GetCaster():HasModifier("modifier_alchemist_spray_5") then 
+	self.max = self.max + self:GetCaster():GetTalentValue("modifier_alchemist_spray_5", "max")
 end
 
 self:SetStackCount(1)
 
 
-if self:GetCaster():HasModifier("modifier_alchemist_unstable_3") then 
-	self:StartIntervalThink(self:GetAbility().damage_tick_interval)
+if self:GetCaster():HasModifier("modifier_alchemist_spray_4") then 
+	self:StartIntervalThink(self.interval)
 end
 
 end
@@ -150,9 +147,9 @@ end
 function modifier_alchemist_corrosive_weaponry_custom_debuff:OnIntervalThink()
 if not IsServer() then return end 
 
-local damage = self:GetAbility().damage_tick[self:GetCaster():GetUpgradeStack("modifier_alchemist_unstable_3")]*self:GetStackCount()*self:GetAbility().damage_tick_interval
+local damage = self.damage*self:GetStackCount()*self.interval
 
-local damageTable = { attacker = self:GetCaster(), damage = damage, victim = self:GetParent(), damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility(), }
+local damageTable = { attacker = self:GetCaster(), damage = damage, victim = self:GetParent(), damage_type = DAMAGE_TYPE_PHYSICAL, damage_flags = DOTA_DAMAGE_FLAG_BYPASSES_BLOCK, ability = self:GetAbility(), }
 ApplyDamage(damageTable)
 
 end
@@ -163,6 +160,17 @@ if not IsServer() then return end
 if self:GetStackCount() >= self.max then return end
 
 self:IncrementStackCount()
+
+if self:GetStackCount() >= self.max and self:GetCaster():HasModifier("modifier_alchemist_spray_4") then 
+
+	self:GetParent():EmitSound("Hoodwink.Acorn_armor")
+	self.particle_peffect = ParticleManager:CreateParticle("particles/items3_fx/star_emblem.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())	
+	ParticleManager:SetParticleControl(self.particle_peffect, 0, self:GetParent():GetAbsOrigin())
+	self:AddParticle(self.particle_peffect, false, false, -1, false, true)
+
+end 
+
+
 end
 
 
@@ -170,44 +178,66 @@ function modifier_alchemist_corrosive_weaponry_custom_debuff:DeclareFunctions()
 return
 {
 	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-  	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
-	MODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE,
- 	MODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET,
-   	MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE,
-  	MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE,
- 	MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
- 	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS
+	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
+	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS
 }
 end
 
 function modifier_alchemist_corrosive_weaponry_custom_debuff:GetModifierPhysicalArmorBonus()
-if not self:GetCaster():HasModifier("modifier_alchemist_rage_2") then return end
-return self:GetAbility().armor_inc[self:GetCaster():GetUpgradeStack("modifier_alchemist_rage_2")]*self:GetStackCount()
+if not self:GetCaster():HasModifier("modifier_alchemist_spray_4") then return end
+return self.armor*self:GetStackCount()
 end
 
 
 
-function modifier_alchemist_corrosive_weaponry_custom_debuff:GetModifierIncomingDamage_Percentage(params)
-if not self:GetCaster():HasModifier("modifier_alchemist_unstable_4") then return end
-if not params.inflictor then return end
 
-return self:GetAbility().weapon_damage[self:GetCaster():GetUpgradeStack("modifier_alchemist_unstable_4")]*self:GetStackCount()
+
+function modifier_alchemist_corrosive_weaponry_custom_debuff:GetModifierStatusResistanceStacking() 
+local bonus = 0
+
+if self:GetCaster():HasModifier("modifier_alchemist_chemical_rage_custom") then
+ 	bonus = self.bonus
+end
+
+  return (self.status + bonus)*self:GetStackCount()
+end
+
+function modifier_alchemist_corrosive_weaponry_custom_debuff:GetModifierMoveSpeedBonus_Percentage()
+
+local bonus = 0
+
+if self:GetCaster():HasModifier("modifier_alchemist_chemical_rage_custom") then
+ 	bonus = self.bonus
+end
+
+
+  return (self.move + bonus)*self:GetStackCount()
+end
+
+
+function modifier_alchemist_corrosive_weaponry_custom_debuff:GetEffectName()
+return "particles/units/heroes/hero_alchemist/alchemist_corrosive_weaponry.vpcf"
+
+end
+
+function modifier_alchemist_corrosive_weaponry_custom_debuff:GetStatusEffectName()
+return "particles/status_fx/status_effect_alchemist_corrosive_weaponry.vpcf"
+
+end
+function modifier_alchemist_corrosive_weaponry_custom_debuff:StatusEffectPriority()
+return 100
 
 end
 
 
-function modifier_alchemist_corrosive_weaponry_custom_debuff:GetModifierTotalDamageOutgoing_Percentage()
-if not self:GetCaster():HasModifier("modifier_alchemist_spray_2") then return end
-return self:GetAbility().damage_reduction[self:GetCaster():GetUpgradeStack("modifier_alchemist_spray_2")]*self:GetStackCount()
-end
+modifier_alchemist_goblins_greed_custom_anim = class({})
 
-function modifier_alchemist_corrosive_weaponry_custom_debuff:GetModifierLifestealRegenAmplify_Percentage() 
-if not self:GetCaster():HasModifier("modifier_alchemist_spray_2") then return end
-return self:GetAbility().damage_heal[self:GetCaster():GetUpgradeStack("modifier_alchemist_spray_2")]*self:GetStackCount()
-end
+function modifier_alchemist_goblins_greed_custom_anim:IsHidden() return true end
+function modifier_alchemist_goblins_greed_custom_anim:IsPurgable() return false end
+function modifier_alchemist_goblins_greed_custom_anim:DeclareFunctions() return {MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS} end
+function modifier_alchemist_goblins_greed_custom_anim:GetActivityTranslationModifiers() return "ogre_hop_gesture" end
 
-function modifier_alchemist_corrosive_weaponry_custom_debuff:GetModifierHealAmplify_PercentageTarget() 
-if not self:GetCaster():HasModifier("modifier_alchemist_spray_2") then return end
+ then return end
 return self:GetAbility().damage_heal[self:GetCaster():GetUpgradeStack("modifier_alchemist_spray_2")]*self:GetStackCount()
 end
 

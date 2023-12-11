@@ -57,6 +57,12 @@ PrecacheResource( "particle", "particles/sf_slow_attack.vpcf", context )
 end
 
 
+function custom_nevermore_necromastery:GetAbilityTextureName()
+    if self:GetCaster():HasModifier("modifier_shadow_fiend_arcana_custom") then
+        return "nevermore_necromastery_demon"
+    end
+   return "nevermore_necromastery"
+end
 
 
 function custom_nevermore_necromastery:GetCooldown(iLevel)
@@ -245,8 +251,11 @@ if self:GetParent():HasModifier("modifier_custom_necromastery_legendary") and se
 	self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_necromastery_tempo", {duration = duration})
 	self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_necromastery_tempo_track", {duration = duration})
 
-
-	local soul_projectile = {Target = self:GetParent(),Source = params.target, Ability = self:GetAbility(),EffectName = self.particle_soul_creep,bDodgeable = false,bProvidesVision = false,iMoveSpeed = self.soul_projectile_speed,iSourceAttachment = DOTA_PROJECTILE_ATTACHMENT_HITLOCATION}
+    local particle = self.particle_soul_creep
+    if self:GetCaster():HasModifier("modifier_shadow_fiend_arcana_custom") then
+        particle = "particles/econ/items/shadow_fiend/sf_fire_arcana/sf_fire_arcana_necro_souls.vpcf"
+    end
+	local soul_projectile = {Target = self:GetParent(),Source = params.target, Ability = self:GetAbility(),EffectName = particle,bDodgeable = false,bProvidesVision = false,iMoveSpeed = self.soul_projectile_speed,iSourceAttachment = DOTA_PROJECTILE_ATTACHMENT_HITLOCATION}
 	ProjectileManager:CreateTrackingProjectile(soul_projectile)
 
 end
@@ -410,8 +419,11 @@ if not IsServer() then return end
 		end
 
 		
-
-		local soul_projectile = {Target = self.caster,Source = target, Ability = self.ability,EffectName = self.particle_soul_creep,bDodgeable = false,bProvidesVision = false,iMoveSpeed = self.soul_projectile_speed,iSourceAttachment = DOTA_PROJECTILE_ATTACHMENT_HITLOCATION}
+        local particle = self.particle_soul_creep
+        if self:GetCaster():HasModifier("modifier_shadow_fiend_arcana_custom") then
+            particle = "particles/econ/items/shadow_fiend/sf_fire_arcana/sf_fire_arcana_necro_souls.vpcf"
+        end
+		local soul_projectile = {Target = self.caster,Source = target, Ability = self.ability,EffectName = particle,bDodgeable = false,bProvidesVision = false,iMoveSpeed = self.soul_projectile_speed,iSourceAttachment = DOTA_PROJECTILE_ATTACHMENT_HITLOCATION}
 		ProjectileManager:CreateTrackingProjectile(soul_projectile)
 
 

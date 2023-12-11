@@ -373,7 +373,7 @@ var damage_items =
 	"item_silver_edge_custom",
 	"item_mjollnir",
 	"item_bloodthorn",
-	"item_revenants_brooch",
+	"item_revenants_brooch_custom",
 	"item_witchfury",
 	"item_radiance_custom",
 	"item_veil_of_corruption",

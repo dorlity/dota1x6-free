@@ -8,6 +8,7 @@ LinkLuaModifier("modifier_sandking_epicenter_custom_heal", "abilities/sand_king/
 LinkLuaModifier("modifier_sandking_epicenter_custom_absorb", "abilities/sand_king/sandking_epicenter_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_sandking_epicenter_custom_absorb_cd", "abilities/sand_king/sandking_epicenter_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_sandking_epicenter_custom_speed", "abilities/sand_king/sandking_epicenter_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_sandking_epicenter_custom_shard_count", "abilities/sand_king/sandking_epicenter_custom", LUA_MODIFIER_MOTION_NONE)
 
 sandking_epicenter_custom = class({})
 		
@@ -128,7 +129,7 @@ self:GetCaster():EmitSound("Ability.SandKing_SandStorm.start")
 end 
 
 
-function sandking_epicenter_custom:Pulse(caster, radius, is_scepter, shard)
+function sandking_epicenter_custom:Pulse(caster, radius, is_scepter, main_skill)
 if self:GetLevel() < 1 then return end
 
 
@@ -149,7 +150,6 @@ end
 self.damage_duration = self:GetCaster():GetTalentValue("modifier_sand_king_epicenter_1", "duration")
 self.damage_inc = self:GetCaster():GetTalentValue("modifier_sand_king_epicenter_1", "damage")
 
-local break_duration = self:GetSpecialValueFor("shard_break")
 
 local targets = self:GetCaster():FindTargets(radius)
 
@@ -172,6 +172,8 @@ if #targets > 0 then
 
 end
 
+local mod = self:GetCaster():FindModifierByName("modifier_sandking_epicenter_custom")
+
 local scepter_chance = self:GetSpecialValueFor("scepter_chance")
 
 for _,target in pairs(targets) do 
@@ -180,8 +182,9 @@ for _,target in pairs(targets) do
 		target:AddNewModifier(self:GetCaster(), self, "modifier_sandking_epicenter_custom_heal_reduce", {duration = self.damage_duration})
 	end 
 
-	if shard then 
-		target:AddNewModifier(self:GetCaster(), self, "modifier_generic_break", {duration = (1 - target:GetStatusResistance())*break_duration})
+
+	if self:GetCaster():HasShard() and main_skill then 
+		target:AddNewModifier(self:GetCaster(), self, "modifier_sandking_epicenter_custom_shard_count", {duration = self:GetSpecialValueFor("AbilityDuration") + 0.1})
 	end 
 
 
@@ -258,7 +261,7 @@ end
 function modifier_sandking_epicenter_custom:OnIntervalThink()
 if not IsServer() then return end 
 
-self:GetAbility():Pulse(self.parent, self.radius_init + self.radius_inc*self:GetStackCount(), false, self.parent:HasShard() and self:GetStackCount() == 0)
+self:GetAbility():Pulse(self.parent, self.radius_init + self.radius_inc*self:GetStackCount(), false, true)
 
 self:IncrementStackCount()
 
@@ -763,3 +766,29 @@ end
 function modifier_sandking_epicenter_custom_speed:GetModifierMoveSpeedBonus_Percentage()
 return self.speed*self:GetStackCount()
 end
+
+
+
+
+modifier_sandking_epicenter_custom_shard_count = class({})
+function modifier_sandking_epicenter_custom_shard_count:IsHidden() return true end
+function modifier_sandking_epicenter_custom_shard_count:IsPurgable() return false end
+function modifier_sandking_epicenter_custom_shard_count:OnCreated()
+self.max = self:GetAbility():GetSpecialValueFor("shard_break_count")
+self.duration =  self:GetAbility():GetSpecialValueFor("shard_break")
+
+self.proced = false
+self:SetStackCount(1)
+end 
+
+function modifier_sandking_epicenter_custom_shard_count:OnRefresh()
+if not IsServer() then return end 
+
+self:IncrementStackCount()
+
+if self:GetStackCount() >= self.max and self.proced == false then 
+	self.proced = true
+	self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_generic_break", {duration = (1 - self:GetParent():GetStatusResistance())*self.duration})
+end 
+
+end 

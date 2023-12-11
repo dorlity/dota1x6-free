@@ -22,10 +22,25 @@ if player.active_necro == false then
     --CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), "CreateIngameErrorMessage", {message = "#active_necro"}) 
     --return false
 end
-if player.used_necro == true then 
-    CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), "CreateIngameErrorMessage", {message = "#used_necro"}) 
+
+if player.necro_cd and player.necro_cd > 0 then 
+    CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), "CreateIngameErrorMessage", {message = "#necro_cd"..player.necro_cd}) 
     return false
 end
+
+
+if tower:HasModifier("modifier_tower_incoming_duel_soon") then 
+    CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), "CreateIngameErrorMessage", {message = "#duel_necro"}) 
+    return false
+end
+
+
+if duel_data[player.duel_data] and duel_data[player.duel_data].finished == 0 and duel_data[player.duel_data].stage == 2 then 
+    CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), "CreateIngameErrorMessage", {message = "#duel_active_necro"}) 
+    return false
+end
+
+
 
 
 if tower:HasModifier("modifier_necro_attack") then 
@@ -41,6 +56,8 @@ end
 function item_roshan_necro:OnSpellStart()
 if not IsServer() then return end
 
+
+
 local find_towers = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetCursorPosition(), nil, FIND_UNITS_EVERYWHERE, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_NONE, FIND_CLOSEST, false)
 
 if #find_towers == 0 then 
@@ -50,6 +67,7 @@ end
 local tower = towers[find_towers[1]:GetTeamNumber()]
 local player = players[find_towers[1]:GetTeamNumber()]
 
+    CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(player:GetPlayerOwnerID()), "CreateIngameErrorMessage", {message = "#necro_cd"..33}) 
 
 if not tower or not player then 
     return 
@@ -58,6 +76,7 @@ end
 CustomGameEventManager:Send_ServerToAllClients('NecroAttack',  {id = player:GetPlayerOwnerID(), victim = player:GetUnitName(), attacker = self:GetCaster():GetUnitName()})
 
 player.used_necro = true
+player.necro_cd = self:GetSpecialValueFor("cd")
 
 tower:AddNewModifier(player, self, "modifier_necro_attack", {enemy_caster = self:GetCaster():entindex(),duration = self:GetSpecialValueFor("delay")})
 

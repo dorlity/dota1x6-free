@@ -16,7 +16,7 @@ templar_assassin_psi_blades_custom = class({})
 templar_assassin_psi_blades_custom.range_attack = {50, 100, 150}
 templar_assassin_psi_blades_custom.range_blades = {50, 100, 150}
 
-templar_assassin_psi_blades_custom.damage_inc = {0.06, 0.9, 0.12}
+templar_assassin_psi_blades_custom.damage_inc = {0.06, 0.09, 0.12}
 
 templar_assassin_psi_blades_custom.speed_move = 10
 templar_assassin_psi_blades_custom.speed_evasion = 10

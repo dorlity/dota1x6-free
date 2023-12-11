@@ -102,6 +102,9 @@ end
 
 
 function custom_nevermore_requiem:GetAbilityTextureName()
+    if self:GetCaster():HasModifier("modifier_shadow_fiend_arcana_custom") then
+        return "nevermore_requiem_demon"
+    end
    return "nevermore_requiem"
 end
 
@@ -116,6 +119,9 @@ end
 function custom_nevermore_requiem:OnAbilityPhaseStart()
 
     self.sound = "Hero_Nevermore.RequiemOfSoulsCast"
+    if self:GetCaster():HasModifier("modifier_shadow_fiend_arcana_custom") then
+        self.sound = "Hero_Nevermore.ROS.Arcana.Cast"
+    end
     self.target = nil
 
 
@@ -133,8 +139,11 @@ function custom_nevermore_requiem:OnAbilityPhaseStart()
 		self:GetCaster():EmitSound(self.sound)
 	end
 
-
-	self.wings_particle = ParticleManager:CreateParticle("particles/units/heroes/hero_nevermore/nevermore_wings.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
+    local particle_wing_name = "particles/units/heroes/hero_nevermore/nevermore_wings.vpcf"
+    if self:GetCaster():HasModifier("modifier_shadow_fiend_arcana_custom") then
+        particle_wing_name = "particles/econ/items/shadow_fiend/sf_fire_arcana/sf_fire_arcana_wings.vpcf"
+    end
+	self.wings_particle = ParticleManager:CreateParticle(particle_wing_name, PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
 
 	-- Start cast animation
 	self:GetCaster():StartGesture(ACT_DOTA_CAST_ABILITY_6)
@@ -185,10 +194,12 @@ function custom_nevermore_requiem:OnSpellStart(death_cast)
 
 	local cast_response = {"nevermore_nev_ability_requiem_01", "nevermore_nev_ability_requiem_02", "nevermore_nev_ability_requiem_03", "nevermore_nev_ability_requiem_04", "nevermore_nev_ability_requiem_05", "nevermore_nev_ability_requiem_06", "nevermore_nev_ability_requiem_07", "nevermore_nev_ability_requiem_08", "nevermore_nev_ability_requiem_11", "nevermore_nev_ability_requiem_12", "nevermore_nev_ability_requiem_13", "nevermore_nev_ability_requiem_14"}
 	local sound_cast = "Hero_Nevermore.RequiemOfSouls"
-
 	local particle_caster_souls = "particles/units/heroes/hero_nevermore/nevermore_requiemofsouls_a.vpcf"
 	local particle_caster_ground = "particles/units/heroes/hero_nevermore/nevermore_requiemofsouls.vpcf"
-	
+    if self:GetCaster():HasModifier("modifier_shadow_fiend_arcana_custom") then
+        sound_cast = "Hero_Nevermore.ROS.Arcana"
+        particle_caster_ground = "particles/econ/items/shadow_fiend/sf_fire_arcana/sf_fire_arcana_requiemofsouls.vpcf"
+    end
 
 
 	local souls_per_line = ability:GetSpecialValueFor("requiem_soul_conversion")
@@ -352,7 +363,7 @@ function CreateRequiemSoulLine(caster, ability, line_end_position, death_cast)
 
 	local particle_lines = "particles/units/heroes/hero_nevermore/nevermore_requiemofsouls_line.vpcf"
 	
-	if caster:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then 
+	if caster:HasModifier("modifier_shadow_fiend_arcana_custom") then 
 		particle_lines = "particles/econ/items/shadow_fiend/sf_fire_arcana/sf_fire_arcana_requiemofsouls_line.vpcf"
 	end
 
@@ -516,7 +527,7 @@ local particle_lines = "particles/units/heroes/hero_nevermore/nevermore_requiemo
 
 
 local  caster = self:GetParent()
-if caster:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then 
+if caster:HasModifier("modifier_shadow_fiend_arcana_custom") then 
 	particle_lines = "particles/econ/items/shadow_fiend/sf_fire_arcana/sf_fire_arcana_requiemofsouls_line.vpcf"
 end
 

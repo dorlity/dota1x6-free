@@ -61,6 +61,10 @@
 "item_solar_crest"    "REMOVE"
 "item_harpoon"      "REMOVE"
 "item_pavise"      "REMOVE"
+"item_ancient_janggo"   "REMOVE"
+"item_boots_of_bearing"   "REMOVE"
+"item_tranquil_boots"   "REMOVE"
+"item_revenants_brooch" "REMOVE"
 
 "item_observer_stackable"
     {
@@ -405,6 +409,31 @@
         }
 
     }
+
+
+      "item_patrol_reward_2_no_gadget"
+    {
+        "BaseClass"                      "item_lua"
+        "ScriptFile"                    "abilities/items/item_patrol_reward_2_no_gadget"
+        "AbilityTextureName"            "item_tome_of_aghanim"
+        "AbilityBehavior"                "DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+        "Model"                             "models/gameplay/attrib_tome_xp.vmdl"
+        "ItemPermanent"                    "0"
+        "ItemInitialCharges"            "1"
+        "ItemKillable"                   "0"
+        "ItemPurchasable"                   "0" 
+        "ItemCost"                      "0"
+        "ItemSellable"                  "1"
+        "ItemStackable"                 "1"
+        "SpellDispellableType"          "SPELL_DISPELLABLE_NO"
+
+        "AbilitySpecial"
+        {
+
+        }
+
+    }
+
       "item_patrol_grenade"
     {
         "BaseClass"                      "item_lua"
@@ -868,6 +897,32 @@
 
 
 
+    "item_patrol_refresh"
+    {
+        "BaseClass"                      "item_lua"
+        "ScriptFile"                    "abilities/items/item_patrol_refresh"
+        "AbilityTextureName"            "item_refresher_shard"
+        "AbilityBehavior"                "DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+        "ItemPermanent"                    "0"
+        "ItemInitialCharges"            "1"
+        "ItemKillable"                   "0"
+        "ItemPurchasable"                   "0" 
+        "ItemCost"                      "0"
+        "ItemSellable"                  "0"
+        "ItemStackable"                 "1"
+        "SpellDispellableType"          "SPELL_DISPELLABLE_NO"
+
+        "AbilityValues"
+        {
+            "cd"           "180"
+
+        }
+
+
+    }
+
+
+
       "item_patrol_respawn"
     {
         "BaseClass"                      "item_lua"
@@ -927,6 +982,7 @@
 		"AbilityValues"
 		{
             "delay"                   "15"
+            "cd"                "180"
 		}
 
 
@@ -1725,8 +1781,8 @@
 
 		// Stats		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"35"
-		"AbilityCastRange"				"150"
+		"AbilityCooldown"				"25"
+		"AbilityCastRange"				"225"
 		"AbilityCastPoint"				"0.0"
 
 
@@ -3025,7 +3081,7 @@
         "AbilityUnitTargetFlags"        "DOTA_UNIT_TARGET_FLAG_INVULNERABLE | DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES"
         "FightRecapLevel"               "1"
         
-        "AbilityCooldown"               "15.0"
+        "AbilityCooldown"               "14.0"
         "AbilityCastRange"              "900"
         "AbilityManaCost"               "0"
         
@@ -3060,7 +3116,7 @@
             "04"
             {
                 "var_type"              "FIELD_FLOAT"
-                "mute_duration"         "4.0"
+                "mute_duration"         "5.0"
             }
             "05"
             {
@@ -3953,7 +4009,7 @@
 				"bonus_magical_armor"	"15"
 				"bonus_attack_speed"	"20"
 				"bonus_damage"			"20"
-				"spell_amp_debuff"		"15"
+				"spell_amp_debuff"		"20"
 				"bonus_mana_regen"		"2"
 				"duration"		"3"
 				"bonus_intellect"		"10"
@@ -5518,7 +5574,7 @@
 		// Stats
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityCastPoint"				"0.0"
-		"AbilityCooldown"				"30.0"
+		"AbilityCooldown"				"25.0"
 		"AbilityManaCost"				"0"
 		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"	
 
@@ -5542,7 +5598,7 @@
                 "spell_lifesteal_creep" "5"
 				"buff_duration"			"6"
 				"lifesteal_active"	    "3"
-                "mana_active"      "40"
+                "mana_active"      "70"
                 "mana_active_creep"      "8"
 				"mana_cost"				"25"
 				"mana_cost_active"		"100"
@@ -5928,7 +5984,7 @@
                 "duration"                      "3.5"
                 "passive_reflection_constant"   "20"
                 "passive_reflection_pct"        "20"
-                "active_reflection"             "40"
+                "active_reflection"             "50"
                 "active_heal"                   "80"
                 "active_creeps"                 "33"
 
@@ -6293,7 +6349,7 @@
 
         // Stats        
         //-------------------------------------------------------------------------------------------------------------
-        "AbilityCooldown"               "18"
+        "AbilityCooldown"               "20"
         "AbilityCastRange"              "650"
         "AbilityCastPoint"              "0.0"
 
@@ -6728,9 +6784,9 @@
             "magic_resistance"      "20"
             "tooltip_resist"            "30"
             "aura_health_regen"     "2.5"
-            "magic_resistance_aura"     "10"
+            "magic_resistance_aura"     "15"
             "aura_radius"           "1200"
-            "barrier_block"         "550"
+            "barrier_block"         "600"
             "barrier_duration"      "12.0"
             "barrier_radius"        "1200"
             "bonus_all_stats"       "0"
@@ -6945,9 +7001,9 @@
             "bonus_armor"           "6"
             "bonus_health_regen"    "5"
             "unholy_bonus_damage"   "35"
-            "unholy_bonus_strength" "20"
+            "unholy_bonus_strength" "22"
             "unholy_bonus_armor"    "4"
-            "unholy_bonus_slow_resistance"  "20"
+            "unholy_bonus_slow_resistance"  "25"
             "unholy_health_drain_per_second"    "45"
             "toggle_cooldown"       "0.036"
         }
@@ -8020,7 +8076,7 @@
                 "silence_damage_percent"    "40"
 
                 "duration"                  "3"         
-                "spell_amp_debuff"          "15"
+                "spell_amp_debuff"          "20"
         }
     }
     
@@ -8325,7 +8381,272 @@
 
 
 
+
+    //=================================================================================================================
+    // Recipe: Ancient Janggo of Endurance
+    //=================================================================================================================
+    "item_recipe_ancient_janggo_custom"
+    {        
+
+        "BaseClass"                     "item_datadriven"                                                   // unique ID number for this item.  Do not change this once established or it will invalidate collected stats.
+        "Model"                         "models/props_gameplay/recipe.vmdl"
+        "FightRecapLevel"               "1"   
+        "AbilityTextureName"            "item_recipe_ancient_janggo"
+        
+        
+        // Item Info
+        //-------------------------------------------------------------------------------------------------------------
+        "ItemCost"                      "500"   
+        "ItemShopTags"                  ""
+        
+        // Recipe
+        //-------------------------------------------------------------------------------------------------------------
+        "ItemRecipe"                    "1"
+        "ItemResult"                    "item_ancient_janggo_custom"
+        "ItemRequirements"
+        {
+            "01"                        "item_belt_of_strength;item_robe;item_wind_lace"
+        }
+    }
+
+    //=================================================================================================================
+    // Ancient Janggo of Endurance
+    //=================================================================================================================
+    "item_ancient_janggo_custom"
+    {
+        "BaseClass"                      "item_lua"
+        "ScriptFile"                    "abilities/items/item_ancient_janggo_custom"
+        "AbilityTextureName"            "item_ancient_janggo" 
+        "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IGNORE_CHANNEL"
+        "ItemPermanent"                 "1"
+        "FightRecapLevel"               "1"
+
+        // Stats        
+        //-------------------------------------------------------------------------------------------------------------
+        "AbilityCooldown"               "20.0"
+        //"SpellDispellableType"            "SPELL_DISPELLABLE_YES"
+
+        // Item Info
+        //-------------------------------------------------------------------------------------------------------------
+        "ItemCost"                      "1650"
+        "ItemShopTags"                  "str;agi;int;damage;move_speed;attack_speed;hard_to_tag"
+        "ItemQuality"                   "rare"
+        "ItemAliases"                   "drum of endurance"
+        "ItemDeclarations"              "DECLARE_PURCHASES_TO_TEAMMATES | DECLARE_PURCHASES_TO_SPECTATORS"
+        "ShouldBeSuggested"             "1"
+
+        // Special  
+        //-------------------------------------------------------------------------------------------------------------
+        "AbilityValues"
+        {
+            "aura_movement_speed"   "20"
+            "bonus_str"             "7"
+            "bonus_int"             "7"
+            "bonus_attack_speed_pct"    "50"
+            "bonus_movement_speed_pct"  "15"
+            "duration"              "6"
+            "radius"                "1200"
+        }
+    }
+
+
+
+
+
+    "item_recipe_boots_of_bearing_custom"
+    {
+        "BaseClass"                     "item_datadriven"                                                   // unique ID number for this item.  Do not change this once established or it will invalidate collected stats.
+        "Model"                         "models/props_gameplay/recipe.vmdl"
+        "FightRecapLevel"               "1"   
+        "AbilityTextureName"            "item_recipe_boots_of_bearing"
+        
+        
+        // Item Info
+        //-------------------------------------------------------------------------------------------------------------
+        "ItemCost"                      "1700"  
+        "ItemShopTags"                  ""
+        
+        // Recipe
+        //-------------------------------------------------------------------------------------------------------------
+        "ItemRecipe"                    "1"
+        "ItemResult"                    "item_boots_of_bearing_custom"
+        "ItemRequirements"
+        {
+            "01"                        "item_tranquil_boots_custom;item_ancient_janggo_custom"
+        }
+    }
+    
+    //=================================================================================================================
+    // Ancient Janggo of Endurance
+    //=================================================================================================================
+    "item_boots_of_bearing_custom"
+    {
+        "BaseClass"                      "item_lua"
+        "ScriptFile"                    "abilities/items/item_boots_of_bearing_custom"
+        "AbilityTextureName"            "item_boots_of_bearing" 
+        "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IGNORE_CHANNEL"
+        "ItemPermanent"                 "1"
+        "FightRecapLevel"               "1"
+
+        // Stats        
+        //-------------------------------------------------------------------------------------------------------------
+        "AbilityCooldown"               "20.0"
+        //"SpellDispellableType"            "SPELL_DISPELLABLE_YES"
+
+        // Item Info
+        //-------------------------------------------------------------------------------------------------------------
+        "ItemCost"                      "4275"
+        "ItemShopTags"                  "str;agi;int;damage;move_speed;attack_speed;hard_to_tag"
+        "ItemQuality"                   "rare"
+        "ItemAliases"                   "marching boots"
+        "ItemDeclarations"              "DECLARE_PURCHASES_TO_TEAMMATES | DECLARE_PURCHASES_TO_SPECTATORS"
+        "ShouldBeSuggested"             "1"
+
+        // Special  
+        //-------------------------------------------------------------------------------------------------------------
+        "AbilityValues"
+        {
+            "aura_movement_speed"   "20"
+            "bonus_str"             "8"
+            "bonus_int"             "8"
+            "bonus_attack_speed_pct"    "60"
+            "bonus_movement_speed_pct"  "18"
+            "duration"              "6"
+            "radius"
+            {
+                "value"             "1200"
+                "affected_by_aoe_increase"  "1"
+            }
+            "bonus_movement_speed"  "65"
+            "bonus_health_regen"    "20"
+            "bonus_ms_duration"     "1.5"
+        }
+    }
+
+
+
+
+    "item_recipe_tranquil_boots_custom"
+    {
+        "BaseClass"                     "item_datadriven"                                                   // unique ID number for this item.  Do not change this once established or it will invalidate collected stats.
+        "Model"                         "models/props_gameplay/recipe.vmdl"
+        "FightRecapLevel"               "1"   
+        "AbilityTextureName"            "item_recipe_tranquil_boots"
+        
+        // Item Info
+        //-------------------------------------------------------------------------------------------------------------
+        "ItemCost"                      "0" 
+        "ItemShopTags"                  ""
+        
+        // Recipe
+        //-------------------------------------------------------------------------------------------------------------
+        "ItemRecipe"                    "1"
+        "ItemResult"                    "item_tranquil_boots_custom"
+        "ItemRequirements"
+        {
+            "01"                        "item_boots;item_wind_lace;item_ring_of_regen"
+        }
+    }
+    
+    //=================================================================================================================
+    // Tranquil Boots
+    //=================================================================================================================
+    "item_tranquil_boots_custom"
+    {
+        "BaseClass"                      "item_lua"
+        "ScriptFile"                    "abilities/items/item_tranquil_boots_custom"
+        "AbilityTextureName"            "item_tranquil_boots" 
+        "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+        // Stats        
+        //-------------------------------------------------------------------------------------------------------------
+        "AbilityCooldown"               "6.0"
+        "AbilityManaCost"               "0"
+        
+        // Item Info
+        //-------------------------------------------------------------------------------------------------------------
+        "ItemCost"                      "925"
+        "ItemShopTags"                  "move_speed;regen_health;armor"
+        "ItemQuality"                   "rare"
+        "ItemAliases"                   "tranquil boots"
+        "ItemHideCharges"               "1"
+        "ItemDeclarations"              "DECLARE_PURCHASES_TO_SPECTATORS"
+        "ShouldBeSuggested"             "1"
+        
+        // Special  
+        //-------------------------------------------------------------------------------------------------------------
+        "AbilityValues"
+        {
+            "bonus_movement_speed"  "75"
+            "bonus_health_regen"    "20"
+            "break_time"            "6"
+            "break_threshold"       "5"
+            "broken_movement_speed" "40"
+        }
+    }
+    
+
+
+
+// REVENANT BROOCH
+    "item_recipe_revenants_brooch_custom"
+    {
+        "BaseClass"                     "item_datadriven"
+        "Model"                         "models/props_gameplay/recipe.vmdl"
+        "AbilityTextureName"            "item_recipe_revenants_brooch"
+
+        "ItemCost"                      "800"
+        "ItemShopTags"                  ""
+
+        "ItemRecipe"                    "1"
+        "ItemResult"                    "item_revenants_brooch_custom"
+        "ItemRequirements"
+        {
+            "01"                        "item_witch_blade;item_mystic_staff"
+        }
+    }
+    
+    "item_revenants_brooch_custom"
+    {
+        "BaseClass"                     "item_lua"
+        "ScriptFile"                    "abilities/items/item_revenants_brooch_custom"
+
+        "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IGNORE_CHANNEL | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+
+        "AbilityTextureName"            "item_revenants_brooch"
+
+        "AbilityCooldown"               "25"
+        "AbilityManaCost"               "300"
+
+        "AbilityManaCost"               "300"
+        "ItemCost"                      "6200"
+        "ItemShopTags"                  "int;hard_to_tag"
+        "ItemQuality"                   "rare"
+        "ItemAliases"                   "staff;misery;sm"
+        "ItemDeclarations"              "DECLARE_PURCHASES_TO_TEAMMATES | DECLARE_PURCHASES_IN_SPEECH | DECLARE_PURCHASES_TO_SPECTATORS"
+        "ShouldBeSuggested"             "1"
+
+        "AbilityValues"
+        {
+            "bonus_intellect"       "45"
+            "bonus_attack_speed"    "40"
+            "bonus_armor"           "8"
+            "projectile_speed"      "300"
+            "int_damage_multiplier" "1.0"
+            "slow"                  "25.0"
+            "slow_duration"         "4.0"
+            "passive_cooldown"      "9.0"
+            "number_of_attacks"     "5"
+            "active_duration"       "15.0"
+            "mres_reduction"        "20.0"
+            "reduction_duration"    "8.0"
+            "damage_reduction"      "-25"
+            
+        }
+    }
+
+
+
+
 }
 
-
-#base "../vscripts/cheats/cheatitem.txt"

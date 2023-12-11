@@ -4003,10 +4003,22 @@ shop.items_data["npc_dota_hero_juggernaut"] = require("donate_items/npc_dota_her
 shop.items_data["npc_dota_hero_phantom_assassin"] = require("donate_items/npc_dota_hero_phantom_assassin")
 shop.items_data["npc_dota_hero_huskar"] = require("donate_items/npc_dota_hero_huskar")
 
+
 shop.items_data_slots["npc_dota_hero_phantom_assassin"] = require("donate_items/npc_dota_hero_phantom_assassin_slots")
 shop.items_data_slots["npc_dota_hero_juggernaut"] = require("donate_items/npc_dota_hero_juggernaut_slots")
 shop.items_data_slots["npc_dota_hero_huskar"] = require("donate_items/npc_dota_hero_huskar_slots")
 
+
+--[[
+shop.items_data_slots["npc_dota_hero_razor"] = require("donate_items/npc_dota_hero_razor_slots")
+shop.items_data_slots["npc_dota_hero_nevermore"] = require("donate_items/npc_dota_hero_nevermore_slots")
+shop.items_data_slots["npc_dota_hero_legion_commander"] = require("donate_items/npc_dota_hero_legion_commander_slots")
+
+
+shop.items_data["npc_dota_hero_razor"] = require("donate_items/npc_dota_hero_razor")
+shop.items_data["npc_dota_hero_nevermore"] = require("donate_items/npc_dota_hero_nevermore")
+shop.items_data["npc_dota_hero_legion_commander"] = require("donate_items/npc_dota_hero_legion_commander")
+]]
 --- Функция добавления предмета игроку ( Из ивента )
 function shop:AddedDonateItemToHero(hero_name, PlayerID, item_id, skip_add)
 	local player = PlayerResource:GetPlayer(PlayerID)
@@ -4018,7 +4030,7 @@ function shop:AddedDonateItemToHero(hero_name, PlayerID, item_id, skip_add)
     local original_item_information = shop.items_data[hero_name][item_id]
     if original_item_information == nil then return end
     local item_slot_type = original_item_information["SlotType"]
-
+    
     if skip_add == nil then
         -- Перезарядка
         if hero.cooldown_items_donate ~= nil and hero.cooldown_items_donate[item_slot_type] ~= nil and hero.cooldown_items_donate[item_slot_type] > 0 then
@@ -4029,6 +4041,24 @@ function shop:AddedDonateItemToHero(hero_name, PlayerID, item_id, skip_add)
         end
         shop:ItemCooldown(hero, PlayerID, item_slot_type)
         -----------------------------------------------------------
+    end
+
+
+    if item_id == 23095 then
+        Timers:CreateTimer(0.5, function()
+            shop:AddedDonateItemToHero(hero_name, PlayerID, 23096, true)
+            shop:AddedDonateItemToHero(hero_name, PlayerID, 23098, true)
+            shop:AddedDonateItemToHero(hero_name, PlayerID, 23099, true)
+            shop:AddedDonateItemToHero(hero_name, PlayerID, 23097, true)
+        end)
+    end
+    if item_id == 2309599 then
+        Timers:CreateTimer(0.5, function()
+            shop:AddedDonateItemToHero(hero_name, PlayerID, 2309699, true)
+            shop:AddedDonateItemToHero(hero_name, PlayerID, 2309899, true)
+            shop:AddedDonateItemToHero(hero_name, PlayerID, 2309999, true)
+            shop:AddedDonateItemToHero(hero_name, PlayerID, 2309799, true)
+        end)
     end
 
     if hero.items_slots_type and hero.items_slots_type[item_slot_type] ~= nil then
@@ -4088,6 +4118,24 @@ function shop:RemoveDonateItemToHero(hero_name, PlayerID, item_id, fast, skip_ad
     end
     -----------------------------------------------------------
 
+    if item_id == 23095 then
+        shop:RemoveDonateItemToHero(hero_name, PlayerID, 23096, nil, true)
+        shop:RemoveDonateItemToHero(hero_name, PlayerID, 23098, nil, true)
+        shop:RemoveDonateItemToHero(hero_name, PlayerID, 23099, nil, true)
+        shop:RemoveDonateItemToHero(hero_name, PlayerID, 23097, nil, true)
+    end
+
+    if item_id == 2309599 then
+        shop:RemoveDonateItemToHero(hero_name, PlayerID, 2309699, nil, true)
+        shop:RemoveDonateItemToHero(hero_name, PlayerID, 2309899, nil, true)
+        shop:RemoveDonateItemToHero(hero_name, PlayerID, 2309999, nil, true)
+        shop:RemoveDonateItemToHero(hero_name, PlayerID, 2309799, nil, true)
+    end
+
+    if item_id == 5810 then
+        hero:SetMaterialGroup("default")
+    end
+
     if skip_add == nil then
         -- Обновляем таблицу надетых предметов
         local player_items_table = {}
@@ -4116,6 +4164,14 @@ function shop:RemoveDonateItemToHero(hero_name, PlayerID, item_id, fast, skip_ad
 
 	CustomNetTables:SetTableValue('sub_data', tostring(PlayerID), player_table)
     -----------------------------------------------------------------------------------------
+
+    if hero and hero:GetUnitName() == "npc_dota_hero_legion_commander" then
+        if hero.MaterialGroupHash and (hero.MaterialGroupHash == "628863847" or hero.MaterialGroupHash == 628863847) then
+            hero:SetMaterialGroup("1")
+        else
+            hero:SetMaterialGroup("default")
+        end
+    end
 end
 
 function shop:UpdateFullParticleForPlayer(id, hero, for_this_id)
@@ -4312,6 +4368,7 @@ function shop:SetItemToHero(hero, PlayerID, hero_name, item, starting)
     local modifier_item = item_info["Modifier"]
     local item_slot_type = item_info["SlotType"]
     local body_group = item_info["BodyGroup"]
+    local body_group_style = item_info["BodyGroupStyle"]
     local dota_items_in_hero = shop.items_data_slots[hero_name][item_slot_type]
     if starting ~= nil then
         if hero:IsRealHero() then
@@ -4432,7 +4489,11 @@ function shop:SetItemToHero(hero, PlayerID, hero_name, item, starting)
             item_model_entity:FollowEntity(hero, true)
 
             if body_group ~= nil then
-                item_model_entity:SetBodygroupByName( body_group, 1 )
+                if body_group_style ~= nil then
+                    item_model_entity:SetBodygroupByName( body_group, body_group_style )
+                else
+                    item_model_entity:SetBodygroupByName( body_group, 1 )
+                end
             end 
 
             if hero_name == "npc_dota_hero_huskar" and item_slot_type == "weapon" then
@@ -4698,6 +4759,14 @@ function shop:BackupOtherModelDota(hero, item_slot_type)
         if hero:GetUnitName() == "npc_dota_hero_huskar" and item_slot_type == "weapon" then
             item_model_entity:SetBodygroupByName( "spear", 1 )
         end
+
+        if hero and hero:GetUnitName() == "npc_dota_hero_legion_commander" then
+            if hero.MaterialGroupHash and (hero.MaterialGroupHash == "628863847" or hero.MaterialGroupHash == 628863847) then
+                hero:SetMaterialGroup("1")
+            else
+                hero:SetMaterialGroup("default")
+            end
+        end
     end
 end
 
@@ -4765,6 +4834,22 @@ function shop:AddedDonateHero(hero, PlayerID)
 		for _, item in pairs(player_items_table) do
             if hero:GetModelName() ~= "models/heroes/phantom_assassin_persona/phantom_assassin_persona.vmdl" then
 			    shop:SetItemToHero(hero, PlayerID, hero_name, item, true)
+                if item == 23095 then
+                    Timers:CreateTimer(0.5, function()
+                        shop:AddedDonateItemToHero(hero_name, PlayerID, 23096, true)
+                        shop:AddedDonateItemToHero(hero_name, PlayerID, 23098, true)
+                        shop:AddedDonateItemToHero(hero_name, PlayerID, 23099, true)
+                        shop:AddedDonateItemToHero(hero_name, PlayerID, 23097, true)
+                    end)
+                end
+                if item == 2309599 then
+                    Timers:CreateTimer(0.5, function()
+                        shop:AddedDonateItemToHero(hero_name, PlayerID, 2309699, true)
+                        shop:AddedDonateItemToHero(hero_name, PlayerID, 2309899, true)
+                        shop:AddedDonateItemToHero(hero_name, PlayerID, 2309999, true)
+                        shop:AddedDonateItemToHero(hero_name, PlayerID, 2309799, true)
+                    end)
+                end
             end
 		end
 	end
@@ -4841,6 +4926,10 @@ function shop:RemoveAllItemsOtherModel(hero)
     -- Массив чтоб вернуть дефолтный предмет, если отключит кастомный с объектом
     if hero.other_model_backup == nil then
         hero.other_model_backup = {}
+    end
+
+    if hero.MaterialGroupHash == nil then
+        hero.MaterialGroupHash = hero:GetMaterialGroupHash()
     end
 
     local real_models = shop.items_data_slots[hero:GetUnitName()]
@@ -4958,16 +5047,25 @@ function shop:ChangeModelHero(hero, model, starting)
         hero:SetModel("models/heroes/phantom_assassin_persona/phantom_assassin_persona.vmdl")
         return
     end
+
     if starting then 
         Timers:CreateTimer(1, function()
             hero:SetOriginalModel(model)
             hero:SetModel(model)
             hero:RemoveGesture(ACT_DOTA_SPAWN)
+            if model == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+                hero:AddNewModifier(hero, nil, "modifier_razor_arcana", {})
+            end
         end)
     else
         hero:SetOriginalModel(model)
 	    hero:SetModel(model)
 	    hero:RemoveGesture(ACT_DOTA_SPAWN)
+        Timers:CreateTimer(1, function()
+            if model == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+                hero:AddNewModifier(hero, nil, "modifier_razor_arcana", {})
+            end
+        end)
     end
 end
 

@@ -16,7 +16,12 @@ LinkLuaModifier("modifier_duel_custom_str", "abilities/legion_commander/custom_l
 custom_legion_commander_duel = class({})
 
 
-
+function custom_legion_commander_duel:GetAbilityTextureName()
+    if self:GetCaster():HasModifier("modifier_legion_commander_arcana_custom") then
+        return "legion_commander_duel_alt1"
+    end
+    return "legion_commander_duel"
+end
 
 
 function custom_legion_commander_duel:Precache(context)
@@ -88,8 +93,12 @@ if self.caster:HasModifier("modifier_legion_duel_speed") then
   target:AddNewModifier(self.caster, self, "modifier_duel_target_damage", {duration = duration})
 end
 
+local sound_cast = "Hero_LegionCommander.Duel.Cast"
+if self:GetCaster():HasModifier("modifier_legion_commander_arcana_custom") then
+    sound_cast = "Hero_LegionCommander.Duel.Cast.Arcana"
+end
 
-self.caster:EmitSound("Hero_LegionCommander.Duel.Cast")
+self.caster:EmitSound(sound_cast)
 self.caster:AddNewModifier(self.caster, self, "modifier_duel_buff", {duration = duration, target = target:entindex()})
 target:AddNewModifier(self.caster, self, "modifier_duel_buff", {duration = duration, target = self.caster:entindex()})
 
@@ -286,8 +295,12 @@ if not self:GetParent():IsCreep() then
 end
 
 if self:GetCaster() == self:GetParent() then 
-  self:GetCaster():EmitSound("Hero_LegionCommander.Duel")
-	self.particle = ParticleManager:CreateParticle("particles/legion_duel_ring.vpcf", PATTACH_WORLDORIGIN, nil)
+    self:GetCaster():EmitSound("Hero_LegionCommander.Duel")
+    local particle_name = "particles/legion_duel_ring.vpcf"
+    if self:GetCaster():HasModifier("modifier_legion_commander_arcana_custom") then
+        particle_name = "particles/econ/items/legion/legion_weapon_voth_domosh/legion_duel_ring_arcana.vpcf"
+    end
+    self.particle = ParticleManager:CreateParticle(particle_name, PATTACH_WORLDORIGIN, nil)
 	
   local dir = (self:GetCaster():GetAbsOrigin() - self.target:GetAbsOrigin())
 

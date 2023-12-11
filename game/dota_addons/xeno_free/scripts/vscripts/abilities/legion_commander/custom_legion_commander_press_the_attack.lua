@@ -12,7 +12,15 @@ custom_legion_commander_press_the_attack = class({})
 
 
 
-
+function custom_legion_commander_press_the_attack:GetAbilityTextureName()
+    if self:GetCaster():HasModifier("modifier_legion_commander_wings_fallen_custom") then
+        return "legion_commander/legacy_of_the_fallen_legion/legion_commander_press_the_attack"
+    end
+    if self:GetCaster():HasModifier("modifier_legion_commander_wings_fallen_custom_2") then
+        return "legion_commander/legacy_of_the_fallen_legion/legion_commander_press_the_attack"
+    end
+    return "legion_commander_press_the_attack"
+end
 
 function custom_legion_commander_press_the_attack:Precache(context)
 
@@ -217,19 +225,28 @@ self:PlayEffect()
 end 
 
 function modifier_press_the_attack_custom_buff:PlayEffect()
-if not IsServer() then return end
+    if not IsServer() then return end
+    if self.cast then 
+        ParticleManager:DestroyParticle(self.cast, true)
+        ParticleManager:ReleaseParticleIndex(self.cast)
+    end 
 
-if self.cast then 
-	ParticleManager:DestroyParticle(self.cast, true)
-	ParticleManager:ReleaseParticleIndex(self.cast)
-end 
+    local particle_name = "particles/units/heroes/hero_legion_commander/legion_commander_press.vpcf"
+    if self:GetCaster():HasModifier("modifier_legion_commander_wings_fallen_custom") then
+        particle_name = "particles/econ/items/legion/legion_fallen/legion_fallen_press_owner.vpcf"
+        self:GetCaster():AddActivityModifier("self")
+        self:GetCaster():AddActivityModifier("lotfl")
+    end
+    if self:GetCaster():HasModifier("modifier_legion_commander_wings_fallen_custom_2") then
+        particle_name = "particles/econ/items/legion/legion_fallen/legion_fallen_press_owner_alt.vpcf"
+        self:GetCaster():AddActivityModifier("self")
+    end
 
-
-self.cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_legion_commander/legion_commander_press.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent() )
-ParticleManager:SetParticleControlEnt( self.cast, 0, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true )
-ParticleManager:SetParticleControlEnt( self.cast, 1, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true )
-ParticleManager:SetParticleControlEnt( self.cast, 2, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_attack1", self:GetParent():GetAbsOrigin(), true )
-self:AddParticle(self.cast,false, false, -1, false, false)
+    self.cast = ParticleManager:CreateParticle( particle_name, PATTACH_CUSTOMORIGIN, self:GetParent() )
+    ParticleManager:SetParticleControlEnt( self.cast, 0, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true )
+    ParticleManager:SetParticleControlEnt( self.cast, 1, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true )
+    ParticleManager:SetParticleControlEnt( self.cast, 2, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_attack1", self:GetParent():GetAbsOrigin(), true )
+    self:AddParticle(self.cast,false, false, -1, false, false)
 
 end 
 

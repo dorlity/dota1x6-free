@@ -78,7 +78,7 @@ function item_witchfury_passive:OnAttack(params)
 if not IsServer() then return end
 if not self:GetAbility() then return end
 if self:GetParent():HasModifier("modifier_monkey_king_wukongs_command_custom_soldier") then return end
-if self:GetParent():HasModifier("modifier_item_witch_blade") or self:GetParent():HasModifier("modifier_item_revenants_brooch") then return end
+if self:GetParent():HasModifier("modifier_item_witch_blade") or self:GetParent():HasModifier("modifier_revenants_brooch_custom") then return end
 if not self:GetParent():IsRealHero() then return end
 if params.attacker ~= self:GetParent() then return end
 if not self:GetAbility():IsFullyCastable() then return end

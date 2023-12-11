@@ -58,11 +58,78 @@ function init() {
 }
 
 
+function show_badmap(id)
+{
+
+	var server_data = CustomNetTables.GetTableValue("server_data", String(id));
+
+	if (!server_data)
+			return
+
+	let kv = []
+	kv.mmr = server_data.rating
+	kv.max = server_data.map_rating.max
+	kv.min = server_data.map_rating.min
+
+	var hero_pick = $.GetContextPanel().FindChildTraverse("hero_pick")
+
+	let event = hero_pick.FindChildTraverse("BadMap")
+
+	event.RemoveClass("BadMap_hidden")
+
+	let text = event.FindChildTraverse("BadMap_top_text")
+	text.html = true
+	text.text = $.Localize("#badmap_top")
+
+
+	let text2 = event.FindChildTraverse("BadMap_your_mmr_text")
+	text2.html = true
+	text2.text = $.Localize("#badmap_your_mmr") + String(kv.mmr)
+
+	let text3 = event.FindChildTraverse("BadMap_map_mmr_text")
+	text3.html = true
+
+	var max = kv.max 
+
+	if (max > 10000)
+	{
+		text3.text = $.Localize("#badmap_map_mmr") + String(kv.min) + "+"
+
+	}else 
+	{
+		text3.text = $.Localize("#badmap_map_mmr") + String(kv.min) + "-" + String(kv.max)
+
+	}
+
+
+	let text4 = event.FindChildTraverse("BadMap_bottom_text")
+	text4.html = true
+	text4.text = $.Localize("#badmap_pick_stage")
+
+	let text5 = event.FindChildTraverse("BadMap_leave_text")
+	text5.html = true
+	text5.text = $.Localize("#badmap_pick_stage_leave")
+	
+	let text6 = event.FindChildTraverse("BadMap_leave_button_text")
+	text6.html = true
+	text6.text = $.Localize("#badmap_pick_stage_leave_button")
+
+
+
+	let name_image = String($.Localize("#badmap_image"))
+
+	let image = event.FindChildTraverse("BadMap_image")
+  image.style.backgroundImage = "url('file://{images}/custom_game/" + name_image + ".png')"
+  image.style.backgroundSize = 'contain';
+
+}
+
+
 
 
 let wrong_rating_status = 0
 
-function show_safe_leave(reason)
+function show_safe_leave(reason, id)
 {
 
 	if (wrong_rating_status == 1) return;
@@ -80,15 +147,26 @@ function show_safe_leave(reason)
 
 		if (reason == 1)
 		{
-		//	Game.EmitSound("UI.Safe_to_Leave")
 			text.text = $.Localize("#Savetoleave")
 		}
 		if (reason == 2)
 		{
-		//	Game.EmitSound("UI.Safe_to_Leave")
-			text.text = $.Localize("#Savetoleave_rating_players")
 
 			wrong_rating_status = 1
+			if (id !== null && Game.GetLocalPlayerID() == id)
+			{
+				var hero_pick = $.GetContextPanel().FindChildTraverse("hero_pick")
+				var hero_pick_contet = hero_pick.FindChildTraverse("hero_pick_content")
+				if (hero_pick_contet)
+				{
+						hide_chosen_hero()
+						hero_pick_contet.DeleteAsync(0)
+						show_badmap(id)
+				}
+			}else 
+			{
+				text.text = $.Localize("#Savetoleave_rating_players")
+			}
 		}
 
 		if (reason == 3)
@@ -152,13 +230,12 @@ function getRandomInt(max) {
 }
 
 
-function check_connection() {
-
-
-
+function check_connection()
+{
 	for (var id = 0; id <= 5; id++) {
 
-		if (Players.GetPlayerSelectedHero(id) != 'invalid index') {
+		if (Players.GetPlayerSelectedHero(id) != 'invalid index') 
+		{
 
 			var server_data = CustomNetTables.GetTableValue("server_data", String(id));
 			var playerInfo = Game.GetPlayerInfo(id);
@@ -173,33 +250,32 @@ function check_connection() {
 
 			var icon = $.GetContextPanel().FindChildTraverse("player_icon" + id)
 
-			if (icon && playerInfo) {
+			if (icon && playerInfo) 
+			{
 
 				var connect = icon.FindChildTraverse("hero_connect" + id)
 				var state = playerInfo.player_connection_state
 
-				if (!connect && (state == DOTAConnectionState_t.DOTA_CONNECTION_STATE_DISCONNECTED || state == DOTAConnectionState_t.DOTA_CONNECTION_STATE_ABANDONED)) {
+				if (!connect && (state == DOTAConnectionState_t.DOTA_CONNECTION_STATE_DISCONNECTED || state == DOTAConnectionState_t.DOTA_CONNECTION_STATE_ABANDONED)) 
+				{
 					connect = $.CreatePanel("Panel", icon, "hero_connect" + id)
 					connect.AddClass("hero_disconnect")
 				}
 
-				if (connect && playerInfo.player_connection_state == DOTAConnectionState_t.DOTA_CONNECTION_STATE_CONNECTED) {
+				if (connect && playerInfo.player_connection_state == DOTAConnectionState_t.DOTA_CONNECTION_STATE_CONNECTED) 
+				{
 					connect.DeleteAsync(0)
 				}
-
-				if (playerInfo.player_connection_state == DOTAConnectionState_t.DOTA_CONNECTION_STATE_ABANDONED) {
+ 
+				if (playerInfo.player_connection_state == DOTAConnectionState_t.DOTA_CONNECTION_STATE_ABANDONED) 
+				{
 
 					if (server_data && server_data.wrong_map_status !== 2 && server_data.stats_match == true)
 					{
 						show_safe_leave(1)
 					}
-
-
 					icon.AddClass("hero_abandon")
 				}
-
-
-
 			}
 
 
@@ -683,7 +759,7 @@ function update_lobby_rating()
 
 					if (wrong_map_count >= 1)
 					{
-						show_safe_leave(2)
+						show_safe_leave(2, pid)
 					}
 
 				}else
@@ -1301,13 +1377,13 @@ function check_donate_heroes()
 
 
 function pick_load_heroes() {
-	const str_row = $.CreatePanel("Panel", $("#hero_pick"), "StrengthSelector");
+	const str_row = $.CreatePanel("Panel", $("#hero_pick_content"), "StrengthSelector");
 	str_row.BLoadLayoutSnippet('heroes_row')
 
-	const agi_row = $.CreatePanel("Panel", $("#hero_pick"), "AgilitySelector");
+	const agi_row = $.CreatePanel("Panel", $("#hero_pick_content"), "AgilitySelector");
 	agi_row.BLoadLayoutSnippet('heroes_row')
 
-	const int_row = $.CreatePanel("Panel", $("#hero_pick"), "IntellectSelector");
+	const int_row = $.CreatePanel("Panel", $("#hero_pick_content"), "IntellectSelector");
 	int_row.BLoadLayoutSnippet('heroes_row')
 
 	const hero_list = CustomNetTables.GetTableValue("custom_pick", "hero_list");

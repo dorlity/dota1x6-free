@@ -2705,91 +2705,135 @@ global_values =
     {
         ["modifier_alchemist_spray_1"] =
         {
-            
+            cd = {-2, -3, -4},
+            mana = {-30, -45, -60},
         },
         ["modifier_alchemist_spray_2"] =
         {
-            
+            heal = {15, 20, 25},
+            heal_reduce = {-10, -15, -20},
+            heal_creeps = 3
         },
         ["modifier_alchemist_spray_3"] =
         {
-            
+            damage = {20, 30, 40},
+            armor =  {-2, -3, -4}
         },
         ["modifier_alchemist_spray_4"] =
         {
-            
+            armor = {-0.8, -1.2},
+            damage = {12, 20},
+            interval = 0.5
         },
         ["modifier_alchemist_spray_5"] =
         {
-            
+            max = 2,
+            duration = 1.5,
         },
         ["modifier_alchemist_spray_6"] =
         {
-            
+            radius = 100,
+            timer = 4,
+            silence = 2.5
         },
         ["modifier_alchemist_spray_legendary"] =
         {
-            
+            delay = 1.6,
+            slow = -30,
+            damage_reduce = -20,
+            damage = 100
         },
 
 
 
         ["modifier_alchemist_unstable_1"] =
         {
-            
+            speed = {6, 9, 12},
+            status = {10, 15, 20}
         },
         ["modifier_alchemist_unstable_2"] =
         {
-            
+            heal = {2, 3, 4},
+            mana = {1, 1.5, 2}
         },
         ["modifier_alchemist_unstable_3"] =
         {
-            
+            damage = {2, 3, 4},
+            duration = 6,
+            radius = 450,
+            interval = 0.5
         },
         ["modifier_alchemist_unstable_4"] =
         {
-            
+            damage = {15, 25},
+            cd = {-2, -3},
+            duration = 6,
+            delay = 4
         },
         ["modifier_alchemist_unstable_5"] =
         {
-            
+            range = 300,
+            duration = 0.2,
+            radius = 350,
+            root = 1.5
         },
         ["modifier_alchemist_unstable_6"] =
         {
-            
+            delay = 4,
         },
         ["modifier_alchemist_unstable_legendary"] =
         {
-            
+            damage = 50,
+            shield = 50,
+            duration = 6,
+            damage_creeps = 0.33
         },
 
 
 
         ["modifier_alchemist_greed_1"] =
         {
-            
+            gold = {2, 3, 4},
+            blue = {2, 3, 4},   
         },
         ["modifier_alchemist_greed_2"] =
         {
-            
+            max = 4,
+            damage = {80, 120, 160},
+            gold = {20, 30, 40},
+            creeps = 4
         },
         ["modifier_alchemist_greed_3"] =
         {
-            
+            stats = 1,
+            max = {10, 15, 20},
+            gold = 100
         },
         ["modifier_alchemist_greed_4"] =
         {
-            
+            speed = {2, 3},
+            damage = {40, 70},
+            max = 25,
+            is_perma = 1,
+            mod_name = "modifier_alchemist_goblins_greed_custom_runes",  
         },
         ["modifier_alchemist_greed_5"] =
         {
-            
+            cast = 1.5,
+            cd = 100,
+            duration = 30,
+            speed = 100,
+            arcane = 20,
+            regen = 2,
+            damage = 25,
+            status = 15,
         },
         ["modifier_alchemist_greed_6"] =
         {
-            max = 35,
-            is_perma = 1,
-            mod_name = "modifier_alchemist_goblins_greed_custom_runes",  
+            cd = 40,
+            duration = 2,
+            radius = 600,
+            heal = 15,
         },
         ["modifier_alchemist_greed_legendary"] =
         {
@@ -2800,31 +2844,45 @@ global_values =
 
         ["modifier_alchemist_rage_1"] =
         {
-            
+            cd = {-8, -12, -16}
         },
         ["modifier_alchemist_rage_2"] =
         {
-            
+            range = {40, 60, 80},
+            cleave = {20, 30, 40}
         },
         ["modifier_alchemist_rage_3"] =
         {
-            
+            chance = 15,
+            armor = {3, 5, 7},
+            duration = 4
         },
         ["modifier_alchemist_rage_4"] =
         {
-            
+            heal = {8, 12},
+            speed = {10, 15},
+            max = 8,
+            duration = 2
         },
         ["modifier_alchemist_rage_5"] =
         {
-            
+            speed = 40,
+            duration = 4,
+            slow = -20,
+            slow_duration = 2
         },
         ["modifier_alchemist_rage_6"] =
         {
-            
+            duration = 4,
+            damage = -50,
+            mana = 0
         },
         ["modifier_alchemist_rage_legendary"] =
         {
-            
+            bva = -0.2,
+            status = 30,
+            bonus_range = 50,
+            cd = 4
         },
 
     },
@@ -6069,8 +6127,8 @@ global_values =
         ["modifier_sand_king_epicenter_1"] =
         {
             heal_reduce = {-10, -15, -20},
-            damage = {6, 9, 12},
-            max = 8,
+            damage = 10,
+            max = {4, 6, 8},
             duration = 6,
         },
         ["modifier_sand_king_epicenter_2"] =

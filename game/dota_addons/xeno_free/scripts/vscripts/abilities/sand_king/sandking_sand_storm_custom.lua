@@ -388,10 +388,12 @@ end
 
 
 function modifier_sandking_sand_storm_custom_invis:GetModifierInvisibilityLevel()
+if self:GetCaster():IsInvulnerable() then return end
     return 1
 end
 
 function modifier_sandking_sand_storm_custom_invis:CheckState()
+if self:GetCaster():IsInvulnerable() then return end
     return {
         [MODIFIER_STATE_INVISIBLE] = true,
     }

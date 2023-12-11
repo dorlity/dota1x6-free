@@ -23,7 +23,7 @@ CustomGameEventManager:Send_ServerToAllClients('TargetAttack',  {hero = self:Get
 self:StartIntervalThink(10)
 self:GetParent():AddNewModifier(self:GetParent(), nil, "modifier_target_vision", {})
 
-self.gold = Streak_k*100
+self.gold = Target_gold_reward*100
 self.init = false
 self:SetHasCustomTransmitterData(true)
 end
@@ -42,7 +42,7 @@ for id = 0,24 do
 			bonus_gold = 0
 
 			if net_self > net_target then 
-				bonus_gold = (net_self - net_target)*Streak_k
+				bonus_gold = (net_self - net_target)*Target_gold_reward
 			end
 			local time = math.floor(self:GetRemainingTime())
 			bonus_gold = math.floor(bonus_gold)
@@ -215,7 +215,7 @@ for _,hero in pairs(players) do
 	bonus_gold = 0
 
 	if net_self > net_enemy then 
-		bonus_gold = (net_self - net_enemy)*Streak_k
+		bonus_gold = (net_self - net_enemy)*Target_gold_reward
 	end
 
 	hero:ModifyGold(bonus_gold , true , DOTA_ModifyGold_HeroKill)

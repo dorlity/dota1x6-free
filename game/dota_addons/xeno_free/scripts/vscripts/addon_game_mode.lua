@@ -49,6 +49,7 @@ LinkLuaModifier( "modifier_duel_hero_teleport", "modifiers/modifier_duel_logic",
 
 LinkLuaModifier( "modifier_watcher_custom", "modifiers/modifier_watcher_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_haste_zone_thinker", "modifiers/modifier_haste_zone_thinker", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_duel_vision_thinker", "modifiers/modifier_duel_vision_thinker", LUA_MODIFIER_MOTION_NONE )
 
 LinkLuaModifier("modifier_mid_teleport", "modifiers/modifier_mid_teleport", LUA_MODIFIER_MOTION_NONE)
 
@@ -123,6 +124,7 @@ _G.round_timer = 5
 _G.duel_timer_final = 80 + duel_start
 _G.duel_timer_normal = 45 + duel_start
 _G.field_stun = 0.5
+_G.duel_necro_time = 20
 _G.duel_push_time = 15
 _G.duel_push_teleport = 6
 _G.duel_start_wave = 12
@@ -132,9 +134,10 @@ _G.duel_last_field = "1"
 
 _G.Target_start_wave = 7
 _G.Target_end_wave = 13
-_G.Target_cooldown = 2
+_G.Target_cooldown = 3
 _G.Target_gold_min = 0
 _G.Target_gold = 1.2
+_G.Target_gold_reward = 0.35
 _G.Target_radius = 1500
 
 _G.Streak_k = 0.25
@@ -174,8 +177,8 @@ _G.Observer_cd = 180
 _G.Observer_duration = 480
 
 _G.DeathTimer = 2
-_G.StartDeathTimer = 10
-_G.DeathTimer_PerWave = 1.8
+_G.StartDeathTimer = 5
+_G.DeathTimer_PerWave = 2
 _G.Short_Respawn = 5
 _G.Short_Respawn_target = 10
 
@@ -279,7 +282,6 @@ _G.LowPriorityTime = 900
 _G.SafeToLeave = false
 _G.SafeToLeave_reason = 0
 _G.SafeToLeave_alert = false
-_G.SafeLeaveTime = 300
 
 _G.DoubleRating_timer = 25
 _G.DoubleRating_active = true
@@ -654,6 +656,8 @@ _G.NoCdItems =
 	["item_phylactery_custom"] = true,
 	["item_manaflare_lens_custom"] = true,
 	["item_ultimate_scepter"] = true,
+	["item_tranquil_boots_custom"] = true,
+	["item_falcon_blade_custom"] = true,
 }
 
 _G.custom_voice = 
@@ -825,6 +829,7 @@ end
  PrecacheResource( "soundfile", "soundevents/juggernaut_vo_custom.vsndevts", context ) 
 
  PrecacheResource( "soundfile", "soundevents/npc_dota_hero_juggernaut.vsndevts", context ) 
+ PrecacheResource( "soundfile", "soundevents/npc_dota_hero_alchemist.vsndevts", context ) 
  PrecacheResource( "soundfile", "soundevents/npc_dota_hero_phantom_assassin.vsndevts", context ) 
  PrecacheResource( "soundfile", "soundevents/npc_dota_hero_arc_warden.vsndevts", context ) 
  PrecacheResource( "soundfile", "soundevents/npc_dota_hero_pangolier.vsndevts", context ) 
@@ -1540,7 +1545,7 @@ end
 if unit:GetTeamNumber() == DOTA_TEAM_NEUTRALS then 
 
 	local gold = unit:GetMinimumGoldBounty()*0.85
-	local exp = unit:GetDeathXP()*0.85
+	local exp = (unit:GetDeathXP()*0.7)
 	unit:SetMaximumGoldBounty(gold)
 	unit:SetMinimumGoldBounty(gold)
 	unit:SetDeathXP(exp)
@@ -1792,6 +1797,16 @@ for _,spawner in pairs(spawners) do
 	bounty_abs[#bounty_abs + 1] = Vector(abs.x, abs.y , abs.z)
 
 end
+
+local duel_vision = Entities:FindAllByName("duel_vision")
+
+for _,vision in pairs(duel_vision) do 
+	local abs = vision:GetAbsOrigin()
+
+	CreateModifierThinker(nil, nil, "modifier_duel_vision_thinker", {}, abs, DOTA_TEAM_NEUTRALS, false)
+end
+
+
 
 
 local haste_zones = Entities:FindAllByName("haste_zone")
@@ -2220,16 +2235,7 @@ if unit and unit:HasModifier("modifier_alchemist_goblins_greed_custom") then
 	gold = gold*ability:GetSpecialValueFor("bounty_multiplier")
 
 	if unit:HasModifier("modifier_alchemist_greed_5") then 
-		local buf_table = {
-			"modifier_alchemist_goblins_greed_custom_haste",
-			"modifier_alchemist_goblins_greed_custom_dd",
-			"modifier_alchemist_goblins_greed_custom_arcane",
-			"modifier_alchemist_goblins_greed_custom_regen"
-		}
-		local name = buf_table[RandomInt(1, #buf_table)]
-
-		unit:AddNewModifier(unit, ability, name, {duration = ability.rune_duration})
-
+		ability:GiveBuff()
 	end
 
 	unit:AddNewModifier(unit, ability, "modifier_alchemist_goblins_greed_custom_runes", {})
@@ -2323,7 +2329,7 @@ end
 
 _G.self_disarm = 
 {
-	["modifier_alchemist_chemical_rage_custom"] = true,
+	["modifier_alchemist_chemical_rage_custom_legendary"] = true,
 	["modifier_razor_static_link_custom_attacking"] = true
 }
 
@@ -3074,7 +3080,24 @@ end
 
 
 
-function my_game:RefreshCooldowns(caster)
+function my_game:RefreshCooldowns(caster, effect)
+
+
+
+if effect then 
+
+	if caster:IsAlive() then 
+		caster:SetHealth(caster:GetMaxHealth())
+		caster:SetMana(caster:GetMaxMana())
+	end 
+
+	local particle = ParticleManager:CreateParticle("particles/items2_fx/refresher.vpcf", PATTACH_CUSTOMORIGIN, caster)
+	ParticleManager:SetParticleControlEnt( particle, 0, caster, PATTACH_POINT_FOLLOW, "attach_hitloc", caster:GetOrigin(), true )
+	ParticleManager:ReleaseParticleIndex(particle)
+
+	caster:EmitSound("DOTA_Item.Refresher.Activate")	
+
+end 
 
 for i = 0, 20 do
 	local current_ability = caster:GetAbilityByIndex(i)
@@ -3096,7 +3119,7 @@ for i = 0, 8 do
 			current_item:EndCooldown()		
 		end
 		if current_item:GetName() == "item_aegis" then 
-			current_item:Destroy()
+			--current_item:Destroy()
 		end
 	end
 end
@@ -3210,7 +3233,7 @@ my_game.patrol_drop_second =
 	--"item_trap_custom",
 	"item_patrol_respawn",
 	"item_patrol_razor",
-	"item_gray_upgrade",
+	"item_patrol_refresh",
 }
 
 
@@ -3482,14 +3505,18 @@ for team,player in pairs(players) do
 		end 	
 	end 	
 
+	if player.necro_cd > 0 then 
+		player.necro_cd = player.necro_cd - 1
+	end 
+
 	
 	player.active_necro = (MaxTimer - timer) > Necro_Timer
 
---	if duel_data[player.duel_data] and duel_data[player.duel_data].finished == 0 and duel_data[player.duel_data].stage == 1
-	--and (MaxTimer - timer) <= duel_push_time and not player:HasModifier("modifier_tower_incoming_duel_soon") then 
+	if duel_data[player.duel_data] and duel_data[player.duel_data].finished == 0 and duel_data[player.duel_data].stage == 1
+	and (MaxTimer - timer) <= duel_necro_time and towers[player:GetTeamNumber()] and not towers[player:GetTeamNumber()]:HasModifier("modifier_tower_incoming_duel_soon") then 
 
-	--	player:AddNewModifier(player, nil, "modifier_tower_incoming_duel_soon", {duration = duel_push_time})
-	--end 
+		towers[player:GetTeamNumber()]:AddNewModifier(towers[player:GetTeamNumber()], nil, "modifier_tower_incoming_duel_soon", {duration = (MaxTimer - timer) + 1})
+	end 
 
 
 	if duel_data[player.duel_data] and duel_data[player.duel_data].finished == 0 and duel_data[player.duel_data].stage == 1
@@ -3732,6 +3759,10 @@ if patrol_wave <= my_game.current_wave and timer == patrol_max and my_game:Final
 		drop = my_game.patrol_drop_second
 		second_tier = true
 		patrol_item  = "item_patrol_reward_2"
+
+		if my_game.current_wave == patrol_wave_2 then 
+			patrol_item  = "item_patrol_reward_2_no_gadget"
+		end 
 
 	end
 
@@ -4668,26 +4699,15 @@ if not IsServer() then return end
 
 
 if SafeToLeave == false and GameRules:GetDOTATime(false, false) < 3 then 
-
-	local n = 0
-
 	for id = 0, 24 do
     	local data = CustomNetTables:GetTableValue("server_data", tostring(id) )
     	
-    	if data then 
-
-	    	if data.wrong_map_status == 2 then 
-	    		n = n + 1
-	    	end
-	    	if n >= 1 then 
-				_G.SafeToLeave = true
-				SafeToLeave_reason = 2
-				break
-			end
+    	if data and data.wrong_map_status == 2 then 
+			_G.SafeToLeave = true
+			SafeToLeave_reason = 2
+			break
 		end
-
 	end
-
 end
 
 
@@ -4715,16 +4735,12 @@ for id = 0, 24 do
 
     		local lp_games = 0
     		local switch_safetoleave = false
-    		local isPenalty = false
 			local lp_games = data.lp_games_remaining
 
 			if HTTP.serverData.isStatsMatch == true and SafeToLeave == false and GameRules:GetDOTATime(false, false) <= LowPriorityTime and HTTP.playersData[id].lost_game == false then 
-				isPenalty = true
+
 				lp_games = lp_games + 1
-			end
 
-
-			if HTTP.serverData.isStatsMatch == true and SafeToLeave == false and wrong_map_status == 0 and GameRules:GetDOTATime(false, false) <= SafeLeaveTime and HTTP.playersData[id].lost_game == false then 
                 _G.SafeToLeave = true
                 switch_safetoleave = true 
                 SafeToLeave_reason = 1
@@ -4732,7 +4748,6 @@ for id = 0, 24 do
             end
 
 			data.lp_games_remaining = lp_games
-			data.isPenalty = isPenalty
             data.switch_safetoleave = switch_safetoleave
 
 
@@ -5007,6 +5022,8 @@ player.choise_table = {}
 player.Players_Died = 0
 player.banned = false
 player.randomed = randomed
+
+player.necro_cd = 0
 
 player.wrong_map_status = 0
 
@@ -5439,6 +5456,12 @@ function my_game:ExecuteOrderFilterCustom( ord )
 
     if ord.order_type == DOTA_UNIT_ORDER_BUYBACK and not hero:IsReincarnating() then 
     	
+    	Timers:CreateTimer(0.2, function() 
+    		if hero and not hero:IsNull() then 
+    			my_game:RefreshCooldowns(hero, true)
+    		end
+   		 end)
+
     	Timers:CreateTimer(1, function() 
     		if hero and not hero:IsNull() then 
     			hero.no_buyback = 1

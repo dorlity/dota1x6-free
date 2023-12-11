@@ -37,7 +37,7 @@ function modifier_on_respawn:OnTakeDamage(params)
 if not IsServer() then return end
 if not params.attacker then return end
 if params.unit:GetTeamNumber() == self:GetParent():GetTeamNumber() then return end
-if params.attacker:GetTeamNumber() ~= self:GetParent():GetTeamNumber() then return end
+if params.attacker ~= self:GetParent() then return end
 if params.unit:GetUnitName() ~= "npc_towerdire" and params.unit:GetUnitName() ~= "npc_towerradiant" then return end
 
 local attacker = params.attacker
@@ -60,6 +60,7 @@ else
     end
 
     if GameRules:GetDOTATime(false, false) >= push_timer then 
+        my_game:RefreshCooldowns(hero, true)
         my_game:CreateUpgradeOrb(hero, 3)
     end
 
@@ -327,7 +328,8 @@ if players[hero:GetTeamNumber()] then
     players[hero:GetTeamNumber()].towers_destroyed = players[hero:GetTeamNumber()].towers_destroyed + 1
 end
 
-if GameRules:GetDOTATime(false, false) >= push_timer then 
+if GameRules:GetDOTATime(false, false) >= push_timer then
+    my_game:RefreshCooldowns(hero, true) 
     my_game:CreateUpgradeOrb(hero, 3)
 end
 

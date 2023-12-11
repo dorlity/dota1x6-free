@@ -15,7 +15,21 @@ LinkLuaModifier("modifier_razor_static_link_custom_leash", "abilities/razor/razo
 
 razor_static_link_custom = class({})
 
-
+function razor_static_link_custom:GetAbilityTextureName()
+    if self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
+        return "razor/arcana/razor_static_link_alt2"
+    end
+    if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
+        return "razor/arcana/razor_static_link_alt1"
+    end
+    if self:GetCaster():HasModifier("modifier_razor_head_immortal_custom") then
+        return "razor_static_link_alt"
+    end
+    if self:GetCaster():HasModifier("modifier_razor_head_immortal_custom_golden") then
+        return "razor_static_link_alt_gold"
+    end
+    return "razor_static_link"  
+end
 
 function razor_static_link_custom:Precache(context)
     PrecacheResource( "particle", "particles/razor/link_purge.vpcf", context )
@@ -146,7 +160,13 @@ end
 
 self.caster:AddNewModifier(self.caster, self.ability, "modifier_razor_static_link_custom_attacking", {target = self.target:entindex()})
 
-self.caster:EmitSound("Ability.static.loop")
+
+self.sound_ability = "Ability.static.loop"
+if self:GetCaster():HasModifier("modifier_razor_head_immortal_custom") or self:GetCaster():HasModifier("modifier_razor_head_immortal_custom_golden") then
+    self.sound_ability = "Hero_Razor.SeveringCrest.Loop"
+end
+
+self.caster:EmitSound(self.sound_ability)
 self.caster:StartGesture(ACT_DOTA_CAST_ABILITY_2)
 
 self.total_duration = self.ability:GetSpecialValueFor("drain_length")
@@ -233,6 +253,15 @@ end
 
 
 local particleFile = "particles/units/heroes/hero_razor/razor_static_link.vpcf"
+if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
+    particleFile = "particles/econ/items/razor/razor_arcana/razor_arcana_static_link.vpcf"
+elseif self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
+    particleFile = "particles/econ/items/razor/razor_arcana/razor_arcana_static_link_v2.vpcf"
+elseif self:GetCaster():HasModifier("modifier_razor_head_immortal_custom") then
+    particleFile = "particles/econ/items/razor/razor_punctured_crest/razor_static_link_blade.vpcf"
+elseif self:GetCaster():HasModifier("modifier_razor_head_immortal_custom_golden") then
+    particleFile = "particles/econ/items/razor/razor_punctured_crest_golden/razor_static_link_blade_golden.vpcf"
+end
 self.particle = ParticleManager:CreateParticle(particleFile, PATTACH_POINT_FOLLOW, self.caster)
 ParticleManager:SetParticleControlEnt(self.particle, 0, self.caster, PATTACH_POINT_FOLLOW, "attach_static", self.caster:GetAbsOrigin(), true)
 ParticleManager:SetParticleControlEnt(self.particle, 1, self.target, PATTACH_POINT_FOLLOW, "attach_hitloc", self.target:GetAbsOrigin(), true)
@@ -416,7 +445,7 @@ end
 
 self:GetParent():RemoveModifierByName("modifier_razor_static_link_custom_attacking")
 
-self:GetParent():StopSound("Ability.static.loop")
+self:GetParent():StopSound(self.sound_ability)
 self:GetParent():EmitSound("Ability.static.end")
 
 if self:GetParent():HasModifier("modifier_razor_link_7")then 
@@ -598,8 +627,13 @@ function modifier_razor_static_link_custom_caster:GetAttributes() return MODIFIE
 function modifier_razor_static_link_custom_caster:OnCreated()
 if not IsServer() then return end
 self.RemoveForDuel = true
-
-self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_razor/razor_static_link_buff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+local particle_name = "particles/units/heroes/hero_razor/razor_static_link_buff.vpcf"
+if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
+    particle_name = "particles/econ/items/razor/razor_arcana/razor_arcana_static_link_buff.vpcf"
+elseif self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
+    particle_name = "particles/econ/items/razor/razor_arcana/razor_arcana_static_link_buff_v2.vpcf"
+end
+self.particle = ParticleManager:CreateParticle(particle_name, PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
 self:AddParticle( self.particle, false, false, -1, false, false )
 end 
 
@@ -632,8 +666,13 @@ function modifier_razor_static_link_custom_target:OnCreated()
 if not IsServer() then return end
 
 self.RemoveForDuel = true
-
-self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_razor/razor_static_link_debuff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+local particle_name = "particles/units/heroes/hero_razor/razor_static_link_debuff.vpcf"
+if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
+    particle_name = "particles/econ/items/razor/razor_arcana/razor_arcana_static_link_debuff.vpcf"
+elseif self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
+    particle_name = "particles/econ/items/razor/razor_arcana/razor_arcana_static_link_debuff_v2.vpcf"
+end
+self.particle = ParticleManager:CreateParticle(particle_name, PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
 self:AddParticle( self.particle, false, false, -1, false, false )
 end 
 

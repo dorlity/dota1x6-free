@@ -154,6 +154,9 @@ end
 function modifier_duel_field_thinker:CheckPosition(unit)
 if unit:HasModifier("modifier_custom_juggernaut_omnislash") then return end
 if unit:HasModifier("modifier_monkey_king_wukongs_command_custom_soldier") then return end
+if unit:GetUnitName() == "npc_dota_donate_item_illusion" then return end
+if unit:IsInvulnerable() then return end
+if unit:HasModifier("modifier_primal_beast_pulverize_custom_debuff") then return end
 if unit:GetTeamNumber() == DOTA_TEAM_CUSTOM_5 then return end
 if not unit:IsAlive() then return end
 if unit:IsUnselectable() then return end
@@ -660,7 +663,14 @@ end
 
 
 if self.winner == 1 then 
-	local item = CreateItem("item_patrol_reward_2", self:GetParent(), self:GetParent())
+	local name = "item_patrol_reward_2"
+
+	if my_game.current_wave == patrol_wave_2 then 
+		name = "item_patrol_reward_2_no_gadget"
+	end 
+
+	local item = CreateItem(name, self:GetParent(), self:GetParent())
+
 
 	if self:GetParent():GetNumItemsInInventory() < 10 then
 		self:GetParent():AddItem(item)

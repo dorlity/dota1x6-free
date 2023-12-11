@@ -726,7 +726,6 @@ if self.parent:GetUnitName() == "npc_dota_hero_phantom_assassin" then
     
         string_table = 
         {
-            {"juggernaut_custom_jug_arc_underattack_", 1, 1},
             {"phantom_assassin_custom_phass_arc_pain_", 1, 14},
         }
     elseif self.parent:GetModelName() == "models/heroes/phantom_assassin_persona/phantom_assassin_persona.vmdl" then 
@@ -1168,6 +1167,13 @@ if self.parent:GetUnitName() == "npc_dota_hero_phantom_assassin" then
         end 
     end 
 
+    return string_table
+end 
+
+
+
+return string_table
+end
     return string_table
 end 
 

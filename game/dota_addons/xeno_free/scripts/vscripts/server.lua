@@ -452,6 +452,9 @@ for i, player in pairs( HTTP.serverData.players ) do
 		end
 
 		local wrong_map_status = 0
+		if test then 
+		--	wrong_map_status = 2
+		end 
 
 		if wrong_map == 1 then 
 
@@ -492,6 +495,7 @@ for i, player in pairs( HTTP.serverData.players ) do
 				rank_tier = 0,
 				in_ranked = in_ranked,
 				leaderboard_rank = 0,
+				map_rating = {min = min, max = max},
 				wrong_map_status = wrong_map_status,
 				competitive_calibration_games_remaining = 0,
 				favorite_hero = player.favoriteHero,
@@ -996,7 +1000,7 @@ local data = CustomNetTables:GetTableValue("server_data", tostring(id))
 local lp_games = data.lp_games_remaining
 
 
-if lp_games > 0 and HTTP.playersData[id].place < 4 and HTTP.playersData[id].isLeaver == false and SafeToLeave == false then 
+if lp_games > 0 and HTTP.playersData[id].place < 4 and SafeToLeave == false then 
 	lp_games = lp_games - 1
 end
 
@@ -1022,7 +1026,6 @@ end
 
 
 print('the last', id)
-
 
 
 
@@ -1080,9 +1083,8 @@ function HTTP.PlayerLeave( id )
 
 	HTTP.Request( "/leave", {
 		playerId = tostring( PlayerResource:GetSteamAccountID(id) ),
-	    isWrongMap = wrong_map_status > 0, 
+	    isWrongMap = wrong_map_status == 2, 
 		isSafeToLeave = data.switch_safetoleave,
-	    isPenalty = data.isPenalty,
 	    leaveTime = GameRules:GetDOTATime(false, false),
 	    playerName = PlayerResource:GetPlayerName( id ),
 	    lpCount = data.lp_games_remaining,   

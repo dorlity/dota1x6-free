@@ -11,6 +11,7 @@ function modifier_alchemist_greed_1:IsPurgable() return false end
 function modifier_alchemist_greed_1:OnCreated(table)
 if not IsServer() then return end
   self:SetStackCount(1)
+self.StackOnIllusion = true
 end
 
 

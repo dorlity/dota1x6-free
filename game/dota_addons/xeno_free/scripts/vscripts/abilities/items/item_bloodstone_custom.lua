@@ -28,19 +28,10 @@ function modifier_item_bloodstone_custom:DeclareFunctions()
 		MODIFIER_PROPERTY_HEALTH_BONUS,
         MODIFIER_PROPERTY_MANA_BONUS,
         MODIFIER_EVENT_ON_TAKEDAMAGE,
-		MODIFIER_PROPERTY_MANACOST_PERCENTAGE
 }
 end
 
-function modifier_item_bloodstone_custom:GetModifierPercentageManacost()
-local reduce = 0
 
-if self:GetCaster():HasModifier("modifier_item_bloodstone_custom_buff") then 
-	reduce = self:GetAbility():GetSpecialValueFor("mana_cost_active")
-end
-
-return reduce
-end
 
 
 function modifier_item_bloodstone_custom:GetModifierHealthBonus()
@@ -114,6 +105,9 @@ function modifier_item_bloodstone_custom_buff:IsPurgable() return false end
 function modifier_item_bloodstone_custom_buff:IsPurgeException() return false end
 
 function modifier_item_bloodstone_custom_buff:OnCreated()
+
+self.reduce =  self:GetAbility():GetSpecialValueFor("mana_cost_active")
+
 if not IsServer() then return end
 
 
@@ -123,6 +117,24 @@ ParticleManager:SetParticleControlEnt(particle, 1, self:GetParent(), PATTACH_POI
 ParticleManager:SetParticleControlEnt(particle, 6, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
 self:AddParticle(particle, false, false, -1, false, false)
 end
+function modifier_item_bloodstone_custom_buff:DeclareFunctions()
+	return {
+
+		MODIFIER_PROPERTY_MANACOST_PERCENTAGE
+}
+end
+
+
+function modifier_item_bloodstone_custom_buff:GetModifierPercentageManacost(params)
+if params.ability == nil then return end
+
+return self.reduce
+end
+
+
+
+
+
 
 modifier_item_bloodstone_custom_debuff = class({})
 

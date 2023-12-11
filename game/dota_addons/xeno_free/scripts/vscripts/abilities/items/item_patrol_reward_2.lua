@@ -19,6 +19,8 @@ end
 function item_patrol_reward_2:OnSpellStart()
 if not IsServer() then return end
 
+
+
 upgrade:init_upgrade(self:GetCaster(),12,nil,after_legen)
 self:SpendCharge()
 

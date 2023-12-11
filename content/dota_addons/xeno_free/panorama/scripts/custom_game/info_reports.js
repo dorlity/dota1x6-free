@@ -66,8 +66,31 @@ var SETS_TEXTURE_FULL_ICON =
     pharaohs : "econ/sets/v2/sacred_chamber_guardian",
     baptism : "econ/sets/v2/pursuit_of_the_ember_demons",
     ironbound : "econ/sets/v2/hides_of_hostility",
+
+    // legion commander
+    birdofpray : "econ/sets/v2/bird_of_prey",
+    triumphimperatrix : "econ/sets/v2/triumph_of_the_imperatrix",
+    radiantconqueror : "econ/sets/v2/radiant_conqueror",
+    honorservant : "econ/sets/v2/honored_servant_of_the_empire",
+    daemonfell : "econ/sets/v2/legion_commander_daemonfell_flame",
+
+    // Shadow Fiend
+    soulstyrant: "econ/sets/v2/souls_tyrant",
+    soulcorplence: "econ/sets/v2/soul_corpulence",
+    eternalharverst: "econ/sets/v2/eternal_harvest",
+
+    // razor
+    basilisklord : "econ/sets/v2/test_of_the_basilisk_lord",
+    cruelassemblage : "econ/sets/v2/cruel_assemblage",
+    forlornmaze : "econ/sets/v2/menace_of_the_forlorn_maze",
 }
 
+var OTHER_BACKGROUND_HEROES =
+{
+    npc_dota_hero_legion_commander : "queenofpain",
+    npc_dota_hero_nevermore : "silencer",
+}
+ 
 var SETS_PRIORITY = 
 {
     "npc_dota_hero_huskar" : 
@@ -740,6 +763,409 @@ var ITEM_CHANGED_INFORMATION =
     {
         "model" : [59, 22708, 4], // оружие
     },
+
+
+
+
+
+5810 :
+{
+    "changed_icons" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["custom_legion_commander_duel", "legion_commander_duel_alt1"],
+    ],
+    "changed_effects" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["custom_legion_commander_duel", "legion_commander_duel"],
+    ],
+	"model" : [0, 5810],
+},
+7930 :
+{
+    "changed_icons" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["custom_legion_commander_press_the_attack", "legion_commander/legacy_of_the_fallen_legion/legion_commander_press_the_attack"],
+    ],
+    "changed_effects" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["custom_legion_commander_press_the_attack", "legion_commander_press_the_attack"],
+    ],
+	"model" : [0, 7930],
+    "styles" : [7930, 0]
+},
+7931 :
+{
+	"model" : [0, 7930],
+    "styles" : [7930, 1]
+},
+9236 :
+{
+    "changed_icons" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["custom_legion_commander_overwhelming_odds", "legion_commander/immortal/legion_commander_overwhelming_odds"],
+    ],
+    "changed_effects" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["custom_legion_commander_overwhelming_odds", "legion_commander_overwhelming_odds"],
+    ],
+	"model" : [0, 9236],
+},
+25758 :
+{
+	"model" : [0, 25758],
+},
+25759 :
+{
+	"model" : [0, 25759],
+},
+25761 :
+{
+	"model" : [0, 25761],
+},
+25762 :
+{
+	"model" : [0, 25762],
+},
+25763 :
+{
+	"model" : [0, 25763],
+},
+29256 :
+{
+	"model" : [0, 29256],
+},
+29257 :
+{
+	"model" : [0, 29257],
+},
+29255 :
+{
+	"model" : [0, 29255],
+},
+29254 :
+{
+	"model" : [0, 29254],
+},
+29253 :
+{
+	"model" : [0, 29253],
+},
+29252 :
+{
+	"model" : [0, 29252],
+},
+13985 :
+{
+	"model" : [0, 13985],
+},
+13984 :
+{
+	"model" : [0, 13984],
+},
+13986 :
+{
+	"model" : [0, 13986],
+},
+13987 :
+{
+	"model" : [0, 13987],
+},
+13988 :
+{
+	"model" : [0, 13988],
+},
+13989 :
+{
+	"model" : [0, 13989],
+},
+13048 :
+{
+	"model" : [0, 13048],
+},
+13051 :
+{
+	"model" : [0, 13051],
+},
+13053 :
+{
+	"model" : [0, 13053],
+},
+13054 :
+{
+	"model" : [0, 13054],
+},
+13052 :
+{
+	"model" : [0, 13052],
+},
+13050 :
+{
+	"model" : [0, 13050],
+},
+8821 :
+{
+	"model" : [0, 8821],
+},
+8822 :
+{
+	"model" : [0, 8822],
+},
+8823 :
+{
+	"model" : [0, 8823],
+},
+8824 :
+{
+	"model" : [0, 8824],
+},
+8820 :
+{
+	"model" : [0, 8820],
+},
+6996 :
+{
+    "changed_icons" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["custom_nevermore_shadowraze_close", "nevermore_shadowraze1_demon"],
+        ["custom_nevermore_shadowraze_medium", "nevermore_shadowraze2_demon"],
+        ["custom_nevermore_shadowraze_far", "nevermore_shadowraze3_demon"],
+        ["custom_nevermore_necromastery", "nevermore_necromastery_demon"],
+        ["custom_nevermore_dark_lord", "nevermore_dark_lord_demon"],
+        ["custom_nevermore_requiem", "nevermore_requiem_demon"],
+    ],
+    "changed_effects" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["custom_nevermore_shadowraze_close", "nevermore_shadowraze1"],
+        ["custom_nevermore_shadowraze_medium", "nevermore_shadowraze2"],
+        ["custom_nevermore_shadowraze_far", "nevermore_shadowraze3"],
+        ["custom_nevermore_necromastery", "nevermore_necromastery"],
+        ["custom_nevermore_dark_lord", "nevermore_dark_lord"],
+        ["custom_nevermore_requiem", "nevermore_requiem"],
+    ],
+	"model" : [0, 6996],
+},
+8259 :
+{
+	"model" : [0, 8259],
+},
+9021 :
+{
+	"model" : [0, 9021],
+},
+9019 :
+{
+	"model" : [0, 9019],
+},
+9020 :
+{
+	"model" : [0, 9020],
+},
+13505 :
+{
+	"model" : [0, 13505],
+},
+13506 :
+{
+	"model" : [0, 13506],
+},
+13507 :
+{
+	"model" : [0, 13507],
+},
+12677 :
+{
+	"model" : [0, 12677],
+},
+12678 :
+{
+	"model" : [0, 12678],
+},
+12679 :
+{
+	"model" : [0, 12679],
+},
+22845 :
+{
+	"model" : [0, 22845],
+	"styles" : [22845, 1]
+},
+22844 :
+{
+	"model" : [0, 22844],
+	"styles" : [22844, 1]
+},
+22843 :
+{
+	"model" : [0, 22843],
+	"styles" : [22843, 1]
+},
+23096 :
+{
+    "model" : [0, 23096]
+},
+23098 :
+{
+    "model" : [0, 23098]
+},
+23099 :
+{
+    "model" : [0, 23099]
+},
+23095 :
+{
+    "changed_icons" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["razor_plasma_field_custom", "razor/arcana/razor_plasma_field_alt1"],
+        ["razor_static_link_custom", "razor/arcana/razor_static_link_alt1"],
+        ["razor_unstable_current_custom", "razor/arcana/razor_unstable_current_alt1"],
+        ["razor_eye_of_the_storm_custom", "razor/arcana/razor_eye_of_the_storm_alt1"],
+    ],
+    "changed_effects" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["razor_plasma_field_custom", "razor_plasma_field"],
+        ["razor_static_link_custom", "razor_static_link"],
+        ["razor_unstable_current_custom", "razor_unstable_current"],
+        ["razor_eye_of_the_storm_custom", "razor_eye_of_the_storm"],
+    ],
+    "model" : [0, 23100]
+},
+2309599 :
+{
+    "changed_icons" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["razor_plasma_field_custom", "razor/arcana/razor_plasma_field_alt1"],
+        ["razor_static_link_custom", "razor/arcana/razor_static_link_alt1"],
+        ["razor_unstable_current_custom", "razor/arcana/razor_unstable_current_alt1"],
+        ["razor_eye_of_the_storm_custom", "razor/arcana/razor_eye_of_the_storm_alt1"],
+    ],
+    "changed_effects" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["razor_plasma_field_custom", "razor_plasma_field"],
+        ["razor_static_link_custom", "razor_static_link"],
+        ["razor_unstable_current_custom", "razor_unstable_current"],
+        ["razor_eye_of_the_storm_custom", "razor_eye_of_the_storm"],
+    ],
+    "model" : [0, 23100],
+    "styles" : [23100, 1]
+},
+23097 :
+{
+    "model" : [0, 23097]
+},
+6646 :
+{
+    "changed_icons" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["razor_static_link", "razor_static_link_alt"],
+    ],
+    "changed_effects" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["razor_static_link_custom", "razor_static_link"],
+    ],
+    "model" : [0, 6646]
+},
+6916 :
+{
+    "changed_icons" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["razor_static_link", "razor_static_link_alt_gold"],
+    ],
+    "changed_effects" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["razor_static_link_custom", "razor_static_link"],
+    ],
+    "model" : [0, 6916]
+},
+8000 :
+{
+    "changed_icons" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["razor_plasma_field", "razor/severing_lash/razor_plasma_field"],
+    ],
+    "changed_effects" : 
+    [
+        // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
+        ["razor_plasma_field_custom", "razor_plasma_field"],
+    ],
+    "model" : [0, 8000]
+},
+14812 :
+{
+    "model" : [0, 14812]
+},
+14813 :
+{
+    "model" : [0, 14813]
+},
+14814 :
+{
+    "model" : [0, 14814]
+},
+14759 :
+{
+    "model" : [0, 14759]
+},
+14815 :
+{
+    "model" : [0, 14815]
+},
+19500 :
+{
+    "model" : [0, 19500]
+},
+19501 :
+{
+    "model" : [0, 19501]
+},
+19502 :
+{
+    "model" : [0, 19502]
+},
+19503 :
+{
+    "model" : [0, 19503]
+},
+19505 :
+{
+    "model" : [0, 19505]
+},
+18130 :
+{
+    "model" : [0, 18130]
+},
+18131 :
+{
+    "model" : [0, 18131]
+},
+18132 :
+{
+    "model" : [0, 18132]
+},
+18133 :
+{
+    "model" : [0, 18133]
+},
+18227 :
+{
+    "model" : [0, 18227]
+},
 }
 function UpdatePlayerShopTable(table, key, data ) 
 {
@@ -6464,7 +6890,13 @@ function CreateSlotTypeInfo(panel, name)
 
         let sets_texture_background = $.CreatePanel("Panel", sets_texture, "");
         sets_texture_background.AddClass("sets_texture_bg");
-        sets_texture_background.style.backgroundImage = 'url("s2r://materials/portraits_card/portrait_backgrounds/' + current_shop_hero_choose.replace("npc_dota_hero_", "") + '.psd")';
+
+        let texture_bg = current_shop_hero_choose.replace("npc_dota_hero_", "")
+        if (OTHER_BACKGROUND_HEROES[current_shop_hero_choose] != null)
+        {
+            texture_bg = OTHER_BACKGROUND_HEROES[current_shop_hero_choose]
+        }
+        sets_texture_background.style.backgroundImage = 'url("s2r://materials/portraits_card/portrait_backgrounds/' + texture_bg + '.psd")';
         sets_texture_background.style.backgroundSize = "cover"
 
         let hero_image_sets = $.CreatePanel("Panel", sets_texture, "");
@@ -7379,7 +7811,7 @@ function GetAllItemsInSet(set_name, hero_name)
 }
 
 
-
+ 
 function UpdateOnlyCouriers()
 {
     let CategoryPets = $.GetContextPanel().FindChildTraverse("CategoryPets")
@@ -7423,8 +7855,6 @@ function UpdateOnlyCouriers()
     }  
 }
 
-
-
 function ChangeScenePreviewItem(buy_panel, ButtonItemStyleBuyPanel, style, item_scene_panel_preview)
 {
     ButtonItemStyleBuyPanel.SetPanelEvent("onactivate", function() 
@@ -7447,7 +7877,6 @@ function ChangeScenePreviewItem(buy_panel, ButtonItemStyleBuyPanel, style, item_
         ButtonItemStyleBuyPanel.SetHasClass("ButtonItemStyle_active", true)
     })
 }
-
 
 function HeroIsAlive()
 {
@@ -7475,8 +7904,6 @@ function HeroIsAlive()
     return false
 }
 
-
-
 function IsLockedTime()
 {
     let player_table = CustomNetTables.GetTableValue("networth_players", String(Players.GetLocalPlayer()));
@@ -7489,7 +7916,7 @@ function IsLockedTime()
         }
     }
 
-    if (Game.GetDOTATime( false, false) >= 120)
+    if (Game.GetDOTATime( false, false) >= 120 && !Game.IsInToolsMode())
     {
         GameEvents.SendEventClientSide("dota_hud_error_message", 
         {

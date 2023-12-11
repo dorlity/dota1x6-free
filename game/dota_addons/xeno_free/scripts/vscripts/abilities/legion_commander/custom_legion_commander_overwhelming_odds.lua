@@ -33,6 +33,13 @@ PrecacheResource( "particle", "particles/lc_odds_l.vpcf", context )
 
 end
 
+function custom_legion_commander_overwhelming_odds:GetAbilityTextureName()
+    if self:GetCaster():HasModifier("modifier_legion_commander_ti7_head_custom") then
+        return "legion_commander/immortal/legion_commander_overwhelming_odds"
+    end
+    return "legion_commander_overwhelming_odds"
+end
+
 function custom_legion_commander_overwhelming_odds:GetAbilityTargetFlags()
 if self:GetCaster():HasModifier("modifier_legion_odds_solo") then 
   return DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES
@@ -172,12 +179,19 @@ end
 
 if legendary_stacks and legendary_stacks > 0 then 
 	self.damage = self.damage * (1 + legendary_stacks*self.caster:GetTalentValue("modifier_legion_odds_legendary", "damage")/100)
-end 
+end
+
+local particle_cast = "particles/units/heroes/hero_legion_commander/legion_commander_odds.vpcf"
+local sound_cast = "Hero_LegionCommander.Overwhelming.Location"
+if self:GetCaster():HasModifier("modifier_legion_commander_ti7_head_custom") then
+    particle_cast = "particles/econ/items/legion/legion_overwhelming_odds_ti7/legion_commander_odds_ti7.vpcf"
+    sound_cast = "Hero_LegionCommander.Overwhelming.Location.ti7"
+end
 
 
-EmitSoundOnLocationWithCaster(self.point, "Hero_LegionCommander.Overwhelming.Location", self.caster)
+EmitSoundOnLocationWithCaster(self.point, sound_cast, self.caster)
 
-local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_legion_commander/legion_commander_odds.vpcf", PATTACH_WORLDORIGIN, nil )
+local particle = ParticleManager:CreateParticle( particle_cast, PATTACH_WORLDORIGIN, nil )
 ParticleManager:SetParticleControl( particle, 0, self.point )
 ParticleManager:SetParticleControl( particle, 1, self:GetCaster():GetAbsOrigin() )
 ParticleManager:SetParticleControl( particle, 2, self.point )
@@ -217,7 +231,12 @@ self.silence_duration = self.caster:GetTalentValue("modifier_legion_odds_solo", 
 for _,enemy in ipairs(self.enemies) do 
 	enemy:EmitSound("Hero_LegionCommander.Overwhelming.Creep")
 
-	local particle_peffect = ParticleManager:CreateParticle("particles/units/heroes/hero_legion_commander/legion_commander_odds_dmga.vpcf", PATTACH_ABSORIGIN_FOLLOW, enemy)
+    local particle_damage = "particles/units/heroes/hero_legion_commander/legion_commander_odds_dmga.vpcf"
+    if self:GetCaster():HasModifier("modifier_legion_commander_ti7_head_custom") then
+        particle_damage = "particles/econ/items/legion/legion_overwhelming_odds_ti7/legion_commander_odds_ti7_creep.vpcf"
+    end
+
+	local particle_peffect = ParticleManager:CreateParticle(particle_damage, PATTACH_ABSORIGIN_FOLLOW, enemy)
 	ParticleManager:SetParticleControlEnt(particle_peffect , 0, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), true)
 	ParticleManager:SetParticleControlEnt(particle_peffect , 1, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), true)
 	ParticleManager:SetParticleControlEnt(particle_peffect , 3, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetCaster():GetAbsOrigin(), true)
@@ -270,8 +289,12 @@ self.status = self:GetCaster():GetTalentValue("modifier_legion_odds_creep", "sta
 
 
 if not IsServer() then return end
-
-self.poof = ParticleManager:CreateParticle("particles/units/heroes/hero_legion_commander/legion_commander_odds_buff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+ 
+local particle_buff = "particles/units/heroes/hero_legion_commander/legion_commander_odds_buff.vpcf"
+if self:GetCaster():HasModifier("modifier_legion_commander_ti7_head_custom") then
+    particle_buff = "particles/econ/items/legion/legion_overwhelming_odds_ti7/legion_commander_odds_ti7_buff.vpcf"
+end
+self.poof = ParticleManager:CreateParticle(particle_buff, PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
 ParticleManager:SetParticleControl(self.poof, 0, self:GetParent():GetAbsOrigin())
 
 end

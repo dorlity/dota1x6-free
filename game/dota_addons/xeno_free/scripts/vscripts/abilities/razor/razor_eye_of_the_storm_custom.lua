@@ -17,6 +17,15 @@ function razor_eye_of_the_storm_custom:Precache(context)
     PrecacheResource( "particle", "particles/razor/razor_rain_storm_new.vpcf", context )
 end
 
+function razor_eye_of_the_storm_custom:GetAbilityTextureName()
+    if self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
+        return "razor/arcana/razor_eye_of_the_storm_alt2"
+    end
+    if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
+        return "razor/arcana/razor_eye_of_the_storm_alt1"
+    end
+    return "razor_eye_of_the_storm"  
+end
 
 
 function razor_eye_of_the_storm_custom:GetIntrinsicModifierName()
@@ -190,9 +199,15 @@ end
 function modifier_razor_eye_of_the_storm_custom:Show()
 if not IsServer() then return end
 if self.effect_cast then return end
+local particle_name = "particles/razor/razor_rain_storm_new.vpcf"
+if self:GetParent():HasModifier("modifier_razor_arcana_custom") then
+    particle_name = "particles/econ/items/razor/razor_arcana/razor_arcana_eye_of_the_storm_rain.vpcf"
+end
+if self:GetParent():HasModifier("modifier_razor_arcana_v2_custom") then
+    particle_name = "particles/econ/items/razor/razor_arcana/razor_arcana_eye_of_the_storm_rain_v2.vpcf"
+end
 
-
-self.effect_cast = ParticleManager:CreateParticle( "particles/razor/razor_rain_storm_new.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent )
+self.effect_cast = ParticleManager:CreateParticle( particle_name, PATTACH_ABSORIGIN_FOLLOW, self.parent )
 ParticleManager:SetParticleControl( self.effect_cast, 2, Vector(self.radius, 1, 1) )
 self:AddParticle( self.effect_cast, false, false, -1, false, false )
 end 
@@ -303,7 +318,14 @@ end
 
 if self.parent:HasModifier("modifier_razor_eye_4") and RollPseudoRandomPercentage(self.attack_chance ,310,self.parent) then 
 
-	local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_razor/razor_storm_lightning_strike.vpcf", PATTACH_CUSTOMORIGIN_FOLLOW, self.parent )
+    local particle_name = "particles/units/heroes/hero_razor/razor_storm_lightning_strike.vpcf"
+    if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
+        particle_name = "particles/econ/items/razor/razor_arcana/razor_arcana_eye_of_the_storm.vpcf"
+    end
+    if self:GetParent():HasModifier("modifier_razor_arcana_v2_custom") then
+        particle_name = "particles/econ/items/razor/razor_arcana/razor_arcana_v2_eye_of_the_storm.vpcf"
+    end
+	local effect_cast = ParticleManager:CreateParticle( particle_name, PATTACH_CUSTOMORIGIN_FOLLOW, self.parent )
 	ParticleManager:SetParticleControlEnt( effect_cast, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_whip", self.parent:GetAbsOrigin(), true  )
 	ParticleManager:SetParticleControlEnt( effect_cast, 1, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), true  )
 	ParticleManager:ReleaseParticleIndex( effect_cast )
@@ -331,7 +353,15 @@ end
 function modifier_razor_eye_of_the_storm_custom:PlayEffects2( enemy )
 if not IsServer() then return end
 
-local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_razor/razor_storm_lightning_strike.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.cloud_unit )
+local particle_name = "particles/units/heroes/hero_razor/razor_storm_lightning_strike.vpcf"
+if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
+    particle_name = "particles/econ/items/razor/razor_arcana/razor_arcana_eye_of_the_storm.vpcf"
+end
+if self:GetParent():HasModifier("modifier_razor_arcana_v2_custom") then
+    particle_name = "particles/econ/items/razor/razor_arcana/razor_arcana_v2_eye_of_the_storm.vpcf"
+end
+
+local effect_cast = ParticleManager:CreateParticle( particle_name, PATTACH_ABSORIGIN_FOLLOW, self.cloud_unit )
 ParticleManager:SetParticleControl( effect_cast, 0, self.cloud_unit:GetAbsOrigin() )
 ParticleManager:SetParticleControlEnt( effect_cast, 1, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), true  )
 ParticleManager:ReleaseParticleIndex( effect_cast )
@@ -753,8 +783,14 @@ end
 if not self.mod.cloud_unit or self.mod.cloud_unit:IsNull() then return end 
 
 local point = self.parent:GetAbsOrigin() + RandomVector(RandomInt(100, 500))
-
-local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_razor/razor_storm_lightning_strike.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.mod.cloud_unit )
+local particle_name = "particles/units/heroes/hero_razor/razor_storm_lightning_strike.vpcf"
+if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
+    particle_name = "particles/econ/items/razor/razor_arcana/razor_arcana_eye_of_the_storm.vpcf"
+end
+if self:GetParent():HasModifier("modifier_razor_arcana_v2_custom") then
+    particle_name = "particles/econ/items/razor/razor_arcana/razor_arcana_v2_eye_of_the_storm.vpcf"
+end
+local effect_cast = ParticleManager:CreateParticle( particle_name, PATTACH_ABSORIGIN_FOLLOW, self.mod.cloud_unit )
 ParticleManager:SetParticleControl( effect_cast, 0, self.mod.cloud_unit:GetAbsOrigin() )
 ParticleManager:SetParticleControl( effect_cast, 1, point )
 ParticleManager:ReleaseParticleIndex( effect_cast )

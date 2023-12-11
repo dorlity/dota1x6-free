@@ -76,6 +76,8 @@ function init()
 	GameEvents.Subscribe_custom('legion_duel_status', legion_duel_status)
 	GameEvents.Subscribe_custom('legion_duel_status_end', legion_duel_status_end)
 
+	GameEvents.Subscribe_custom('patrol_refresher', patrol_refresher)
+
 	GameEvents.Subscribe_custom('grenade_alert', grenade_alert)
 
 	GameEvents.Subscribe_custom('TargetAttack', TargetAttack)
@@ -2352,6 +2354,53 @@ function muerta_quest_alert(kv)
 	 })
 	event.DeleteAsync( 8);
 }
+
+
+
+
+function patrol_refresher(kv)
+{
+
+
+var Main = $.GetContextPanel().FindChildTraverse("patrol_refresher_status_main")
+
+let event = Main.FindChildTraverse("patrol_refresher_status")
+
+if (event)
+{
+	return
+}
+
+let new_event = $.CreatePanel("Panel", Main, "patrol_refresher_status")
+new_event.AddClass("patrol_refresher_status") 
+
+let icon_1 = $.CreatePanel("Panel", new_event, "")
+icon_1.AddClass("patrol_refresher_status_icon_1") 
+
+let icon_vs = $.CreatePanel("Panel", new_event, "")
+icon_vs.AddClass("patrol_refresher_status_icon_vs") 
+
+
+let icon_2 = $.CreatePanel("Panel", new_event, "")
+icon_2.AddClass("patrol_refresher_status_icon_2") 
+
+
+icon_1.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + kv.hero_1 + '.png" );'
+icon_1.style.backgroundSize = "contain"
+
+
+$.Schedule( 6.5, function(){ 
+	if (new_event !== undefined)
+	{
+	  new_event.RemoveClass("patrol_refresher_status");
+    new_event.AddClass("patrol_refresher_status_close");
+ 	}
+ })
+new_event.DeleteAsync(6.8);
+
+}
+
+
 
 
 

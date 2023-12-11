@@ -136,7 +136,10 @@ end
 
 
 function custom_nevermore_shadowraze_close:GetAbilityTextureName()
-   return "nevermore_shadowraze1"
+    if self:GetCaster():HasModifier("modifier_shadow_fiend_arcana_custom") then
+        return "nevermore_shadowraze1_demon"
+    end
+    return "nevermore_shadowraze1"
 end
 
 function custom_nevermore_shadowraze_close:IsHiddenWhenStolen()
@@ -169,6 +172,9 @@ function custom_nevermore_shadowraze_close:OnSpellStart()
 	local ability = self
 	local cast_response = {"nevermore_nev_ability_shadow_07", "nevermore_nev_ability_shadow_18", "nevermore_nev_ability_shadow_21"}
 	local sound_raze = "Hero_Nevermore.Shadowraze"
+    if self:GetCaster():HasModifier("modifier_shadow_fiend_arcana_custom") then
+        sound_raze = "Hero_Nevermore.Shadowraze.Arcana"
+    end
 	caster:EmitSound(sound_raze)
 
 	-- Ability specials
@@ -205,6 +211,9 @@ end
 end
 
 function custom_nevermore_shadowraze_medium:GetAbilityTextureName()
+    if self:GetCaster():HasModifier("modifier_shadow_fiend_arcana_custom") then
+        return "nevermore_shadowraze2_demon"
+    end
    return "nevermore_shadowraze2"
 end
 
@@ -238,6 +247,9 @@ function custom_nevermore_shadowraze_medium:OnSpellStart()
 	local ability = self
 	local cast_response = {"nevermore_nev_ability_shadow_08", "nevermore_nev_ability_shadow_20", "nevermore_nev_ability_shadow_22"}
 	local sound_raze = "Hero_Nevermore.Shadowraze"
+    if self:GetCaster():HasModifier("modifier_shadow_fiend_arcana_custom") then
+        sound_raze = "Hero_Nevermore.Shadowraze.Arcana"
+    end
 	caster:EmitSound(sound_raze)
 
 	-- Ability specials
@@ -271,6 +283,9 @@ end
 end
 
 function custom_nevermore_shadowraze_far:GetAbilityTextureName()
+    if self:GetCaster():HasModifier("modifier_shadow_fiend_arcana_custom") then
+        return "nevermore_shadowraze3_demon"
+    end
    return "nevermore_shadowraze3"
 end
 
@@ -304,6 +319,9 @@ function custom_nevermore_shadowraze_far:OnSpellStart()
 	local ability = self
 	local cast_response = {"nevermore_nev_ability_shadow_11", "nevermore_nev_ability_shadow_19", "nevermore_nev_ability_shadow_23"}
 	local sound_raze = "Hero_Nevermore.Shadowraze"
+    if self:GetCaster():HasModifier("modifier_shadow_fiend_arcana_custom") then
+        sound_raze = "Hero_Nevermore.Shadowraze.Arcana"
+    end
 	caster:EmitSound(sound_raze)
 	local raze_radius = ability:GetSpecialValueFor("shadowraze_radius")
 	local raze_distance = ability:GetSpecialValueFor("shadowraze_range")
@@ -325,7 +343,7 @@ function CastShadowRazeOnPoint(caster, ability, point, radius, auto)
 
 	local particle_raze = "particles/units/heroes/hero_nevermore/nevermore_shadowraze.vpcf"
 
-	if caster:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then 
+	if caster:HasModifier("modifier_shadow_fiend_arcana_custom") then 
 		particle_raze = "particles/econ/items/shadow_fiend/sf_fire_arcana/sf_fire_arcana_shadowraze.vpcf"
 	end
 
@@ -770,6 +788,9 @@ ParticleManager:DestroyParticle( self.effect_cast, true )
 ParticleManager:ReleaseParticleIndex( self.effect_cast )
 
 local sound_raze = "Hero_Nevermore.Shadowraze"
+if self:GetCaster():HasModifier("modifier_shadow_fiend_arcana_custom") then
+    sound_raze = "Hero_Nevermore.Shadowraze.Arcana"
+end
 self:GetParent():EmitSound(sound_raze)
 
 CastShadowRazeOnPoint(self:GetCaster(), self:GetAbility(), self:GetParent():GetAbsOrigin(), self.radius, true)
