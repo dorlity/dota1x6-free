@@ -130,7 +130,7 @@ function modifier_custom_phantom_assassin_fan_of_knives_thinker:OnIntervalThink(
 
       table.insert(self.hit_enemies, enemy)
       
-      local real_damage = ApplyDamage({victim = enemy, attacker = self:GetCaster(), damage = damage, ability = self:GetAbility(), damage_type = DAMAGE_TYPE_PURE})
+      local real_damage = ApplyDamage({victim = enemy, attacker = self:GetCaster(), damage = damage, ability = self:GetAbility(), damage_type = DAMAGE_TYPE_PHYSICAL})
 
       enemy:SendNumber(4, real_damage)
     end

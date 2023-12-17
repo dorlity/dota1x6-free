@@ -13,6 +13,28 @@ return true
 end 
 
 
+
+function CDOTA_BaseNPC:CheckCastMods(ability)
+
+for _,unit in pairs(self:FindTargets(1000)) do 
+	for _,mod in pairs(unit:FindAllModifiers()) do 
+
+		if mod.OnAbilityFullyCast ~= nil then 
+			local params = 
+			{
+				ability = ability,
+				unit = self,
+			}
+			mod:OnAbilityFullyCast(params)
+		end 
+	end 
+end 
+
+
+end 
+
+
+
 function CDOTA_BaseNPC:GiveKillExp(target)
 
 local diff = math.max(0, (target:GetCurrentXP() - self:GetCurrentXP()))

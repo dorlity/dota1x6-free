@@ -663,7 +663,7 @@ end
 
 
 if self.winner == 1 then 
-	local name = "item_patrol_reward_2"
+	local name = "item_patrol_reward_2_always_gadget"
 
 	if my_game.current_wave == patrol_wave_2 then 
 		name = "item_patrol_reward_2_no_gadget"

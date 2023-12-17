@@ -2,34 +2,20 @@ LinkLuaModifier("modifier_antimage_blink_custom_active", "abilities/antimage/ant
 LinkLuaModifier("modifier_antimage_blink_custom_evasion", "abilities/antimage/antimage_blink_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_antimage_blink_custom_illusion", "abilities/antimage/antimage_blink_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_antimage_blink_custom_slow", "abilities/antimage/antimage_blink_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_antimage_blink_custom_agility", "abilities/antimage/antimage_blink_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_antimage_blink_custom_attacks", "abilities/antimage/antimage_blink_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_antimage_blink_custom_legendary_damage", "abilities/antimage/antimage_blink_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_antimage_blink_custom_count", "abilities/antimage/antimage_blink_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_antimage_blink_custom_turn", "abilities/antimage/antimage_blink_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_antimage_blink_custom_turn_slow", "abilities/antimage/antimage_blink_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_antimage_blink_custom_quest", "abilities/antimage/antimage_blink_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_antimage_blink_custom_resist", "abilities/antimage/antimage_blink_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_antimage_blink_custom_resist_effect", "abilities/antimage/antimage_blink_custom", LUA_MODIFIER_MOTION_NONE)
 
 
 antimage_blink_custom = class({})
 
 
 
-antimage_blink_custom.evasion_chance = {20, 30, 40}
-antimage_blink_custom.evasion_speed = {10, 15, 20}
-antimage_blink_custom.evasion_duration = 2.5
 
-antimage_blink_custom.speed_max = 3
-antimage_blink_custom.speed_duration = 3
-antimage_blink_custom.speed_attack = {40, 60, 80}
-
-
-antimage_blink_custom.slow = -40
-antimage_blink_custom.slow_turn = -50
-antimage_blink_custom.slow_attack = -60
-antimage_blink_custom.slow_duration = 2.5
-
-antimage_blink_custom.attacks_max = 3
-antimage_blink_custom.attacks_damage = {0.3, 0.4, 0.5}
 
 antimage_blink_custom.double_count = 3
 antimage_blink_custom.double_heal = 0.1
@@ -50,6 +36,7 @@ PrecacheResource( "particle", 'particles/am_heal.vpcf', context )
 PrecacheResource( "particle", 'particles/units/heroes/hero_terrorblade/terrorblade_reflection_slow.vpcf', context )
 PrecacheResource( "particle", 'particles/am_blink_refresh.vpcf', context )
 PrecacheResource( "particle", 'particles/am_blink_count.vpcf', context )
+PrecacheResource( "particle", 'particles/antimage/blink_speed.vpcf', context )
 
 end
 
@@ -125,26 +112,23 @@ function antimage_blink_custom:ProceedProc()
 if not IsServer() then return end
 
 
-if self:GetCaster():HasModifier("modifier_antimage_counter_4") then 
-    local ability = self:GetCaster():FindAbilityByName("antimage_counterspell_custom")
-    if ability then 
-       ability:ProcDamage()
-    end
+if self:GetCaster():HasModifier("modifier_antimage_blink_2") or self:GetCaster():HasModifier("modifier_antimage_blink_1") then 
+	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_antimage_blink_custom_evasion", {duration = self:GetCaster():GetTalentValue("modifier_antimage_blink_1", "duration", true)})
 end
-
-if self:GetCaster():HasModifier("modifier_antimage_blink_2")  then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_antimage_blink_custom_evasion", {duration = self.evasion_duration})
-end
-
-if self:GetCaster():HasModifier("modifier_antimage_blink_1") then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_antimage_blink_custom_agility", {duration = self.speed_duration})
-end
-
 
 
 if self:GetCaster():HasModifier("modifier_antimage_blink_6") then 
 	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_antimage_blink_custom_count", {})
 end
+
+if self:GetCaster():HasModifier("modifier_antimage_blink_5") then 
+
+	if self.resist_thinker and not self.resist_thinker:IsNull() then 
+		UTIL_Remove(self.resist_thinker)
+	end 
+
+	self.resist_thinker = CreateModifierThinker(self:GetCaster(), self, "modifier_antimage_blink_custom_resist", {duration = self:GetCaster():GetTalentValue("modifier_antimage_blink_5", "duration"), radius = self:GetCaster():GetTalentValue("modifier_antimage_blink_5", "radius" )}, self:GetCaster():GetAbsOrigin(), self:GetCaster():GetTeamNumber(), false)
+end 
 
 
 if self:GetCaster():HasModifier("modifier_antimage_blink_4") then 
@@ -160,6 +144,10 @@ if self:GetCaster():HasModifier("modifier_antimage_blink_4") then
 		    if mod.StackOnIllusion ~= nil and mod.StackOnIllusion == true then
 		        v:UpgradeIllusion(mod:GetName(), mod:GetStackCount() )
 		    end
+		end
+
+		if self:GetCaster():HasModifier("modifier_antimage_blink_2") or self:GetCaster():HasModifier("modifier_antimage_blink_1") then 
+			v:AddNewModifier(self:GetCaster(), self, "modifier_antimage_blink_custom_evasion", {duration = self:GetCaster():GetTalentValue("modifier_antimage_blink_1", "duration", true)})
 		end
 
 		v.owner = self:GetCaster()
@@ -179,6 +167,7 @@ end
 function antimage_blink_custom:OnSpellStart()
 
 
+
 ProjectileManager:ProjectileDodge(self:GetCaster())
 
 if self:GetCaster():GetQuest() == "Anti.Quest_6" and not self:GetCaster():QuestCompleted() then 
@@ -187,24 +176,9 @@ end
 
 if self:GetCaster():HasModifier("modifier_antimage_blink_7") then 
 	self:GetCaster():EmitSound("Antimage.Blink_legen")
-	
-	--local point = self:GetCursorPosition()
-
-	--if point == self:GetCaster():GetAbsOrigin() then 
-		--point = self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector()*10
-	--end
-
-	--local dir = (point - self:GetCaster():GetAbsOrigin())
-	--dir.z = 0
-	----dir = dir:Normalized()
---	self:GetCaster():FaceTowards(point)
-	--self:GetCaster():SetForwardVector(dir)
 
 	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_antimage_blink_custom_active", {duration = self:GetCaster():GetTalentValue("modifier_antimage_blink_7", "duration")})
-
 else 
-
-
 
 	local caster = self:GetCaster()
 	local point = self:GetCursorPosition()
@@ -233,18 +207,6 @@ else
 	EmitSoundOnLocationWithCaster( self:GetCaster():GetOrigin(), "Hero_Antimage.Blink_in", self:GetCaster() )
 
 
-	if self:GetCaster():HasModifier("modifier_antimage_blink_5") then 
-
-		local units = FindUnitsInLine(self:GetCaster():GetTeamNumber(), origin, self:GetCaster():GetAbsOrigin(), nil, 200, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NONE)
-
-  		for _,unit in ipairs(units) do
-  			unit:AddNewModifier(self:GetCaster(), self, "modifier_antimage_blink_custom_slow", {duration = self.slow_duration})
-  		end
-		
-	end
-
-
-
 
 end
 
@@ -260,18 +222,20 @@ function modifier_antimage_blink_custom_active:IsHidden() return true end
 function modifier_antimage_blink_custom_active:IsPurgable() return false end
 
 function modifier_antimage_blink_custom_active:OnCreated()
-    if not IsServer() then return end
-    self.pfx = ParticleManager:CreateParticle("particles/items_fx/force_staff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-    self:GetParent():StartGesture(ACT_DOTA_RUN)
-    self.angle = self:GetParent():GetForwardVector():Normalized()
-    self.distance = self:GetCaster():GetTalentValue("modifier_antimage_blink_7", "distance") / ( self:GetDuration() / FrameTime())
+if not IsServer() then return end
+self.turn_slow = self:GetCaster():GetTalentValue("modifier_antimage_blink_7", "turn_slow_duration")
 
-    self.targets = {}
+self.pfx = ParticleManager:CreateParticle("particles/items_fx/force_staff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+self:GetParent():StartGesture(ACT_DOTA_RUN)
+self.angle = self:GetParent():GetForwardVector():Normalized()
+self.distance = self:GetCaster():GetTalentValue("modifier_antimage_blink_7", "distance") / ( self:GetDuration() / FrameTime())
 
-    self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_antimage_blink_custom_turn", {duration = self:GetRemainingTime() + 1})
-    if self:ApplyHorizontalMotionController() == false then
-        self:Destroy()
-    end
+self.targets = {}
+
+self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_antimage_blink_custom_turn", {duration = self:GetRemainingTime() + 1})
+if self:ApplyHorizontalMotionController() == false then
+    self:Destroy()
+end
 end
 
 function modifier_antimage_blink_custom_active:DeclareFunctions()
@@ -315,53 +279,50 @@ end
 
 
 function modifier_antimage_blink_custom_active:UpdateHorizontalMotion( me, dt )
-    if not IsServer() then return end
-    local pos = self:GetParent():GetAbsOrigin()
-    GridNav:DestroyTreesAroundPoint(pos, 80, false)
-    local pos_p = self.angle * self.distance
-    local next_pos = GetGroundPosition(pos + pos_p,self:GetParent())
-    self:GetParent():SetAbsOrigin(next_pos)
+if not IsServer() then return end
+local pos = self:GetParent():GetAbsOrigin()
+GridNav:DestroyTreesAroundPoint(pos, 80, false)
+local pos_p = self.angle * self.distance
+local next_pos = GetGroundPosition(pos + pos_p,self:GetParent())
+self:GetParent():SetAbsOrigin(next_pos)
 
 
 
-	local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetParent():GetOrigin(), nil, 120, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false )
-	
-	for _,enemy in pairs(enemies) do 
-		local attack = true
-		for _,target in pairs(self.targets) do 
-			if target == enemy then 
-				attack = false 
-			end
+local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetParent():GetOrigin(), nil, 120, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false )
+
+for _,enemy in pairs(enemies) do 
+	local attack = true
+	for _,target in pairs(self.targets) do 
+		if target == enemy then 
+			attack = false 
 		end
-
-		if attack then 
-			self.targets[#self.targets + 1] = enemy
-
-			local damage = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_antimage_blink_custom_legendary_damage", {})
-			local no_cleave = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_no_cleave", {})
-			
-			self:GetParent():PerformAttack(enemy, true, true, true, true, false, false, false)
-			
-			if damage then 
-				damage:Destroy()
-			end
-			
-			if no_cleave then 
-				no_cleave:Destroy()
-			end
-			
-
-
-		if self:GetCaster():HasModifier("modifier_antimage_blink_5") then 
-	  		enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_antimage_blink_custom_slow", {duration = self:GetAbility().slow_duration})
-		end
-
-			local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_antimage/antimage_manabreak_slow.vpcf", PATTACH_ABSORIGIN_FOLLOW, enemy)
-			ParticleManager:SetParticleControl(particle, 0, enemy:GetAbsOrigin())
-			ParticleManager:SetParticleControl(particle, 1, enemy:GetAbsOrigin())
-		end
-
 	end
+
+	if attack then 
+		self.targets[#self.targets + 1] = enemy
+
+		local damage = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_antimage_blink_custom_legendary_damage", {})
+		local no_cleave = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_no_cleave", {})
+		
+		self:GetParent():PerformAttack(enemy, true, true, true, true, false, false, false)
+		enemy:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_antimage_blink_custom_turn_slow", {duration = self.turn_slow})
+
+		if damage then 
+			damage:Destroy()
+		end
+		
+		if no_cleave then 
+			no_cleave:Destroy()
+		end
+		
+
+		local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_antimage/antimage_manabreak_slow.vpcf", PATTACH_CUSTOMORIGIN, enemy)
+		ParticleManager:SetParticleControlEnt( particle, 0, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetOrigin(), true )
+		ParticleManager:SetParticleControlEnt( particle, 1, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetOrigin(), true )
+		ParticleManager:ReleaseParticleIndex(particle)
+	end
+
+end
 
 end
 
@@ -375,21 +336,22 @@ end
 modifier_antimage_blink_custom_evasion = class({})
 function modifier_antimage_blink_custom_evasion:IsHidden() return false end
 function modifier_antimage_blink_custom_evasion:IsPurgable() return false end
-function modifier_antimage_blink_custom_evasion:GetEffectName() return "particles/void_step_speed.vpcf" end
 function modifier_antimage_blink_custom_evasion:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_EVASION_CONSTANT,
-	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
+	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
+	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+	MODIFIER_EVENT_ON_ATTACK_LANDED
 }
 end
 
 function modifier_antimage_blink_custom_evasion:GetTexture() return "buffs/blink_evasion" end
 
-function modifier_antimage_blink_custom_evasion:GetModifierEvasion_Constant()
+function modifier_antimage_blink_custom_evasion:GetModifierPhysicalArmorBonus()
 local bonus = 0
 if self:GetParent():HasModifier("modifier_antimage_blink_2") then 
-	bonus = self:GetAbility().evasion_chance[self:GetCaster():GetUpgradeStack("modifier_antimage_blink_2")]
+	bonus = self.armor
 end	
 
 return bonus
@@ -398,11 +360,45 @@ end
 function modifier_antimage_blink_custom_evasion:GetModifierMoveSpeedBonus_Percentage()
 local bonus = 0
 if self:GetParent():HasModifier("modifier_antimage_blink_2") then 
-	bonus = self:GetAbility().evasion_speed[self:GetCaster():GetUpgradeStack("modifier_antimage_blink_2")]
+	bonus = self.move
 end	
 
 return bonus
 end
+function modifier_antimage_blink_custom_evasion:GetModifierAttackSpeedBonus_Constant()
+local bonus = 0
+if self:GetParent():HasModifier("modifier_antimage_blink_1") then 
+	bonus = self.attack_speed
+end	
+
+return bonus
+end
+
+function modifier_antimage_blink_custom_evasion:OnAttackLanded(params)
+if not IsServer() then return end
+if not self:GetParent():HasModifier("modifier_antimage_blink_1") then return end 
+if self:GetParent() ~= params.attacker then return end 
+if not params.target:IsCreep() and not params.target:IsHero() then return end
+
+params.target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_antimage_blink_custom_slow", {duration = self.slow_duration*(1 - params.target:GetStatusResistance())})
+end 
+
+
+
+function modifier_antimage_blink_custom_evasion:OnCreated()
+
+self.move = self:GetCaster():GetTalentValue("modifier_antimage_blink_2", "speed")
+self.armor = self:GetCaster():GetTalentValue("modifier_antimage_blink_2", "armor")
+
+self.attack_speed = self:GetCaster():GetTalentValue("modifier_antimage_blink_1", "speed")
+self.slow_duration = self:GetCaster():GetTalentValue("modifier_antimage_blink_1", "slow_duration")
+
+if not IsServer() then return end 
+
+local effect_cast = ParticleManager:CreateParticle( "particles/antimage/blink_speed.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
+ParticleManager:SetParticleControl( effect_cast, 0, self:GetParent():GetAbsOrigin() )
+self:AddParticle( effect_cast, false, false, -1, false, false)
+end 
 
 
 
@@ -469,7 +465,6 @@ end
 modifier_antimage_blink_custom_turn = class({})
 function modifier_antimage_blink_custom_turn:IsHidden() return true end
 function modifier_antimage_blink_custom_turn:IsPurgable() return true end
-function modifier_antimage_blink_custom_turn:GetTexture() return "buffs/step_cd" end
 
 function modifier_antimage_blink_custom_turn:DeclareFunctions()
 return 
@@ -488,7 +483,7 @@ return 100
 
 
 modifier_antimage_blink_custom_slow = class({})
-function modifier_antimage_blink_custom_slow:IsHidden() return false end
+function modifier_antimage_blink_custom_slow:IsHidden() return true end
 function modifier_antimage_blink_custom_slow:IsPurgable() return true end
 function modifier_antimage_blink_custom_slow:GetTexture() return "buffs/step_cd" end
 
@@ -496,22 +491,12 @@ function modifier_antimage_blink_custom_slow:DeclareFunctions()
 return 
 {
 	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-	MODIFIER_PROPERTY_TURN_RATE_PERCENTAGE
 }
 end
 function modifier_antimage_blink_custom_slow:GetModifierMoveSpeedBonus_Percentage()
-return self:GetAbility().slow
+return self.slow
 end
 
-function modifier_antimage_blink_custom_slow:GetModifierAttackSpeedBonus_Constant()
-return self:GetAbility().slow_attack
-end
-
-
-function modifier_antimage_blink_custom_slow:GetModifierTurnRate_Percentage()
-return self:GetAbility().slow_turn
-end
 
 function modifier_antimage_blink_custom_slow:GetEffectName()
 	return "particles/units/heroes/hero_terrorblade/terrorblade_reflection_slow.vpcf"
@@ -519,116 +504,13 @@ end
 
 
 function modifier_antimage_blink_custom_slow:OnCreated(table)
-if not IsServer() then return end
-local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_antimage/antimage_manabreak_slow.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-ParticleManager:SetParticleControl(particle, 0, self:GetParent():GetAbsOrigin())
-ParticleManager:SetParticleControl(particle, 1, self:GetParent():GetAbsOrigin())
-end
 
-
-
-function modifier_antimage_blink_custom_slow:OnRefresh(table)
-if not IsServer() then return end
-self:OnCreated(table)
-end
-
-
-
-modifier_antimage_blink_custom_agility = class({})
-function modifier_antimage_blink_custom_agility:IsHidden() return false end
-function modifier_antimage_blink_custom_agility:IsPurgable() return false end
-function modifier_antimage_blink_custom_agility:GetTexture() return "buffs/antimage_blink_agility" end
-
-function modifier_antimage_blink_custom_agility:OnCreated(table)
-if not IsServer() then return end
-self.RemoveForDuel = true
+self.slow = self:GetCaster():GetTalentValue("modifier_antimage_blink_1", "slow")
 end
 
 
 
 
-function modifier_antimage_blink_custom_agility:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-	--MODIFIER_EVENT_ON_ATTACK_LANDED
-}
-end
-
-
-function modifier_antimage_blink_custom_agility:GetModifierAttackSpeedBonus_Constant()
-return self:GetAbility().speed_attack[self:GetParent():GetUpgradeStack("modifier_antimage_blink_1")]
-end
-
-
-function modifier_antimage_blink_custom_agility:OnAttackLanded(params)
-if not IsServer() then return end
-if params.attacker ~= self:GetParent() then return end
-
-self:DecrementStackCount()
-
-if self:GetStackCount() == 0 then
-	self:Destroy()
-end
-
-end
-
-
-modifier_antimage_blink_custom_attacks = class({})
-function modifier_antimage_blink_custom_attacks:IsHidden() return false end
-function modifier_antimage_blink_custom_attacks:IsPurgable() return false end
-function modifier_antimage_blink_custom_attacks:GetTexture() return "buffs/antimage_blink_damage" end
-
-
-function modifier_antimage_blink_custom_attacks:OnCreated(table)
-if not IsServer() then return end
-self.RemoveForDuel = true
-self:SetStackCount(self:GetAbility().attacks_max)
-
-end
-
-
-function modifier_antimage_blink_custom_attacks:OnRefresh(table)
-self:OnCreated(table)
-end
-
-
-function modifier_antimage_blink_custom_attacks:DeclareFunctions()
-return
-{
-	MODIFIER_EVENT_ON_ATTACK_LANDED,
-	MODIFIER_PROPERTY_TOOLTIP
-}
-end
-
-
-
-
-function modifier_antimage_blink_custom_attacks:OnAttackLanded(params)
-if not IsServer() then return end
-if params.attacker ~= self:GetParent() then return end
-if params.target:IsBuilding() then return end
-
-local damage = self:GetParent():GetAgility()*self:GetAbility().attacks_damage[self:GetCaster():GetUpgradeStack("modifier_antimage_blink_3")]
-
-ApplyDamage({ victim = params.target, attacker = self:GetParent(), damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility(), })
-	
-SendOverheadEventMessage(params.target, 4, params.target, damage, nil)
-		
-
-
-self:DecrementStackCount()
-if self:GetStackCount() == 0 then 
-	self:Destroy()
-end
-
-end
-
-
-
-function modifier_antimage_blink_custom_attacks:OnTooltip()
- return self:GetParent():GetAgility()*self:GetAbility().attacks_damage[self:GetCaster():GetUpgradeStack("modifier_antimage_blink_3")]
-end
 
 
 modifier_antimage_blink_custom_legendary_damage = class({})
@@ -650,6 +532,9 @@ function modifier_antimage_blink_custom_legendary_damage:OnCreated()
 
 self.damage = self:GetCaster():GetTalentValue("modifier_antimage_blink_7", "damage") - 100
 end 
+
+
+
 
 
 modifier_antimage_blink_custom_count = class({})
@@ -715,3 +600,114 @@ end
 modifier_antimage_blink_custom_quest = class({})
 function modifier_antimage_blink_custom_quest:IsHidden() return true end
 function modifier_antimage_blink_custom_quest:IsPurgable() return false end
+
+
+
+
+
+
+
+
+
+
+
+modifier_antimage_blink_custom_resist = class({})
+
+function modifier_antimage_blink_custom_resist:IsHidden() return true end
+
+function modifier_antimage_blink_custom_resist:IsPurgable() return false end
+
+function modifier_antimage_blink_custom_resist:IsAura() return true end
+
+function modifier_antimage_blink_custom_resist:GetAuraDuration() return 0.1 end
+
+
+function modifier_antimage_blink_custom_resist:GetAuraRadius() return self.radius
+end
+
+function modifier_antimage_blink_custom_resist:OnCreated(table)
+self.radius = table.radius
+
+if not IsServer() then return end
+particle_cast = "particles/antimage/blink_field.vpcf"
+
+local effect_cast = ParticleManager:CreateParticle( particle_cast, PATTACH_WORLDORIGIN, nil)
+ParticleManager:SetParticleControl( effect_cast, 0, self:GetParent():GetAbsOrigin() )
+ParticleManager:SetParticleControl( effect_cast, 1, Vector( self.radius, 0, 1 ) )
+self:AddParticle( effect_cast, false, false, -1, false, false )
+end
+
+
+function modifier_antimage_blink_custom_resist:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_BOTH
+ end
+
+function modifier_antimage_blink_custom_resist:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC end
+
+function modifier_antimage_blink_custom_resist:GetModifierAura() return "modifier_antimage_blink_custom_resist_effect" end
+
+
+
+
+
+modifier_antimage_blink_custom_resist_effect = class({})
+
+function modifier_antimage_blink_custom_resist_effect:IsPurgable() return false end
+
+function modifier_antimage_blink_custom_resist_effect:IsHidden() return true end 
+
+
+function modifier_antimage_blink_custom_resist_effect:DeclareFunctions()
+return
+{
+ 	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
+}
+
+end
+
+
+function modifier_antimage_blink_custom_resist_effect:OnCreated()
+self.speed = self:GetCaster():GetTalentValue("modifier_antimage_blink_5", "speed")
+self.status = self:GetCaster():GetTalentValue("modifier_antimage_blink_5", "status")
+
+end 
+
+function modifier_antimage_blink_custom_resist_effect:GetModifierAttackSpeedBonus_Constant()
+if self:GetParent():GetTeamNumber() ~= self:GetCaster():GetTeamNumber() then 
+	return self.speed
+end 
+
+end
+
+
+
+
+function modifier_antimage_blink_custom_resist_effect:GetModifierStatusResistanceStacking()
+if self:GetParent():GetTeamNumber() == self:GetCaster():GetTeamNumber() then 
+	return self.status
+end 
+
+end
+
+
+
+
+modifier_antimage_blink_custom_turn_slow = class({})
+function modifier_antimage_blink_custom_turn_slow:IsHidden() return true end
+function modifier_antimage_blink_custom_turn_slow:IsPurgable() return true end
+function modifier_antimage_blink_custom_turn_slow:DeclareFunctions()
+return
+{
+  MODIFIER_PROPERTY_TURN_RATE_PERCENTAGE
+}
+end
+
+
+function modifier_antimage_blink_custom_turn_slow:OnCreated()
+self.slow = self:GetCaster():GetTalentValue("modifier_antimage_blink_7", "turn_slow")
+end
+
+function modifier_antimage_blink_custom_turn_slow:GetModifierTurnRate_Percentage()
+return self.slow
+end
+

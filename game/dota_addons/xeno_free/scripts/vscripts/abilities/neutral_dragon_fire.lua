@@ -52,7 +52,7 @@ if not self:GetParent():IsSilenced() and self:GetParent():GetAttackTarget() ~= n
     self:GetParent():EmitSound("n_black_dragon.Fireball.Cast")
     self.sign = ParticleManager:CreateParticle( "particles/generic_gameplay/generic_has_quest.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())
 
-self.target = self:GetParent():GetAttackTarget()
+    self.target = self:GetParent():GetAttackTarget()
 
      self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_neutral_cast", {})
 
@@ -60,6 +60,7 @@ self.target = self:GetParent():GetAttackTarget()
                 self.timer = nil
                 ParticleManager:DestroyParticle(self.sign, true)
                 self:GetParent():RemoveModifierByName("modifier_neutral_cast")
+                self:GetParent():CheckCastMods(self:GetAbility())
               if self.target ~= nil and self.target:IsAlive()  and self:GetParent():IsAlive()  and self:GetParent():GetMana() >= self:GetAbility():GetManaCost(1) then 
                 self:GetParent():SpendMana(self:GetAbility():GetManaCost(1), self:GetAbility())
                 self.point = self.target:GetAbsOrigin()

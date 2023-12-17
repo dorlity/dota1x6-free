@@ -21,11 +21,9 @@ end
 
 function pangolier_shield_crash_custom:GetCooldown(iLevel)
 
-if self:GetCaster():HasModifier("modifier_pangolier_gyroshell_custom") and self:GetCaster():HasScepter() then 
-    return self:GetSpecialValueFor("scepter_cd")
+if self:GetCaster():HasModifier("modifier_pangolier_gyroshell_custom") and self:GetCaster():FindAbilityByName("pangolier_gyroshell_custom") then 
+    return self:GetCaster():FindAbilityByName("pangolier_gyroshell_custom"):GetSpecialValueFor("crash_cd")
 end
-
-
 
 local upgrade_cooldown = 0
 
@@ -214,7 +212,7 @@ arc:SetEndCallback(function()
             SendOverheadEventMessage(enemy, 6, enemy,  bonus, nil)
         end
 
-        local damage_table = ({ victim = enemy, attacker = self:GetCaster(), ability = self, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL })
+        local damage_table = ({ victim = enemy, attacker = self:GetCaster(), ability = self, damage = damage, damage_type = DAMAGE_TYPE_PHYSICAL })
         ApplyDamage(damage_table)
     end
 

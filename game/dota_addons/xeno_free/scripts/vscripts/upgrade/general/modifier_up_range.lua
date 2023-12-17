@@ -30,7 +30,7 @@ if not IsServer() then return end
 end
 
 function modifier_up_range:GetModifierAttackRangeBonus()
-if not self:GetParent():IsRangedAttacker() and self:GetParent():HasModifier("modifier_item_penta_edged_sword") then return end
+if not self:GetParent():IsRangedAttacker() and self:GetParent():HasModifier("modifier_item_celestial_spear_custom") then return end
 if self:GetParent():IsRangedAttacker() and (self:GetParent():HasModifier("modifier_item_dragon_lance") 
 	or self:GetParent():HasModifier("modifier_item_hurricane_pike")) then return end
 
@@ -39,7 +39,7 @@ end
 
 
 function modifier_up_range:GetModifierCastRangeBonusStacking()
-if (self:GetParent():HasModifier("modifier_item_manaflare_lens_custom") or self:GetParent():HasModifier("modifier_item_aether_lens")) then return end
+if (self:GetParent():HasModifier("modifier_item_manaflare_lens_custom") or self:GetParent():HasModifier("modifier_item_aether_lens") or self:GetParent():HasModifier("modifier_item_ethereal_blade")) then return end
 
 return 50 + 50*self:GetStackCount()
 end

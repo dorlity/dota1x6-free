@@ -155,7 +155,7 @@ function modifier_bloodseeker_bloodrage_custom:OnCreated( kv )
 self.attack_speed = self:GetAbility():GetSpecialValueFor( "attack_speed" )
 self.spell_amp = self:GetAbility():GetSpecialValueFor( "spell_amp" )
 self.damage_pct = self:GetAbility():GetSpecialValueFor("damage_pct")
-self.shard_max_health_dmg_pct = self:GetAbility():GetSpecialValueFor("shard_max_health_dmg_pct")
+self.shard_damage = self:GetAbility():GetSpecialValueFor("shard_damage")
 
 if not IsServer() then return end
 self.self_k = 0
@@ -307,15 +307,9 @@ end
 
 if self:GetParent():HasShard() then 
 
-	local bonus_pure_damage = params.target:GetMaxHealth() * self.shard_max_health_dmg_pct / 100
+	local bonus_pure_damage =  self.shard_damage
 
-	if params.target:IsCreep() and bonus_pure_damage > self:GetAbility():GetSpecialValueFor("shard_max_creeps") then 
-		bonus_pure_damage = self:GetAbility():GetSpecialValueFor("shard_max_creeps")
-	end
-
-	self:GetParent():Heal(bonus_pure_damage, self:GetAbility())
-	SendOverheadEventMessage(self:GetParent(), OVERHEAD_ALERT_HEAL, self:GetParent(), bonus_pure_damage, nil)
-
+	self:GetParent():GenericHeal(bonus_pure_damage, self:GetAbility(), true)
 
 	ApplyDamage({attacker = self:GetParent(), victim = params.target, damage_type = DAMAGE_TYPE_PURE, ability = self:GetAbility(), damage = bonus_pure_damage })
 end

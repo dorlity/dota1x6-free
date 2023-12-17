@@ -673,7 +673,7 @@ function custom_juggernaut_whirling_blade_custom:GetCooldown(iLevel)
 local cd_max = self:GetCaster():GetTalentValue("modifier_juggernaut_bladefury_legendary", "cd_max")
 local cd_min = self:GetCaster():GetTalentValue("modifier_juggernaut_bladefury_legendary", "cd_min")
 
-return cd_max - (cd_max - cd_min)*(math.min(1, self:GetCaster():GetAttackSpeed()/7))
+return cd_max - (cd_max - cd_min)*(math.min(1, self:GetCaster():GetAttackSpeed(true)/7))
 end
 
 

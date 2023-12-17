@@ -33,7 +33,15 @@ var styles_id =
 	"2078": ["4483"],
 	"2111": ["4484"],
 	"2118": ["4485"],
-
+    "23096": ["2309699"],
+    "23098": ["2309899"],
+    "23099": ["2309999"],
+    "23095": ["2309599"],
+    "23097": ["2309799"],
+    "7930": ["7931"],
+    "9021": ["22845"],
+    "9020": ["22844"],
+    "9019": ["22843"],
 }
 
 var no_styles =
@@ -43,6 +51,14 @@ var no_styles =
     "2078": true,
     "2111": true,
     "2118": true,
+}
+
+var razor_arcana_items_blocked =
+{
+    23096 : true,
+    23098 : true,
+    23099 : true,
+    23097 : true,
 }
 
 
@@ -83,6 +99,7 @@ var SETS_TEXTURE_FULL_ICON =
     basilisklord : "econ/sets/v2/test_of_the_basilisk_lord",
     cruelassemblage : "econ/sets/v2/cruel_assemblage",
     forlornmaze : "econ/sets/v2/menace_of_the_forlorn_maze",
+    razor_arcana : "econ/sets/v2/voidstorm_asylum",
 }
 
 var OTHER_BACKGROUND_HEROES =
@@ -934,8 +951,6 @@ var ITEM_CHANGED_INFORMATION =
     [
         // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
         ["custom_nevermore_shadowraze_close", "nevermore_shadowraze1_demon"],
-        ["custom_nevermore_shadowraze_medium", "nevermore_shadowraze2_demon"],
-        ["custom_nevermore_shadowraze_far", "nevermore_shadowraze3_demon"],
         ["custom_nevermore_necromastery", "nevermore_necromastery_demon"],
         ["custom_nevermore_dark_lord", "nevermore_dark_lord_demon"],
         ["custom_nevermore_requiem", "nevermore_requiem_demon"],
@@ -944,10 +959,7 @@ var ITEM_CHANGED_INFORMATION =
     [
         // НАЗВАНИЕ АБИЛКИ В ИГРЕ -- путь(если есть) + НАЗВАНИЕ ИКОНКИ В ФАЙЛАХ ДОТЫ   ( file://{images}/spellicons/huskar_life_break.png  вот так строится путь )
         ["custom_nevermore_shadowraze_close", "nevermore_shadowraze1"],
-        ["custom_nevermore_shadowraze_medium", "nevermore_shadowraze2"],
-        ["custom_nevermore_shadowraze_far", "nevermore_shadowraze3"],
         ["custom_nevermore_necromastery", "nevermore_necromastery"],
-        ["custom_nevermore_dark_lord", "nevermore_dark_lord"],
         ["custom_nevermore_requiem", "nevermore_requiem"],
     ],
 	"model" : [0, 6996],
@@ -7076,32 +7088,41 @@ function CreateItemShopItemHero(panel, info)
         } 
         else 
         {
-            if (player_data_local && player_data_local["points"] >= info["price"])
+            if (razor_arcana_items_blocked[info["item_id"]])
             {
-                BlockItemBuyButton.RemoveClass("BlockItemBuyButton_nomoney")
-                BlockItemBuyButton.AddClass("BlockItemBuyButton_money")
-                BlockItemBuyButtonLabel.RemoveClass("BlockItemBuyButtonLabel_nomoney")
-                BlockItemBuyButtonLabel.AddClass("BlockItemBuyButtonLabel")
-                BlockItem.AddClass("BlockItem_money")
-                BlockItem.RemoveClass("BlockItem_nomoney")
-                BlockItem.SetPanelEvent("onactivate", function() 
-                { 
-                    CreateBuyWindow(info["item_id"], info["price"], info["name"], 0, current_shop_hero_choose, null, info["OtherItemsBundle"])
-                })
-            } 
-            else 
-            {
-                BlockItem.RemoveClass("BlockItem_money")
-                BlockItem.AddClass("BlockItem_nomoney")
-                BlockItemBuyButton.AddClass("BlockItemBuyButton_nomoney")
-                BlockItemBuyButton.RemoveClass("BlockItemBuyButton_money")
-                BlockItemBuyButtonLabel.AddClass("BlockItemBuyButtonLabel_nomoney")
-                BlockItemBuyButtonLabel.RemoveClass("BlockItemBuyButtonLabel")
-                BlockItem.SetPanelEvent("onactivate", function() 
-                { 
-                    CreateBuyWindow(info["item_id"], info["price"], info["name"], 0, current_shop_hero_choose, true, info["OtherItemsBundle"])
-                })
+                // ДОБАВИТЬ СЮДА ТУПА СТИЛЬКА ЕСЛИ  НАДО
+                BlockItemBuyButton.style.opacity = "0"
             }
+            else
+            {
+                if (player_data_local && player_data_local["points"] >= info["price"])
+                {
+                    BlockItemBuyButton.RemoveClass("BlockItemBuyButton_nomoney")
+                    BlockItemBuyButton.AddClass("BlockItemBuyButton_money")
+                    BlockItemBuyButtonLabel.RemoveClass("BlockItemBuyButtonLabel_nomoney")
+                    BlockItemBuyButtonLabel.AddClass("BlockItemBuyButtonLabel")
+                    BlockItem.AddClass("BlockItem_money")
+                    BlockItem.RemoveClass("BlockItem_nomoney")
+                    BlockItem.SetPanelEvent("onactivate", function() 
+                    { 
+                        CreateBuyWindow(info["item_id"], info["price"], info["name"], 0, current_shop_hero_choose, null, info["OtherItemsBundle"])
+                    })
+                } 
+                else 
+                {
+                    BlockItem.RemoveClass("BlockItem_money")
+                    BlockItem.AddClass("BlockItem_nomoney")
+                    BlockItemBuyButton.AddClass("BlockItemBuyButton_nomoney")
+                    BlockItemBuyButton.RemoveClass("BlockItemBuyButton_money")
+                    BlockItemBuyButtonLabel.AddClass("BlockItemBuyButtonLabel_nomoney")
+                    BlockItemBuyButtonLabel.RemoveClass("BlockItemBuyButtonLabel")
+                    BlockItem.SetPanelEvent("onactivate", function() 
+                    { 
+                        CreateBuyWindow(info["item_id"], info["price"], info["name"], 0, current_shop_hero_choose, true, info["OtherItemsBundle"])
+                    })
+                }
+            }
+
             if (info["OtherItemsBundle"])
             {
                 var ButtonsItemStyles = $.CreatePanel("Panel", BlockItemImage, "ButtonsItemStyles");

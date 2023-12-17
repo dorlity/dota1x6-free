@@ -82,6 +82,8 @@ function modifier_centaur_stun:OnIntervalThink()
 			return
 		end
 
+      	self:GetParent():CheckCastMods(self:GetAbility())
+      	
 		parent:AddNewModifier(parent, ability, "modifier_centaur_stun_cd", {
 			duration = self.cd
 		})

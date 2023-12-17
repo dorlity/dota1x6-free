@@ -51,7 +51,6 @@ end
 
 function modifier_item_pipe_custom:GetModifierMagicalResistanceBonus()
 if self:GetParent():HasModifier("modifier_item_eternal_shroud_custom") then return end
-if self:GetParent():HasModifier("modifier_item_bloodthorn") then return end
 if self:GetParent():HasModifier("modifier_item_spell_breaker") then return end
 if self:GetParent():HasModifier("modifier_item_mage_slayer") then return end
 	if self:GetAbility() then
@@ -67,35 +66,39 @@ function modifier_item_pipe_custom:GetAuraSearchTeam() return DOTA_UNIT_TARGET_T
 function modifier_item_pipe_custom:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC end
 function modifier_item_pipe_custom:GetModifierAura() return "modifier_item_pipe_custom_aura" end
 
+function modifier_item_pipe_custom:GetAuraEntityReject(hEntity)
+return hEntity:IsRealHero() or not hEntity.owner or hEntity.owner ~= self:GetCaster()
+end 
+
 
 modifier_item_pipe_custom_aura = class({})
 
 function modifier_item_pipe_custom_aura:IsPurgable() return false end
 
 function modifier_item_pipe_custom_aura:OnCreated( params )
-	self.aura_health_regen = self:GetAbility():GetSpecialValueFor("aura_health_regen")
+	self.aura_armor = self:GetAbility():GetSpecialValueFor("aura_armor")
 	self.magic_resistance_aura = self:GetAbility():GetSpecialValueFor("magic_resistance_aura")
 end
 
 function modifier_item_pipe_custom_aura:DeclareFunctions()
 	return 
 	{
-		MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT,
+		MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
 		MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS,
 	}
 end
 
-function modifier_item_pipe_custom_aura:GetModifierConstantHealthRegen()
-	return self.aura_health_regen
+function modifier_item_pipe_custom_aura:GetModifierPhysicalArmorBonus()
+	return self.aura_armor
 end
 
+
+
 function modifier_item_pipe_custom_aura:GetModifierMagicalResistanceBonus()
-if self:GetParent():HasModifier("modifier_item_eternal_shroud_custom") then return end
-if self:GetParent():HasModifier("modifier_item_bloodthorn") then return end
-if self:GetParent():HasModifier("modifier_item_spell_breaker") then return end
-if self:GetParent():HasModifier("modifier_item_mage_slayer") then return end
 	return self.magic_resistance_aura
 end
+
+
 
 modifier_item_pipe_custom_active = class({})
 

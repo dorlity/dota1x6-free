@@ -213,7 +213,7 @@ if not RollPseudoRandomPercentage(chance, 842, self.caster) then return end
 self.proc = true
 
 if params.no_attack_cooldown then return end
-self:GetParent():StartGestureWithPlaybackRate(ACT_DOTA_ATTACK_EVENT, self:GetParent():GetAttackSpeed())
+self:GetParent():StartGestureWithPlaybackRate(ACT_DOTA_ATTACK_EVENT, self:GetParent():GetAttackSpeed(true))
 
 
 end

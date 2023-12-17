@@ -338,13 +338,13 @@ end
 
 local jump = self:GetParent():FindAbilityByName("pangolier_shield_crash_custom")
 
-if jump and jump:GetLevel() > 0 and self:GetParent():HasScepter() then 
+if jump and jump:GetLevel() > 0 then 
 
 	local cd = jump:GetCooldownTimeRemaining()
 
-	if cd > jump:GetSpecialValueFor("scepter_cd") then 
+	if cd > self:GetAbility():GetSpecialValueFor("crash_cd") then 
 		jump:EndCooldown()
-		jump:StartCooldown(jump:GetSpecialValueFor("scepter_cd"))
+		jump:StartCooldown(self:GetAbility():GetSpecialValueFor("crash_cd"))
 	end
 
 end

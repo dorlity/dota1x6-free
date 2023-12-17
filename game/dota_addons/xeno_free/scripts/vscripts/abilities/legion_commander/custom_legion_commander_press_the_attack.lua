@@ -79,6 +79,9 @@ function custom_legion_commander_press_the_attack:OnSpellStart()
 if not IsServer() then return end
 self.target = self:GetCaster()
 
+self.target:SetPoseParameter( "capture_progress_0_to_1", 1 )
+self.target:SetPoseParameter( "run_haste_turns", 1 )
+
 local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_legion_commander/legion_commander_press_halo.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
 ParticleManager:ReleaseParticleIndex(particle)
 
@@ -105,6 +108,8 @@ if self:GetCaster():HasModifier("modifier_legion_press_legendary") then
 end 
 
 self.target:AddNewModifier(self:GetCaster(), self, "modifier_press_the_attack_custom_buff", {duration = self.duration})
+
+self.target:AddNewModifier(self:GetCaster(), self, "modifier_legion_commander_press_the_attack", {duration = self.duration})
 
 if self:GetCaster():HasModifier("modifier_legion_press_lowhp") then 
 	self.target:AddNewModifier(self:GetCaster(), self, "modifier_press_the_attack_custom_unslow", {duration = self:GetCaster():GetTalentValue("modifier_legion_press_lowhp", "duration")})
@@ -235,11 +240,12 @@ function modifier_press_the_attack_custom_buff:PlayEffect()
     if self:GetCaster():HasModifier("modifier_legion_commander_wings_fallen_custom") then
         particle_name = "particles/econ/items/legion/legion_fallen/legion_fallen_press_owner.vpcf"
         self:GetCaster():AddActivityModifier("self")
-        self:GetCaster():AddActivityModifier("lotfl")
+        self:GetCaster():StartGesture(ACT_SCRIPT_CUSTOM_0)
     end
     if self:GetCaster():HasModifier("modifier_legion_commander_wings_fallen_custom_2") then
         particle_name = "particles/econ/items/legion/legion_fallen/legion_fallen_press_owner_alt.vpcf"
         self:GetCaster():AddActivityModifier("self")
+        self:GetCaster():StartGesture(ACT_SCRIPT_CUSTOM_0)
     end
 
     self.cast = ParticleManager:CreateParticle( particle_name, PATTACH_CUSTOMORIGIN, self:GetParent() )

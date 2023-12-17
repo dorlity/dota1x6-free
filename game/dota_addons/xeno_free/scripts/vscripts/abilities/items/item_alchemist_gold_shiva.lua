@@ -92,6 +92,13 @@ function modifier_alchemist_gold_shiva_custom_stats:IsPermanent() return true en
 function modifier_alchemist_gold_shiva_custom_stats:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 
 function modifier_alchemist_gold_shiva_custom_stats:OnCreated(keys)
+
+self.evasion = self:GetAbility():GetSpecialValueFor("evasion")
+self.damage = self:GetAbility():GetSpecialValueFor("bonus_damage")
+self.armor = self:GetAbility():GetSpecialValueFor("bonus_armor")
+self.stats = self:GetAbility():GetSpecialValueFor("bonus_stats")
+self.regen = self:GetAbility():GetSpecialValueFor("bonus_regen")
+
 if not IsServer() then end
 self.particle = ParticleManager:CreateParticle("particles/items2_fx/radiance_owner.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
 self:AddParticle(self.particle, false, false, -1, false, false)
@@ -106,25 +113,40 @@ return
 	MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
 	MODIFIER_PROPERTY_EVASION_CONSTANT,
 	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS, 
-	MODIFIER_PROPERTY_STATS_INTELLECT_BONUS
+	MODIFIER_PROPERTY_STATS_INTELLECT_BONUS,
+	MODIFIER_PROPERTY_STATS_AGILITY_BONUS,
+	MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
+	MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT,
 }
 end
 
 function modifier_alchemist_gold_shiva_custom_stats:GetModifierPreAttack_BonusDamage()
-	return self:GetAbility():GetSpecialValueFor("bonus_damage")
+	return self.damage
 end
 
 function modifier_alchemist_gold_shiva_custom_stats:GetModifierEvasion_Constant()
-	return self:GetAbility():GetSpecialValueFor("evasion")
+	return self.evasion
 end
 
 function modifier_alchemist_gold_shiva_custom_stats:GetModifierPhysicalArmorBonus()
-	return self:GetAbility():GetSpecialValueFor("bonus_armor")
+	return self.armor
 end
 
 
 function modifier_alchemist_gold_shiva_custom_stats:GetModifierBonusStats_Intellect()
-	return self:GetAbility():GetSpecialValueFor("bonus_int")
+	return self.stats
+end
+
+function modifier_alchemist_gold_shiva_custom_stats:GetModifierBonusStats_Agility()
+	return self.stats
+end
+
+function modifier_alchemist_gold_shiva_custom_stats:GetModifierBonusStats_Strength()
+	return self.stats
+end
+
+function modifier_alchemist_gold_shiva_custom_stats:GetModifierConstantHealthRegen()
+	return self.regen
 end
 
 

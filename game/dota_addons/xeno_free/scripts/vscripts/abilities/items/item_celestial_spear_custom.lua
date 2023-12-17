@@ -1,6 +1,6 @@
 LinkLuaModifier("modifier_item_celestial_spear_custom", "abilities/items/item_celestial_spear_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_item_celestial_spear_custom_armor", "abilities/items/item_celestial_spear_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_item_celestial_spear_custom_debuff", "abilities/items/item_celestial_spear_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_item_celestial_spear_custom_speed", "abilities/items/item_celestial_spear_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_item_celestial_spear_custom_leash", "abilities/items/item_celestial_spear_custom", LUA_MODIFIER_MOTION_NONE)
 
 
@@ -30,7 +30,6 @@ local projectile =
 
 local hProjectile = ProjectileManager:CreateTrackingProjectile( projectile )
 
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_item_celestial_spear_custom_speed", {duration = self:GetSpecialValueFor("duration")})
 self:GetCaster():EmitSound("Celestial_spear.Cast")
 
 end 
@@ -70,26 +69,31 @@ function modifier_item_celestial_spear_custom:IsPurgable() return false end
 function modifier_item_celestial_spear_custom:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_item_celestial_spear_custom:DeclareFunctions()
     local funcs = {
-        MODIFIER_PROPERTY_MANA_REGEN_CONSTANT,
-        MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
         MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, 
         MODIFIER_PROPERTY_STATS_AGILITY_BONUS,
         MODIFIER_PROPERTY_STATS_INTELLECT_BONUS,
-        MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT,
+        MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
+        MODIFIER_PROPERTY_PROJECTILE_NAME,
+        MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
+        MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE
     }
 
     return funcs
 end
 
 
-function modifier_item_celestial_spear_custom:GetModifierPhysicalArmorBonus()
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_armor") end
-end
 
-function modifier_item_celestial_spear_custom:GetModifierConstantManaRegen()
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_mana_regen_pct") end
-end
+function modifier_item_celestial_spear_custom:OnCreated()
 
+self.corruption_duration = self:GetAbility():GetSpecialValueFor("corruption_duration")
+end 
+
+
+function modifier_item_celestial_spear_custom:GetModifierAttackRangeBonus()
+if self:GetParent():IsRangedAttacker() then return end
+
+if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("attack_range") end
+end
 
 
 function modifier_item_celestial_spear_custom:GetModifierBonusStats_Strength()
@@ -107,8 +111,21 @@ function modifier_item_celestial_spear_custom:GetModifierBonusStats_Intellect()
 end
 
 
-function modifier_item_celestial_spear_custom:GetModifierMoveSpeedBonus_Constant()
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("self_movement_speed") end
+function modifier_item_celestial_spear_custom:GetModifierPreAttack_BonusDamage(keys)
+    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_damage") end
+end
+
+function modifier_item_celestial_spear_custom:GetModifierProjectileName()
+    return "particles/items_fx/desolator_projectile.vpcf"
+end
+
+function modifier_item_celestial_spear_custom:GetModifierProcAttack_Feedback(params)
+if params.attacker ~= self:GetParent() then return end
+local target = params.target
+
+target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_item_celestial_spear_custom_armor", {duration = self.corruption_duration})
+target:EmitSound("Item_Desolator.Target")
+
 end
 
 
@@ -123,12 +140,6 @@ function modifier_item_celestial_spear_custom_debuff:OnCreated(table)
 
 self.armor = self:GetAbility():GetSpecialValueFor("target_armor")
 
-self.move = 0 
-
-if self:GetCaster() ~= self:GetParent() then
-    self.move = self:GetAbility():GetSpecialValueFor("target_movement_speed")
-end 
-
 if not IsServer() then return end
 
 local nFXIndex = ParticleManager:CreateParticle( "particles/items3_fx/star_emblem_caster.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent() )
@@ -141,7 +152,6 @@ function modifier_item_celestial_spear_custom_debuff:DeclareFunctions()
 return
 {
     MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
-    MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
 }
 
 end
@@ -149,35 +159,29 @@ function modifier_item_celestial_spear_custom_debuff:GetModifierPhysicalArmorBon
 return self.armor
 end 
 
-function modifier_item_celestial_spear_custom_debuff:GetModifierMoveSpeedBonus_Percentage()
-return self.move
-end 
 
 
 
+modifier_item_celestial_spear_custom_armor   = class({})
 
-modifier_item_celestial_spear_custom_speed = class({})
-function modifier_item_celestial_spear_custom_speed:IsHidden() return false end
-function modifier_item_celestial_spear_custom_speed:IsPurgable() return false end
+function modifier_item_celestial_spear_custom_armor:IsPurgable()     return true end
+function modifier_item_celestial_spear_custom_armor:GetTexture() return "item_desolator" end
 
-function modifier_item_celestial_spear_custom_speed:OnCreated(table)
 
-self.attack = self:GetAbility():GetSpecialValueFor("self_attack_speed") 
+function modifier_item_celestial_spear_custom_armor:OnCreated()
+    self.corruption_armor = self:GetAbility():GetSpecialValueFor("corruption_armor")
 
 end
 
-function modifier_item_celestial_spear_custom_speed:DeclareFunctions()
-return
-{
-    MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-}
-
+function modifier_item_celestial_spear_custom_armor:DeclareFunctions()
+    return {
+        MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
+    }
 end
 
-function modifier_item_celestial_spear_custom_speed:GetModifierAttackSpeedBonus_Constant()
-return self.attack
-end 
-
+function modifier_item_celestial_spear_custom_armor:GetModifierPhysicalArmorBonus()
+    return self.corruption_armor
+end
 
 
 

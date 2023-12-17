@@ -13,7 +13,6 @@ return
         'models/items/huskar/the_ironbound_hunter_arms/the_ironbound_hunter_arms.vmdl',
         'models/items/huskar/huskar_pharaohs_guard_arms/huskar_pharaohs_guard_arms.vmdl',
         'models/items/huskar/frostivus2018_huskar_ice_age_hunter_arms/frostivus2018_huskar_ice_age_hunter_arms.vmdl',
-        'models/items/huskar/frostivus2018_huskar_ice_age_hunter_arms/frostivus2018_huskar_ice_age_hunter_arms.vmdl',
         'models/items/huskar/ti9_cache_huskar_baptism_of_melting_fire_arms/ti9_cache_huskar_baptism_of_melting_fire_arms.vmdl',
         'models/heroes/huskar/huskar_bracer.vmdl'
     },
@@ -30,7 +29,6 @@ return
         'models/items/huskar/obsidian_claw_of_the_jaguar_dagger/obsidian_claw_of_the_jaguar_dagger.vmdl',
         'models/items/huskar/huskar_pharaohs_guard_offhand_weapon/huskar_pharaohs_guard_offhand_weapon.vmdl',
         'models/items/huskar/sacred_bones_offhand_weapon/sacred_bones_offhand_weapon.vmdl',
-        'models/items/huskar/frostivus2018_huskar_ice_age_hunter_off_hand/frostivus2018_huskar_ice_age_hunter_off_hand.vmdl',
         'models/items/huskar/ti9_cache_huskar_baptism_of_melting_fire_off_hand/ti9_cache_huskar_baptism_of_melting_fire_off_hand.vmdl',
         'models/heroes/huskar/huskar_dagger.vmdl'
     },
@@ -48,7 +46,6 @@ return
         'models/items/huskar/obsidian_claw_of_the_jaguar_helmet/obsidian_claw_of_the_jaguar_helmet.vmdl',
         'models/items/huskar/huskar_pharaohs_guard_head/huskar_pharaohs_guard_head.vmdl',
         'models/items/huskar/searing_dominator/searing_dominator.vmdl',
-        'models/items/huskar/frostivus2018_huskar_ice_age_hunter_head/frostivus2018_huskar_ice_age_hunter_head.vmdl',
         'models/items/huskar/sacred_bones_helmet/sacred_bones_helmet.vmdl',
         'models/items/huskar/ti9_cache_huskar_baptism_of_melting_fire_head/ti9_cache_huskar_baptism_of_melting_fire_head.vmdl',
         'models/heroes/huskar/huskar_helmet.vmdl'
@@ -60,7 +57,6 @@ return
         'models/items/huskar/huskar_poseidon_shoulder/huskar_poseidon_shoulder.vmdl',
         'models/items/huskar/charred_berserker_shoulder/charred_berserker_shoulder.vmdl',
         'models/items/huskar/winter_hunting_shoulder/winter_hunting_shoulder.vmdl',
-        'models/items/huskar/frostivus2018_huskar_ice_age_hunter_shoulder/frostivus2018_huskar_ice_age_hunter_shoulder.vmdl',
         'models/items/huskar/ti9_cache_huskar_darkclaw_berserker_shoulder/ti9_cache_huskar_darkclaw_berserker_shoulder.vmdl',
         'models/items/huskar/obsidian_claw_of_the_jaguar_shoulder/obsidian_claw_of_the_jaguar_shoulder.vmdl',
         'models/items/huskar/huskar_pharaohs_guard_shoulder/huskar_pharaohs_guard_shoulder.vmdl',
@@ -80,7 +76,6 @@ return
         'models/items/huskar/sacred_bones_spear/sacred_bones_spear.vmdl',
         'models/items/huskar/frostivus2018_huskar_ice_age_hunter_weapon/frostivus2018_huskar_ice_age_hunter_weapon.vmdl',
         'models/items/huskar/burning_spear/burning_spear.vmdl',
-        'models/items/huskar/frostivus2018_huskar_ice_age_hunter_weapon/frostivus2018_huskar_ice_age_hunter_weapon.vmdl',
         'models/items/huskar/armor_of_reckless_vigor_weapon/armor_of_reckless_vigor_weapon.vmdl',
         'models/items/huskar/husk_2021_immortal/husk_2021_immortal.vmdl',
         'models/items/huskar/charred_berserker_weapon/charred_berserker_weapon.vmdl',
@@ -88,7 +83,6 @@ return
         'models/items/huskar/the_ironbound_hunter_weapon/the_ironbound_hunter_weapon.vmdl',
         'models/items/huskar/obsidian_blade_spear/obsidian_blade_spear.vmdl',
         'models/items/huskar/ti9_cache_huskar_baptism_of_melting_fire_weapon/ti9_cache_huskar_baptism_of_melting_fire_weapon.vmdl',
-        'models/items/huskar/husk_2021_immortal/husk_2021_immortal.vmdl',
         'models/heroes/huskar/huskar_spear.vmdl'
     },
 }

@@ -60,6 +60,7 @@ if not self:GetParent():IsSilenced() and self:GetParent():GetAttackTarget() ~= n
           self:GetParent():SpendMana(self:GetAbility():GetManaCost(1), self:GetAbility())
          self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_troll_raise_cd", {duration = self.cd})
 
+        self:GetParent():CheckCastMods(self:GetAbility())
     for i = 1,self.number do
          self:GetParent():EmitSound("n_creep_TrollWarlord.RaiseDead")
          local new_skelet = CreateUnitByName("npc_dota_dark_troll_warlord_skeleton_warrior", self:GetParent():GetAbsOrigin(), true, nil, nil, DOTA_TEAM_NEUTRALS)

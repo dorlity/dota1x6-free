@@ -11,29 +11,9 @@ axe_battle_hunger_custom = class({})
 
 axe_battle_hunger_custom.scepter_armor = 7
 
-axe_battle_hunger_custom.damage_inc = {1, 1.5, 2}
 
-axe_battle_hunger_custom.reduce_init = -2
-axe_battle_hunger_custom.reduce_attack = {-4, -6, -8}
-axe_battle_hunger_custom.reduce_magic = {-8, -12, -16}
 
-axe_battle_hunger_custom.heal_pct = 0.6
 
-axe_battle_hunger_custom.armor_reduce = 1
-axe_battle_hunger_custom.armor_duration = {6,10}
-
-axe_battle_hunger_custom.silence_timer = 5
-axe_battle_hunger_custom.silence_duration = 2
-axe_battle_hunger_custom.silence_cd = 1
-
-axe_battle_hunger_custom.legendary_duration = 3
-axe_battle_hunger_custom.legendary_radius = 350
-axe_battle_hunger_custom.legendary_multi = 1
-axe_battle_hunger_custom.legendary_timer = 3
-axe_battle_hunger_custom.legendary_max = 6
-
-axe_battle_hunger_custom.slow = {5,10,15}
-axe_battle_hunger_custom.movespeed_bonus = {10,15,20}
 
 
 
@@ -51,7 +31,7 @@ end
 
 function axe_battle_hunger_custom:GetCooldown(level)
 	if self:GetCaster():HasModifier("modifier_axe_hunger_6") then
-		return self.BaseClass.GetCooldown( self, level ) - self.silence_cd
+		return self.BaseClass.GetCooldown( self, level ) + self:GetCaster():GetTalentValue("modifier_axe_hunger_6", "cd")
 	end
     return self.BaseClass.GetCooldown( self, level )
 end
@@ -99,7 +79,7 @@ if not IsServer() then return end
 	
 
 	if target ~= self:GetCaster() and self:GetCaster():HasModifier("modifier_axe_hunger_legendary") then 
-		duration = self.legendary_duration
+		duration = self:GetCaster():GetTalentValue("modifier_axe_hunger_legendary", "duration")
 	end
 
 	target:AddNewModifier( self:GetCaster(), self, "modifier_axe_battle_hunger_custom_debuff", { duration = duration } )
@@ -121,10 +101,8 @@ function modifier_axe_battle_hunger_custom_buff:IsPurgable()
 end
 
 function modifier_axe_battle_hunger_custom_buff:IsHidden()
-return true -- not self:GetCaster():HasModifier("modifier_axe_hunger_3")
+return true 
 end
-
-
 
 
 function modifier_axe_battle_hunger_custom_buff:DeclareFunctions()
@@ -137,7 +115,7 @@ function modifier_axe_battle_hunger_custom_buff:DeclareFunctions()
 end
 
 function modifier_axe_battle_hunger_custom_buff:GetModifierMoveSpeedBonus_Percentage()
-	return self:GetAbility().movespeed_bonus[self:GetCaster():GetUpgradeStack("modifier_axe_hunger_3")]
+	return self.speed
 end
 
 
@@ -149,6 +127,15 @@ end
 return
 end
 
+
+function modifier_axe_battle_hunger_custom_buff:OnCreated()
+
+self.speed = self:GetCaster():GetTalentValue("modifier_axe_hunger_3", "speed")
+end 
+
+
+
+
 modifier_axe_battle_hunger_custom_debuff = class({})
 
 function modifier_axe_battle_hunger_custom_debuff:IsPurgable()
@@ -156,51 +143,55 @@ if not self:GetCaster() or self:GetCaster():IsNull() then return end
 	return not self:GetCaster():HasModifier("modifier_axe_hunger_legendary")
 end
 
+
 function modifier_axe_battle_hunger_custom_debuff:OnCreated( kv )
-	self.slow = self:GetAbility():GetSpecialValueFor( "slow" )
-	self.damage = self:GetAbility():GetSpecialValueFor( "damage_per_second" )
+self.slow = self:GetAbility():GetSpecialValueFor( "slow" ) + self:GetCaster():GetTalentValue("modifier_axe_hunger_3", "slow")
+self.damage = self:GetAbility():GetSpecialValueFor( "damage_per_second" )
 
-	local caster = self:GetCaster()
+self.self_heal = self:GetCaster():GetTalentValue("modifier_axe_hunger_5", "heal")/100
 
+self.silence_duration = self:GetCaster():GetTalentValue("modifier_axe_hunger_6", "silence")
+self.silence_timer = self:GetCaster():GetTalentValue("modifier_axe_hunger_6", "timer")
 
+self.legendary_multi = self:GetCaster():GetTalentValue("modifier_axe_hunger_legendary", "multi")
+self.legendary_timer = self:GetCaster():GetTalentValue("modifier_axe_hunger_legendary", "timer")
+self.legendary_max = self:GetCaster():GetTalentValue("modifier_axe_hunger_legendary", "max")
 
-	self.stone_angle = 85
-	self.facing = false
+local caster = self:GetCaster()
 
-
-	self:SetStackCount( 0 )
-
-
-	local caster = self:GetCaster()
-	if self:GetCaster().owner ~= nil then 
-		caster = self:GetCaster().owner
-	end
-
-	if caster:HasModifier("modifier_axe_hunger_3") then 
-		self.slow = self.slow - self:GetAbility().slow[self:GetCaster():GetUpgradeStack("modifier_axe_hunger_3")]
-	end
+self.stone_angle = 85
+self.facing = false
 
 
+self:SetStackCount( 0 )
 
-	self.armor = -1*self:GetAbility().scepter_armor
-	if not IsServer() then return end
-
-	local name = "modifier_axe_battle_hunger_custom_creep"
-	if self:GetParent():IsHero() then 
-		name = "modifier_axe_battle_hunger_custom_hero"
-	end
+self.reduce_attack = self:GetCaster():GetTalentValue("modifier_axe_hunger_2", "reduce_attack")
+self.reduce_magic = self:GetCaster():GetTalentValue("modifier_axe_hunger_2", "reduce_magic")
 
 
+local caster = self:GetCaster()
+if self:GetCaster().owner ~= nil then 
+	caster = self:GetCaster().owner
+end
 
 
-	self.count = -1
-	self.legendary_count = -1
-	self.legendary_damage = 0
+self.armor = -1*self:GetAbility().scepter_armor
+if not IsServer() then return end
 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), name, {})
+local name = "modifier_axe_battle_hunger_custom_creep"
+if self:GetParent():IsHero() then 
+	name = "modifier_axe_battle_hunger_custom_hero"
+end
 
-	self:StartIntervalThink( 1 )
-	self:OnIntervalThink()
+
+self.count = -1
+self.legendary_count = -1
+self.legendary_damage = 0
+
+self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), name, {})
+
+self:StartIntervalThink( 1 )
+self:OnIntervalThink()
 end
 
 
@@ -244,7 +235,7 @@ function modifier_axe_battle_hunger_custom_debuff:DeclareFunctions()
 		MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
 		MODIFIER_EVENT_ON_TAKEDAMAGE,
 		MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
-        MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE
+    MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE
 	}
 
 	return funcs
@@ -260,7 +251,7 @@ if self:GetCaster() == self:GetParent() then return end
 
 local bonus = 0
 if self:GetCaster():HasModifier("modifier_axe_hunger_2") then 
-	bonus = self:GetAbility().reduce_attack[self:GetCaster():GetUpgradeStack("modifier_axe_hunger_2")]
+	bonus = self.reduce_attack
 end
 
 return bonus
@@ -273,7 +264,7 @@ if self:GetCaster() == self:GetParent() then return end
 
 local bonus = 0
 if self:GetCaster():HasModifier("modifier_axe_hunger_2") then 
-	bonus = self:GetAbility().reduce_magic[self:GetCaster():GetUpgradeStack("modifier_axe_hunger_2")]
+	bonus = self.reduce_magic
 end
 
 return bonus
@@ -328,80 +319,74 @@ if not self:GetCaster() or self:GetCaster():IsNull() then
 	return
 end
 
-	if self:GetCaster():GetQuest() == "Axe.Quest_6" and self:GetParent():IsRealHero() and self:GetParent() ~= self:GetCaster() and not self:GetCaster():QuestCompleted() then 
-		self:GetCaster():UpdateQuest(1)
+if self:GetCaster():GetQuest() == "Axe.Quest_6" and self:GetParent():IsRealHero() and self:GetParent() ~= self:GetCaster() and not self:GetCaster():QuestCompleted() then 
+	self:GetCaster():UpdateQuest(1)
+end
+
+if self:GetCaster():HasModifier("modifier_axe_hunger_6") and self:GetCaster() ~= self:GetParent() then 
+	self.count = self.count + 1
+end
+
+if self.count >= self.silence_timer then 
+	self.count = 0
+	self:GetParent():EmitSound("Sf.Raze_Silence")
+	self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_axe_battle_hunger_custom_str_silence", {duration = (1 - self:GetParent():GetStatusResistance())*self.silence_duration})
+end
+
+if self:GetCaster():HasModifier("modifier_axe_hunger_legendary") and self:GetCaster() ~= self:GetParent() then 
+	self.legendary_count = self.legendary_count + 1
+end
+
+if self.legendary_count >= self.legendary_timer and self:GetStackCount() < self.legendary_max then 
+	local effect_target = ParticleManager:CreateParticle( "particles/units/heroes/hero_doom_bringer/doom_infernal_blade_impact.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
+	ParticleManager:SetParticleControl( effect_target, 0, self:GetParent():GetAbsOrigin() )
+	ParticleManager:ReleaseParticleIndex( effect_target )
+	self:GetParent():EmitSound("Axe.Hunger_damage")
+
+	self.legendary_count = 0
+	
+	self:SetStackCount(self:GetStackCount() + self.legendary_multi)
+	SendOverheadEventMessage(self:GetParent(), 2, self:GetParent(), self:GetStackCount(), nil)
+end
+
+
+if self:GetCaster():HasModifier("modifier_axe_hunger_4") and self:GetParent() ~= self:GetCaster() then 
+
+	local duration = self:GetCaster():GetTalentValue("modifier_axe_hunger_4", "duration")
+
+	if self:GetParent():IsCreep() then 
+		--duration = duration/2
 	end
 
-	if self:GetCaster():HasModifier("modifier_axe_hunger_6") and self:GetCaster() ~= self:GetParent() then 
-		self.count = self.count + 1
-	end
+	self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_axe_battle_hunger_custom_str_buff", {duration = duration})
+	self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_axe_battle_hunger_custom_str_buff_counter", {duration = duration})
 
-	if self.count >= self:GetAbility().silence_timer then 
-		self.count = 0
-		self:GetParent():EmitSound("Sf.Raze_Silence")
-		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_axe_battle_hunger_custom_str_silence", {duration = (1 - self:GetParent():GetStatusResistance())*self:GetAbility().silence_duration})
-	end
+	self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_axe_battle_hunger_custom_str_buff", {duration = duration})
+	self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_axe_battle_hunger_custom_str_buff_counter", {duration = duration})
+	
 
-	if self:GetCaster():HasModifier("modifier_axe_hunger_legendary") and self:GetCaster() ~= self:GetParent() then 
-		self.legendary_count = self.legendary_count + 1
-	end
+end
 
-	if self.legendary_count >= self:GetAbility().legendary_timer and self:GetStackCount() < self:GetAbility().legendary_max then 
+local damage = self.damage	
+local armor_k = self:GetAbility():GetSpecialValueFor("armor_multiplier") + self:GetStackCount()
 
+if self:GetCaster():HasModifier("modifier_axe_hunger_1") then 
+		armor_k = armor_k + self:GetCaster():GetTalentValue("modifier_axe_hunger_1", "damage")
+end
 
-    	local effect_target = ParticleManager:CreateParticle( "particles/units/heroes/hero_doom_bringer/doom_infernal_blade_impact.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-    	ParticleManager:SetParticleControl( effect_target, 0, self:GetParent():GetAbsOrigin() )
-    	ParticleManager:ReleaseParticleIndex( effect_target )
-		self:GetParent():EmitSound("Axe.Hunger_damage")
+damage = damage + armor_k*self:GetCaster():GetPhysicalArmorValue(false)
 
-		self.legendary_count = 0
-		
-		self:SetStackCount(self:GetStackCount() + self:GetAbility().legendary_multi)
-		SendOverheadEventMessage(self:GetParent(), 2, self:GetParent(), self:GetStackCount(), nil)
-	end
+if self:GetCaster() == self:GetParent() then 
 
+	local heal = damage*self.self_heal
 
-	if self:GetCaster():HasModifier("modifier_axe_hunger_4") and self:GetParent() ~= self:GetCaster() then 
+	self:GetCaster():GenericHeal(heal, self:GetAbility())
+else 
 
-		local duration = self:GetAbility().armor_duration[self:GetCaster():GetUpgradeStack("modifier_axe_hunger_4")]
+	local damageTable = { victim = self:GetParent(), attacker = self:GetCaster(), damage = damage, damage_type = DAMAGE_TYPE_PHYSICAL, ability = self:GetAbility(), damage_flags = DOTA_DAMAGE_FLAG_BYPASSES_BLOCK, }
 
-		if self:GetParent():IsCreep() then 
-			--duration = duration/2
-		end
-
-		self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_axe_battle_hunger_custom_str_buff", {duration = duration})
-		self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_axe_battle_hunger_custom_str_buff_counter", {duration = duration})
- 
-		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_axe_battle_hunger_custom_str_buff", {duration = duration})
-		self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_axe_battle_hunger_custom_str_buff_counter", {duration = duration})
-		
-
-	end
-
-	local damage = self.damage	
-	local armor_k = self:GetAbility():GetSpecialValueFor("armor_multiplier") + self:GetStackCount()
-
-	if self:GetCaster():HasModifier("modifier_axe_hunger_1") then 
- 		armor_k = armor_k + self:GetAbility().damage_inc[self:GetCaster():GetUpgradeStack("modifier_axe_hunger_1")]
-	end
-
-	damage = damage + armor_k*self:GetCaster():GetPhysicalArmorValue(false)
-
-	if self:GetCaster() == self:GetParent() then 
-
-		local heal = damage*self:GetAbility().heal_pct
-
-		self:GetCaster():Heal(heal, self:GetCaster())
-		SendOverheadEventMessage(self:GetCaster(), 10, self:GetCaster(), heal, nil)
-
-		local particle = ParticleManager:CreateParticle( "particles/generic_gameplay/generic_lifesteal.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-		ParticleManager:ReleaseParticleIndex( particle )
-	else 
-
-		local damageTable = { victim = self:GetParent(), attacker = self:GetCaster(), damage = damage, damage_type = DAMAGE_TYPE_PHYSICAL, ability = self:GetAbility(), damage_flags = DOTA_DAMAGE_FLAG_BYPASSES_BLOCK, }
-
-		ApplyDamage( damageTable )
-	end
+	ApplyDamage( damageTable )
+end
 
 	
 end
@@ -480,6 +465,9 @@ return
 end
 
 function modifier_axe_battle_hunger_custom_str_buff_counter:OnCreated(table)
+
+self.armor = self:GetCaster():GetTalentValue("modifier_axe_hunger_4", "armor")
+
 if not IsServer() then return end
 self:SetStackCount(1) 
 self.RemoveForDuel = true 
@@ -492,7 +480,7 @@ if not IsServer() then return end
 end
 
 function modifier_axe_battle_hunger_custom_str_buff_counter:GetModifierPhysicalArmorBonus()
-local bonus = self:GetAbility().armor_reduce
+local bonus = self.armor 
 
 if self:GetCaster() ~= self:GetParent() then 
 	bonus = -1*bonus
@@ -522,6 +510,10 @@ function modifier_axe_battle_hunger_custom_tracker:IsHidden() return true end
 function modifier_axe_battle_hunger_custom_tracker:IsPurgable() return false end
 function modifier_axe_battle_hunger_custom_tracker:OnCreated(table)
 if not IsServer() then return end
+
+self.legendary_radius = self:GetCaster():GetTalentValue("modifier_axe_hunger_legendary", "radius", true)
+self.legendary_duration = self:GetCaster():GetTalentValue("modifier_axe_hunger_legendary", "duration", true)
+
 self:StartIntervalThink(0.2)
 end
 
@@ -530,15 +522,15 @@ if not IsServer() then return end
 if not self:GetParent():HasModifier("modifier_axe_hunger_legendary") then return end
 if not self:GetParent():IsAlive() then return end
 
-local units = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetCaster():GetAbsOrigin(), nil, self:GetAbility().legendary_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD, 0, false )
+local units = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetCaster():GetAbsOrigin(), nil, self.legendary_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD, 0, false )
 
 
 for _,unit in pairs(units) do
 	if unit:HasModifier("modifier_axe_battle_hunger_custom_debuff") then 
-		unit:FindModifierByName("modifier_axe_battle_hunger_custom_debuff"):SetDuration(self:GetAbility().legendary_duration, true)
+		unit:FindModifierByName("modifier_axe_battle_hunger_custom_debuff"):SetDuration(self.legendary_duration, true)
 	
 		if self:GetParent():HasModifier("modifier_axe_battle_hunger_custom_buff") then 
-			self:GetParent():FindModifierByName("modifier_axe_battle_hunger_custom_buff"):SetDuration(self:GetAbility().legendary_duration, true)
+			self:GetParent():FindModifierByName("modifier_axe_battle_hunger_custom_buff"):SetDuration(self.legendary_duration, true)
 		end
 	end
 end

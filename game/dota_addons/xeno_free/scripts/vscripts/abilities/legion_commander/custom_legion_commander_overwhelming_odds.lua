@@ -183,8 +183,9 @@ end
 
 local particle_cast = "particles/units/heroes/hero_legion_commander/legion_commander_odds.vpcf"
 local sound_cast = "Hero_LegionCommander.Overwhelming.Location"
+
 if self:GetCaster():HasModifier("modifier_legion_commander_ti7_head_custom") then
-    particle_cast = "particles/econ/items/legion/legion_overwhelming_odds_ti7/legion_commander_odds_ti7.vpcf"
+    particle_cast = "particles/legion_custom_odds/legion_custom_odds.vpcf"
     sound_cast = "Hero_LegionCommander.Overwhelming.Location.ti7"
 end
 
@@ -199,6 +200,7 @@ ParticleManager:SetParticleControl( particle, 3, self.point )
 ParticleManager:SetParticleControl( particle, 4, Vector( self.radius, self.radius, self.radius ) )
 ParticleManager:SetParticleControl( particle, 6, self.point )
 ParticleManager:ReleaseParticleIndex( particle )
+
 
 
 local flag = DOTA_UNIT_TARGET_FLAG_NONE

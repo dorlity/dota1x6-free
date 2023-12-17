@@ -232,12 +232,7 @@ else
     self:SetStackCount(1)
 end
 
-self.str  = 0
-local bonus = self:GetCaster():GetTalentValue("modifier_skeleton_reincarnation_3", "str")*self:GetStackCount()/100
-
-self.str  = self:GetParent():GetStrength() * bonus
-
-self:GetParent():CalculateStatBonus(true)
+self.PercentStr = self:GetCaster():GetTalentValue("modifier_skeleton_reincarnation_3", "str")*self:GetStackCount()/100
 
 if not self:GetParent():HasModifier("modifier_skeleton_king_reincarnation_custom_str") then 
     self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_skeleton_king_reincarnation_custom_str", {})
@@ -259,9 +254,7 @@ function modifier_skeleton_king_reincarnation_custom:DeclareFunctions()
 end
 
 
-function modifier_skeleton_king_reincarnation_custom:GetModifierBonusStats_Strength()
-return self.str
-end
+
 
 function modifier_skeleton_king_reincarnation_custom:GetModifierPhysicalArmorBonus()
 if not self:GetParent():HasModifier("modifier_skeleton_reincarnation_3") then return end 

@@ -356,7 +356,7 @@ function modifier_phantom_assassin_phantom_strike_passive:DeclareFunctions()
 return
 {
   MODIFIER_EVENT_ON_ATTACK_LANDED,
-  MODIFIER_EVENT_ON_TAKEDAMAGE
+  --MODIFIER_EVENT_ON_TAKEDAMAGE
 }
 end
 

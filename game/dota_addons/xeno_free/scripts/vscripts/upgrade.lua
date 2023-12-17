@@ -877,7 +877,7 @@ skills = {
 		{"modifier_antimage_break_6",1,"purple",1,"purple_skill","manabreak",25,1,"manabreak_6",0},
 	
 		{"modifier_antimage_blink_4",1,"purple",2,"purple_skill","antimage_blink",25,2,"antimage_blink_6",1},
-		{"modifier_antimage_blink_5",1,"purple",1,"purple_skill","antimage_blink",25,2,"antimage_blink_5",1},
+		{"modifier_antimage_blink_5",1,"purple",1,"purple_skill","antimage_blink",25,2,"antimage_blink_5",0},
 		{"modifier_antimage_blink_6",1,"purple",1,"purple_skill","antimage_blink",25,2,"antimage_blink_4",1},
 
 		{"modifier_antimage_counter_4",1,"purple",2,"purple_skill","counterspell",25,3,"counterspell_4",1},
@@ -2306,23 +2306,33 @@ return {table_patrol[r_1][1], table_patrol[r_2][1]}
 end
 
 
-function upgrade:GetPatrol2(no_gadget)
+function upgrade:GetPatrol2(gadget_status)
+
+local gadget = 0
+if gadget_status then 
+	gadget = gadget_status
+end 
 
 local table_patrol = skills['patrol_2']
 
 local r_1 = RandomInt(1, #table_patrol)
 
-repeat r_1 = RandomInt(1, #table_patrol)
-until (table_patrol[r_1][1] ~= "modifier_patrol_reward_razor" or not no_gadget)
+if gadget == 2 then 
+	repeat r_1 = RandomInt(1, #table_patrol)
+	until (table_patrol[r_1][1] == "modifier_patrol_reward_razor")
+else 
+	repeat r_1 = RandomInt(1, #table_patrol)
+	until (table_patrol[r_1][1] ~= "modifier_patrol_reward_razor" or gadget ~= 1)
+end 
 
 local r_2 = r_1
 local r_3 = r_1
 
 repeat r_2 = RandomInt(1, #table_patrol)
-until (table_patrol[r_2][1] ~= "modifier_patrol_reward_razor" or not no_gadget) and r_2 ~= r_1
+until (table_patrol[r_2][1] ~= "modifier_patrol_reward_razor" or gadget ~= 1) and r_2 ~= r_1
 
 repeat r_3 = RandomInt(1, #table_patrol)
-until (table_patrol[r_3][1] ~= "modifier_patrol_reward_razor" or not no_gadget) and (r_3 ~= r_1) and (r_3 ~= r_2)
+until (table_patrol[r_3][1] ~= "modifier_patrol_reward_razor" or gadget ~= 1) and (r_3 ~= r_1) and (r_3 ~= r_2)
 
 return {table_patrol[r_1][1], table_patrol[r_2][1], table_patrol[r_3][1]}
 end
@@ -2474,7 +2484,7 @@ function upgrade:find_legendary(player)
 end
 
 
-function upgrade:init_upgrade(player, rarity, can_refresh, after_legen, prev_choise, instant, no_gadget)
+function upgrade:init_upgrade(player, rarity, can_refresh, after_legen, prev_choise, instant, gadget_status)
 if not test then
 	players[player:GetTeamNumber()].IsChoosing = true
 	players[player:GetTeamNumber()]:AddNewModifier(players[player:GetTeamNumber()], nil, "modifier_end_choise", {duration = 120})
@@ -2489,7 +2499,7 @@ local legendary_info = false
 if rarity == 11 then 
 	players[player:GetTeamNumber()].choise = upgrade:GetPatrol1()
 elseif rarity == 12 then 
-	players[player:GetTeamNumber()].choise = upgrade:GetPatrol2(no_gadget)
+	players[player:GetTeamNumber()].choise = upgrade:GetPatrol2(gadget_status)
 elseif rarity == 13 then 
 	players[player:GetTeamNumber()].choise = upgrade:GetAlchemistItems(player)
 elseif rarity == 10 then

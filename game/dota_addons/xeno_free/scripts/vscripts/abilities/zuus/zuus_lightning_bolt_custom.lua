@@ -268,9 +268,14 @@ if target ~= nil and target:GetTeam() ~= caster:GetTeam() then
 		damage = damage*(1 +  legendary_mod:GetStackCount()*caster:FindAbilityByName("zuus_stormkeeper_custom"):GetSpecialValueFor("damage_inc")/100)
 	end
 
+	local creeps_k = 1
+	if target:IsCreep() then 
+		creeps_k = self:GetSpecialValueFor("creeps_damage")
+	end 
+
 	
 	target:AddNewModifier(caster, self, "modifier_stunned", {duration = stun_duration * (1 - target:GetStatusResistance())})
-	ApplyDamage({attacker = caster, ability = self, damage_type = self:GetAbilityDamageType(), damage = damage, victim = target})
+	ApplyDamage({attacker = caster, ability = self, damage_type = self:GetAbilityDamageType(), damage = damage*creeps_k, victim = target})
 
 	if self:GetCaster():HasModifier("modifier_zuus_bolt_2") then 
 		target:AddNewModifier(self:GetCaster(), self, "modifier_zuus_lightning_bolt_custom_magic", {duration = self.resist_duration})

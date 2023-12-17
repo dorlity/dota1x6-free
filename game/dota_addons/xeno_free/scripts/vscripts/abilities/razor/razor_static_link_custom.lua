@@ -554,7 +554,7 @@ self.caster = self:GetCaster()
 self.ability = self:GetAbility()
 
 self.attack_count = 0
-self.attack_max = 1/self.caster:GetAttacksPerSecond()
+self.attack_max = 1/self.caster:GetAttacksPerSecond(true)
 
 self.interval = 0.03
 self:OnIntervalThink()
@@ -572,7 +572,7 @@ if not self.target or self.target:IsNull() or not self.target:IsAlive()  then
 end 
 
 self.attack_count = self.attack_count + self.interval
-self.attack_max = 1/self.caster:GetAttacksPerSecond()
+self.attack_max = 1/self.caster:GetAttacksPerSecond(true)
 
 
 local dir = (self.target:GetAbsOrigin() - self.caster:GetAbsOrigin())

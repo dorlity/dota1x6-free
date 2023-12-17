@@ -73,13 +73,7 @@ end
 
 
 
-function mars_spear_custom:OnAbilityPhaseStart()
-	local mars_bulwark_custom = self:GetCaster():FindAbilityByName("mars_bulwark_custom")
-	if mars_bulwark_custom and mars_bulwark_custom:GetToggleState() then
-		mars_bulwark_custom:ToggleAbility()
-	end
-	return true
-end
+
 
 function mars_spear_custom:GetCastRange(vLocation, hTarget)
 if IsServer() then return end

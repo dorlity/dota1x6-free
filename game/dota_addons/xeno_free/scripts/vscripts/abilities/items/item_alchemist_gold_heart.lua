@@ -28,7 +28,6 @@ function modifier_item_alchemist_gold_heart:IsHidden()	return true end
 function modifier_item_alchemist_gold_heart:OnCreated()
 	self.bonus_damage = self:GetAbility():GetSpecialValueFor("bonus_damage")
 	self.bonus_strength = self:GetAbility():GetSpecialValueFor("bonus_strength")
-	self.bonus_health = self:GetAbility():GetSpecialValueFor("bonus_health")
 	self.health_regen_pct = self:GetAbility():GetSpecialValueFor("health_regen_pct")
 	self.active_regen = self:GetAbility():GetSpecialValueFor("active_regen")
 end
@@ -36,7 +35,6 @@ end
 function modifier_item_alchemist_gold_heart:DeclareFunctions()
 	local funcs = {
 		MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
-		MODIFIER_PROPERTY_HEALTH_BONUS,
 		MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE,
 		MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE
 	}
@@ -57,9 +55,7 @@ function modifier_item_alchemist_gold_heart:GetModifierPreAttack_BonusDamage()
 end
 
 
-function modifier_item_alchemist_gold_heart:GetModifierHealthBonus()
-	return self.bonus_health
-end
+
 
 function modifier_item_alchemist_gold_heart:GetModifierHealthRegenPercentage()
 

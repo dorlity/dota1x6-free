@@ -144,12 +144,13 @@ end
 
 
 local particle = "particles/units/heroes/hero_razor/razor_plasmafield.vpcf"
+
 if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
     particle = "particles/razor/razor_arcana_plasma.vpcf"
 elseif self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
-    particle = "particles/razor/razor_arcana_plasma.vpcf"
+    particle = "particles/razor/razor_arcana_plasma_green.vpcf"
 elseif self:GetCaster():HasModifier("modifier_razor_weapon_last_custom") then
-    particle = "particles/econ/items/razor/razor_ti6/razor_plasmafield_ti6.vpcf"
+    particle = "particles/razor/razor_plasmafield_ti6.vpcf"
 end
 
 
@@ -161,7 +162,7 @@ end
 --[[
 
 particles/razor/razor_arcana_plasma_green.vpcf
-particles/razor/razor_plasmafield_ti6.vpcf
+
 ]]
 if self.is_thinker == true then 
 	self.speed = self.speed*1.5

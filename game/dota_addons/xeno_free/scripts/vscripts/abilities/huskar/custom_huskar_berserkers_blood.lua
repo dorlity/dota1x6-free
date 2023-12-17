@@ -178,14 +178,13 @@ if self:GetParent():GetHealthPercent() <= self:GetAbility().lowhp_health
     self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_huskar_berserkers_blood_str", {})
 end
 
-self.str  = 0
 
 if self:GetParent():HasModifier("modifier_custom_huskar_berserkers_blood_str") then 
-  self.str   = self:GetParent():GetStrength() * self:GetParent():FindModifierByName("modifier_custom_huskar_berserkers_blood_str"):GetStackCount()*self:GetAbility().lowhp_str[self:GetParent():GetUpgradeStack("modifier_huskar_passive_active")]
+  self.PercentStr  =  self:GetParent():FindModifierByName("modifier_custom_huskar_berserkers_blood_str"):GetStackCount()*self:GetAbility().lowhp_str[self:GetParent():GetUpgradeStack("modifier_huskar_passive_active")]
+else 
+  self.PercentStr = 0
+end 
 
-end
-
-self:GetParent():CalculateStatBonus(true)
 end
 
 
@@ -208,16 +207,12 @@ function modifier_custom_huskar_berserkers_blood:DeclareFunctions()
     MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE,
     MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
     MODIFIER_PROPERTY_MIN_HEALTH,
-  MODIFIER_PROPERTY_STATS_STRENGTH_BONUS
   }
 
   return funcs
 end
 
 
-function modifier_custom_huskar_berserkers_blood:GetModifierBonusStats_Strength()
-return self.str
-end
 
 
 function modifier_custom_huskar_berserkers_blood:GetMinHealth()

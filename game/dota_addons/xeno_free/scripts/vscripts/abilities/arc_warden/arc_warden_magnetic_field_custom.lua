@@ -166,7 +166,7 @@ end
 
 if self:GetCaster():HasModifier("modifier_arc_warden_field_4") and name ~= nil then 
 	self:GetCaster():RemoveModifierByName("modifier_arc_warden_magnetic_field_custom_damage_attack")
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_arc_warden_magnetic_field_custom_damage_stack", {name = name})
+	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_arc_warden_magnetic_field_custom_damage_stack", { name = name})
 end 
 
 
@@ -1125,12 +1125,10 @@ function modifier_arc_warden_magnetic_field_custom_damage_stack:OnCreated(table)
 if not IsServer() then return end 
 
 self.interval = FrameTime()
-self.time = self:GetAbility():GetSpecialValueFor("duration")
+self.time = self:GetCaster():GetTalentValue("modifier_arc_warden_field_4", "delay")
 self.count = 0
 
-if self:GetCaster():HasModifier("modifier_arc_warden_field_3") then 
-	self.time = self.time + self:GetCaster():GetTalentValue("modifier_arc_warden_field_3", "duration")
-end 
+
 
 self.index = self:GetParent():entindex()
 self.event = "arc_field_change"

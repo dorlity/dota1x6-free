@@ -618,13 +618,16 @@ if self:GetCaster():GetTeamNumber() ~= self:GetParent():GetTeamNumber() then
 	self.str_percentage = self.str_percentage*-1
 end
 
-self.str   = self:GetParent():GetStrength() * self.str_percentage * 0.01
+self.PercentStr  = self.str_percentage * 0.01
 
 end
 
 function modifier_primal_beast_pulverize_custom_str_count:OnRefresh(table)
 if not IsServer() then return end
 self:IncrementStackCount()
+
+
+self.PercentStr  = self.str_percentage * 0.01 * self:GetStackCount()
 end
 
 
@@ -633,7 +636,6 @@ end
 function modifier_primal_beast_pulverize_custom_str_count:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
 	MODIFIER_PROPERTY_TOOLTIP,
 	MODIFIER_PROPERTY_MODEL_SCALE
 }
@@ -644,12 +646,7 @@ function modifier_primal_beast_pulverize_custom_str_count:OnTooltip()
 return self:GetAbility().str_change[self:GetCaster():GetUpgradeStack("modifier_primal_beast_pulverize_4")]*self:GetStackCount()
 end
 
-function modifier_primal_beast_pulverize_custom_str_count:GetModifierBonusStats_Strength()
-if self.str then
-	return self.str*self:GetStackCount()
-end
 
-end
 
 
 function modifier_primal_beast_pulverize_custom_str_count:GetModifierModelScale()

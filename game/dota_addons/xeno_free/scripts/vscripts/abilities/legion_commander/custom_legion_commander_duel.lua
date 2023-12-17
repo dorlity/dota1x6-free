@@ -298,7 +298,7 @@ if self:GetCaster() == self:GetParent() then
     self:GetCaster():EmitSound("Hero_LegionCommander.Duel")
     local particle_name = "particles/legion_duel_ring.vpcf"
     if self:GetCaster():HasModifier("modifier_legion_commander_arcana_custom") then
-        particle_name = "particles/econ/items/legion/legion_weapon_voth_domosh/legion_duel_ring_arcana.vpcf"
+        particle_name = "particles/legion_custom_odds/legion_duel_ring_arcana.vpcf"
     end
     self.particle = ParticleManager:CreateParticle(particle_name, PATTACH_WORLDORIGIN, nil)
 	

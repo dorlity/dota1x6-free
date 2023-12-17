@@ -50,6 +50,7 @@ if not self:GetParent():IsSilenced() and self:GetParent():GetAttackTarget() ~= n
             if self.target ~= nil and self.target:IsAlive() and not self.target:IsMagicImmune() and self:GetParent():IsAlive()
             and self:GetParent():GetMana() >= self:GetAbility():GetManaCost(1)  then 
 
+            self:GetParent():CheckCastMods(self:GetAbility())
               self:GetParent():SpendMana(self:GetAbility():GetManaCost(1), self:GetAbility())
             
             self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_satyr_purge_cd", {duration = self.cd})

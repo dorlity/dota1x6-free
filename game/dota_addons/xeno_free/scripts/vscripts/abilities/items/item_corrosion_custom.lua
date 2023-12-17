@@ -18,18 +18,17 @@ for _,mod in pairs(self:GetCaster():FindAllModifiers()) do
 end
 
 local info = {
-                 Target = self:GetCursorTarget(),
-                 Source = self:GetCaster(),
-                 Ability = self, 
-                 EffectName = "particles/corrosion_custom.vpcf",
-                 iMoveSpeed = 900,
-                 bReplaceExisting = false,                         
-                 bProvidesVision = true,                           
-                 iVisionRadius = 30,        
-                 iVisionTeamNumber = self:GetCaster():GetTeamNumber()      
-                  }
-              ProjectileManager:CreateTrackingProjectile(info)
-
+   Target = self:GetCursorTarget(),
+   Source = self:GetCaster(),
+   Ability = self, 
+   EffectName = "particles/corrosion_custom.vpcf",
+   iMoveSpeed = 900,
+   bReplaceExisting = false,                         
+   bProvidesVision = true,                           
+   iVisionRadius = 30,        
+   iVisionTeamNumber = self:GetCaster():GetTeamNumber()      
+    }
+ProjectileManager:CreateTrackingProjectile(info)
 
 
 end
@@ -112,6 +111,7 @@ self.armor = self:GetAbility():GetSpecialValueFor("armor")
 self.damage = self:GetAbility():GetSpecialValueFor("damage")
 self.damageTable = { attacker = self:GetCaster(), victim = self:GetParent(), damage = self:GetAbility():GetSpecialValueFor("damage"), damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility() }
 
+self.heal_reduction = self:GetAbility():GetSpecialValueFor("heal_reduction")
 
 if not IsServer() then return end
 self:StartIntervalThink(1)
@@ -137,7 +137,9 @@ function modifier_item_corrosion_custom_passive_slow:DeclareFunctions()
 return
 {
   MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-  MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS
+  MODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET,
+  MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE,
+  MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE,
 }
 end
 
@@ -146,10 +148,18 @@ function modifier_item_corrosion_custom_passive_slow:GetModifierMoveSpeedBonus_P
 return self.slow
 end
 
-
-function modifier_item_corrosion_custom_passive_slow:GetModifierPhysicalArmorBonus()
-return self.armor
+function modifier_item_corrosion_custom_passive_slow:GetModifierLifestealRegenAmplify_Percentage()
+  return self.heal_reduction
 end
+
+function modifier_item_corrosion_custom_passive_slow:GetModifierHealAmplify_PercentageTarget()
+  return self.heal_reduction
+end
+
+function modifier_item_corrosion_custom_passive_slow:GetModifierHPRegenAmplify_Percentage()
+  return self.heal_reduction
+end
+
 
 
 
@@ -163,25 +173,30 @@ function modifier_item_corrosion_custom:IsPurgable() return false end
 function modifier_item_corrosion_custom:DeclareFunctions()
 return
 {
-  MODIFIER_PROPERTY_HEALTH_BONUS,
+  MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
+  MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
   MODIFIER_EVENT_ON_ATTACK_LANDED
 }
 end
 
-function modifier_item_corrosion_custom:GetModifierHealthBonus()
+function modifier_item_corrosion_custom:GetModifierPhysicalArmorBonus()
 if self:GetAbility() then 
-  return self:GetAbility():GetSpecialValueFor("health_bonus")
+  return self:GetAbility():GetSpecialValueFor("armor")
 end
 
 end
+function modifier_item_corrosion_custom:GetModifierAttackSpeedBonus_Constant()
+if self:GetAbility() then 
+  return self:GetAbility():GetSpecialValueFor("attack_speed")
+end
 
+end
 
 function modifier_item_corrosion_custom:OnAttackLanded(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.attacker then return end
 if not params.target:IsHero() and not params.target:IsCreep() then return end
 if params.target:IsMagicImmune() then return end
-if self:GetParent():HasModifier("modifier_item_blight_stone") then return end
 if self:GetParent():HasModifier("modifier_item_orb_of_venom") then return end
 
 params.target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_item_corrosion_custom_passive_slow", {duration = self:GetAbility():GetSpecialValueFor("duration_passive")})

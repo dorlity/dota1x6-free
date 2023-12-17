@@ -2579,126 +2579,181 @@ global_values =
     {
         ["modifier_axe_call_1"] =
         {
-            
+            armor = {-3, -4, -5},
+            damage_return = {20, 30, 40},
+            duration = 5
         },
         ["modifier_axe_call_2"] =
         {
-            
+            heal = {6, 9, 12},
+            duration = 4
         },
         ["modifier_axe_call_3"] =
         {
-            
+            speed = {40, 60, 80}
         },
         ["modifier_axe_call_4"] =
         {
-            
+            damage = {12, 20},
+            heal = 50,
         },
         ["modifier_axe_call_5"] =
         {
-            
+            cast = -0.3,
+            damage_reduce = -35,
+            status = 35,
         },
         ["modifier_axe_call_6"] =
         {
-            
+            duration = 1.5,
+            cd = 15
         },
         ["modifier_axe_call_legendary"] =
         {
-            
+            speed = 40,
+            duration = 2.5,
         },
 
 
 
         ["modifier_axe_hunger_1"] =
         {
-            
+            damage = {1, 1.5, 2}
         },
         ["modifier_axe_hunger_2"] =
         {
-            
+            reduce_attack = {-4, -6, -8},
+            reduce_magic = {-8, -12, -16}
         },
         ["modifier_axe_hunger_3"] =
         {
-            
+            slow = {-5, -10, -15},
+            speed = {10, 15, 20},
         },
         ["modifier_axe_hunger_4"] =
         {
-            
+            armor = 1,
+            duration = {6, 10},  
         },
         ["modifier_axe_hunger_5"] =
         {
-            
+            heal = 60,
         },
         ["modifier_axe_hunger_6"] =
         {
-            
+            cd = -1,
+            silence = 2,
+            timer = 5,
         },
         ["modifier_axe_hunger_legendary"] =
         {
-            
+            duration = 3,
+            timer = 3,
+            multi = 1,
+            radius = 350,
+            max = 6,
         },
 
 
 
         ["modifier_axe_helix_1"] =
         {
-            
+            damage = {30, 45, 60},  
         },
         ["modifier_axe_helix_2"] =
         {
-            
+            range = {40, 60, 80},
+            slow = {-15, -20, -25},
+            duration = 3
         },
         ["modifier_axe_helix_3"] =
         {
-            
+            duration = 4,
+            max = 2,
+            armor = {3, 4, 5},
+            move = {10, 15, 20}
         },
         ["modifier_axe_helix_4"] =
         {
-            
+            count = {6, 4},
+            max = 4,
+            duration = 5,
+            speed = {12, 20}
         },
         ["modifier_axe_helix_5"] =
         {
-            
+            heal = 2,
+            health = 40,
+            count = -1,
+            bonus = 1,
         },
         ["modifier_axe_helix_6"] =
         {
-            
+            radius = 120,  
+            pull_duration = 0.2,
+            cd = 12,
+            root = 2,
         },
         ["modifier_axe_helix_legendary"] =
         {
-            
+            cd = 5,
+            interval = 0.3,
+            count = 4,
+            timer = 4,
+            max = 3,
+            status = 70,
         },
 
 
 
         ["modifier_axe_culling_1"] =
         {
-            
+            str_pct = {4, 6, 8},
+            str = {1, 1.5, 2}
         },
         ["modifier_axe_culling_2"] =
         {
-            
+            damage = {1.5, 2, 2.5},
+            heal = 100  
         },
         ["modifier_axe_culling_3"] =
         {
-            
+            damage = {80, 120, 160},
+            range = {80, 120, 160},
         },
         ["modifier_axe_culling_4"] =
         {
-            
+            damage = {1, 1.5},
+            heal_reduce = {-2.5, -4},
+            max = 10,
+            duration = 6,
         },
         ["modifier_axe_culling_5"] =
         {
-            
+            cast = -0.15,
+            radius = 600,
+            status = 35,
+            health = 50,
+            cd = -8
         },
         ["modifier_axe_culling_6"] =
         {
+            duration = 5,
+            damage = 3,
+            heal = 30,
+            heal_creeps = 0.25,
             max = 8,
             is_perma = 1,
             mod_name = "modifier_axe_culling_blade_custom_kills"
         },
         ["modifier_axe_culling_legendary"] =
         {
-            
+            damage = 10,
+            cd = 15,
+            cd_low = 4,
+            health = 50,
+            speed = 50,
+            duration = 5,
         },
     },
     npc_dota_hero_alchemist =
@@ -2722,26 +2777,26 @@ global_values =
         ["modifier_alchemist_spray_4"] =
         {
             armor = {-0.8, -1.2},
-            damage = {12, 20},
+            damage = {10, 15},
             interval = 0.5
         },
         ["modifier_alchemist_spray_5"] =
         {
             max = 2,
-            duration = 1.5,
+            duration = 1,
         },
         ["modifier_alchemist_spray_6"] =
         {
             radius = 100,
             timer = 4,
-            silence = 2.5
+            silence = 2
         },
         ["modifier_alchemist_spray_legendary"] =
         {
             delay = 1.6,
-            slow = -30,
+            slow = -25,
             damage_reduce = -20,
-            damage = 100
+            damage = 70
         },
 
 
@@ -2783,7 +2838,7 @@ global_values =
         },
         ["modifier_alchemist_unstable_legendary"] =
         {
-            damage = 50,
+            damage = 40,
             shield = 50,
             duration = 6,
             damage_creeps = 0.33
@@ -2798,7 +2853,7 @@ global_values =
         },
         ["modifier_alchemist_greed_2"] =
         {
-            max = 4,
+            max = 5,
             damage = {80, 120, 160},
             gold = {20, 30, 40},
             creeps = 4
@@ -2853,16 +2908,16 @@ global_values =
         },
         ["modifier_alchemist_rage_3"] =
         {
-            chance = 15,
+            chance = 20,
             armor = {3, 5, 7},
             duration = 4
         },
         ["modifier_alchemist_rage_4"] =
         {
             heal = {8, 12},
-            speed = {10, 15},
+            speed = {8, 12},
             max = 8,
-            duration = 2
+            duration = 4
         },
         ["modifier_alchemist_rage_5"] =
         {
@@ -2882,7 +2937,7 @@ global_values =
             bva = -0.2,
             status = 30,
             bonus_range = 50,
-            cd = 4
+            cd = 2
         },
 
     },
@@ -3051,15 +3106,15 @@ global_values =
         ["modifier_antimage_break_6"] =
         {
             mana = 50,
-            root = 1.5,
+            break_duration = 3,
             heal_reduce = -30,
-            cd = 10,
+            cd = 15,
             duration = 2
         },
         ["modifier_antimage_break_7"] =
         {
             cd = 15,
-            duration = 6,
+            duration = 5,
             damage = 130,
             slow = -40, 
             slow_duration = 1
@@ -3069,11 +3124,16 @@ global_values =
 
         ["modifier_antimage_blink_1"] =
         {
-            
+            speed = {30, 45, 60},
+            slow = {-10, -15, -20},
+            duration = 3,
+            slow_duration = 2,
         },
         ["modifier_antimage_blink_2"] =
         {
-            
+            duration = 3,
+            speed = {10, 15, 20},
+            armor = {6, 9, 12},
         },
         ["modifier_antimage_blink_3"] =
         {
@@ -3081,14 +3141,16 @@ global_values =
         },
         ["modifier_antimage_blink_4"] =
         {
-            damage = {25, 40},
+            damage = {30, 50},
             duration = 3,
             heal = {0.8, 1.2}
-
         },
         ["modifier_antimage_blink_5"] =
         {
-            
+            duration = 6,
+            radius = 265,
+            speed = -80,
+            status = 20
         },
         ["modifier_antimage_blink_6"] =
         {
@@ -3100,72 +3162,108 @@ global_values =
         {
             cd = 45,
             mana = 30,
-            damage = 70,
+            damage = 50,
             distance = 350,
-            duration = 0.2
+            duration = 0.2,
+            turn_slow = -50,
+            turn_slow_duration = 2,
         },
 
 
 
         ["modifier_antimage_counter_1"] =
         {
-            
+            damage = {2, 3, 4},
+            radius = 500,
+            interval = 0.5
         },
         ["modifier_antimage_counter_2"] =
         {
-            
+            slow = {-15, -20, -25},
+            duration = 4,
+            attack = {-30, -45, -60},
+            radius = 600
         },
         ["modifier_antimage_counter_3"] =
         {
-            
+            heal = {6, 9, 12},
+            duration = 4,
+          --  bonus = 3
         },
         ["modifier_antimage_counter_4"] =
         {
-            
+            radius = 350,
+            damage = {12, 20},
+            duration = 3,
+            heal = 50
         },
         ["modifier_antimage_counter_5"] =
         {
-            
+            cd = -1,
+            duration = 0.3,
+            status = 50
         },
         ["modifier_antimage_counter_6"] =
         {
-            
+            health = 30,
+            damage_reduce = -40,
         },
         ["modifier_antimage_counter_7"] =
         {
-            
+            duration = 2.3,
+            shield = 10,
+            radius = 500,
+            stun = 1.2,
+            damage = 50,
+            damage_duration = 4
         },
 
 
 
         ["modifier_antimage_void_1"] =
         {
-            
+            damage = {8, 12, 16},
+            cd = {-4, -6, -8},
         },
         ["modifier_antimage_void_2"] =
         {
-            cd = {-8, -12, -16},
-            range = {100, 150, 200}
+            mana = {1, 1.5, 2},
+            interval = 0.5,
+            radius = 600,
+            str = {-6, -9, -12},
         },
         ["modifier_antimage_void_3"] =
         {
-            
+            speed = {10, 15, 20},
+            max = 4,
+            duration = 8,
+            radius = 600,
         },
         ["modifier_antimage_void_4"] =
         {
-            
+            damage = {2.5, 4},
+            mana = {5, 8},
+            max = 8,
+            duration = 10
         },
         ["modifier_antimage_void_5"] =
         {
-            
+            radius = 600,
+            stun = 0.8,
+            heal = 15,
+            cd = 8
         },
         ["modifier_antimage_void_6"] =
         {
-            
+            range = 200,
+            duration = 3,
+            slow = -80
         },
         ["modifier_antimage_void_7"] =
         {
-            
+            cd = 16,
+            duration = 5,
+            mana = 15,
         },
     },
     npc_dota_hero_primal_beast =
@@ -5422,8 +5520,8 @@ global_values =
 
         ["modifier_arc_warden_field_1"] =
         {  
-            damage = {30, 40, 50},
-            speed = {30, 40, 50}
+            damage = {30, 45, 60},
+            speed = {30, 45, 60}
         },
         ["modifier_arc_warden_field_2"] =
         {
@@ -5437,10 +5535,11 @@ global_values =
         },
         ["modifier_arc_warden_field_4"] =
         {
-            damage_stack = {20, 30},
+            damage_stack = {25, 40},
             radius = 300,
             stack_creeps = 0.33,
             duration = 10,
+            delay = 5,
         },
         ["modifier_arc_warden_field_5"] =
         {
@@ -5502,7 +5601,7 @@ global_values =
         ["modifier_arc_warden_spark_7"] =
         {
             max = 6,
-            cd = 21,
+            cd = 18,
             cast = 2
         },
 
@@ -5516,15 +5615,14 @@ global_values =
         },
         ["modifier_arc_warden_double_2"] =
         {
-            slow = {-10, -15, -20},
-            mana = {20, 30, 40},
-            interval = 1,
-            duration = 2
+            range = {50, 75, 100},
+            duration = 3,
+            damage = {30, 45, 60}
         },
         ["modifier_arc_warden_double_3"] =
         {
             cd = {-4, -6, -8},
-            strength = {8, 12, 16}
+            strength = {6, 9, 12}
         },
         ["modifier_arc_warden_double_4"] =
         {
@@ -5555,8 +5653,8 @@ global_values =
         {
             cast = 2,
             cd = 20,
-            damage = 2,
-            max = 12,
+            damage = 2.5,
+            max = 10,
             cdr = 30,
             range = 900
         },

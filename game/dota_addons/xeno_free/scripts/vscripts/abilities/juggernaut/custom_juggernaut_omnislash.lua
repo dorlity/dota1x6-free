@@ -355,7 +355,7 @@ self.bonusrate = omni:GetSpecialValueFor("bonus_rate")
 
 Timers:CreateTimer(FrameTime(),function()
   self:slash(true)
-  self.rate = (1/self:GetParent():GetAttacksPerSecond())/self.bonusrate
+  self.rate = (1/self:GetParent():GetAttacksPerSecond(true))/self.bonusrate
   self:StartIntervalThink(self.rate)    
 end)
 
@@ -389,7 +389,7 @@ end
 
 function modifier_custom_juggernaut_omnislash:OnIntervalThink()
 
-self.rate = (1/self:GetParent():GetAttacksPerSecond())/(self.bonusrate)
+self.rate = (1/self:GetParent():GetAttacksPerSecond(true))/(self.bonusrate)
 self:slash()
 self:StartIntervalThink(self.rate)
 end

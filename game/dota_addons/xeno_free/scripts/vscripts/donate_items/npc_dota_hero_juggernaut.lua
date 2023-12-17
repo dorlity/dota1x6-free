@@ -789,7 +789,6 @@ return
         ["HeroModel"] = "models/heroes/juggernaut/juggernaut_arcana.vmdl",
         ["ArcanaAnim"] = "arcana",
         ["MaterialGroup"] = "0",
-        ["MaterialGroupItem"] = "0",
         ["ItemModel"] = "models/items/juggernaut/arcana/juggernaut_arcana_mask.vmdl",
         ["ParticlesItems"] = {
             {
@@ -839,7 +838,6 @@ return
         ["HeroModel"] = "models/heroes/juggernaut/juggernaut_arcana.vmdl",
         ["ArcanaAnim"] = "arcana",
         ["MaterialGroup"] = "1",
-        ["MaterialGroupItem"] = "1",
         ["ItemModel"] = "models/items/juggernaut/arcana/juggernaut_arcana_mask.vmdl",
         ["ParticlesItems"] = {
             {

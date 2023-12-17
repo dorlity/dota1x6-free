@@ -46,7 +46,7 @@ function modifier_item_guardian_greaves_custom:DeclareFunctions()
 	return {
 		MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
 		MODIFIER_PROPERTY_MOVESPEED_BONUS_UNIQUE,
-		MODIFIER_PROPERTY_MANA_BONUS,
+		MODIFIER_PROPERTY_MANA_REGEN_CONSTANT,
 		MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT,
 		MODIFIER_EVENT_ON_TAKEDAMAGE,
 		MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE
@@ -70,8 +70,8 @@ function modifier_item_guardian_greaves_custom:GetModifierMoveSpeedBonus_Special
 	return self:GetAbility():GetSpecialValueFor("bonus_movement")
 end
 
-function modifier_item_guardian_greaves_custom:GetModifierManaBonus()
-	return self:GetAbility():GetSpecialValueFor("bonus_mana")
+function modifier_item_guardian_greaves_custom:GetModifierConstantManaRegen()
+	return self:GetAbility():GetSpecialValueFor("bonus_mana_regen")
 end
 
 function modifier_item_guardian_greaves_custom:GetModifierPhysicalArmorBonus()

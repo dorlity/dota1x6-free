@@ -53,6 +53,7 @@ self.target = self:GetParent():GetAttackTarget()
      self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_neutral_cast", {})
 
             self.timer = Timers:CreateTimer(0.7,function()
+                self:GetParent():CheckCastMods(self:GetAbility())
                 self.timer = nil
                 ParticleManager:DestroyParticle(self.sign, true)
                 self:GetParent():RemoveModifierByName("modifier_neutral_cast")

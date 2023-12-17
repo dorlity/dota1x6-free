@@ -34,4 +34,4 @@ end
 
 function modifier_duel_damage_final:GetModifierTotalDamageOutgoing_Percentage()
     return 8
-endnd
+end

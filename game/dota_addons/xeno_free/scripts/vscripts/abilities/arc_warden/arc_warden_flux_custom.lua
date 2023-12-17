@@ -275,6 +275,8 @@ function modifier_arc_warden_flux_custom:DestroyOnExpire() return false end
 
 function modifier_arc_warden_flux_custom:OnIntervalThink()
 if not IsServer() then return end 
+if not self:GetCaster() or self:GetCaster():IsNull() then self:Destroy() return end
+
 
 self:SetStackCount(0)
 
@@ -336,6 +338,7 @@ end
 
 function modifier_arc_warden_flux_custom:OnDestroy()
 if not IsServer() then return end 
+if not self:GetCaster() or self:GetCaster():IsNull() then return end
 
 local mod = self:GetParent():FindModifierByName("modifier_arc_warden_flux_custom_count")
 
@@ -580,6 +583,7 @@ self.think_interval = 0.2
 
 self.count = 0
 
+self.caster = self:GetCaster()
 
 self:StartIntervalThink(self.think_interval)
 end 
@@ -615,9 +619,9 @@ end
 
 function modifier_arc_warden_flux_custom_count:OnIntervalThink()
 if not IsServer() then return end 
+if not self.caster or self.caster:IsNull() then self:Destroy() return end
 
-
-local hero = self:GetCaster()
+local hero = self.caster
 
 if hero:IsTempestDouble() and hero.owner then 
 	hero = hero.owner
@@ -636,8 +640,8 @@ else
 end
 
 
-if self:GetCaster():HasModifier("modifier_arc_warden_flux_2") then 
-	self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_arc_warden_flux_custom_incoming",{duration = self:GetCaster():GetTalentValue("modifier_arc_warden_flux_2", "duration")})
+if self.caster:HasModifier("modifier_arc_warden_flux_2") then 
+	self.caster:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_arc_warden_flux_custom_incoming",{duration = self.caster:GetTalentValue("modifier_arc_warden_flux_2", "duration")})
 end 
 
 end

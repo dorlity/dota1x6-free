@@ -18,68 +18,63 @@ function antimage_mana_overload_custom:OnHeroCalculateStatBonus()
 end
 
 function antimage_mana_overload_custom:OnSpellStart()
-	if not IsServer() then return end
+if not IsServer() then return end
 
-	local point = self:GetCursorPosition()
+local point = self:GetCursorPosition()
 
-	local duration = self:GetSpecialValueFor("duration")
+local duration = self:GetSpecialValueFor("duration")
 
-	local outgoing_damage = self:GetSpecialValueFor("outgoing_damage")
+local outgoing_damage = self:GetSpecialValueFor("outgoing_damage")
 
-	local incoming_damage = self:GetSpecialValueFor("incoming_damage")	
+local incoming_damage = self:GetSpecialValueFor("incoming_damage")	
 
-	local illusion = CreateIllusions( self:GetCaster(), self:GetCaster(), {duration=duration,outgoing_damage=outgoing_damage,incoming_damage=incoming_damage}, 1, 0, false, false )  
+local illusion = CreateIllusions( self:GetCaster(), self:GetCaster(), {duration=duration,outgoing_damage=outgoing_damage,incoming_damage=incoming_damage}, 1, 0, false, false )  
 
-	for k, v in pairs(illusion) do
-		v.illusion_counter_spell = true
-		--v:SetControllableByPlayer(-1, true)
-		v.owner = self:GetCaster()
-		v.am_scepter = true
-		
-		v:AddNewModifier(self:GetCaster(), self, "modifier_antimage_mana_overload_custom_illusion", {})
+for k, v in pairs(illusion) do
+	v.illusion_counter_spell = true
+	--v:SetControllableByPlayer(-1, true)
+	v.owner = self:GetCaster()
+	v.am_scepter = true
+	
+	v:AddNewModifier(self:GetCaster(), self, "modifier_antimage_mana_overload_custom_illusion", {})
 
-		local direction = (point - v:GetAbsOrigin())
-		direction.z = 0
-		direction = direction:Normalized()
-
-
-	    for _,mod in pairs(self:GetCaster():FindAllModifiers()) do
-	       if mod.StackOnIllusion ~= nil and mod.StackOnIllusion == true then
-	          v:UpgradeIllusion(mod:GetName(), mod:GetStackCount() )
-	       end
-	    end
-	      
-		local particle_start = ParticleManager:CreateParticle( "particles/units/heroes/hero_antimage/antimage_blink_start.vpcf", PATTACH_WORLDORIGIN, nil )
-		ParticleManager:SetParticleControl( particle_start, 0, v:GetAbsOrigin() )
-		ParticleManager:SetParticleControlForward( particle_start, 0, direction:Normalized() )
-		ParticleManager:ReleaseParticleIndex( particle_start )
-		EmitSoundOnLocationWithCaster( v:GetAbsOrigin(), "Hero_Antimage.Blink_out", v )
-
-    	FindClearSpaceForUnit(v, point, true)
-
-    	v:StartGesture(ACT_DOTA_CAST_ABILITY_2)
-
-		local particle_end = ParticleManager:CreateParticle( "particles/units/heroes/hero_antimage/antimage_blink_end.vpcf", PATTACH_ABSORIGIN_FOLLOW, v )
-		ParticleManager:SetParticleControl( particle_end, 0, v:GetOrigin() )
-		ParticleManager:SetParticleControlForward( particle_end, 0, direction:Normalized() )
-		ParticleManager:ReleaseParticleIndex( particle_end )
-		EmitSoundOnLocationWithCaster( v:GetOrigin(), "Hero_Antimage.Blink_in", v )
+	local direction = (point - v:GetAbsOrigin())
+	direction.z = 0
+	direction = direction:Normalized()
 
 
-
-		if v:HasModifier("modifier_antimage_counter_4") then 
-		    local ability = v:FindAbilityByName("antimage_counterspell_custom")
-		    if ability and ability:GetLevel() > 0 then 
-		       ability:ProcDamage()
-		    end
-		end
-
-
-
-    	Timers:CreateTimer(0.1, function()
-    		v:MoveToPositionAggressive(point)
-    	end)
+    for _,mod in pairs(self:GetCaster():FindAllModifiers()) do
+       if mod.StackOnIllusion ~= nil and mod.StackOnIllusion == true then
+          v:UpgradeIllusion(mod:GetName(), mod:GetStackCount() )
+       end
     end
+      
+	local particle_start = ParticleManager:CreateParticle( "particles/units/heroes/hero_antimage/antimage_blink_start.vpcf", PATTACH_WORLDORIGIN, nil )
+	ParticleManager:SetParticleControl( particle_start, 0, v:GetAbsOrigin() )
+	ParticleManager:SetParticleControlForward( particle_start, 0, direction:Normalized() )
+	ParticleManager:ReleaseParticleIndex( particle_start )
+	EmitSoundOnLocationWithCaster( v:GetAbsOrigin(), "Hero_Antimage.Blink_out", v )
+
+	FindClearSpaceForUnit(v, point, true)
+
+	v:StartGesture(ACT_DOTA_CAST_ABILITY_2)
+
+	local particle_end = ParticleManager:CreateParticle( "particles/units/heroes/hero_antimage/antimage_blink_end.vpcf", PATTACH_ABSORIGIN_FOLLOW, v )
+	ParticleManager:SetParticleControl( particle_end, 0, v:GetOrigin() )
+	ParticleManager:SetParticleControlForward( particle_end, 0, direction:Normalized() )
+	ParticleManager:ReleaseParticleIndex( particle_end )
+	EmitSoundOnLocationWithCaster( v:GetOrigin(), "Hero_Antimage.Blink_in", v )
+
+	if self:GetCaster():HasModifier("modifier_antimage_blink_2") or self:GetCaster():HasModifier("modifier_antimage_blink_1") then 
+		v:AddNewModifier(self:GetCaster(), self, "modifier_antimage_blink_custom_evasion", {duration = self:GetCaster():GetTalentValue("modifier_antimage_blink_1", "duration", true)})
+	end
+
+
+	Timers:CreateTimer(0.1, function()
+		v:MoveToPositionAggressive(point)
+	end)
+end
+
 end
 
 

@@ -62,6 +62,7 @@ if not self:GetParent():IsSilenced() and self:GetParent():GetAttackTarget() ~= n
       self:GetParent():SpendMana(self:GetAbility():GetManaCost(1), self:GetAbility())
       self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_harpy_strike_cd", {duration = self.cd})
 
+      self:GetParent():CheckCastMods(self:GetAbility())
       if self.target:TriggerSpellAbsorb( self:GetAbility() ) then return end
 
       self.point = self.target:GetAbsOrigin()  

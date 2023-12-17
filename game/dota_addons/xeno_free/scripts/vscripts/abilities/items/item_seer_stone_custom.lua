@@ -35,11 +35,19 @@ function modifier_item_seer_stone_custom:DeclareFunctions()
         MODIFIER_PROPERTY_BONUS_NIGHT_VISION,
         MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
         MODIFIER_PROPERTY_CAST_RANGE_BONUS_STACKING,
+        MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE
 
     }
 
     return funcs
 end
+
+
+function modifier_item_seer_stone_custom:GetModifierPercentageCooldown()
+if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("cdr_bonus") end
+end
+   
+
 
 
 function modifier_item_seer_stone_custom:GetModifierConstantManaRegen()

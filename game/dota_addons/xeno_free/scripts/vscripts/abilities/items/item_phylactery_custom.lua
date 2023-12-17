@@ -23,7 +23,6 @@ function modifier_item_phylactery_custom:DeclareFunctions()
 		MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
 		MODIFIER_PROPERTY_STATS_AGILITY_BONUS,
 		MODIFIER_PROPERTY_STATS_INTELLECT_BONUS,
-		MODIFIER_PROPERTY_MANA_REGEN_CONSTANT
 	}
 end
 
@@ -72,11 +71,7 @@ function modifier_item_phylactery_custom:GetModifierHealthBonus()
 	end
 end
 
-function modifier_item_phylactery_custom:GetModifierConstantManaRegen()
-	if self:GetAbility() then
-		return self:GetAbility():GetSpecialValueFor("mana_regen")
-	end
-end
+
 
 
 function modifier_item_phylactery_custom:GetModifierBonusStats_Strength()

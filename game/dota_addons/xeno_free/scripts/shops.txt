@@ -81,7 +81,9 @@
 		"item"		"item_voodoo_mask"
 		//"item"		"item_shadow_amulet"	
 		"item"		"item_ghost"
-		"item"		"item_blink"		
+		"item"		"item_blink"	
+		"item"		"item_ring_of_health"
+		"item"		"item_void_stone"	
 	}	
 	
 	// Level 1 - Green Recipes
@@ -116,7 +118,7 @@
 		"item"		"item_headdress"
 		"item"		"item_urn_of_shadows_custom"
 		"item"		"item_tranquil_boots_custom"
-		"item"		"item_medallion_of_courage_custom"
+		//"item"		"item_medallion_of_courage_custom"
 		"item"		"item_pavise_custom"
 		"item"		"item_arcane_boots_custom"
 		"item"		"item_ancient_janggo_custom"
@@ -126,14 +128,14 @@
 		"item"		"item_spirit_vessel_custom"			
 		"item"		"item_pipe_custom"			
 		"item"		"item_guardian_greaves_custom"
-		//"item"		"item_soul_keeper_custom"
 		"item"		"item_boots_of_bearing_custom"
+		"item"		"item_devastator"
 	}
 				
 	"magics"			
 	{
 		"item"		"item_veil_of_discord"		
-		"item"		"item_veil_of_corruption"
+		//"item"		"item_veil_of_corruption"
 		"item"		"item_glimmer_cape"
 		"item"		"item_force_staff"
 		"item"		"item_aether_lens"
@@ -149,6 +151,7 @@
 		"item"		"item_sheepstick"
 		"item"		"item_gungir"
 		"item"		"item_wind_waker"
+		"item"		"item_meteor_hammer_custom"
 	}
 		
 	// Level 3 - Purple Recipes	
@@ -178,7 +181,7 @@
 		"item"		"item_armlet"
 		"item"		"item_basher"	
 		"item"		"item_shadow_blade_custom"
- 		"item"		"item_desolator"	
+ 		"item"		"item_desolator_custom"	
 		"item"		"item_bfury_custom"
 		"item"		"item_ethereal_blade"
 		"item"		"item_nullifier"	
@@ -190,11 +193,11 @@
 		"item"		"item_rapier"
 		"item"		"item_bloodthorn"
 		"item"		"item_abyssal_blade"	
-		"item"		"item_meteor_hammer_custom"
-		"item"		"item_witchfury"
+		//"item"		"item_witchfury"
 		"item"		"item_revenants_brooch_custom"
 		"item"		"item_disperser"
 		"item"		"item_celestial_spear_custom"
+		"item"		"item_angels_demise_custom"	
 	}
 		
 	// Level 4 - Orange / Orb / Artifacts				
@@ -210,7 +213,7 @@
  		"item"		"item_cleansing_blade"		
  		"item"		"item_mage_slayer"	
 		"item"		"item_phylactery_custom"
-		"item"		"item_manaflare_lens_custom"
+	//	"item"		"item_manaflare_lens_custom"
  		"item"		"item_heavens_halberd"
  		"item"		"item_kaya_and_sange"
  		"item"		"item_sange_and_yasha"
@@ -241,7 +244,6 @@
 		"item"		"item_gloves"
 		"item"		"item_chainmail"
 		"item"		"item_cloak"
-		"item"		"item_void_stone"
 		"item"		"item_helm_of_iron_will"
 		"item"		"item_energy_booster"
 		"item"		"item_vitality_booster"
@@ -251,9 +253,9 @@
 	}
 	
 	"secretshop"
-	{				
-		"item"		"item_ring_of_health"
-		"item"		"item_void_stone"
+	{		
+		"item"		"item_ring_of_tarrasque"
+		"item"		"item_tiara_of_selemene"		
 		"item"		"item_cornucopia"
 		"item"		"item_energy_booster"
 		"item"		"item_vitality_booster"
@@ -365,7 +367,6 @@
 		"item"		"item_bracer"
 
 		"item"		"item_soul_ring"
-		"item"		"item_ring_of_health"
 
 		"item"		"item_blades_of_attack"
 

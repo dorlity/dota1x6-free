@@ -174,7 +174,7 @@ if self:GetParent():HasModifier("modifier_skeleton_king_mortal_strike_cd") and n
 
 if self:GetAbility():IsFullyCastable() or self:GetParent():HasModifier("modifier_skeleton_strike_legendary") or self:GetParent():HasModifier("modifier_skeleton_king_mortal_strike_scepter") then
     self:GetParent():RemoveGesture(ACT_DOTA_ATTACK_EVENT)
-    self:GetParent():StartGestureWithPlaybackRate(ACT_DOTA_ATTACK_EVENT, self:GetParent():GetAttackSpeed())
+    self:GetParent():StartGestureWithPlaybackRate(ACT_DOTA_ATTACK_EVENT, self:GetParent():GetAttackSpeed(true))
     self.record = params.record
 
 

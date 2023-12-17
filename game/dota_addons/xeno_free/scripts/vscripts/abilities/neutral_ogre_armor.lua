@@ -51,6 +51,7 @@ if not self:GetParent():IsSilenced() and self:GetParent():GetAttackTarget() ~= n
           self:GetParent():RemoveModifierByName("modifier_neutral_cast")
           if not self:GetParent():IsAlive() or self:GetParent():GetMana() < self:GetAbility():GetManaCost(1) then return end
           
+        self:GetParent():CheckCastMods(self:GetAbility())
         self:GetParent():SpendMana(self:GetAbility():GetManaCost(1), self:GetAbility())
          self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_ogre_armor_cd", {duration = self.cd})
 

@@ -503,6 +503,7 @@ if #enemies > 0 or not self:GetParent():IsAlive() then
 	end
 
 
+	self.PercentAgi   = 0
 else
 	self:SetStackCount(0)
 
@@ -513,9 +514,8 @@ else
 		self:AddParticle(self.particle, false, false, -1, false, false)
 	end
 
-	self.agi  = 0
-	self.agi   = self:GetParent():GetAgility() * self:GetAbility().agility_bonus[self:GetCaster():GetUpgradeStack("modifier_sniper_aim_4")]
-	self:GetParent():CalculateStatBonus(true)
+	self.PercentAgi   =  self:GetAbility().agility_bonus[self:GetCaster():GetUpgradeStack("modifier_sniper_aim_4")]
+
 end
 
 end
@@ -526,7 +526,6 @@ end
 function modifier_sniper_take_aim_custom_agility:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_STATS_AGILITY_BONUS,
 	MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE,
 	MODIFIER_PROPERTY_TOOLTIP
 }
@@ -541,10 +540,6 @@ return self:GetAbility().agility_regen[self:GetCaster():GetUpgradeStack('modifie
 
 end
 
-function modifier_sniper_take_aim_custom_agility:GetModifierBonusStats_Agility()
-if self:GetStackCount() == 1 then return end
-return self.agi
-end
 
 function modifier_sniper_take_aim_custom_agility:OnTooltip()
 return self:GetAbility().agility_bonus[self:GetCaster():GetUpgradeStack("modifier_sniper_aim_4")]*100

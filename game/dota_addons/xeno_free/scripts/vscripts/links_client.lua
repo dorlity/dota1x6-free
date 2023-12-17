@@ -55,6 +55,7 @@ LinkLuaModifier( "modifier_start_stun", "modifiers/modifier_start_stun", LUA_MOD
 LinkLuaModifier( "modifier_contract_speed", "abilities/items/item_contract", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier( "modifier_voice_module", "modifiers/modifier_voice_module", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier( "modifier_cooldown_speed", "modifiers/modifier_cooldown_speed", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier( "modifier_percent_stats", "modifiers/modifier_percent_stats", LUA_MODIFIER_MOTION_NONE)
 
 
 LinkLuaModifier( "modifier_duel_field_thinker", "modifiers/modifier_duel_logic", LUA_MODIFIER_MOTION_NONE )

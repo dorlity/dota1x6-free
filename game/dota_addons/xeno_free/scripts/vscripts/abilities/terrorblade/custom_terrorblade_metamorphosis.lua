@@ -869,18 +869,10 @@ function modifier_custom_terrorblade_metamorphosis_stats:OnIntervalThink()
 
 if self:GetParent():HasModifier("modifier_terror_meta_start")  then
 
-	self.agi_percentage = self:GetAbility().stats_agi[self:GetCaster():GetUpgradeStack("modifier_terror_meta_start")]*self:GetStackCount()/100
-	self.str_percentage = self:GetAbility().stats_str[self:GetCaster():GetUpgradeStack("modifier_terror_meta_start")]*self:GetStackCount()/100
-
-
-	self.agi  = 0
-	self.str  = 0
-
-	self.agi   = self:GetParent():GetAgility() * self.agi_percentage
-	self.str   = self:GetParent():GetStrength() * self.str_percentage
+	self.PercentAgi = self:GetAbility().stats_agi[self:GetCaster():GetUpgradeStack("modifier_terror_meta_start")]*self:GetStackCount()/100
+	self.PercentStr = self:GetAbility().stats_str[self:GetCaster():GetUpgradeStack("modifier_terror_meta_start")]*self:GetStackCount()/100
 end
 
-self:GetParent():CalculateStatBonus(true)
 end
 
 
@@ -889,8 +881,6 @@ end
 function modifier_custom_terrorblade_metamorphosis_stats:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_STATS_AGILITY_BONUS,
-	MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
 	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
 	MODIFIER_PROPERTY_TOOLTIP,
 	MODIFIER_PROPERTY_MODEL_SCALE,
@@ -913,18 +903,6 @@ return self:GetStackCount()*self:GetAbility().stats_agi[self:GetCaster():GetUpgr
 end
 
 
-
-function modifier_custom_terrorblade_metamorphosis_stats:GetModifierBonusStats_Strength()
-if not self:GetParent():HasModifier("modifier_terror_meta_start") then return end
-return self.str
-end
-
-
-
-function modifier_custom_terrorblade_metamorphosis_stats:GetModifierBonusStats_Agility()
-if not self:GetParent():HasModifier("modifier_terror_meta_start") then return end
-return self.agi
-end
 
 
 function modifier_custom_terrorblade_metamorphosis_stats:GetModifierMoveSpeedBonus_Percentage()

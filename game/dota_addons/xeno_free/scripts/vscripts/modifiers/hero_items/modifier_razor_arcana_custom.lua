@@ -35,6 +35,7 @@ function modifier_razor_arcana_custom:OnAttackLanded(params)
         ParticleManager:ReleaseParticleIndex(particle_on_hit)
     end
 end
+
 function modifier_razor_arcana_custom:OnDeath(params)
     if not IsServer() then return end
     if params.attacker == self:GetParent() and params.unit:IsRealHero() and params.unit ~= self:GetParent() then

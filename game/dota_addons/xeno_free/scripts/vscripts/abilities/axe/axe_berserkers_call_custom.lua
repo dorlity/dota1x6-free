@@ -6,33 +6,15 @@ LinkLuaModifier( "modifier_axe_berserkers_call_custom_speed", "abilities/axe/axe
 LinkLuaModifier( "modifier_axe_berserkers_call_custom_slow", "abilities/axe/axe_berserkers_call_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_axe_berserkers_call_custom_legendary", "abilities/axe/axe_berserkers_call_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_axe_berserkers_call_custom_heal", "abilities/axe/axe_berserkers_call_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_axe_berserkers_call_custom_armor", "abilities/axe/axe_berserkers_call_custom", LUA_MODIFIER_MOTION_NONE )
 
 axe_berserkers_call_custom = class({})
 
 
-axe_berserkers_call_custom.heal_inc = {6, 9, 12}
-axe_berserkers_call_custom.heal_duration = 5
 
-axe_berserkers_call_custom.speed = {40,60,80}
 
-axe_berserkers_call_custom.return_inc = {0.2, 0.3, 0.4}
 
-axe_berserkers_call_custom.after_damage = {0.1, 0.2}
-axe_berserkers_call_custom.after_heal = 0.5
 
-axe_berserkers_call_custom.resist_status = 35
-axe_berserkers_call_custom.resist_damage = -35
-axe_berserkers_call_custom.resist_cast = 0.1
-
-axe_berserkers_call_custom.auto_duration = 1.5
-axe_berserkers_call_custom.auto_cd = 20
-
-axe_berserkers_call_custom.aoe_range = 100
-axe_berserkers_call_custom.aoe_slow = -80
-axe_berserkers_call_custom.aoe_slow_duration = 2
-
-axe_berserkers_call_custom.legendary_speed = 40
-axe_berserkers_call_custom.legendary_duration = 2
 
 
 
@@ -69,11 +51,13 @@ function axe_berserkers_call_custom:OnAbilityPhaseStart()
 end
 
 function axe_berserkers_call_custom:GetCastPoint()
+local bonus = 0
+
 if self:GetCaster():HasModifier("modifier_axe_call_5") then 
-	return self.resist_cast
+	bonus = self:GetCaster():GetTalentValue("modifier_axe_call_5", "cast")
 end
 
-	return 0.3
+	return self:GetSpecialValueFor("AbilityCastPoint") + bonus
 end
 
 
@@ -88,23 +72,26 @@ function axe_berserkers_call_custom:GetCooldown(level)
 end
 
 function axe_berserkers_call_custom:OnSpellStart()
-	if not IsServer() then return end
+if not IsServer() then return end
 
-	duration = self:GetSpecialValueFor("duration")
+duration = self:GetSpecialValueFor("duration")
 
-	if self:GetCaster():HasModifier("modifier_axe_call_legendary") then 
-		duration = duration + self.legendary_duration*(1 - self:GetCaster():GetHealthPercent()/100)
-	end
+if self:GetCaster():HasModifier("modifier_axe_call_legendary") then 
+	duration = duration + self:GetCaster():GetTalentValue("modifier_axe_call_legendary", "duration")*(1 - self:GetCaster():GetHealthPercent()/100)
+end
 
-	if self:GetCaster():HasModifier("modifier_axe_call_2") then 
-		self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_axe_berserkers_call_custom_heal", {duration = self.heal_duration})
-	end 
+if self:GetCaster():HasModifier("modifier_axe_call_2") then 
+	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_axe_berserkers_call_custom_heal", {duration = self:GetCaster():GetTalentValue("modifier_axe_call_2", "duration")})
+end 
 
-	self:GetCaster():AddNewModifier( self:GetCaster(), self, "modifier_axe_berserkers_call_custom_buff", { duration = duration } )
-	self:GetCaster():EmitSound("Hero_Axe.Berserkers_Call")
-	local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_axe/axe_beserkers_call_owner.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-	ParticleManager:SetParticleControlEnt( effect_cast, 1, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_mouth", Vector(0,0,0), true )
-	ParticleManager:ReleaseParticleIndex( effect_cast )
+self:GetCaster():AddNewModifier( self:GetCaster(), self, "modifier_axe_berserkers_call_custom_buff", { duration = duration } )
+self:GetCaster():EmitSound("Hero_Axe.Berserkers_Call")
+local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_axe/axe_beserkers_call_owner.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
+ParticleManager:SetParticleControlEnt( effect_cast, 1, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_mouth", Vector(0,0,0), true )
+ParticleManager:ReleaseParticleIndex( effect_cast )
+
+self:EndCooldown()
+self:SetActivated(false)
 end
 
 
@@ -128,6 +115,20 @@ end
 
 function modifier_axe_berserkers_call_custom_buff:OnCreated( kv )
 self.armor = self:GetAbility():GetSpecialValueFor( "bonus_armor" )
+
+self.damage_reduce = self:GetCaster():GetTalentValue("modifier_axe_call_5", "damage_reduce")
+self.status = self:GetCaster():GetTalentValue("modifier_axe_call_5", "status")
+
+self.armor_duration = self:GetCaster():GetTalentValue("modifier_axe_call_1", "duration")
+
+self.attack_speed = self:GetCaster():GetTalentValue("modifier_axe_call_3", "speed")
+
+self.legendary_speed = self:GetCaster():GetTalentValue("modifier_axe_call_legendary", "speed")
+
+self.after_damage = self:GetCaster():GetTalentValue("modifier_axe_call_4", "damage")/100
+self.after_heal = self:GetCaster():GetTalentValue("modifier_axe_call_4", "heal")/100
+
+self.return_damage = self:GetCaster():GetTalentValue("modifier_axe_call_1", "damage_return")/100
 
 if not IsServer() then return end
 
@@ -177,6 +178,10 @@ for _,enemy in pairs(enemies) do
 
 		enemy:AddNewModifier( self:GetCaster(), self:GetAbility(), "modifier_axe_berserkers_call_custom_debuff", { duration = duration*(1 - enemy:GetStatusResistance()) } )
 			
+		if self:GetCaster():HasModifier("modifier_axe_call_1") then 
+			enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_axe_berserkers_call_custom_armor", {duration = self.armor_duration})
+		end 
+
 		if self:GetCaster():HasModifier("modifier_axe_call_3") then 
 			enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_axe_berserkers_call_custom_speed", {duration = duration*(1 - enemy:GetStatusResistance())})
 		end
@@ -258,7 +263,7 @@ end
 function modifier_axe_berserkers_call_custom_buff:GetModifierAttackSpeedBonus_Constant()
 local bonus = 0
 if self:GetCaster():HasModifier("modifier_axe_call_3") then 
-	bonus = self:GetAbility().speed[self:GetCaster():GetUpgradeStack("modifier_axe_call_3")]
+	bonus = self.attack_speed
 end
 	return bonus
 end
@@ -267,7 +272,7 @@ end
 function modifier_axe_berserkers_call_custom_buff:GetModifierStatusResistanceStacking()
 local bonus = 0
 if self:GetCaster():HasModifier("modifier_axe_call_5") then 
-	bonus = self:GetAbility().resist_status
+	bonus = self.status
 end
 	return bonus
 end
@@ -275,7 +280,7 @@ end
 function modifier_axe_berserkers_call_custom_buff:GetModifierIncomingDamage_Percentage()
 local bonus = 0
 if self:GetCaster():HasModifier("modifier_axe_call_5") then 
-	bonus = self:GetAbility().resist_damage
+	bonus = self.damage_reduce
 end
 	return bonus
 end
@@ -285,7 +290,7 @@ end
 function modifier_axe_berserkers_call_custom_buff:GetModifierMoveSpeedBonus_Percentage()
 local bonus = 0
 if self:GetCaster():HasModifier("modifier_axe_call_legendary") then 
-	bonus = self:GetAbility().legendary_speed
+	bonus = self.legendary_speed
 end
 	return bonus
 end
@@ -310,7 +315,7 @@ if not IsServer() then return end
 if self:GetParent() ~= params.unit then return end
 
 if self:GetParent():HasModifier("modifier_axe_call_4") then 
-	local damage = self:GetAbility().after_damage[self:GetParent():GetUpgradeStack("modifier_axe_call_4")]*params.original_damage
+	local damage = self.after_damage*params.original_damage
 	self:SetStackCount(self:GetStackCount() + damage)
 end
 
@@ -320,11 +325,10 @@ end
 if not self:GetParent():HasModifier("modifier_axe_call_1") then return end
 if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end
 
-	local target = params.attacker
-	local damage_return = self:GetAbility().return_inc[self:GetParent():GetUpgradeStack("modifier_axe_call_1")]
-   ApplyDamage({victim = target, attacker = self:GetParent(), damage = params.original_damage*damage_return, damage_type = params.damage_type,  damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION + DOTA_DAMAGE_FLAG_REFLECTION, ability = self:GetAbility()})
+local target = params.attacker
+local damage_return = self.return_damage
 
-
+ApplyDamage({victim = target, attacker = self:GetParent(), damage = params.original_damage*damage_return, damage_type = params.damage_type,  damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION + DOTA_DAMAGE_FLAG_REFLECTION, ability = self:GetAbility()})
 
 end
 
@@ -332,6 +336,8 @@ end
 function modifier_axe_berserkers_call_custom_buff:OnDestroy()
 if not IsServer() then return end
 
+self:GetAbility():SetActivated(true)
+self:GetAbility():UseResources(false, false, false, true)
 
 if self:GetCaster():HasModifier("modifier_axe_call_4") then 
 	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'axe_call_change',  {hide = 1, max_time = self.time, time = self:GetRemainingTime(), damage = self:GetStackCount()})
@@ -347,7 +353,7 @@ ParticleManager:ReleaseParticleIndex( effect_cast )
 
 self:GetCaster():EmitSound("Axe.Call_damage")
 
-self:GetCaster():GenericHeal(self:GetStackCount()*self:GetAbility().after_heal, self:GetAbility())
+self:GetCaster():GenericHeal(self:GetStackCount()*self.after_heal, self:GetAbility())
 
 
 local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetCaster():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false )
@@ -420,34 +426,8 @@ function modifier_axe_berserkers_call_custom_debuff:GetStatusEffectName()
 	return "particles/status_fx/status_effect_beserkers_call.vpcf"
 end
 
-function modifier_axe_berserkers_call_custom_debuff:DeclareFunctions()
-return
-	{
-    MODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET,
-    MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE,
-    MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE
-	}
-end
 
 
-function modifier_axe_berserkers_call_custom_debuff:GetModifierLifestealRegenAmplify_Percentage()
-if self:GetCaster():HasModifier("modifier_axe_call_5") then 
-	--return self:GetAbility().resist_heal
-end
-return
-end 
-function modifier_axe_berserkers_call_custom_debuff:GetModifierHealAmplify_PercentageTarget()
-if self:GetCaster():HasModifier("modifier_axe_call_5") then 
-	--return self:GetAbility().resist_heal
-end
-return
-end 
-function modifier_axe_berserkers_call_custom_debuff:GetModifierHPRegenAmplify_Percentage()
-if self:GetCaster():HasModifier("modifier_axe_call_5") then 
-	--return self:GetAbility().resist_heal
-end
-return
-end 
 
 
 modifier_axe_berserkers_call_custom_tracker = class({})
@@ -460,33 +440,41 @@ return
 }
 end
 
+
+function modifier_axe_berserkers_call_custom_tracker:OnCreated()
+self.auto_cd = self:GetCaster():GetTalentValue("modifier_axe_call_6", "cd", true)
+self.auto_duration = self:GetCaster():GetTalentValue("modifier_axe_call_6", "duration", true)
+end 
+
 function modifier_axe_berserkers_call_custom_tracker:GetAbsorbSpell(params) 
 if params.ability:GetCaster():GetTeamNumber() == self:GetParent():GetTeamNumber() then return end
 if not IsServer() then return end
 if not self:GetCaster():HasModifier("modifier_axe_call_6") then return end
-if self:GetCaster():HasModifier("modifier_axe_berserkers_call_custom_auto_cd") then return end
 if not params.ability then return end
 if not params.ability:GetCaster() then return end
 if params.ability:GetCaster() == self:GetParent() then return end
+if params.ability:GetCaster():HasModifier("modifier_axe_berserkers_call_custom_auto_cd") then return end
 
 
 local particle = ParticleManager:CreateParticle("particles/qop_linken.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
 ParticleManager:SetParticleControlEnt(particle, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
 ParticleManager:ReleaseParticleIndex(particle)
+
 self:GetCaster():EmitSound("Hero_Axe.Berserkers_Call")
 self:GetCaster():EmitSound("Hero_Axe.BerserkersCall.Start")
 self:GetCaster():EmitSound("DOTA_Item.LinkensSphere.Activate")
-local duration = self:GetAbility().auto_duration
-params.ability:GetCaster():AddNewModifier( self:GetCaster(), self:GetAbility(), "modifier_axe_berserkers_call_custom_debuff", { duration = duration*(1 - params.ability:GetCaster():GetStatusResistance()) } )
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_axe_berserkers_call_custom_auto_cd", {duration = self:GetAbility().auto_cd})	
+
+
+params.ability:GetCaster():AddNewModifier( self:GetCaster(), self:GetAbility(), "modifier_axe_berserkers_call_custom_debuff", { duration = self.auto_duration*(1 - params.ability:GetCaster():GetStatusResistance()) } )
+params.ability:GetCaster():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_axe_berserkers_call_custom_auto_cd", {duration = self.auto_cd})	
 end
 
 
 modifier_axe_berserkers_call_custom_auto_cd = class({})
-function modifier_axe_berserkers_call_custom_auto_cd:IsHidden() return false end
+function modifier_axe_berserkers_call_custom_auto_cd:IsHidden() return true end
 function modifier_axe_berserkers_call_custom_auto_cd:IsPurgable() return false end
 function modifier_axe_berserkers_call_custom_auto_cd:IsDebuff() return true end
-function modifier_axe_berserkers_call_custom_auto_cd:GetTexture() return "buffs/call_auto" end
+function modifier_axe_berserkers_call_custom_auto_cd:RemoveOnDeath() return true end
 function modifier_axe_berserkers_call_custom_auto_cd:OnCreated(table)
 self.RemoveForDuel = true
 end
@@ -503,8 +491,13 @@ return
 }
 end
 function modifier_axe_berserkers_call_custom_speed:GetModifierAttackSpeedBonus_Constant()
-return self:GetAbility().speed[self:GetCaster():GetUpgradeStack("modifier_axe_call_3")]
+return self.attack_speed
 end
+
+
+function modifier_axe_berserkers_call_custom_speed:OnCreated()
+self.attack_speed = self:GetCaster():GetTalentValue("modifier_axe_call_3", "speed")
+end 
 
 
 modifier_axe_berserkers_call_custom_slow = class({})
@@ -540,10 +533,35 @@ return
 end
 
 function modifier_axe_berserkers_call_custom_heal:GetModifierHealthRegenPercentage()
-    return self:GetAbility().heal_inc[self:GetCaster():GetUpgradeStack("modifier_axe_call_2")]/self:GetAbility().heal_duration
+    return self.heal
 end
 
 
 function modifier_axe_berserkers_call_custom_heal:GetEffectName() return "particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf" end
 
 function modifier_axe_berserkers_call_custom_heal:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
+
+
+function modifier_axe_berserkers_call_custom_heal:OnCreated()
+
+self.heal = self:GetCaster():GetTalentValue("modifier_axe_call_2", "heal")/self:GetCaster():GetTalentValue("modifier_axe_call_2", "duration")
+end 
+
+
+modifier_axe_berserkers_call_custom_armor = class({})
+function modifier_axe_berserkers_call_custom_armor:IsHidden() return true end
+function modifier_axe_berserkers_call_custom_armor:IsPurgable() return false end
+function modifier_axe_berserkers_call_custom_armor:OnCreated()
+self.armor = self:GetCaster():GetTalentValue("modifier_axe_call_1", "armor")
+end 
+
+function modifier_axe_berserkers_call_custom_armor:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS
+}
+end
+
+function modifier_axe_berserkers_call_custom_armor:GetModifierPhysicalArmorBonus()
+return self.armor
+end

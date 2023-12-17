@@ -334,7 +334,7 @@ for _,unit in pairs(enemies) do
 		and unit:GetAbsOrigin().z >= 300 
 		and (unit:GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D() <= self.radius*(1.05)
 		and not unit:IsCourier() 
-		and not unit:GetUnitName() ~= "npc_dota_donate_item_illusion" 
+		and unit:GetUnitName() ~= "npc_dota_donate_item_illusion" 
 		and not unit:HasModifier("modifier_unselect") 
 		and not unit:HasModifier("modifier_mars_arena_of_blood_custom_legendary")
 		and not unit:HasModifier("modifier_custom_terrorblade_reflection_unit")

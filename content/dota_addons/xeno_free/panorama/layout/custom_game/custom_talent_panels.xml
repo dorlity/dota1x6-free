@@ -46,6 +46,12 @@
 				<Label class="MK_Banana_spawn_timer" id="MK_Banana_spawn_timer" hittest="false" />
 			</Panel>
 		</Panel>
+		<Panel class="Axe_Culling_Panel_hidden" id="Axe_Culling_Panel" hittest="false">
+			<Panel class="Axe_Culling_spawn_icon" id="Axe_Culling_spawn_icon" hittest="false" />
+			<Panel class="Axe_Culling_Bar" hittest="false">
+				<Label class="Axe_Culling_spawn_timer" id="Axe_Culling_spawn_timer" hittest="false" />
+			</Panel>
+		</Panel>
 		<Panel class="Leshrac_Storm_Panel_hidden" id="Leshrac_Storm_Panel" hittest="false">
 			<Panel class="Leshrac_Storm_Bar" hittest="false">
 				<Panel class="Leshrac_Storm_Filler" id="Leshrac_Storm_Filler" hittest="false" />
@@ -265,6 +271,13 @@
 			<Panel class="InvokerUlt_Bar_hero" id="InvokerUlt_Bar" hittest="false">
 				<Label class="InvokerUlt_filler" id="InvokerUlt_filler" hittest="false" />
 				<Label class="InvokerUlt_number" id="InvokerUlt_number" hittest="false" />
+			</Panel>
+		</Panel>
+		<Panel class="Antimage_counter_panel_hidden" id="Antimage_counter_panel" hittest="false">
+			<Panel class="Antimage_counter_Icon" id="Antimage_counter_Icon" hittest="false" />
+			<Panel class="Antimage_counter_Bar_hero" id="Antimage_counter_Bar" hittest="false">
+				<Label class="Antimage_counter_filler" id="Antimage_counter_filler" hittest="false" />
+				<Label class="Antimage_counter_number" id="Antimage_counter_number" hittest="false" />
 			</Panel>
 		</Panel>
 		<Panel class="AxeCall_panel_hidden" id="AxeCall_panel" hittest="false">

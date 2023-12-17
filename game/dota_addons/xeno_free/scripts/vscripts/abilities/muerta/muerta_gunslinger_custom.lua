@@ -387,7 +387,7 @@ elseif creep_has then
 	self:AttackTarget(creeps[1])
 else
 	
-	self:GetParent():StartGestureWithPlaybackRate(ACT_DOTA_CAST_ABILITY_3, self:GetParent():GetAttackSpeed())
+	self:GetParent():StartGestureWithPlaybackRate(ACT_DOTA_CAST_ABILITY_3, self:GetParent():GetAttackSpeed(true))
 
 	Timers:CreateTimer(0.1, function()
 		if params.target and not params.target:IsNull() and params.target:IsAlive() then 

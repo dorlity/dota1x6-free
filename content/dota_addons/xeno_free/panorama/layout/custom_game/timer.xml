@@ -35,7 +35,7 @@
 					<Panel class="DuelVS" id="DuelVS" />
 					<Panel class="NormalDuelHeroRight" id="NormalDuelHeroRight" />
 					<Label class="RewardText" id="RewardText" text="#wave_reward" />
-					<DOTAItemImage itemname="item_patrol_reward_2" class="RewardIconRazor" id="RewardIconRazor" />
+					<DOTAItemImage itemname="item_patrol_reward_2_always_gadget" class="RewardIconRazor" id="RewardIconRazor" />
 				</Panel>
 			</Panel>
 		</Panel>

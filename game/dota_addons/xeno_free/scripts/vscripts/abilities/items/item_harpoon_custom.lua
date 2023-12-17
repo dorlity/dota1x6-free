@@ -75,7 +75,6 @@ function modifier_item_harpoon_custom:DeclareFunctions()
         MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
         MODIFIER_PROPERTY_STATS_AGILITY_BONUS,
         MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
-        MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
         MODIFIER_PROPERTY_MANA_REGEN_CONSTANT,
         MODIFIER_EVENT_ON_ATTACK_LANDED,
         MODIFIER_EVENT_ON_ATTACK_FAIL,
@@ -89,7 +88,7 @@ if not IsServer() then return end
 if not self:GetParent():IsRealHero() then return end
 if self:GetParent():HasModifier("modifier_monkey_king_wukongs_command_custom_soldier") then return end
 
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_item_harpoon_custom_cd", {duration = 6*self:GetParent():GetCooldownReduction()})
+self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_item_harpoon_custom_cd", {duration = self:GetAbility():GetSpecialValueFor("passive_cooldown")*self:GetParent():GetCooldownReduction()})
 self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_item_harpoon_custom_speed", {})
 
 for i = 0,8 do 
@@ -146,9 +145,6 @@ function modifier_item_harpoon_custom:GetModifierConstantManaRegen()
     return self:GetAbility():GetSpecialValueFor("bonus_mana_regen")
 end
 
-function modifier_item_harpoon_custom:GetModifierAttackSpeedBonus_Constant()
-    return self:GetAbility():GetSpecialValueFor("bonus_attack_speed")
-end
 
 function modifier_item_harpoon_custom:GetModifierPreAttack_BonusDamage()
     return self:GetAbility():GetSpecialValueFor("bonus_damage")

@@ -51,7 +51,15 @@ end
 
 
 
+function arc_warden_tempest_double_custom:GetCastPoint()
 
+if self:GetCaster():HasModifier("modifier_arc_warden_double_6") then 
+  return 0
+end
+
+return self:GetSpecialValueFor("AbilityCastPoint")
+ 
+end
 
 
 
@@ -418,9 +426,9 @@ if not self:GetParent():HasModifier("modifier_arc_warden_double_3") then return 
 
 self.str_percentage = self:GetCaster():GetTalentValue("modifier_arc_warden_double_3", "strength")/100
 
-self.str  = 0
-
-self.str   = self:GetParent():GetStrength() * self.str_percentage
+self.PercentStr = self.str_percentage
+self.PercentAgi = self.str_percentage
+self.PercentInt = self.str_percentage
 
 self:GetParent():CalculateStatBonus(true)
 
@@ -433,27 +441,20 @@ function modifier_arc_warden_tempest_double_custom:DeclareFunctions()
         MODIFIER_EVENT_ON_DEATH,
         MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
     	MODIFIER_EVENT_ON_ABILITY_EXECUTED,
+    	MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
     	MODIFIER_EVENT_ON_ATTACK_LANDED,
 
-		MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
 		MODIFIER_PROPERTY_MANACOST_PERCENTAGE
 	}
 end
 
 
 
+function modifier_arc_warden_tempest_double_custom:GetModifierAttackRangeBonus()
+if not self:GetCaster():HasModifier("modifier_arc_warden_double_2") then return end 
 
-
-
-
-
-
-function modifier_arc_warden_tempest_double_custom:GetModifierBonusStats_Strength() return 
-	self.str 
+return self:GetCaster():GetTalentValue("modifier_arc_warden_double_2", "range")
 end
-
-
-
 
 
 
@@ -1506,7 +1507,9 @@ function modifier_arc_warden_tempest_double_custom_slow:IsPurgable() return true
 function modifier_arc_warden_tempest_double_custom_slow:GetEffectName() return "particles/units/heroes/hero_terrorblade/terrorblade_reflection_slow.vpcf" end
 
 function modifier_arc_warden_tempest_double_custom_slow:OnCreated()
-self.slow = self:GetCaster():GetTalentValue("modifier_arc_warden_double_2", "slow")
+
+self.duration = self:GetCaster():GetTalentValue("modifier_arc_warden_double_2", "duration")
+self.damage = self:GetCaster():GetTalentValue("modifier_arc_warden_double_2", "damage")
 
 if not IsServer() then return end
 self:SetStackCount(0)
@@ -1526,9 +1529,10 @@ if not IsServer() then return end
 
 self:IncrementStackCount()
 
-self:GetParent():Script_ReduceMana(self:GetCaster():GetTalentValue("modifier_arc_warden_double_2", "mana"), self:GetAbility()) 
+ApplyDamage({damage = self.damage, victim = self:GetParent(), attacker = self:GetCaster(), ability = self:GetAbility(), damage_type = DAMAGE_TYPE_MAGICAL})
 
-if self:GetStackCount() >= self:GetCaster():GetTalentValue("modifier_arc_warden_double_2", "duration") then 
+
+if self:GetStackCount() >= self.duration then 
 	self:Destroy()
 	return
 end 
@@ -1536,20 +1540,6 @@ end
 end 
 
 
-
-function modifier_arc_warden_tempest_double_custom_slow:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
-}
-end 
-
-
-
-
-function modifier_arc_warden_tempest_double_custom_slow:GetModifierMoveSpeedBonus_Percentage()
-return self.slow
-end 
 
 
 

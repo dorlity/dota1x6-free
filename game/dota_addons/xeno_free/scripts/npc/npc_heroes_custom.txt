@@ -1180,14 +1180,15 @@
 		"Ability22"		""
 		"Ability23"		""
 		"Ability24"		""
-		"Ability25"				""
+		"Ability25"				"" 
 
 		"Ability27"				"custom_ability_observer"
 		"Ability28"				"custom_ability_sentry"
 		"Ability29"				"custom_ability_smoke"
 		"Ability30"				"custom_ability_dust"
 		"AttributePrimary"		"DOTA_ATTRIBUTE_AGILITY"
-		"VoiceFile"		"soundevents/voscripts/game_sounds_vo_razor.vsndevts"
+		//"VoiceFile"		"soundevents/voscripts/game_sounds_vo_razor.vsndevts"
+
 
 	}
 

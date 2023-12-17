@@ -65,6 +65,10 @@ function modifier_terrorblade_demon_zeal_custom:GetAuraRadius()
 return self.radius
 end
 
+function modifier_terrorblade_demon_zeal_custom:GetAuraSearchFlags()
+	return DOTA_UNIT_TARGET_FLAG_INVULNERABLE
+end
+
 
 
 function modifier_terrorblade_demon_zeal_custom:GetAuraSearchTeam()
@@ -92,7 +96,7 @@ function modifier_terrorblade_demon_zeal_custom_buff:OnCreated()
 self.move = self:GetAbility():GetSpecialValueFor("berserk_bonus_attack_speed")
 self.speed = self:GetAbility():GetSpecialValueFor("berserk_bonus_movement_speed")
 
-self.meta_k = self:GetAbility():GetSpecialValueFor("meta_k")/100
+self.reflection_k = self:GetAbility():GetSpecialValueFor("reflection_k")
 
 if not IsServer() then return end
 self.pfx = ParticleManager:CreateParticle("particles/models/heroes/terrorblade/demon_zeal.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
@@ -115,22 +119,23 @@ end
 function modifier_terrorblade_demon_zeal_custom_buff:GetModifierMoveSpeedBonus_Constant()
 
 local k = 1 
-if self:GetParent():HasModifier("modifier_custom_terrorblade_metamorphosis") then 
-	k = self.meta_k
+if self:GetParent():HasModifier("modifier_custom_terrorblade_reflection_unit") then 
+	k = self.reflection_k
 end
 
-return self.move * k
+
+return self.move / k
 end
 
 
 function modifier_terrorblade_demon_zeal_custom_buff:GetModifierAttackSpeedBonus_Constant()
 
 local k = 1 
-if self:GetParent():HasModifier("modifier_custom_terrorblade_metamorphosis") then 
-	k = self.meta_k
+if self:GetParent():HasModifier("modifier_custom_terrorblade_reflection_unit") then 
+	k = self.reflection_k
 end
 
-return self.speed * k
+return self.speed / k
 end
 
 

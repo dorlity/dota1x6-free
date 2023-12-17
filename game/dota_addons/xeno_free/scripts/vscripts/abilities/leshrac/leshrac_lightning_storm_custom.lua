@@ -387,6 +387,7 @@ if not self.ability then
   return
 end
 
+self.attack = self.ability:GetSpecialValueFor("slow_attack")
 self.slow = self.ability:GetSpecialValueFor("slow_movement_speed")
 
 if not IsServer() then return end
@@ -402,6 +403,7 @@ function modifier_leshrac_lightning_storm_custom_slow:DeclareFunctions()
 return
 {
   MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+  MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
 }
 end
 
@@ -410,6 +412,11 @@ function modifier_leshrac_lightning_storm_custom_slow:GetModifierMoveSpeedBonus_
 return self.slow
 end
 
+
+
+function modifier_leshrac_lightning_storm_custom_slow:GetModifierAttackSpeedBonus_Constant()
+return self.attack
+end
 
 
 

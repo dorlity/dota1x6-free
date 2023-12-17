@@ -96,6 +96,7 @@ self.sign = ParticleManager:CreateParticle( "particles/generic_gameplay/generic_
 
             if self.target ~= nil and self.target:IsAlive() and self:GetParent():IsAlive()  and self:GetParent():GetMana() >= self:GetAbility():GetManaCost(1) then 
               self:GetParent():SpendMana(self:GetAbility():GetManaCost(1), self:GetAbility())
+        self:GetParent():CheckCastMods(self:GetAbility())
          self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_satyr_shockwave_cd", {duration = self.cd})
 
     local direction = point - self:GetParent():GetAbsOrigin() + self:GetParent():GetForwardVector()*10

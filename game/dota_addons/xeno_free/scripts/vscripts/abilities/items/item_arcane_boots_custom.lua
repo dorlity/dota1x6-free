@@ -28,7 +28,7 @@ function modifier_item_arcane_boots_custom:GetAttributes()	return MODIFIER_ATTRI
 function modifier_item_arcane_boots_custom:DeclareFunctions()
 	return {
 		MODIFIER_PROPERTY_MOVESPEED_BONUS_UNIQUE,
-		MODIFIER_PROPERTY_MANA_BONUS,
+		MODIFIER_PROPERTY_MANA_REGEN_CONSTANT
 	}
 end
 
@@ -38,8 +38,8 @@ function modifier_item_arcane_boots_custom:GetModifierMoveSpeedBonus_Special_Boo
 	end
 end
 
-function modifier_item_arcane_boots_custom:GetModifierManaBonus()
+function modifier_item_arcane_boots_custom:GetModifierConstantManaRegen()
 	if self:GetAbility() then
-		return self:GetAbility():GetSpecialValueFor("bonus_mana")
+		return self:GetAbility():GetSpecialValueFor("mana_regen")
 	end
 end

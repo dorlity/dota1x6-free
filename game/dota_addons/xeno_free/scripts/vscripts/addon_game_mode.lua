@@ -40,6 +40,7 @@ LinkLuaModifier( "modifier_start_stun", "modifiers/modifier_start_stun", LUA_MOD
 LinkLuaModifier( "modifier_contract_speed", "abilities/items/item_contract", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier( "modifier_voice_module", "modifiers/modifier_voice_module", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier( "modifier_cooldown_speed", "modifiers/modifier_cooldown_speed", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier( "modifier_percent_stats", "modifiers/modifier_percent_stats", LUA_MODIFIER_MOTION_NONE)
 
 LinkLuaModifier( "modifier_portrait_donate_custom", "modifiers/hero_items/modifier_portrait_donate_custom", LUA_MODIFIER_MOTION_NONE )
 
@@ -125,7 +126,7 @@ _G.duel_timer_final = 80 + duel_start
 _G.duel_timer_normal = 45 + duel_start
 _G.field_stun = 0.5
 _G.duel_necro_time = 20
-_G.duel_push_time = 15
+_G.duel_push_time = 10
 _G.duel_push_teleport = 6
 _G.duel_start_wave = 12
 _G.duel_last_field = "1"
@@ -278,7 +279,7 @@ _G.Player_damage_max = 4
 _G.Player_damage_inc = 10
 _G.Player_damage_time = 900
 
-_G.LowPriorityTime = 900
+_G.LowPriorityTime = 600
 _G.SafeToLeave = false
 _G.SafeToLeave_reason = 0
 _G.SafeToLeave_alert = false
@@ -363,9 +364,7 @@ _G.start_abilities =
 _G.ChangeItemsCooldown = 5
 _G.new_shop_heroes = 
 {
-	"npc_dota_hero_juggernaut",
-	"npc_dota_hero_phantom_assassin",
-	"npc_dota_hero_huskar"
+
 }
 
 
@@ -628,7 +627,11 @@ _G.UnvalidAbilities =
 	["custom_ability_sentry"] = true,
 	["custom_ability_smoke"] = true,
 	["custom_ability_dust"] = true,
-	["custom_ability_grenade"] = true
+	["custom_ability_grenade"] = true,
+	["invoker_exort_custom"] = true,
+	["invoker_wex_custom"] = true,
+	["invoker_quas_custom"] = true,
+	["invoker_invoke_custom"] = true,
 }
 
 _G.UnvalidItems = 
@@ -829,6 +832,8 @@ end
  PrecacheResource( "soundfile", "soundevents/juggernaut_vo_custom.vsndevts", context ) 
 
  PrecacheResource( "soundfile", "soundevents/npc_dota_hero_juggernaut.vsndevts", context ) 
+ PrecacheResource( "soundfile", "soundevents/npc_dota_hero_antimage.vsndevts", context ) 
+ PrecacheResource( "soundfile", "soundevents/npc_dota_hero_axe.vsndevts", context ) 
  PrecacheResource( "soundfile", "soundevents/npc_dota_hero_alchemist.vsndevts", context ) 
  PrecacheResource( "soundfile", "soundevents/npc_dota_hero_phantom_assassin.vsndevts", context ) 
  PrecacheResource( "soundfile", "soundevents/npc_dota_hero_arc_warden.vsndevts", context ) 
@@ -1538,8 +1543,33 @@ local unit = EntIndexToHScript(event.entindex)
 
 local new_spawned_hero = EntIndexToHScript(event.entindex)
 if new_spawned_hero and new_spawned_hero:IsHero() and new_spawned_hero.first_spawn_model == nil then
-	new_spawned_hero.first_spawn_model = true
-	shop:AddedDonateHero(new_spawned_hero, new_spawned_hero:GetPlayerOwnerID())
+    new_spawned_hero.first_spawn_model = true
+    if new_spawned_hero and new_spawned_hero:GetUnitName() == "npc_dota_hero_razor" then
+        local time = 0.2
+        if new_spawned_hero:IsIllusion() then
+            time = FrameTime()
+        end
+        local has_arcana = false
+        if new_spawned_hero ~= nil and new_spawned_hero:IsHero() then
+            local children = new_spawned_hero:GetChildren();
+            for k,child in pairs(children) do
+                if child and child:GetClassname() == "dota_item_wearable" and child:GetModelName() == "models/items/razor/razor_arcana/razor_arcana_weapon.vmdl" then
+                    has_arcana = true
+                    break
+                end
+            end
+        end
+        shop:AddedDonateHero(new_spawned_hero, new_spawned_hero:GetPlayerOwnerID())
+        Timers:CreateTimer(time, function()
+            if not has_arcana then
+                new_spawned_hero:SetOriginalModel("models/heroes/razor/razor.vmdl")
+                new_spawned_hero:SetModel("models/heroes/razor/razor.vmdl")
+                shop:UpdateRazorParticle(new_spawned_hero, false)
+            end
+        end)
+    else
+        shop:AddedDonateHero(new_spawned_hero, new_spawned_hero:GetPlayerOwnerID())
+    end
 end
 
 if unit:GetTeamNumber() == DOTA_TEAM_NEUTRALS then 
@@ -5130,6 +5160,8 @@ if custom_voice[player:GetUnitName()] then
 end 
 
 player:AddNewModifier(player, nil, "modifier_portrait_donate_custom", {})
+
+player:AddNewModifier(player, nil, "modifier_percent_stats", {})
 
 local mod = player:FindModifierByName("modifier_item_custom_dust_charges")
 

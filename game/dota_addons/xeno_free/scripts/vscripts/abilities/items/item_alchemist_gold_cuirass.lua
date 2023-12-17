@@ -1,6 +1,5 @@
 LinkLuaModifier("modifier_item_alchemist_gold_cuirass", "abilities/items/item_alchemist_gold_cuirass", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_item_alchemist_gold_cuirass_active_debuff", "abilities/items/item_alchemist_gold_cuirass", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_item_alchemist_gold_cuirass_active_suck_debuff", "abilities/items/item_alchemist_gold_cuirass", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_item_alchemist_gold_cuirass_active_suck_buff", "abilities/items/item_alchemist_gold_cuirass", LUA_MODIFIER_MOTION_NONE)
 
 item_alchemist_gold_cuirass = class({})
@@ -11,39 +10,13 @@ end
 
 
 function item_alchemist_gold_cuirass:OnSpellStart()
-    if not IsServer() then return end
-    local duration = self:GetSpecialValueFor("duration")
-	local units = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetCaster():GetAbsOrigin(), nil, self:GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO+DOTA_UNIT_TARGET_BASIC, 0, FIND_CLOSEST, false )
-	
-	if #units <= 0 then return end
+if not IsServer() then return end
 
-	self:GetCaster():EmitSound("Hero_Visage.GraveChill.Cast")
-	--units[1]:EmitSound("Hero_Visage.GraveChill.Target")
+self:GetCaster():EmitSound("Item.Pavise.Target")
+self:GetCaster():EmitSound("Item.Star_emblem_cast")
 
-	local heroes = 0
-	local creeps = 0
+self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_item_alchemist_gold_cuirass_active_suck_buff", {duration = self:GetSpecialValueFor("duration")})
 
-
-	for _, target in pairs(units) do
-		
-		if target:IsCreep() then 
-			creeps = creeps + 1
-		end
-
-		if target:IsRealHero() then 
-			heroes = heroes + 1
-		end
-
-		local suck_particle = ParticleManager:CreateParticle("particles/alchemist_special/gold_cuirass_suckbeams.vpcf", PATTACH_POINT_FOLLOW, self:GetCaster())
-		ParticleManager:SetParticleControlEnt(suck_particle, 0, target, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true)
-		ParticleManager:SetParticleControlEnt(suck_particle, 1, self:GetCaster(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetCaster():GetAbsOrigin(), true)
-		ParticleManager:ReleaseParticleIndex(suck_particle)
-		target:AddNewModifier(self:GetCaster(), self, "modifier_item_alchemist_gold_cuirass_active_suck_debuff", {duration = duration})
-	end    
-	local buff = self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_item_alchemist_gold_cuirass_active_suck_buff", {duration = duration})
-	if buff then 
-		buff:SetStackCount(creeps + heroes*self:GetSpecialValueFor("creeps"))
-	end
 end
 
 
@@ -63,7 +36,8 @@ function modifier_item_alchemist_gold_cuirass:OnCreated()
 	self.bonus_armor = self:GetAbility():GetSpecialValueFor("bonus_armor")
 	self.bonus_all_attributes = self:GetAbility():GetSpecialValueFor("bonus_all_attributes")
 	self.bonus_movement_speed = self:GetAbility():GetSpecialValueFor("bonus_movement_speed")
-	self.bonus_mana_regen = self:GetAbility():GetSpecialValueFor("bonus_mana_regen")
+	self.bonus_mana = self:GetAbility():GetSpecialValueFor("bonus_mana")
+	self.bonus_health = self:GetAbility():GetSpecialValueFor("bonus_health")
 
 end
 
@@ -77,7 +51,8 @@ function modifier_item_alchemist_gold_cuirass:DeclareFunctions()
 		MODIFIER_PROPERTY_STATS_AGILITY_BONUS,
 		MODIFIER_PROPERTY_STATS_INTELLECT_BONUS,
 		MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT,
-		MODIFIER_PROPERTY_MANA_REGEN_CONSTANT,
+		MODIFIER_PROPERTY_MANA_BONUS,
+		MODIFIER_PROPERTY_HEALTH_BONUS
 	}
 
 	return funcs
@@ -92,7 +67,7 @@ function modifier_item_alchemist_gold_cuirass:GetModifierPhysicalArmorBonus()
 end
 
 function modifier_item_alchemist_gold_cuirass:GetModifierConstantHealthRegen()
-	return self.bonus_health_regen
+	return self.bonus_health
 end
 
 function modifier_item_alchemist_gold_cuirass:GetModifierBonusStats_Strength()
@@ -112,7 +87,7 @@ function modifier_item_alchemist_gold_cuirass:GetModifierMoveSpeedBonus_Constant
 end
 
 function modifier_item_alchemist_gold_cuirass:GetModifierConstantManaRegen()
-	return self.bonus_mana_regen
+	return self.bonus_mana
 end
 
 
@@ -171,85 +146,118 @@ end
 
 
 
-modifier_item_alchemist_gold_cuirass_active_suck_debuff = class({})
-
-function modifier_item_alchemist_gold_cuirass_active_suck_debuff:OnCreated()
-	if not self:GetAbility() then self:Destroy() return end
-	self.armor = -1*self:GetAbility():GetSpecialValueFor("active_armor")
-	self.speed = -1*self:GetAbility():GetSpecialValueFor("active_speed")
-	self.move = -1*self:GetAbility():GetSpecialValueFor("active_move")
-	self.particle_peffect = ParticleManager:CreateParticle("particles/items3_fx/star_emblem.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())	
-	ParticleManager:SetParticleControl(self.particle_peffect, 0, self:GetParent():GetAbsOrigin())
-	self:AddParticle(self.particle_peffect, false, false, -1, false, true)
-end
-
-function modifier_item_alchemist_gold_cuirass_active_suck_debuff:IsHidden() return false end
-function modifier_item_alchemist_gold_cuirass_active_suck_debuff:IsPurgable() return false end
-function modifier_item_alchemist_gold_cuirass_active_suck_debuff:IsDebuff() return true end
-
-function modifier_item_alchemist_gold_cuirass_active_suck_debuff:DeclareFunctions()
-	return 
-	{
-		MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
-		MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-		MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
-	}
-end
-
-function modifier_item_alchemist_gold_cuirass_active_suck_debuff:GetModifierPhysicalArmorBonus()
-	return self.armor
-end
-
-
-function modifier_item_alchemist_gold_cuirass_active_suck_debuff:GetModifierAttackSpeedBonus_Constant()
-	return self.speed
-end
-function modifier_item_alchemist_gold_cuirass_active_suck_debuff:GetModifierMoveSpeedBonus_Percentage()
-	return self.move
-end
-
-
-
 
 modifier_item_alchemist_gold_cuirass_active_suck_buff = class({})
-
-function modifier_item_alchemist_gold_cuirass_active_suck_buff:OnCreated()
-	if not self:GetAbility() then self:Destroy() return end
-	self.armor = self:GetAbility():GetSpecialValueFor("active_armor")
-	self.speed = self:GetAbility():GetSpecialValueFor("active_speed")
-	self.move = self:GetAbility():GetSpecialValueFor("active_move")
-	self.creeps = self:GetAbility():GetSpecialValueFor("creeps")
-end
-
 function modifier_item_alchemist_gold_cuirass_active_suck_buff:IsHidden() return false end
-function modifier_item_alchemist_gold_cuirass_active_suck_buff:IsPurgable() return false end
+function modifier_item_alchemist_gold_cuirass_active_suck_buff:IsPurgable() return true end
 
-function modifier_item_alchemist_gold_cuirass_active_suck_buff:DeclareFunctions()
-	return 
-	{
-		MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
-		MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-		MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
-	}
+function modifier_item_alchemist_gold_cuirass_active_suck_buff:OnCreated( params )
+self.max_shield = self:GetAbility():GetSpecialValueFor("absorb_amount")
+
+self.attack = self:GetAbility():GetSpecialValueFor("target_attack_speed")
+self.move = self:GetAbility():GetSpecialValueFor("target_movement_speed")
+
+self.bonus_attack = self:GetAbility():GetSpecialValueFor("bonus_attack")
+self.bonus_move = self:GetAbility():GetSpecialValueFor("bonus_move")
+
+if not IsServer() then return end
+self:SetStackCount(self.max_shield)
+
+self.nFXIndex = ParticleManager:CreateParticle( "particles/items3_fx/star_emblem_friend.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent() )
+ParticleManager:SetParticleControlEnt( self.nFXIndex, 1, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true )
+self:AddParticle( self.nFXIndex, false, false, -1, false, true )
+
+self.particle = ParticleManager:CreateParticle("particles/items2_fx/pavise_friend.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())
+ParticleManager:SetParticleControl(self.particle, 0, self:GetParent():GetAbsOrigin())
+ParticleManager:SetParticleControlEnt(self.particle, 1, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+self:AddParticle(self.particle, false, false, -1, false, false)
+
 end
 
-function modifier_item_alchemist_gold_cuirass_active_suck_buff:GetModifierPhysicalArmorBonus()
-	return self.armor*self:GetStackCount() / self.creeps
-end
 
 
 function modifier_item_alchemist_gold_cuirass_active_suck_buff:GetModifierAttackSpeedBonus_Constant()
-	return self.speed*self:GetStackCount() / self.creeps
-end
+local bonus = 0
+if self:GetStackCount() == 0 then 
+    bonus = self.bonus_attack
+end 
+
+return self.attack + bonus
+end 
+
 function modifier_item_alchemist_gold_cuirass_active_suck_buff:GetModifierMoveSpeedBonus_Percentage()
-	return self.move*self:GetStackCount() / self.creeps
+local bonus = 0
+if self:GetStackCount() == 0 then 
+    bonus = self.bonus_move
+end   
+
+return self.move + bonus
+end 
+
+
+
+
+function modifier_item_alchemist_gold_cuirass_active_suck_buff:OnRefresh()
+self.max_shield = self:GetAbility():GetSpecialValueFor("absorb_amount")
+
+if not IsServer() then return end
+self:SetStackCount(self.max_shield)
 end
 
 
-function modifier_item_alchemist_gold_cuirass_active_suck_buff:GetEffectName()
-	return "particles/alchemist_special/cuirass_buff_overhead.vpcf"
+
+function modifier_item_alchemist_gold_cuirass_active_suck_buff:DeclareFunctions()
+return 
+{
+    MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
+    MODIFIER_PROPERTY_INCOMING_PHYSICAL_DAMAGE_CONSTANT,
+    MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+    MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
+}
 end
 
-function modifier_item_alchemist_gold_cuirass_active_suck_buff:GetEffectAttachType()
-	return PATTACH_OVERHEAD_FOLLOW
+
+
+function modifier_item_alchemist_gold_cuirass_active_suck_buff:GetModifierIncomingPhysicalDamageConstant(params)
+
+if IsClient() then 
+  if params.report_max then 
+    return self.max_shield 
+  else 
+    return self:GetStackCount()
+  end 
+end
+
+end
+
+
+function modifier_item_alchemist_gold_cuirass_active_suck_buff:GetModifierIncomingDamageConstant(params)
+if not IsServer() then return end
+
+if self:GetStackCount() == 0 then return end
+if params.damage_type ~= DAMAGE_TYPE_PHYSICAL then return end
+
+if self:GetStackCount() > params.damage then
+    self:SetStackCount(self:GetStackCount() - params.damage)
+    local i = params.damage
+    return -i
+else
+    
+    local i = self:GetStackCount()
+    self:SetStackCount(0)
+
+    ParticleManager:DestroyParticle(self.nFXIndex, false)
+    ParticleManager:ReleaseParticleIndex(self.nFXIndex)
+
+    self.nFXIndex2 = ParticleManager:CreateParticle( "particles/items3_fx/star_emblem.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent() )
+    ParticleManager:SetParticleControlEnt( self.nFXIndex2, 1, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true )
+    self:AddParticle( self.nFXIndex2, false, false, -1, false, true )
+
+    ParticleManager:DestroyParticle(self.particle, false)
+    ParticleManager:ReleaseParticleIndex(self.particle)
+
+    self:GetCaster():EmitSound("Item.Star_emblem_break")
+    return -i
+end
+
 end

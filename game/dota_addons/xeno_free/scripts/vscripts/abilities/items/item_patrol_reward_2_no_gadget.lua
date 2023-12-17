@@ -20,7 +20,7 @@ function item_patrol_reward_2_no_gadget:OnSpellStart()
 if not IsServer() then return end
 
 
-upgrade:init_upgrade(self:GetCaster(),12,nil,after_legen,nil,nil,true)
+upgrade:init_upgrade(self:GetCaster(),12,nil,after_legen,nil,nil,1)
 self:SpendCharge()
 
 end

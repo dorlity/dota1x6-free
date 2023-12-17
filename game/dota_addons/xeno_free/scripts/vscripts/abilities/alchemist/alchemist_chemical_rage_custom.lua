@@ -364,7 +364,7 @@ if not IsServer() then return end
 self.caster = self:GetCaster()
 
 self.attack_count = 0
-self.attack_max = 1/self.caster:GetAttacksPerSecond()
+self.attack_max = 1/self.caster:GetAttacksPerSecond(true)
 
 self.interval = 0.01
 
@@ -405,7 +405,7 @@ direction = direction:Normalized()
 
 
 self.attack_count = self.attack_count + self.interval
-self.attack_max = 1/self.caster:GetAttacksPerSecond()
+self.attack_max = 1/self.caster:GetAttacksPerSecond(true)
 
 if self.attack_count >= self.attack_max 
  and not self.caster:IsStunned() and not self.caster:IsHexed() and not my_game:CheckDisarm(self.caster) and not self.caster:IsChanneling() then 

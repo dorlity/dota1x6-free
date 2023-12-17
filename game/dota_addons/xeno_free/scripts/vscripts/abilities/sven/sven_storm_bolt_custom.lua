@@ -167,6 +167,11 @@ function sven_storm_bolt_custom:OnSpellStart(new_target)
 		target = new_target
 	end
 		
+	local shard_active = 0
+	
+	if self:GetCaster():HasScepter() and not self:GetAutoCastState() then
+	 	shard_active = 1
+	end 
 
 	local info = {
 			EffectName = "particles/units/heroes/hero_sven/sven_spell_storm_bolt.vpcf",
@@ -179,6 +184,7 @@ function sven_storm_bolt_custom:OnSpellStart(new_target)
 			iVisionTeamNumber = self:GetCaster():GetTeamNumber(),
 			iVisionRadius = vision_radius,
 			iSourceAttachment = DOTA_PROJECTILE_ATTACHMENT_ATTACK_2, 
+			ExtraData = {shard_active = shard_active}
 		}
 
 	self.projectile = ProjectileManager:CreateTrackingProjectile( info )
@@ -218,7 +224,7 @@ end
 
 
 
-function sven_storm_bolt_custom:OnProjectileHit( hTarget, vLocation )
+function sven_storm_bolt_custom:OnProjectileHit_ExtraData(hTarget, vLocation, table)
 
 if self:GetCaster():HasModifier("modifier_sven_storm_bolt_custom_scepter")  then 
 
@@ -283,10 +289,15 @@ if self:GetCaster():HasModifier("modifier_sven_hammer_6") then
 	damage_type = DAMAGE_TYPE_PURE
 end
 
+local bonus = 0
+if table.shard_active and table.shard_active == 1 then 
+	bonus = self:GetSpecialValueFor("scepter_damage")
+end 
+
 for _,enemy in pairs(enemies) do
 	if (not enemy:IsMagicImmune()) and not enemy:IsInvulnerable()  then
 
-		ApplyDamage(  { victim = enemy, attacker = self:GetCaster(), damage = self:GetBoltDamage(enemy), ability = self, damage_type = damage_type, })
+		ApplyDamage(  { victim = enemy, attacker = self:GetCaster(), damage = self:GetBoltDamage(enemy) + bonus, ability = self, damage_type = damage_type, })
 		local stun_mod = enemy:AddNewModifier( self:GetCaster(), self, "modifier_sven_storm_bolt_custom_stun", { duration = bolt_stun_duration*(1 - enemy:GetStatusResistance()) } )
 
 	end

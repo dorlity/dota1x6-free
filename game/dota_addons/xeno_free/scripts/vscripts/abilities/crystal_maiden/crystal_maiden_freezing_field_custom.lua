@@ -272,33 +272,43 @@ end
 function modifier_crystal_maiden_freezing_field_custom:OnIntervalThink()
 if not IsServer() then return end
 
-	if self:GetCaster():HasScepter() and (self:GetCaster():IsStunned() or self:GetCaster():IsSilenced() or self:GetCaster():IsHexed() or not self:GetCaster():IsAlive() or self:GetCaster():GetForceAttackTarget() ~= nil) then 
-		self:Destroy()
-	end
+if self:GetCaster():HasScepter() and (self:GetCaster():IsStunned() or self:GetCaster():IsSilenced() or self:GetCaster():IsHexed() or not self:GetCaster():IsAlive() or self:GetCaster():GetForceAttackTarget() ~= nil) then 
+	self:Destroy()
+end
 
 
 
-	self.quartal = self.quartal+1
-	if self.quartal>3 then self.quartal = 0 end
-	local a = RandomInt(0,90) + self.quartal*90
-	local r = RandomInt(self.explosion_min_dist,self.explosion_max_dist)
-	local point = Vector( math.cos(a), math.sin(a), 0 ):Normalized() * r
-	point = self:GetCaster():GetOrigin() + point
+self.quartal = self.quartal+1
+if self.quartal>3 then self.quartal = 0 end
+local a = RandomInt(0,90) + self.quartal*90
+local r = RandomInt(self.explosion_min_dist,self.explosion_max_dist)
+local point = Vector( math.cos(a), math.sin(a), 0 ):Normalized() * r
+point = self:GetCaster():GetOrigin() + point
 
-	local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), point, nil, self.explosion_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false )
-	for _,enemy in pairs(enemies) do
-		self:GetAbility():DealDamage(enemy, self:GetAbility())
-	end
+local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), point, nil, self.explosion_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false )
+for _,enemy in pairs(enemies) do
+	self:GetAbility():DealDamage(enemy, self:GetAbility())
+end
 
-	local all_enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self.slow_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false )
-	
-	for _,enemy in pairs(all_enemies) do 
-		enemy:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_crystal_maiden_freezing_field_custom_debuff", {duration =  self.slow_duration })
-	end
+local copy = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), point, nil, self.explosion_radius, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_INVULNERABLE, 0, false )
+
+for _,unit in pairs(copy) do 
+  if unit:HasModifier("modifier_crystal_maiden_crystal_clone_statue") then 
+		self:GetAbility():DealDamage(unit, self:GetAbility())
+  end 
+end 
 
 
 
-	self:PlayEffects2( point )
+local all_enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self.slow_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false )
+
+for _,enemy in pairs(all_enemies) do 
+	enemy:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_crystal_maiden_freezing_field_custom_debuff", {duration =  self.slow_duration })
+end
+
+
+
+self:PlayEffects2( point )
 
 end
 
@@ -768,6 +778,16 @@ for _,enemy in pairs(enemies) do
 
 	enemy:AddNewModifier(self:GetCaster(), ability, "modifier_crystal_maiden_freezing_field_custom_debuff", {duration =  ability:GetSpecialValueFor( "slow_duration" ) })
 end
+
+local copy = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), point , nil, self.radius, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_INVULNERABLE, 0, false )
+
+
+for _,unit in pairs(copy) do 
+  if unit:HasModifier("modifier_crystal_maiden_crystal_clone_statue") then 
+		ability:DealDamage(unit, self:GetAbility())
+  end 
+end 
+
 
 EmitSoundOnLocationWithCaster( point, "Maiden.Freezing_damage", self:GetCaster() )
 EmitSoundOnLocationWithCaster( point, "Maiden.Freezing_damage2", self:GetCaster() )

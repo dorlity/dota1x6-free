@@ -1174,10 +1174,3 @@ end
 
 return string_table
 end
-    return string_table
-end 
-
-
-
-return string_table
-end

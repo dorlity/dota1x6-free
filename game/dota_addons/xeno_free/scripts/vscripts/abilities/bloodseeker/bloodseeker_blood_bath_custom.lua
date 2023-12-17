@@ -247,7 +247,7 @@ for _,enemy in pairs(enemies) do
 		end
 
 
-		ApplyDamage({ attacker = self:GetCaster(), victim = enemy, damage = self.damage, damage_type = DAMAGE_TYPE_PURE, ability = self:GetAbility() })
+		ApplyDamage({ attacker = self:GetCaster(), victim = enemy, damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility() })
 
 		if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_6") and not enemy:HasModifier("modifier_bloodseeker_blood_bath_custom_center") then 
 			enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_bloodseeker_blood_bath_custom_center", {duration = self:GetAbility().knockback_duration, x = self:GetParent():GetAbsOrigin().x, y = self:GetParent():GetAbsOrigin().y})

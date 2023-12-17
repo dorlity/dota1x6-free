@@ -501,7 +501,7 @@ if self:GetCaster():HasModifier("modifier_sand_king_sand_6") then
 		mod:AddParticle(effect_cast,false, false, -1, false, false)
 		mod:SetEndCallback(function()
 
-			unit:AddNewModifier(self:GetCaster(), self, "modifier_sandking_sand_storm_custom_root", {duration = (1 - unit:GetStatusResistance()*root_duration)})
+			unit:AddNewModifier(self:GetCaster(), self, "modifier_sandking_sand_storm_custom_root", {duration = (1 - unit:GetStatusResistance())*root_duration})
 
 		end)
 

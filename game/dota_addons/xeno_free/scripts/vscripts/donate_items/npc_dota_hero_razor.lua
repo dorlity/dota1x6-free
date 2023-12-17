@@ -19,8 +19,8 @@ return
             },
         },
         ['SetItems'] = nil,
-        ['hide'] = 1,
-        ['OtherItemsBundle'] = nil,
+        ['hide'] = 0,
+        ['OtherItemsBundle'] = {{23096, "#FFFFFF"}, {2309699, "#000000"}},
         ['SlotType'] = 'head',
         ['RemoveDefaultItemsList'] = nil,
         ['Modifier'] = nil,
@@ -37,8 +37,8 @@ return
         ['MaterialGroup'] = nil,
         ['ItemModel'] ='models/items/razor/razor_arcana/razor_arcana_arms.vmdl',
         ['SetItems'] = nil,
-        ['hide'] = 1,
-        ['OtherItemsBundle'] = nil,
+        ['hide'] = 0,
+        ['OtherItemsBundle'] = {{23098, "#FFFFFF"}, {2309899, "#000000"}},
         ['SlotType'] = 'arms',
         ['RemoveDefaultItemsList'] = nil,
         ['Modifier'] = nil,
@@ -55,8 +55,8 @@ return
         ['MaterialGroup'] = nil,
         ['ItemModel'] ='models/items/razor/razor_arcana/razor_arcana_belt.vmdl',
         ['SetItems'] = nil,
-        ['hide'] = 1,
-        ['OtherItemsBundle'] = nil,
+        ['hide'] = 0,
+        ['OtherItemsBundle'] = {{23099, "#FFFFFF"}, {2309999, "#000000"}},
         ['SlotType'] = 'belt',
         ['RemoveDefaultItemsList'] = nil,
         ['Modifier'] = nil,
@@ -66,13 +66,13 @@ return
     {
         ['item_id'] =23095,
         ['name'] ='Voidstorm Asylum Tormentor',
-        ['icon'] ='econ/sets/razor_arcana',
+        ['icon'] ='econ/items/razor/razor_arcana/razor_arcana_weapon',
         ['price'] = 1,
         ['MaterialGroup'] = "default",
         ["MaterialGroupItem"] = "default",
         ['HeroModel'] = "models/items/razor/razor_arcana/razor_arcana.vmdl",
         ['ArcanaAnim'] = nil,
-        ['MaterialGroup'] = nil,
+        ['MaterialGroup'] = "default",
         ['ItemModel'] ='models/items/razor/razor_arcana/razor_arcana_weapon.vmdl',
         ['ParticlesItems'] = 
         {
@@ -160,13 +160,39 @@ return
         ['SlotType'] = 'weapon',
         ['RemoveDefaultItemsList'] = nil,
         ['Modifier'] = "modifier_razor_arcana_custom",
-        ['sets'] = 'rare',
+        ['sets'] = 'razor_arcana',
+    },
+    [23097] = 
+    {
+        ['item_id'] =23097,
+        ['name'] ='Voidstorm Asylum Armor',
+        ['icon'] ='econ/items/razor/razor_arcana/razor_arcana_armor',
+        ['price'] = 1,
+        ['HeroModel'] = nil,
+        ['ArcanaAnim'] = nil,
+        ['MaterialGroup'] = nil,
+        ['ItemModel'] ='models/items/razor/razor_arcana/razor_arcana_armor.vmdl',
+        ['ParticlesItems'] = 
+        {
+            {
+                ['ParticleName'] = 'particles/econ/items/razor/razor_arcana/razor_arcana_shoulder_ambient.vpcf',
+                ['DefaultPattch'] = PATTACH_ABSORIGIN_FOLLOW,
+                ['ControllPoints'] = {[0] = {'SetParticleControl', 'default'}}
+            },
+        },
+        ['SetItems'] = nil,
+        ['hide'] = 0,
+        ['OtherItemsBundle'] = {{23097, "#FFFFFF"}, {2309799, "#000000"}},
+        ['SlotType'] = 'armor',
+        ['RemoveDefaultItemsList'] = nil,
+        ['Modifier'] = nil,
+        ['sets'] = 'razor_arcana',
     },
     [2309599] = 
     {
         ['item_id'] =2309599,
         ['name'] ='Voidstorm Asylum Tormentor',
-        ['icon'] ='econ/sets/razor_arcana',
+        ['icon'] ='econ/items/razor/razor_arcana/razor_arcana_weapon',
         ['price'] = 1,
         ['HeroModel'] = "models/items/razor/razor_arcana/razor_arcana.vmdl",
         ['ArcanaAnim'] = nil,
@@ -230,7 +256,7 @@ return
                 }
             },
         },
-        ['ParticlesHero'] = 
+        ['ParticlesHero'] =
         {
             {
                 ['ParticleName'] = "particles/econ/items/razor/razor_arcana/razor_arcana_base_ambient_game_v2.vpcf",
@@ -261,32 +287,6 @@ return
         ['Modifier'] = "modifier_razor_arcana_v2_custom",
         ['sets'] = 'rare',
     },
-    [23097] = 
-    {
-        ['item_id'] =23097,
-        ['name'] ='Voidstorm Asylum Armor',
-        ['icon'] ='econ/items/razor/razor_arcana/razor_arcana_armor',
-        ['price'] = 1,
-        ['HeroModel'] = nil,
-        ['ArcanaAnim'] = nil,
-        ['MaterialGroup'] = nil,
-        ['ItemModel'] ='models/items/razor/razor_arcana/razor_arcana_armor.vmdl',
-        ['ParticlesItems'] = 
-        {
-            {
-                ['ParticleName'] = 'particles/econ/items/razor/razor_arcana/razor_arcana_shoulder_ambient.vpcf',
-                ['DefaultPattch'] = PATTACH_ABSORIGIN_FOLLOW,
-                ['ControllPoints'] = {[0] = {'SetParticleControl', 'default'}}
-            },
-        },
-        ['SetItems'] = nil,
-        ['hide'] = 1,
-        ['OtherItemsBundle'] = nil,
-        ['SlotType'] = 'armor',
-        ['RemoveDefaultItemsList'] = nil,
-        ['Modifier'] = nil,
-        ['sets'] = 'razor_arcana',
-    },
     [2309699] = 
     {
         ['item_id'] =2309699,
@@ -309,7 +309,7 @@ return
         ['BodyGroupStyle'] = 2,
         ['SetItems'] = nil,
         ['hide'] = 1,
-        ['OtherItemsBundle'] = nil,
+        ['OtherItemsBundle'] = {{23096, "#FFFFFF"}, {2309699, "#000000"}},
         ['SlotType'] = 'head',
         ['RemoveDefaultItemsList'] = nil,
         ['Modifier'] = nil,
@@ -330,7 +330,7 @@ return
         ['ItemModel'] ='models/items/razor/razor_arcana/razor_arcana_arms.vmdl',
         ['SetItems'] = nil,
         ['hide'] = 1,
-        ['OtherItemsBundle'] = nil,
+        ['OtherItemsBundle'] = {{23098, "#FFFFFF"}, {2309899, "#000000"}},
         ['SlotType'] = 'arms',
         ['RemoveDefaultItemsList'] = nil,
         ['Modifier'] = nil,
@@ -350,7 +350,7 @@ return
         ['ItemModel'] ='models/items/razor/razor_arcana/razor_arcana_belt.vmdl',
         ['SetItems'] = nil,
         ['hide'] = 1,
-        ['OtherItemsBundle'] = nil,
+        ['OtherItemsBundle'] = {{23099, "#FFFFFF"}, {2309999, "#000000"}},
         ['SlotType'] = 'belt',
         ['RemoveDefaultItemsList'] = nil,
         ['Modifier'] = nil,
@@ -378,7 +378,7 @@ return
         },
         ['SetItems'] = nil,
         ['hide'] = 1,
-        ['OtherItemsBundle'] = nil,
+        ['OtherItemsBundle'] = {{23097, "#FFFFFF"}, {2309799, "#000000"}},
         ['SlotType'] = 'armor',
         ['RemoveDefaultItemsList'] = nil,
         ['Modifier'] = nil,
@@ -848,24 +848,6 @@ return
 
 -- Weapon
 -- particles/econ/items/razor/razor_ti6/razor_plasmafield_ti6.vpcf
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     --[[

@@ -368,17 +368,14 @@ var damage_items =
 	"item_monkey_king_bar",
 	"item_greater_crit",
 	"item_nullifier",
-	"item_desolator",
+	"item_desolator_custom",
 	"item_disperser",
 	"item_silver_edge_custom",
 	"item_mjollnir",
 	"item_bloodthorn",
 	"item_revenants_brooch_custom",
-	"item_witchfury",
 	"item_radiance_custom",
-	"item_veil_of_corruption",
 	"item_dagon_5_custom",
-	"item_manaflare_lens_custom"
 ]
 
 var surv_items = 

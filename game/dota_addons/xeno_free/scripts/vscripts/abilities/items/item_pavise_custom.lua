@@ -25,15 +25,15 @@ function modifier_item_pavise_custom:GetAttributes() return MODIFIER_ATTRIBUTE_M
 function modifier_item_pavise_custom:DeclareFunctions()
 	return 
 	{
-		MODIFIER_PROPERTY_MANA_REGEN_CONSTANT,
+		MODIFIER_PROPERTY_MANA_BONUS,
 		MODIFIER_PROPERTY_HEALTH_BONUS,
 		MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS
 	}
 end
 
-function modifier_item_pavise_custom:GetModifierConstantManaRegen()
+function modifier_item_pavise_custom:GetModifierManaBonus()
 	if self:GetAbility() then
-		return self:GetAbility():GetSpecialValueFor("bonus_mana_regen")
+		return self:GetAbility():GetSpecialValueFor("bonus_mana")
 	end
 end
 
@@ -82,7 +82,7 @@ end
 function modifier_item_pavise_custom_active:DeclareFunctions()
 	return 
 {
-	MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
+	--MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
   MODIFIER_PROPERTY_INCOMING_PHYSICAL_DAMAGE_CONSTANT,
 }
 end
@@ -99,10 +99,6 @@ if IsClient() then
   end 
 end
 
-end
-
-
-function modifier_item_pavise_custom_active:GetModifierIncomingDamageConstant(params)
 if not IsServer() then return end
 
 if self:GetStackCount() == 0 then return end

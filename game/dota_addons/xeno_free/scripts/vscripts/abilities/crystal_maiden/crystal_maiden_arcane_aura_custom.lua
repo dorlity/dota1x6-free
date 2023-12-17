@@ -108,7 +108,7 @@ local caster = self:GetCaster()
 ability:OnSpellStart()
 caster:StartGesture(ACT_DOTA_CAST_ABILITY_5)
 
-Timers:CreateTimer(FrameTime(), function()
+Timers:CreateTimer(0.1, function()
 
   local copy = FindUnitsInRadius( caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, 500, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_INVULNERABLE, 0, false )
 
@@ -449,7 +449,6 @@ function modifier_crystal_maiden_arcane_aura_custom_buff:DeclareFunctions()
 return
 {
   MODIFIER_PROPERTY_MANA_REGEN_CONSTANT,
-  MODIFIER_PROPERTY_STATS_INTELLECT_BONUS
 }
 end
 
@@ -462,18 +461,9 @@ end
 
 function modifier_crystal_maiden_arcane_aura_custom_buff:OnIntervalThink()
 if not IsServer() then return end 
-
-self.int = 0 
-self.int = self:GetParent():GetIntellect()*self:GetAbility():GetSpecialValueFor("int_bonus")/100
-
-
-self:GetCaster():CalculateStatBonus(true)
+self.PercentInt = self:GetAbility():GetSpecialValueFor("int_bonus")/100
 end 
 
-
-function modifier_crystal_maiden_arcane_aura_custom_buff:GetModifierBonusStats_Intellect()
-return self.int
-end
 
 
 

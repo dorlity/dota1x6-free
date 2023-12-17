@@ -362,9 +362,7 @@ self:SetStackCount(self.max_hits)
 self.agi_percentage = 0
 
 if self:GetCaster():HasModifier("modifier_monkey_king_mastery_2") then 
-  self.agi_percentage = self:GetCaster():GetTalentValue("modifier_monkey_king_mastery_2", "agility")/100
-  self:OnIntervalThink()
-  self:StartIntervalThink(0.1)
+  self.PercentAgi = self:GetCaster():GetTalentValue("modifier_monkey_king_mastery_2", "agility")/100
 end
 
 end
@@ -374,13 +372,9 @@ function modifier_monkey_king_jingu_mastery_custom_buff:DeclareFunctions()
     MODIFIER_EVENT_ON_TAKEDAMAGE,
     MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
     MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
-    MODIFIER_PROPERTY_STATS_AGILITY_BONUS
   }
 end
 
-function modifier_monkey_king_jingu_mastery_custom_buff:GetModifierBonusStats_Agility()
-return self.agi
-end
 
 
 function modifier_monkey_king_jingu_mastery_custom_buff:GetActivityTranslationModifiers(params)
@@ -394,15 +388,6 @@ if self:GetParent():PassivesDisabled() then return end
 end
 
 
-function modifier_monkey_king_jingu_mastery_custom_buff:OnIntervalThink()
-if not IsServer() then return end
-
-self.agi  = 0
-self.agi  = self:GetParent():GetAgility() * self.agi_percentage
-
-self:GetParent():CalculateStatBonus(true)
-
-end
 
 function modifier_monkey_king_jingu_mastery_custom_buff:OnTakeDamage(params)
 if not IsServer() then return end

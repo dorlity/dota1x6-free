@@ -36,9 +36,7 @@ end
 
 
 function modifier_bird_tornado:OnIntervalThink()
-    if not IsServer() then
-        return
-    end
+    if not IsServer() then return end
 
 	local parent = self:GetParent()
 	if not IsValidEntity(parent) then return end
@@ -74,12 +72,11 @@ function modifier_bird_tornado:OnIntervalThink()
 		if not IsValidEntity(parent) or not parent:IsAlive() then return end
 		parent:RemoveModifierByName("modifier_neutral_cast")
 
-
-
 	--	if not IsValidEntity(self.target) or not self.target:IsAlive() then return end
 		if parent:GetMana() < self:GetAbility():GetManaCost(1) then return end
 
 
+      	self:GetParent():CheckCastMods(self:GetAbility())
 
 
 		parent:EmitSound("n_creep_Wildkin.SummonTornado")

@@ -23,7 +23,6 @@ end
 
 function modifier_item_heart_custom:OnCreated(table)
 	self.bonus_strength = self:GetAbility():GetSpecialValueFor("bonus_strength")
-	self.bonus_health = self:GetAbility():GetSpecialValueFor("bonus_health")
 	self.health_regen_pct = self:GetAbility():GetSpecialValueFor("health_regen_pct")
 
 end
@@ -33,7 +32,6 @@ function modifier_item_heart_custom:DeclareFunctions()
 	return 
 	{
 		MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
-		MODIFIER_PROPERTY_HEALTH_BONUS,
 		MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE,
 	}
 end
@@ -44,10 +42,6 @@ function modifier_item_heart_custom:GetModifierBonusStats_Strength()
 end
 
 
-
-function modifier_item_heart_custom:GetModifierHealthBonus()
-	return self.bonus_health
-end
 
 function modifier_item_heart_custom:GetModifierHealthRegenPercentage()
 	return self.health_regen_pct

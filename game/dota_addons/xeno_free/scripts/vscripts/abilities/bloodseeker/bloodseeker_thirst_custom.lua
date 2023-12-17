@@ -803,12 +803,12 @@ function modifier_bloodseeker_thirst_custom_shield:DeclareFunctions()
 return
 {
     MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT,
-	MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
+	MODIFIER_PROPERTY_INCOMING_PHYSICAL_DAMAGE_CONSTANT
 }
 
 end
 
-function modifier_bloodseeker_thirst_custom_shield:GetModifierIncomingDamageConstant( params )
+function modifier_bloodseeker_thirst_custom_shield:GetModifierIncomingPhysicalDamageConstant( params )
 
 
 if IsClient() then 

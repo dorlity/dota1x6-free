@@ -7,7 +7,6 @@ LinkLuaModifier( "modifier_antimage_mana_break_custom_legendary", "abilities/ant
 LinkLuaModifier( "modifier_antimage_mana_break_custom_heal_reduce", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_antimage_mana_break_custom_damage_cd", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_antimage_mana_break_custom_anim_normal", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_antimage_mana_break_custom_rooted", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_antimage_mana_break_custom_silence_cd", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_antimage_mana_break_custom_shard", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_antimage_mana_break_custom_armor", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
@@ -17,19 +16,6 @@ LinkLuaModifier( "modifier_antimage_mana_break_custom_agility", "abilities/antim
 
 
 antimage_mana_break_custom = class({})
-
-
-antimage_mana_break_custom.no_mana_damage = {10, 15}
-antimage_mana_break_custom.no_mana_stun = {1.0, 1.5}
-antimage_mana_break_custom.no_mana_damage_duration = 5
-antimage_mana_break_custom.no_mana_cd = 10
-antimage_mana_break_custom.no_mana_pct = 0.5
-
-
-antimage_mana_break_custom.slow_reduction = -30
-antimage_mana_break_custom.slow_mana = 50
-
-
 
 
 
@@ -192,8 +178,9 @@ if self:GetParent():HasModifier("modifier_antimage_mana_break_custom_legendary")
 	target:EmitSound("Antimage.Break_legendary_hit")
 
 	local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_antimage/antimage_manabreak_slow.vpcf", PATTACH_ABSORIGIN_FOLLOW, target)
-	ParticleManager:SetParticleControl(particle, 0, target:GetAbsOrigin())
-	ParticleManager:SetParticleControl(particle, 1, target:GetAbsOrigin())
+	ParticleManager:SetParticleControlEnt( particle, 0, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetOrigin(), true )
+	ParticleManager:SetParticleControlEnt( particle, 1, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetOrigin(), true )
+	ParticleManager:ReleaseParticleIndex(particle)
 end
 
 
@@ -281,11 +268,11 @@ if target:GetMana()/target:GetMaxMana() <= self:GetCaster():GetTalentValue("modi
 
 
 		if not target:HasModifier("modifier_antimage_mana_break_custom_damage_cd") then 
-			local duration = self:GetCaster():GetTalentValue("modifier_antimage_break_6", "root")*(1 - target:GetStatusResistance())
-			target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_antimage_mana_break_custom_rooted", {duration = duration})
+			local duration = self:GetCaster():GetTalentValue("modifier_antimage_break_6", "break_duration")*(1 - target:GetStatusResistance())
+			target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_generic_break", {duration = duration})
 			target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_antimage_mana_break_custom_damage_cd", {duration = self:GetCaster():GetTalentValue("modifier_antimage_break_6", "cd")})
 
-			target:EmitSound("Antimage.Break_stun")
+			target:EmitSound("DOTA_Item.SilverEdge.Target")
 
 			local effect_cast = ParticleManager:CreateParticle( "particles/am_no_mana.vpcf", PATTACH_OVERHEAD_FOLLOW, target )
 			ParticleManager:SetParticleControl( effect_cast, 0,  target:GetOrigin() )
@@ -316,11 +303,18 @@ function modifier_antimage_mana_break_custom_slow:IsPurgable() return false end
 
 function modifier_antimage_mana_break_custom_slow:OnCreated()
 self.movespeed_slow = self:GetAbility():GetSpecialValueFor("move_slow") * -1
-local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_antimage/antimage_manabreak_slow.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-ParticleManager:SetParticleControl(particle, 0, self:GetParent():GetAbsOrigin())
-ParticleManager:SetParticleControl(particle, 1, self:GetParent():GetAbsOrigin())
 
+if not IsServer() then return end
+local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_antimage/antimage_manabreak_slow.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
+ParticleManager:SetParticleControlEnt( particle, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetOrigin(), true )
+ParticleManager:SetParticleControlEnt( particle, 1, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetOrigin(), true )
+ParticleManager:ReleaseParticleIndex(particle)
 end
+
+
+function modifier_antimage_mana_break_custom_slow:OnRefresh()
+self:OnCreated()
+end 
 
 function modifier_antimage_mana_break_custom_slow:DeclareFunctions()
 	return {
@@ -448,20 +442,6 @@ function modifier_antimage_mana_break_custom_silence_cd:IsPurgable() return fals
 modifier_antimage_mana_break_custom_damage_cd = class({})
 function modifier_antimage_mana_break_custom_damage_cd:IsHidden() return true end
 function modifier_antimage_mana_break_custom_damage_cd:IsPurgable() return false end
-
-
-
-
-modifier_antimage_mana_break_custom_rooted = class({})
-function modifier_antimage_mana_break_custom_rooted:IsHidden() return true end
-function modifier_antimage_mana_break_custom_rooted:IsPurgable() return true end
-function modifier_antimage_mana_break_custom_rooted:CheckState()
-return
-{
-	[MODIFIER_STATE_ROOTED] = true
-}
-end
-function modifier_antimage_mana_break_custom_rooted:GetEffectName() return "particles/items3_fx/gleipnir_root.vpcf" end
 
 
 

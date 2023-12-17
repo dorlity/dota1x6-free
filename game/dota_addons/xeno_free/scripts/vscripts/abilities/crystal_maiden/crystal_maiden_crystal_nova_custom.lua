@@ -114,118 +114,132 @@ end
 
 function crystal_maiden_crystal_nova_custom:OnSpellStart()
 
-  local caster = self:GetCaster()
-  local point = self:GetCursorPosition()
+local caster = self:GetCaster()
+local point = self:GetCursorPosition()
 
 
-  local castrange = self:GetSpecialValueFor("AbilityCastRange")
+local castrange = self:GetSpecialValueFor("AbilityCastRange")
 
-  if self:GetCaster():HasModifier("modifier_maiden_crystal_3") then 
-    castrange = castrange + self:GetCaster():GetTalentValue("modifier_maiden_crystal_3", "range")
+if self:GetCaster():HasModifier("modifier_maiden_crystal_3") then 
+  castrange = castrange + self:GetCaster():GetTalentValue("modifier_maiden_crystal_3", "range")
+end
+
+local dir = (point - caster:GetAbsOrigin()):Normalized()
+
+if (point - caster:GetAbsOrigin()):Length2D() > castrange then 
+  --point = point + self:GetCaster():GetAbsOrigin() + dir*castrange
+end
+
+
+local damage = self:GetSpecialValueFor("nova_damage")
+local radius = self:GetSpecialValueFor("radius") + self:GetCaster():GetTalentValue("modifier_maiden_crystal_6", "radius")
+local debuffDuration = self:GetSpecialValueFor("duration")
+
+local vision_radius = 900
+local vision_duration = 6
+
+
+if self:GetCaster():HasModifier("modifier_maiden_crystal_2") then 
+  damage = damage + self:GetCaster():GetTalentValue("modifier_maiden_crystal_2", "damage")*self:GetCaster():GetIntellect()/100
+end
+
+local mod = self:GetCaster():FindModifierByName("modifier_crystal_maiden_crystal_nova_damage")
+
+if mod then 
+  damage = damage*(1 + mod:GetStackCount()*self:GetCaster():GetTalentValue("modifier_maiden_crystal_4", "damage")/100)
+  mod:Destroy()
+end 
+
+if self:GetCaster():HasModifier("modifier_maiden_crystal_3") then 
+  self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_crystal_maiden_crystal_nova_speed", { duration = self:GetCaster():GetTalentValue("modifier_maiden_crystal_3", "duration"), })
+end
+
+local stun_duration = self:GetCaster():GetTalentValue("modifier_maiden_crystal_5", "stun")
+local stun_cd = self:GetCaster():GetTalentValue("modifier_maiden_crystal_5", "cd")
+
+local arcane = self:GetCaster():FindAbilityByName("crystal_maiden_arcane_aura_custom")
+local mod = self:GetCaster():FindModifierByName("modifier_crystal_maiden_arcane_aura_custom_spell")
+if arcane and mod and self:GetAutoCastState() == true then 
+
+  mod:Destroy()
+
+  EmitSoundOnLocationWithCaster(self:GetCaster():GetAbsOrigin(), "DOTA_Item.Arcane_Blink.Activate", self:GetCaster())
+
+  local effect_end = ParticleManager:CreateParticle( "particles/econ/events/winter_major_2016/blink_dagger_start_wm.vpcf", PATTACH_WORLDORIGIN, nil )
+  ParticleManager:SetParticleControl( effect_end, 0, self:GetCaster():GetAbsOrigin() )
+  ParticleManager:ReleaseParticleIndex( effect_end )
+
+  FindClearSpaceForUnit(self:GetCaster(), point, true)
+
+  local effect_end = ParticleManager:CreateParticle( "particles/econ/events/winter_major_2016/blink_dagger_wm_end.vpcf", PATTACH_WORLDORIGIN, nil )
+  ParticleManager:SetParticleControl( effect_end, 0, self:GetCaster():GetAbsOrigin() )
+  ParticleManager:ReleaseParticleIndex( effect_end )
+
+  self:GetCaster():EmitSound("Puck.Rift_Legendary")
+
+ 
+end
+
+
+local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), point, nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false )
+
+local stunned = false
+
+local damageTable = { attacker = caster, damage_type = DAMAGE_TYPE_MAGICAL, ability = self, }
+
+for _,enemy in pairs(enemies) do
+
+  damageTable.victim = enemy
+
+  local deal_damage = damage
+
+  if enemy:IsCreep() then 
+    deal_damage = deal_damage * (1 + self:GetSpecialValueFor("creeps_damage")/100)
   end
 
-  local dir = (point - caster:GetAbsOrigin()):Normalized()
+  damageTable.damage = deal_damage
 
-  if (point - caster:GetAbsOrigin()):Length2D() > castrange then 
-    --point = point + self:GetCaster():GetAbsOrigin() + dir*castrange
+  if self:GetCaster():HasModifier("modifier_maiden_crystal_5") and not enemy:HasModifier("modifier_crystal_maiden_crystal_nova_stun_cd") then 
+
+    stunned = true
+    enemy:AddNewModifier(self:GetCaster(), self, "modifier_crystal_maiden_crystal_nova_stun", {duration = (1 - enemy:GetStatusResistance())*stun_duration})
+    enemy:AddNewModifier(self:GetCaster(), self, "modifier_crystal_maiden_crystal_nova_stun_cd", {duration = stun_cd})
   end
 
 
-  local damage = self:GetSpecialValueFor("nova_damage")
-  local radius = self:GetSpecialValueFor("radius") + self:GetCaster():GetTalentValue("modifier_maiden_crystal_6", "radius")
-  local debuffDuration = self:GetSpecialValueFor("duration")
+  ApplyDamage(damageTable)
 
-  local vision_radius = 900
-  local vision_duration = 6
+  enemy:AddNewModifier( caster, self, "modifier_crystal_maiden_crystal_nova_custom", { duration = debuffDuration } )
+end
 
-
-  if self:GetCaster():HasModifier("modifier_maiden_crystal_2") then 
-    damage = damage + self:GetCaster():GetTalentValue("modifier_maiden_crystal_2", "damage")*self:GetCaster():GetIntellect()/100
-  end
-
-  local mod = self:GetCaster():FindModifierByName("modifier_crystal_maiden_crystal_nova_damage")
-
-  if mod then 
-    damage = damage*(1 + mod:GetStackCount()*self:GetCaster():GetTalentValue("modifier_maiden_crystal_4", "damage")/100)
-    mod:Destroy()
-  end 
-
-  if self:GetCaster():HasModifier("modifier_maiden_crystal_3") then 
-    self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_crystal_maiden_crystal_nova_speed", { duration = self:GetCaster():GetTalentValue("modifier_maiden_crystal_3", "duration"), })
-  end
-
-  local stun_duration = self:GetCaster():GetTalentValue("modifier_maiden_crystal_5", "stun")
-  local stun_cd = self:GetCaster():GetTalentValue("modifier_maiden_crystal_5", "cd")
-
-  local arcane = self:GetCaster():FindAbilityByName("crystal_maiden_arcane_aura_custom")
-  local mod = self:GetCaster():FindModifierByName("modifier_crystal_maiden_arcane_aura_custom_spell")
-  if arcane and mod and self:GetAutoCastState() == true then 
-
-    mod:Destroy()
-
-    EmitSoundOnLocationWithCaster(self:GetCaster():GetAbsOrigin(), "DOTA_Item.Arcane_Blink.Activate", self:GetCaster())
-
-    local effect_end = ParticleManager:CreateParticle( "particles/econ/events/winter_major_2016/blink_dagger_start_wm.vpcf", PATTACH_WORLDORIGIN, nil )
-    ParticleManager:SetParticleControl( effect_end, 0, self:GetCaster():GetAbsOrigin() )
-    ParticleManager:ReleaseParticleIndex( effect_end )
-
-    FindClearSpaceForUnit(self:GetCaster(), point, true)
-
-    local effect_end = ParticleManager:CreateParticle( "particles/econ/events/winter_major_2016/blink_dagger_wm_end.vpcf", PATTACH_WORLDORIGIN, nil )
-    ParticleManager:SetParticleControl( effect_end, 0, self:GetCaster():GetAbsOrigin() )
-    ParticleManager:ReleaseParticleIndex( effect_end )
-
-    self:GetCaster():EmitSound("Puck.Rift_Legendary")
-
-   
-  end
+AddFOWViewer( self:GetCaster():GetTeamNumber(), point, vision_radius, vision_duration, true )
 
 
-  local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), point, nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false )
+if self:GetCaster():HasModifier("modifier_maiden_crystal_6") and #enemies > 0 then 
+  self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_crystal_maiden_crystal_nova_armor", {duration = self:GetCaster():GetTalentValue("modifier_maiden_crystal_6", "duration")})
+  self:GetCaster():EmitSound("Maiden.Crystal_armor")
+end
 
-  local stunned = false
-
-  local damageTable = { attacker = caster, damage_type = DAMAGE_TYPE_MAGICAL, ability = self, }
-
-  for _,enemy in pairs(enemies) do
-
-    damageTable.victim = enemy
-
-    local deal_damage = damage
-
-    if enemy:IsCreep() then 
-      deal_damage = deal_damage * (1 + self:GetSpecialValueFor("creeps_damage")/100)
-    end
-
-    damageTable.damage = deal_damage
-
-    if self:GetCaster():HasModifier("modifier_maiden_crystal_5") and not enemy:HasModifier("modifier_crystal_maiden_crystal_nova_stun_cd") then 
-
-      stunned = true
-      enemy:AddNewModifier(self:GetCaster(), self, "modifier_crystal_maiden_crystal_nova_stun", {duration = (1 - enemy:GetStatusResistance())*stun_duration})
-      enemy:AddNewModifier(self:GetCaster(), self, "modifier_crystal_maiden_crystal_nova_stun_cd", {duration = stun_cd})
-    end
+if stunned == true then 
+  EmitSoundOnLocationWithCaster(point, "Maiden.Frostbite_stun", self:GetCaster())
+end 
 
 
+
+local copy = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), point, nil, radius, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_INVULNERABLE, 0, false )
+
+for _,unit in pairs(copy) do 
+  if unit:HasModifier("modifier_crystal_maiden_crystal_clone_statue") then 
+
+    damageTable.victim = unit
+    damageTable.damage = damage
     ApplyDamage(damageTable)
-
-    enemy:AddNewModifier( caster, self, "modifier_crystal_maiden_crystal_nova_custom", { duration = debuffDuration } )
-  end
-
-  AddFOWViewer( self:GetCaster():GetTeamNumber(), point, vision_radius, vision_duration, true )
-
-  
-  if self:GetCaster():HasModifier("modifier_maiden_crystal_6") and #enemies > 0 then 
-    self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_crystal_maiden_crystal_nova_armor", {duration = self:GetCaster():GetTalentValue("modifier_maiden_crystal_6", "duration")})
-    self:GetCaster():EmitSound("Maiden.Crystal_armor")
-  end
-
-  if stunned == true then 
-    EmitSoundOnLocationWithCaster(point, "Maiden.Frostbite_stun", self:GetCaster())
   end 
+end 
 
 
-  self:PlayEffects( point, radius, debuffDuration )
+
+self:PlayEffects( point, radius, debuffDuration )
 end
 
 

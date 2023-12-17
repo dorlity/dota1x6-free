@@ -47,7 +47,8 @@ function modifier_item_butterfly_custom:GetModifierPreAttack_BonusDamage()
     if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_damage") end
 end
 function modifier_item_butterfly_custom:GetModifierAttackSpeedBonus_Constant()
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_attack_speed") end
+    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_speed")*self:GetParent():GetAgility()/100 
+    end
 end
 
 function modifier_item_butterfly_custom:GetModifierEvasion_Constant()

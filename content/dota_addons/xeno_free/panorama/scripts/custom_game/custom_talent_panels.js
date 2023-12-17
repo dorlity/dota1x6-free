@@ -8,6 +8,7 @@ var parentHUDElements = $.GetContextPanel().GetParent().GetParent().GetParent().
  $.GetContextPanel().FindChildTraverse("Sven_Shield_Panel").SetParent(parentHUDElements)
  $.GetContextPanel().FindChildTraverse("PangolierShield_panel").SetParent(parentHUDElements)
  $.GetContextPanel().FindChildTraverse("AxeCall_panel").SetParent(parentHUDElements)
+ $.GetContextPanel().FindChildTraverse("Antimage_counter_panel").SetParent(parentHUDElements)
  $.GetContextPanel().FindChildTraverse("LegionPress_panel").SetParent(parentHUDElements)
  $.GetContextPanel().FindChildTraverse("LegionOdds_panel").SetParent(parentHUDElements)
  $.GetContextPanel().FindChildTraverse("EmberShield_panel").SetParent(parentHUDElements)
@@ -91,6 +92,8 @@ function init()
   GameEvents.Subscribe_custom('pa_hunt_think', pa_hunt_think)
   GameEvents.Subscribe_custom('pa_hunt_end', pa_hunt_end)
 
+  GameEvents.Subscribe_custom('axe_culling_change', axe_culling_change)
+
   GameEvents.Subscribe_custom('mk_banana_change', mk_banana_change)
 
   GameEvents.Subscribe_custom('pudge_devour_change', pudge_devour_change)
@@ -155,6 +158,8 @@ function init()
   GameEvents.Subscribe_custom('invoker_ult_change', invoker_ult_change)
 
   GameEvents.Subscribe_custom('axe_call_change', axe_call_change)
+
+  GameEvents.Subscribe_custom('antimage_counter_damage', antimage_counter_damage)
 
   GameEvents.Subscribe_custom('legion_press_change', legion_press_change)
   GameEvents.Subscribe_custom('legion_odds_change', legion_odds_change)
@@ -772,6 +777,55 @@ function axe_call_change(kv)
 
 
 
+
+
+
+
+
+function antimage_counter_damage(kv)
+{
+  let main = parentHUDElements.FindChildTraverse("Antimage_counter_panel")
+
+
+  if (main.BHasClass("Antimage_counter_panel_hidden"))
+  {
+    main.RemoveClass("Antimage_counter_panel_hidden")
+    main.AddClass("Antimage_counter_panel")
+  }
+
+  let filler = main.FindChildTraverse("Antimage_counter_filler")
+
+  if ((kv.hide == 1) && (main.BHasClass("Antimage_counter_panel")))
+  {
+    main.RemoveClass("Antimage_counter_panel")
+    main.AddClass("Antimage_counter_panel_hidden")
+    filler.style.width = '100%'
+
+    return
+  }
+
+
+
+
+  let damage = Math.floor(kv.damage)
+
+  let width = (kv.time/kv.max_time) * 97
+  let text = String(width)+'%'
+
+  filler.style.width = text
+
+  let number = main.FindChildTraverse("Antimage_counter_number")
+  number.text = String(damage)
+}
+
+
+
+
+
+
+
+
+
 function legion_duel_init(kv)
 {
   let main = parentHUDElements.FindChildTraverse("Legion_Duel_Panel")
@@ -1352,6 +1406,32 @@ function mk_banana_change(kv)
 
   number.text = text
 
+
+
+}
+
+
+
+function axe_culling_change(kv)
+{
+
+  let main = $.GetContextPanel().FindChildTraverse("Axe_Culling_Panel")
+  if (main.BHasClass("Axe_Culling_Panel_hidden"))
+  {
+    main.RemoveClass("Axe_Culling_Panel_hidden")
+    main.AddClass("Axe_Culling_Panel")
+  }
+
+
+  let filler = $.GetContextPanel().FindChildTraverse("Axe_Culling_buff_filler")
+  let filler_timer = $.GetContextPanel().FindChildTraverse("Axe_Culling_buff_timer")
+  let number = $.GetContextPanel().FindChildTraverse("Axe_Culling_spawn_timer")
+  let active = $.GetContextPanel().FindChildTraverse("Axe_Culling_Icon")
+
+
+  var text = String(kv.damage)
+ 
+  number.text = text
 
 
 }

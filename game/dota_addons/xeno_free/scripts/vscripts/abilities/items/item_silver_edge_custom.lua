@@ -49,7 +49,6 @@ return
 {
     MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
     MODIFIER_EVENT_ON_ATTACK,
-    MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE,
     MODIFIER_EVENT_ON_ATTACK_FAIL,
     MODIFIER_PROPERTY_PROCATTACK_BONUS_DAMAGE_PHYSICAL
 }
@@ -60,13 +59,6 @@ function item_silver_edge_custom_surge:CheckState() return
 [MODIFIER_STATE_CANNOT_MISS] = true}
 end
 
-function item_silver_edge_custom_surge:GetModifierPreAttack_CriticalStrike( params )
-if self:GetParent() ~= params.attacker then return end
-if self.proc == true then return end
-
-
-return self:GetAbility():GetSpecialValueFor("crit_multiplier") 
-end
 
 
 function item_silver_edge_custom_surge:GetModifierMoveSpeedBonus_Percentage() 
@@ -114,8 +106,6 @@ end
 
 
 
-
-
 item_silver_edge_custom_strike = class({})
 function item_silver_edge_custom_strike:IsHidden() return true end
 function item_silver_edge_custom_strike:IsPurgable() return false end
@@ -158,7 +148,6 @@ return
 {
     MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
    MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-   MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE
     
 }
 end
@@ -171,17 +160,6 @@ function item_silver_edge_custom_passive:GetModifierAttackSpeedBonus_Constant() 
 self:GetAbility():GetSpecialValueFor("bonus_attack_speed")
 end
 
-function item_silver_edge_custom_passive:GetModifierPreAttack_CriticalStrike( params )
-if not IsServer() then return end
-local chance = self:GetAbility():GetSpecialValueFor("crit_chance")
-
-local random = RollPseudoRandomPercentage(chance,112,self:GetParent())
-
-if not random then return end
-
-return self:GetAbility():GetSpecialValueFor("crit_multiplier") 
-
-end
 
 
 

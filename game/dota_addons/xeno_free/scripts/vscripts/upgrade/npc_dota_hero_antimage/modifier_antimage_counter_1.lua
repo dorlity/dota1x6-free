@@ -10,7 +10,16 @@ function modifier_antimage_counter_1:IsPurgable() return false end
 
 function modifier_antimage_counter_1:OnCreated(table)
 if not IsServer() then return end
-  self:SetStackCount(1)
+self:SetStackCount(1)
+self.StackOnIllusion = true 
+
+
+local ability = self:GetParent():FindAbilityByName("antimage_counterspell_custom")
+
+if ability then 
+  self:GetParent():AddNewModifier(self:GetParent(), ability, "modifier_antimage_counterspell_custom_aura", {})
+end
+
 end
 
 

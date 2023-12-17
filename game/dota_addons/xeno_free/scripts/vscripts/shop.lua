@@ -3195,6 +3195,7 @@ function shop:shop_buy_item_player(data)
                 table.insert(player_items_table, v)
             end
         end
+
         player_table.points = player_table.points - cost
         
 		if data.item_id == -1 then 
@@ -3209,6 +3210,12 @@ function shop:shop_buy_item_player(data)
 		            end
 		        end
 		    end
+            if item_id == 23095 then
+                table.insert(player_items_table, 23096)
+                table.insert(player_items_table, 23098)
+                table.insert(player_items_table, 23099)
+                table.insert(player_items_table, 23097)
+            end
 		    player_table.items_ids = player_items_table
 		    HTTP.BuyItem( data.PlayerID, item_id, math.abs( cost ) )
 		end
@@ -4004,21 +4011,21 @@ shop.items_data["npc_dota_hero_phantom_assassin"] = require("donate_items/npc_do
 shop.items_data["npc_dota_hero_huskar"] = require("donate_items/npc_dota_hero_huskar")
 
 
+
 shop.items_data_slots["npc_dota_hero_phantom_assassin"] = require("donate_items/npc_dota_hero_phantom_assassin_slots")
 shop.items_data_slots["npc_dota_hero_juggernaut"] = require("donate_items/npc_dota_hero_juggernaut_slots")
 shop.items_data_slots["npc_dota_hero_huskar"] = require("donate_items/npc_dota_hero_huskar_slots")
-
 
 --[[
 shop.items_data_slots["npc_dota_hero_razor"] = require("donate_items/npc_dota_hero_razor_slots")
 shop.items_data_slots["npc_dota_hero_nevermore"] = require("donate_items/npc_dota_hero_nevermore_slots")
 shop.items_data_slots["npc_dota_hero_legion_commander"] = require("donate_items/npc_dota_hero_legion_commander_slots")
 
-
 shop.items_data["npc_dota_hero_razor"] = require("donate_items/npc_dota_hero_razor")
 shop.items_data["npc_dota_hero_nevermore"] = require("donate_items/npc_dota_hero_nevermore")
 shop.items_data["npc_dota_hero_legion_commander"] = require("donate_items/npc_dota_hero_legion_commander")
 ]]
+
 --- Функция добавления предмета игроку ( Из ивента )
 function shop:AddedDonateItemToHero(hero_name, PlayerID, item_id, skip_add)
 	local player = PlayerResource:GetPlayer(PlayerID)
@@ -4041,24 +4048,6 @@ function shop:AddedDonateItemToHero(hero_name, PlayerID, item_id, skip_add)
         end
         shop:ItemCooldown(hero, PlayerID, item_slot_type)
         -----------------------------------------------------------
-    end
-
-
-    if item_id == 23095 then
-        Timers:CreateTimer(0.5, function()
-            shop:AddedDonateItemToHero(hero_name, PlayerID, 23096, true)
-            shop:AddedDonateItemToHero(hero_name, PlayerID, 23098, true)
-            shop:AddedDonateItemToHero(hero_name, PlayerID, 23099, true)
-            shop:AddedDonateItemToHero(hero_name, PlayerID, 23097, true)
-        end)
-    end
-    if item_id == 2309599 then
-        Timers:CreateTimer(0.5, function()
-            shop:AddedDonateItemToHero(hero_name, PlayerID, 2309699, true)
-            shop:AddedDonateItemToHero(hero_name, PlayerID, 2309899, true)
-            shop:AddedDonateItemToHero(hero_name, PlayerID, 2309999, true)
-            shop:AddedDonateItemToHero(hero_name, PlayerID, 2309799, true)
-        end)
     end
 
     if hero.items_slots_type and hero.items_slots_type[item_slot_type] ~= nil then
@@ -4117,20 +4106,6 @@ function shop:RemoveDonateItemToHero(hero_name, PlayerID, item_id, fast, skip_ad
         shop:ItemCooldown(hero, PlayerID, item_slot_type)
     end
     -----------------------------------------------------------
-
-    if item_id == 23095 then
-        shop:RemoveDonateItemToHero(hero_name, PlayerID, 23096, nil, true)
-        shop:RemoveDonateItemToHero(hero_name, PlayerID, 23098, nil, true)
-        shop:RemoveDonateItemToHero(hero_name, PlayerID, 23099, nil, true)
-        shop:RemoveDonateItemToHero(hero_name, PlayerID, 23097, nil, true)
-    end
-
-    if item_id == 2309599 then
-        shop:RemoveDonateItemToHero(hero_name, PlayerID, 2309699, nil, true)
-        shop:RemoveDonateItemToHero(hero_name, PlayerID, 2309899, nil, true)
-        shop:RemoveDonateItemToHero(hero_name, PlayerID, 2309999, nil, true)
-        shop:RemoveDonateItemToHero(hero_name, PlayerID, 2309799, nil, true)
-    end
 
     if item_id == 5810 then
         hero:SetMaterialGroup("default")
@@ -4834,22 +4809,6 @@ function shop:AddedDonateHero(hero, PlayerID)
 		for _, item in pairs(player_items_table) do
             if hero:GetModelName() ~= "models/heroes/phantom_assassin_persona/phantom_assassin_persona.vmdl" then
 			    shop:SetItemToHero(hero, PlayerID, hero_name, item, true)
-                if item == 23095 then
-                    Timers:CreateTimer(0.5, function()
-                        shop:AddedDonateItemToHero(hero_name, PlayerID, 23096, true)
-                        shop:AddedDonateItemToHero(hero_name, PlayerID, 23098, true)
-                        shop:AddedDonateItemToHero(hero_name, PlayerID, 23099, true)
-                        shop:AddedDonateItemToHero(hero_name, PlayerID, 23097, true)
-                    end)
-                end
-                if item == 2309599 then
-                    Timers:CreateTimer(0.5, function()
-                        shop:AddedDonateItemToHero(hero_name, PlayerID, 2309699, true)
-                        shop:AddedDonateItemToHero(hero_name, PlayerID, 2309899, true)
-                        shop:AddedDonateItemToHero(hero_name, PlayerID, 2309999, true)
-                        shop:AddedDonateItemToHero(hero_name, PlayerID, 2309799, true)
-                    end)
-                end
             end
 		end
 	end
@@ -5055,6 +5014,10 @@ function shop:ChangeModelHero(hero, model, starting)
             hero:RemoveGesture(ACT_DOTA_SPAWN)
             if model == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
                 hero:AddNewModifier(hero, nil, "modifier_razor_arcana", {})
+                shop:UpdateRazorParticle(hero, true)
+            end
+            if model == "models/heroes/razor/razor.vmdl" then
+                shop:UpdateRazorParticle(hero, false)
             end
         end)
     else
@@ -5064,8 +5027,12 @@ function shop:ChangeModelHero(hero, model, starting)
         Timers:CreateTimer(1, function()
             if model == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
                 hero:AddNewModifier(hero, nil, "modifier_razor_arcana", {})
+                shop:UpdateRazorParticle(hero, true)
             end
         end)
+        if model == "models/heroes/razor/razor.vmdl" then
+            shop:UpdateRazorParticle(hero, false)
+        end
     end
 end
 
@@ -5086,6 +5053,34 @@ function shop:UpdatePortraitInfo(id, item_id, delete)
     CustomNetTables:SetTableValue("heroes_items_info", "portrait_items_"..id, shop.player_items_portrait[id])
 end
 
+function shop:UpdateRazorParticle(hero, delete)
+    if delete then
+        for _, ambient in pairs(hero.razor_ambient_default) do
+            if ambient then
+                ParticleManager:DestroyParticle(ambient, true)
+            end
+        end
+        return
+    end
+    Timers:CreateTimer(1, function()
+        hero.razor_ambient_default = {}
+        local whip = ParticleManager:CreateParticle("particles/razor_custom/razor_whip.vpcf", PATTACH_ABSORIGIN_FOLLOW, hero)
+        ParticleManager:SetParticleControlEnt( whip, 0, hero, PATTACH_POINT_FOLLOW, "attach_whip", hero:GetAbsOrigin(), true )
+        ParticleManager:SetParticleControlEnt( whip, 1, hero, PATTACH_POINT_FOLLOW, "attach_whip1", hero:GetAbsOrigin(), true )
+        ParticleManager:SetParticleControlEnt( whip, 2, hero, PATTACH_POINT_FOLLOW, "attach_whip2", hero:GetAbsOrigin(), true )
+        ParticleManager:SetParticleControlEnt( whip, 3, hero, PATTACH_POINT_FOLLOW, "attach_whip3", hero:GetAbsOrigin(), true )
+        ParticleManager:SetParticleControlEnt( whip, 4, hero, PATTACH_POINT_FOLLOW, "attach_whip4", hero:GetAbsOrigin(), true )
+        ParticleManager:SetParticleControlEnt( whip, 5, hero, PATTACH_POINT_FOLLOW, "attach_whip5", hero:GetAbsOrigin(), true )
+        table.insert(hero.razor_ambient_default, whip)
+        local ambient_1 = ParticleManager:CreateParticle("particles/razor_custom/razor_ambient.vpcf", PATTACH_ABSORIGIN_FOLLOW, hero)
+        ParticleManager:SetParticleControlEnt( ambient_1, 3, hero, PATTACH_POINT_FOLLOW, "energyCore", hero:GetAbsOrigin(), true )
+        table.insert(hero.razor_ambient_default, ambient_1)
+        local ambient_2 = ParticleManager:CreateParticle("particles/razor_custom/razor_ambient_main.vpcf", PATTACH_ABSORIGIN_FOLLOW, hero)
+        ParticleManager:SetParticleControlEnt( ambient_2, 0, hero, PATTACH_POINT_FOLLOW, "energyCore", hero:GetAbsOrigin(), true )
+        table.insert(hero.razor_ambient_default, ambient_2)
+
+    end)
+end
 
 
 
