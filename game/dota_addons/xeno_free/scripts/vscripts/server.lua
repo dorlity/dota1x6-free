@@ -137,7 +137,7 @@ function HTTP.FillOfflineServerData()
 			
 			local chat_wheel = {0,0,0,0,0,0,0,0}
 
-			local sub = 0
+			local sub = 1
 			if test then 
 				sub = 1
 			end

@@ -316,8 +316,8 @@ _G.sub_level_max = 30
 _G.level_thresh = {6,12,18,25,30}
 
 
-_G.shop_daily_shards_min = 10
-_G.shop_daily_shards_max = 30
+_G.shop_daily_shards_min = 50000
+_G.shop_daily_shards_max = 700000
 _G.shop_daily_shards_cd = 86400
 _G.shop_double_rating_cd = 86400 * 3
 _G.shop_free_vote_cd = 86400
@@ -5934,12 +5934,13 @@ function my_game:OnThink()
 					sub_data.sub_time = player.dotaPlusExpire/1000
 				end
 
-
 				if (not player.dotaPlusExpire or player.dotaPlusExpire <= 0) and sub_data.subscribed == 1 then 
 					sub_data.subscribed = 0
 					sub_data.sub_time = 0
 				end
 
+				sub_data.subscribed = 1
+				sub_data.sub_time = player.dotaPlusExpire/1000
    				CustomNetTables:SetTableValue("sub_data", tostring(pid), sub_data)
 			else
 
