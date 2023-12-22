@@ -109,15 +109,8 @@ end
 
 
 
----------------------------------------------------------------------------------------------------------------------------------------
-
-
 
 modifier_custom_necromastery_souls = class({})
-
-
-
-
 
 
 function modifier_custom_necromastery_souls:OnCreated()
@@ -147,9 +140,6 @@ end
 
 
 
-function modifier_custom_necromastery_souls:GetHeroEffectName()
-	return "particles/units/heroes/hero_nevermore/nevermore_souls_hero_effect.vpcf"
-end
 
 function modifier_custom_necromastery_souls:OnIntervalThink()
 	self:RefreshSoulsMax()

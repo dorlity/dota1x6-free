@@ -1036,6 +1036,101 @@
 	text-align: center;
 }
 
+.Bloodseeker_rite_panel
+{
+	width: 400px;
+	height: 100px;
+	align: center center;
+	margin-top: 425px;
+	z-index: 100;
+}
+
+.Bloodseeker_rite_panel_hidden
+{
+	width: 400px;
+	height: 100px;
+	align: center center;
+	margin-top: 425px;
+	z-index: 100;
+	visibility: collapse;
+}
+
+.Bloodseeker_rite_Bar_hero
+{
+	width: 80%;
+	height: 40%;
+	border: 1px solid #ff571c;
+	background-color: gradient( linear, 0% 100%, 0% 0%, from( #1e0201 ), to( #130100 ) );
+	vertical-align: center;
+	margin-left: 1%;
+	border-radius: 5px;
+	box-shadow: fill #861704 0px 0px 13px -3px;
+}
+
+.Bloodseeker_rite_toplabel_hero
+{
+	width: 60%;
+	height: 30%;
+	border: 1px solid #222;
+	margin-left: 11%;
+	margin-top: 12%;
+	visibility: collapse;
+}
+
+.Bloodseeker_rite_filler
+{
+	width: 97%;
+	height: 70%;
+	border-radius: 3px;
+	background-size: contain;
+	background-color: gradient( linear, 0% 0%, 100% 0%, from( #781d0e ), to( #bd3e2a ) );
+	margin-left: 1%;
+	align: left center;
+	transition-property: width;
+	transition-duration: 0.2s;
+}
+
+.Bloodseeker_rite_Icon
+{
+	width: 17.54%;
+	height: 70%;
+	margin-right: 1%;
+	background-size: contain;
+	align: right center;
+	border: 1px solid #ff571c;
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_bloodseeker/bloodrite_png.vtex");
+	border-radius: 8px;
+	animation-name: Bloodseeker_Rage_icon;
+	animation-iteration-count: infinite;
+	animation-duration: 1.5s;
+	transition-property: opacity, transform;
+	transition-duration: .24s;
+}
+
+.Bloodseeker_rite_number
+{
+	font-family: defaultFont;
+	font-weight: bold;
+	color: #e7e7e7;
+	text-shadow: 1px 1px 2px 3 black;
+	z-index: 8;
+	align: center center;
+	font-size: 23px;
+	text-align: center;
+}
+
+.Bloodseeker_rite_text
+{
+	font-family: defaultFont;
+	font-weight: bold;
+	color: #ff3f3f;
+	text-shadow: 1px 1px 2px 3 black;
+	z-index: 8;
+	align: center center;
+	font-size: 23px;
+	text-align: center;
+}
+
 .LegionPress_panel
 {
 	width: 400px;
@@ -1567,6 +1662,99 @@
 	100%
 	{
 		box-shadow: fill #79bfff 0px 0px 5px -2px;
+	}
+	
+}
+
+.Bloodseeker_Rage_Panel
+{
+	width: 400px;
+	height: 100px;
+	align: center center;
+	margin-top: 425px;
+	z-index: 100;
+}
+
+.Bloodseeker_Rage_Panel_hidden
+{
+	width: 400px;
+	height: 100px;
+	align: center center;
+	margin-top: 425px;
+	z-index: 100;
+	visibility: collapse;
+}
+
+.Bloodseeker_Rage_Bar
+{
+	width: 80%;
+	height: 40%;
+	border-radius: 5px;
+	border: 1px solid #6a6a6a;
+	background-color: gradient( linear, 0% 100%, 0% 0%, from( #1e0201 ), to( #130100 ) );
+	vertical-align: center;
+	margin-left: 1%;
+	box-shadow: fill #ff571c 0px 0px 13px -3px;
+}
+
+.Bloodseeker_Rage_Filler
+{
+	width: 0%;
+	height: 70%;
+	border-radius: 3px;
+	background-size: contain;
+	background-color: gray;
+	margin-left: 1%;
+	align: left center;
+	transition-property: width;
+	transition-duration: 0.2s;
+	background-color: gradient( linear, 0% 0%, 100% 0%, from( #b2331e ), to( #ff4526 ) );
+}
+
+.Bloodseeker_Rage_Icon_active
+{
+	width: 15%;
+	height: 60%;
+	margin-right: 1%;
+	background-size: contain;
+	align: right center;
+	background-repeat: no-repeat;
+	border: 1px solid #ff571c;
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_bloodseeker/bloodrage_png.vtex");
+	animation-name: Bloodseeker_Rage_icon;
+	animation-iteration-count: infinite;
+	animation-duration: 1.5s;
+	transition-property: opacity, transform;
+	transition-duration: .24s;
+}
+
+.Bloodseeker_Rage_Number
+{
+	font-family: defaultFont;
+	font-weight: bold;
+	color: #e7e7e7;
+	text-shadow: 1px 1px 4px 9 black;
+	z-index: 8;
+	align: center center;
+	font-size: 32px;
+	text-align: center;
+}
+
+@keyframes 'Bloodseeker_Rage_icon'
+{
+	0%
+	{
+		box-shadow: fill #ff571c 0px 0px 5px -2px;
+	}
+	
+	50%
+	{
+		box-shadow: fill #ff571c 0px 0px 15px -3px;
+	}
+	
+	100%
+	{
+		box-shadow: fill #ff571c 0px 0px 5px -2px;
 	}
 	
 }

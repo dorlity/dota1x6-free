@@ -461,7 +461,7 @@ function modifier_muerta_pierce_the_veil_custom_tracker:OnDeath(params)
 if not IsServer() then return end
 if not params.unit:IsHero() then return end
 
-if params.unit:IsValidKill(self:GetParent()) and self:GetParent():HasShard() and (self:GetParent():HasModifier("modifier_muerta_pierce_the_veil_custom") or self:GetParent():HasModifier("modifier_muerta_pierce_the_veil_custom_shard"))
+if params.unit:IsValidKill(self:GetParent()) and (self:GetParent():HasModifier("modifier_muerta_pierce_the_veil_custom") or self:GetParent():HasModifier("modifier_muerta_pierce_the_veil_custom_shard"))
 	and (self:GetParent() == params.attacker or (params.unit:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Length2D() <= self:GetAbility():GetSpecialValueFor("scepter_radius")) then 
 
 	self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_muerta_pierce_the_veil_custom_scepter_buff", {})
@@ -603,7 +603,9 @@ ParticleManager:SetParticleControlEnt(effect_cast, 2, self:GetParent(), PATTACH_
 ParticleManager:ReleaseParticleIndex( effect_cast )
 
 self:SetStackCount(1)
+
 end
+
 
 function modifier_muerta_pierce_the_veil_custom_scepter_buff:OnRefresh(table)
 if not IsServer() then return end
@@ -630,14 +632,20 @@ end
 function modifier_muerta_pierce_the_veil_custom_scepter_buff:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE
+	MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
+	MODIFIER_PROPERTY_TOOLTIP
 }
 end
 
 function modifier_muerta_pierce_the_veil_custom_scepter_buff:GetModifierSpellAmplify_Percentage() 
+if not self:GetParent():HasShard() then return end
 return self:GetStackCount()*self.amp
 end
 
+
+function modifier_muerta_pierce_the_veil_custom_scepter_buff:OnTooltip() 
+return self:GetStackCount()
+end
 
 
 

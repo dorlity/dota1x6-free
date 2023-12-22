@@ -13,9 +13,9 @@ CustomNetTables.SubscribeNetTableListener( "sub_data", UpdatePlayerShopTable );
 
 var new_items =
 {
-	"npc_dota_hero_juggernaut": true,
-	"npc_dota_hero_phantom_assassin": true,
-	"npc_dota_hero_huskar": true
+	"npc_dota_hero_nevermore": true,
+	"npc_dota_hero_razor": true,
+	"npc_dota_hero_legion_commander": true
 }
 
 var styles_id = 
@@ -89,11 +89,13 @@ var SETS_TEXTURE_FULL_ICON =
     radiantconqueror : "econ/sets/v2/radiant_conqueror",
     honorservant : "econ/sets/v2/honored_servant_of_the_empire",
     daemonfell : "econ/sets/v2/legion_commander_daemonfell_flame",
+    desolate_conquest : "econ/sets/v2/desolate_conquest",
 
     // Shadow Fiend
-    soulstyrant: "econ/sets/v2/souls_tyrant",
-    soulcorplence: "econ/sets/v2/soul_corpulence",
+    twilight_effigy : "econ/sets/v2/twilight_effigy",
     eternalharverst: "econ/sets/v2/eternal_harvest",
+    soulcorplence: "econ/sets/v2/soul_corpulence",
+    soulstyrant: "econ/sets/v2/souls_tyrant",
 
     // razor
     basilisklord : "econ/sets/v2/test_of_the_basilisk_lord",
@@ -135,6 +137,32 @@ var SETS_PRIORITY =
         "favorite",
         "dc",
     ],
+    "npc_dota_hero_nevermore":
+    [
+        "rare",
+        "twilight_effigy",
+        "eternalharverst",
+        "soulcorplence",
+        "soulstyrant",
+    ],
+    "npc_dota_hero_razor":
+    [
+        "rare",
+        "razor_arcana",
+        "forlornmaze",
+        "basilisklord",
+        "cruelassemblage",
+    ],
+    "npc_dota_hero_legion_commander":
+    [
+        "rare",
+        "desolate_conquest",
+        "triumphimperatrix",
+        "radiantconqueror",
+        "honorservant",
+        "birdofpray",
+        "daemonfell",
+    ]
 }
 
 
@@ -971,14 +999,17 @@ var ITEM_CHANGED_INFORMATION =
 9021 :
 {
 	"model" : [0, 9021],
+    "styles" : [9021, 0]
 },
 9019 :
 {
 	"model" : [0, 9019],
+    "styles" : [9019, 0]
 },
 9020 :
 {
 	"model" : [0, 9020],
+    "styles" : [9020, 0]
 },
 13505 :
 {
@@ -1049,7 +1080,8 @@ var ITEM_CHANGED_INFORMATION =
         ["razor_unstable_current_custom", "razor_unstable_current"],
         ["razor_eye_of_the_storm_custom", "razor_eye_of_the_storm"],
     ],
-    "model" : [0, 23100]
+    "model" : [0, 23100],
+    "styles" : [23100, 0]
 },
 2309599 :
 {
@@ -1177,6 +1209,116 @@ var ITEM_CHANGED_INFORMATION =
 18227 :
 {
     "model" : [0, 18227]
+},
+
+
+
+
+18034 :
+{
+    "model" : [0, 18034]
+},
+18035 :
+{
+    "model" : [0, 18035]
+},
+18036 :
+{
+    "model" : [0, 18036]
+},
+
+
+
+9780 :
+{
+    "model" : [0, 9780],
+    "styles" : [9780, 0]
+},
+9781 :
+{
+    "model" : [0, 9781],
+    "styles" : [9781, 0]
+},
+9782 :
+{
+    "model" : [0, 9782],
+    "styles" : [9782, 0]
+},
+9783 :
+{
+    "model" : [0, 9783],
+    "styles" : [9783, 0]
+},
+9784 :
+{
+    "model" : [0, 9784],
+    "styles" : [9784, 0]
+},
+9785 :
+{
+    "model" : [0, 9785],
+    "styles" : [9785, 0]
+},
+
+978099 :
+{
+    "model" : [0, 9780],
+    "styles" : [9780, 1]
+},
+978199 :
+{
+    "model" : [0, 9781],
+    "styles" : [9781, 1]
+},
+978299 :
+{
+    "model" : [0, 9782],
+    "styles" : [9782, 1]
+},
+978399 :
+{
+    "model" : [0, 9783],
+    "styles" : [9783, 1]
+},
+978499 :
+{
+    "model" : [0, 9784],
+    "styles" : [9784, 1]
+},
+978599 :
+{
+    "model" : [0, 9785],
+    "styles" : [9785, 1]
+},
+9780999 :
+{
+    "model" : [0, 18589],
+    "styles" : [18589, 0]
+},
+9781999 :
+{
+    "model" : [0, 18590],
+    "styles" : [18590, 0]
+},
+9782999 :
+{
+    "model" : [0, 18591],
+    "styles" : [18591, 0]
+},
+9783999 :
+{
+    "model" : [0, 18592],
+    "styles" : [18592, 0]
+},
+9784999 :
+{
+    "model" : [0, 18593],
+    "styles" : [18593, 0]
+},
+9785999 :
+{
+    "model" : [0, 18594],
+    "styles" : [18594, 0]
 },
 }
 function UpdatePlayerShopTable(table, key, data ) 

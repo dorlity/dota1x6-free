@@ -365,7 +365,7 @@ local target = params.unit
 
 local is_ulti = params.inflictor and not self.parent:HasModifier("modifier_axe_culling_blade_custom_no_bonus") and (params.inflictor == self:GetAbility() or params.inflictor == self.parent:FindAbilityByName("axe_culling_blade_custom_legendary"))
 
-if is_ulti or target:HasModifier("modifier_axe_culling_blade_custom_timer_kill") then 
+if is_ulti then 
 
 
 	local success = false
@@ -376,9 +376,7 @@ if is_ulti or target:HasModifier("modifier_axe_culling_blade_custom_timer_kill")
 		effect = true
 	end
 
-	if is_ulti then 
-		effect = true
-	end 
+	effect = true
 
 	self:GetAbility():CullingBladeKill(target, success, effect)
 
@@ -556,11 +554,28 @@ if target:IsCreep() then
 	damage = damage/3
 end
 
-ApplyDamage({ victim = self:GetCursorTarget(), attacker = self:GetCaster(), damage = damage, damage_type = DAMAGE_TYPE_PURE, ability = self, })
+
+if not target:HasModifier("modifier_custom_juggernaut_healing_ward_reduction_aura") then 
+
+	kill_mod = target:AddNewModifier(target, nil, "modifier_death", {})
+	kill_mod_2 = target:AddNewModifier(target, nil, "modifier_axe_culling_blade_custom_aegis", {})
+end
+
+ApplyDamage({ victim = target, attacker = self:GetCaster(), damage = damage, damage_type = DAMAGE_TYPE_PURE, ability = self, })
+
+
+
 
 if not target:IsMagicImmune() then 
 	target:AddNewModifier(self:GetCaster(), self, "modifier_axe_culling_blade_custom_slow_lendary", {duration = 0.5})
 end
+
+
+if not target:HasModifier("modifier_custom_juggernaut_healing_ward_reduction_aura") then 
+	kill_mod:Destroy()
+	kill_mod_2:Destroy()
+end
+
 
 
 local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_axe/axe_culling_blade_kill.vpcf", PATTACH_ABSORIGIN_FOLLOW, target )
@@ -778,8 +793,24 @@ modifier_axe_culling_blade_custom_timer_kill = class({})
 function modifier_axe_culling_blade_custom_timer_kill:IsHidden() return true end
 function modifier_axe_culling_blade_custom_timer_kill:IsPurgable() return false end
 function modifier_axe_culling_blade_custom_timer_kill:RemoveOnDeath() return false end
+function modifier_axe_culling_blade_custom_timer_kill:DeclareFunctions()
+return
+{
+	MODIFIER_EVENT_ON_DEATH
+}
+end
 
 
+function modifier_axe_culling_blade_custom_timer_kill:OnDeath(params)
+if not IsServer() then return end 
+if params.unit ~= self:GetParent() then return end
+if params.inflictor and (params.inflictor == self:GetAbility() or params.inflictor == self:GetCaster():FindAbilityByName("axe_culling_blade_custom_legendary")) then return end
+
+
+self:GetAbility():CullingBladeKill(self:GetParent(), true, true)
+
+self:Destroy()
+end 
 
 
 modifier_axe_culling_blade_custom_legendary = class({})

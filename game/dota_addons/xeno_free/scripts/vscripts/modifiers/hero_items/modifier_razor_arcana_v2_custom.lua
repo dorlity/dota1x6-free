@@ -19,6 +19,13 @@ end
 function modifier_razor_arcana_v2_custom:GetModifierProjectileName()
     return "particles/dev/empty_particle.vpcf"
 end
+
+
+function modifier_razor_arcana_v2_custom:OnCreated(table)
+if not IsServer() then return end
+self:GetParent():SetMaterialGroup("2")
+end 
+
 function modifier_razor_arcana_v2_custom:OnAttackLanded(params)
     if not IsServer() then return end
     if params.attacker ~= self:GetParent() then return end

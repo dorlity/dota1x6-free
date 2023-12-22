@@ -127,8 +127,8 @@ function HTTP.FillOfflineServerData()
 
 				player_items_onequip[hero_name] = {}
 
-				if hero_name == "npc_dota_hero_juggernaut" and test then 
-					--table.insert(player_items_onequip[hero_name], 2068)
+				if hero_name == "npc_dota_hero_razor" and test then 
+				--	table.insert(player_items_onequip[hero_name], 23095)
 				end 
 			end	
 

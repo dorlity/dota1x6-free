@@ -42,6 +42,10 @@ function modifier_centaur_stun:OnIntervalThink()
 	local parent = self:GetParent()
 	if not IsValidEntity(parent) then return end
 
+	if not self:GetParent():IsCreep() then 
+		self:Destroy()
+		return
+	end 
 	local ability = self:GetAbility()
 	if not IsValidEntity(ability) then return end
 

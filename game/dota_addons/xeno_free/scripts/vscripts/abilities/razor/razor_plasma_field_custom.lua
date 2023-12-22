@@ -14,6 +14,14 @@ LinkLuaModifier("modifier_razor_plasma_field_custom_shield", "abilities/razor/ra
 
 razor_plasma_field_custom = class({})
 
+
+function razor_plasma_field_custom:Precache(context)
+
+my_game:PrecacheShopItems("npc_dota_hero_razor", context)
+end
+
+
+
 function razor_plasma_field_custom:GetAbilityTextureName()
     if self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
         return "razor/arcana/razor_plasma_field_alt2"
@@ -414,6 +422,21 @@ function modifier_razor_plasma_field_custom_damage_cd:IsPurgable() return false 
 
 razor_plasma_field_custom_stop = class({})
 
+
+function razor_plasma_field_custom_stop:GetAbilityTextureName()
+    if self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
+        return "razor/arcana/razor_plasma_field_alt2"
+    end
+    if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
+        return "razor/arcana/razor_plasma_field_alt1"
+    end
+    if self:GetCaster():HasModifier("modifier_razor_weapon_last_custom") then
+        return "razor/severing_lash/razor_plasma_field"
+    end
+    return "razor_plasma_field"  
+end
+
+
 function razor_plasma_field_custom_stop:OnSpellStart()
 
 if self:GetCaster():HasModifier("modifier_razor_plasma_field_custom_stop") then 
@@ -498,6 +521,9 @@ end
 function razor_plasma_field_custom_clone:GetCooldown(level)
 return self:GetCaster():GetTalentValue("modifier_razor_plasma_7", "cd")
 end 
+
+
+
 
 function razor_plasma_field_custom_clone:OnSpellStart()
 

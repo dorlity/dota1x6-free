@@ -41,6 +41,11 @@ function modifier_bird_tornado:OnIntervalThink()
 	local parent = self:GetParent()
 	if not IsValidEntity(parent) then return end
 
+	if not self:GetParent():IsCreep() then 
+		self:Destroy()
+		return
+	end 
+
     if parent:IsSilenced() or parent:IsStunned() or not parent:IsAlive() then
         if self.timer ~= nil then
             Timers:RemoveTimer(self.timer)

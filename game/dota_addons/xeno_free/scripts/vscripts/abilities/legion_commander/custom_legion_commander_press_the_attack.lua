@@ -109,7 +109,7 @@ end
 
 self.target:AddNewModifier(self:GetCaster(), self, "modifier_press_the_attack_custom_buff", {duration = self.duration})
 
-self.target:AddNewModifier(self:GetCaster(), self, "modifier_legion_commander_press_the_attack", {duration = self.duration})
+--self.target:AddNewModifier(self:GetCaster(), self, "modifier_legion_commander_press_the_attack", {duration = self.duration})
 
 if self:GetCaster():HasModifier("modifier_legion_press_lowhp") then 
 	self.target:AddNewModifier(self:GetCaster(), self, "modifier_press_the_attack_custom_unslow", {duration = self:GetCaster():GetTalentValue("modifier_legion_press_lowhp", "duration")})
@@ -215,6 +215,17 @@ end
 
 function modifier_press_the_attack_custom_buff:OnDestroy()
 if not IsServer() then return end 
+
+if self:GetCaster():HasModifier("modifier_legion_commander_wings_fallen_custom") then
+	self:GetCaster():RemoveGesture(ACT_SCRIPT_CUSTOM_0)
+end
+if self:GetCaster():HasModifier("modifier_legion_commander_wings_fallen_custom_2") then
+	self:GetCaster():RemoveGesture(ACT_SCRIPT_CUSTOM_0)
+end
+
+
+
+
 self:GetParent():StopSound("Lc.Press_burn")
 
 if self.aura_mod and not self.aura_mod:IsNull() then 
@@ -352,9 +363,6 @@ end
 function modifier_press_the_attack_custom_buff:GetModifierAttackSpeedBonus_Constant() 
 return self.attack_speed 
 end
-
-
-
 
 
 

@@ -31,6 +31,7 @@ PrecacheResource( "particle", "particles/lc_odd_charge_hit_.vpcf", context )
 PrecacheResource( "particle", "particles/lc_odd_charge.vpcf", context )
 PrecacheResource( "particle", "particles/lc_odds_l.vpcf", context )
 
+my_game:PrecacheShopItems("npc_dota_hero_legion_commander", context)
 end
 
 function custom_legion_commander_overwhelming_odds:GetAbilityTextureName()

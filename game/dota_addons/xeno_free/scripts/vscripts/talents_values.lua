@@ -3714,15 +3714,19 @@ global_values =
         },
         ["modifier_bloodseeker_bloodrage_2"] =
         {
-            
+            speed = {20, 30, 40},
+            damage = {4, 6, 8},
         },
         ["modifier_bloodseeker_bloodrage_3"] =
         {
             
         },
         ["modifier_bloodseeker_bloodrage_4"] =
-        {
-            
+        {   
+            duration = 5,
+            damage = {10, 15},
+            heal = 50,
+            interval = 0.5,
         },
         ["modifier_bloodseeker_bloodrage_5"] =
         {
@@ -3734,18 +3738,28 @@ global_values =
         },
         ["modifier_bloodseeker_bloodrage_7"] =
         {
-            
+            speed = 150,
+            damage = 30,
+            max = 10,
+            max_timer = 10,
+            taunt = 2,
+            rage_fill = 25,
+            rage_decay = -20,
+            radius = 1000,
+            cd = 2
         },
 
 
 
         ["modifier_bloodseeker_bloodrite_1"] =
         {
-            
+            radius = {50, 75, 100},
+            damage = {6, 9, 12},
+            duration = 6
         },
         ["modifier_bloodseeker_bloodrite_2"] =
         {
-            
+            heal = {15, 20, 25}
         },
         ["modifier_bloodseeker_bloodrite_3"] =
         {
@@ -3753,11 +3767,15 @@ global_values =
         },
         ["modifier_bloodseeker_bloodrite_4"] =
         {
-            
+            range = 150,
+            str = {10, 15},
+            taunt = {1, 1.5},
+            duration = 6
         },
         ["modifier_bloodseeker_bloodrite_5"] =
         {
-            
+            cd = -1,
+            bkb = 2,
         },
         ["modifier_bloodseeker_bloodrite_6"] =
         {
@@ -3765,7 +3783,10 @@ global_values =
         },
         ["modifier_bloodseeker_bloodrite_7"] =
         {
-            
+            duration = 5,
+            damage = 60,
+            self_damage = 3,
+            interval = 0.5,
         },
 
 

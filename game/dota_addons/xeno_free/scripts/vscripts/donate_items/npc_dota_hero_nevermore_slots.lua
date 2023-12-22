@@ -12,6 +12,9 @@ return
 		"models/items/nevermore/diabolical_fiend_arms/diabolical_fiend_arms.vmdl",
 		"models/items/nevermore/king_of_vipers_arms/king_of_vipers_arms.vmdl",
 		"models/heroes/shadow_fiend/shadow_fiend_arms.vmdl",
+        "kynomi/models/sf_default_arms/shadow_fiend_arms.vmdl",
+        "kynomi/models/sf_immortal_flame_arms/sf_immortal_flame_arms.vmdl",
+        "kynomi/models/sf_arms_deso/arms_deso.vmdl",
     },
     ["head"] =
     {
@@ -37,5 +40,13 @@ return
 		"models/items/nevermore/ferrum_chiroptera_shoulder/ferrum_chiroptera_shoulder.vmdl",
         "models/items/nevermore/king_of_vipers_shoulder/king_of_vipers_shoulder.vmdl",
 		"models/heroes/shadow_fiend/shadow_fiend_shoulders.vmdl",
+        "kynomi/models/sf_default_shoulders/shadow_fiend_shoulders.vmdl",
+        "kynomi/models/sf_immortal_flame_shoulder/sf_immortal_flame_shoulder.vmdl",
+        "kynomi/models/sf_souls_tyrant_shoulder/sf_souls_tyrant_shoulder.vmdl",
     },
 }
+
+
+
+
+

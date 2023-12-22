@@ -364,7 +364,9 @@ _G.start_abilities =
 _G.ChangeItemsCooldown = 5
 _G.new_shop_heroes = 
 {
-
+	"npc_dota_hero_razor",
+	"npc_dota_hero_nevermore",
+	"npc_dota_hero_legion_commander"
 }
 
 
@@ -666,7 +668,10 @@ _G.NoCdItems =
 _G.custom_voice = 
 {
 	["npc_dota_hero_juggernaut"] = true,
-	["npc_dota_hero_phantom_assassin"] = true
+	["npc_dota_hero_phantom_assassin"] = true,
+	["npc_dota_hero_legion_commander"] = true,
+	["npc_dota_hero_nevermore"] = true,
+	["npc_dota_hero_razor"] = true
 }
 
 
@@ -817,7 +822,8 @@ PrecacheResource( "model", "custom/item_blue.vmdl", context )
 PrecacheResource( "model", "custom/item_orange.vmdl", context )     
 PrecacheResource( "model", "custom/item_gray.vmdl", context )          
 PrecacheResource( "model", "custom/item_purple.vmdl", context )   
-PrecacheResource( "model", "models/heroes/terrorblade/demon.vmdl", context ) 
+PrecacheResource( "model", "models/heroes/terrorblade/demon.vmdl", context )     
+PrecacheResource( "model", "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl", context )   
 
 
 for _,v in pairs(precache_items) do
@@ -828,31 +834,40 @@ for _,v in pairs(precache_units) do
 	PrecacheUnitByNameSync(v, context, -1)
 end
 
- PrecacheResource( "soundfile", "soundevents/phantom_assassin_vo_custom.vsndevts", context ) 
- PrecacheResource( "soundfile", "soundevents/juggernaut_vo_custom.vsndevts", context ) 
+PrecacheResource( "model", "models/items/razor/razor_arcana/razor_arcana.vmdl", context ) 
 
- PrecacheResource( "soundfile", "soundevents/npc_dota_hero_juggernaut.vsndevts", context ) 
- PrecacheResource( "soundfile", "soundevents/npc_dota_hero_antimage.vsndevts", context ) 
- PrecacheResource( "soundfile", "soundevents/npc_dota_hero_axe.vsndevts", context ) 
- PrecacheResource( "soundfile", "soundevents/npc_dota_hero_alchemist.vsndevts", context ) 
- PrecacheResource( "soundfile", "soundevents/npc_dota_hero_phantom_assassin.vsndevts", context ) 
- PrecacheResource( "soundfile", "soundevents/npc_dota_hero_arc_warden.vsndevts", context ) 
- PrecacheResource( "soundfile", "soundevents/npc_dota_hero_pangolier.vsndevts", context ) 
- PrecacheResource( "soundfile", "soundevents/npc_dota_hero_troll_warlord.vsndevts", context ) 
- PrecacheResource( "soundfile", "soundevents/npc_dota_hero_void_spirit.vsndevts", context ) 
- PrecacheResource( "soundfile", "soundevents/npc_dota_hero_skeleton_king.vsndevts", context ) 
- PrecacheResource( "soundfile", "soundevents/npc_dota_hero_invoker.vsndevts", context ) 
- PrecacheResource( "soundfile", "soundevents/npc_dota_hero_razor.vsndevts", context ) 
- PrecacheResource( "soundfile", "soundevents/npc_dota_hero_sand_king.vsndevts", context ) 
- PrecacheResource( "soundfile", "soundevents/npc_dota_hero_zuus.vsndevts", context ) 
- PrecacheResource( "soundfile", "soundevents/npc_dota_hero_legion_commander.vsndevts", context ) 
- PrecacheResource( "soundfile", "soundevents/vo_chat_wheel.vsndevts", context ) 
 
- PrecacheResource( "soundfile", "endsoundevents/game_sounds.vsndevts", context )
- PrecacheResource( "soundfile", "soundevents/soundevents_dota.vsndevts", context )
- PrecacheResource( "soundfile", "soundevents/voscripts/game_sounds_vo_announcer.vsndevts", context )
- PrecacheResource( "soundfile", "soundevents/game_sounds_effects.vsndevts", context ) 
- PrecacheResource( "soundfile", "soundevents/game_sounds_ui_imported.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/phantom_assassin_vo_custom.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/juggernaut_vo_custom.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/legion_commander_vo_custom.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/nevermore_vo_custom.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/razor_vo_custom.vsndevts", context ) 
+
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_juggernaut.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_bloodseeker.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_razor.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_nevermore.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_antimage.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_axe.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_alchemist.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_phantom_assassin.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_arc_warden.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_pangolier.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_troll_warlord.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_void_spirit.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_skeleton_king.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_invoker.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_razor.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_sand_king.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_zuus.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_legion_commander.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/vo_chat_wheel.vsndevts", context ) 
+
+PrecacheResource( "soundfile", "endsoundevents/game_sounds.vsndevts", context )
+PrecacheResource( "soundfile", "soundevents/soundevents_dota.vsndevts", context )
+PrecacheResource( "soundfile", "soundevents/voscripts/game_sounds_vo_announcer.vsndevts", context )
+PrecacheResource( "soundfile", "soundevents/game_sounds_effects.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/game_sounds_ui_imported.vsndevts", context ) 
      
 end
 
@@ -1540,15 +1555,13 @@ _G.GlobalHeroes = {}
 function my_game:OnNPCSpawned(event)
 
 local unit = EntIndexToHScript(event.entindex)
-
 local new_spawned_hero = EntIndexToHScript(event.entindex)
+
 if new_spawned_hero and new_spawned_hero:IsHero() and new_spawned_hero.first_spawn_model == nil then
     new_spawned_hero.first_spawn_model = true
-    if new_spawned_hero and new_spawned_hero:GetUnitName() == "npc_dota_hero_razor" then
-        local time = 0.2
-        if new_spawned_hero:IsIllusion() then
-            time = FrameTime()
-        end
+    if new_spawned_hero and new_spawned_hero:GetUnitName() == "npc_dota_hero_razor" and not new_spawned_hero:IsIllusion() then
+        unit:SetModel("models/items/razor/razor_arcana/razor_arcana.vmdl")
+        unit:SetOriginalModel("models/items/razor/razor_arcana/razor_arcana.vmdl")
         local has_arcana = false
         if new_spawned_hero ~= nil and new_spawned_hero:IsHero() then
             local children = new_spawned_hero:GetChildren();
@@ -1559,13 +1572,18 @@ if new_spawned_hero and new_spawned_hero:IsHero() and new_spawned_hero.first_spa
                 end
             end
         end
-        shop:AddedDonateHero(new_spawned_hero, new_spawned_hero:GetPlayerOwnerID())
+        local time = 0.2
+        if new_spawned_hero:IsIllusion() then
+            time = FrameTime()
+        end
+        shop:RemoveAllItemsOtherModel(unit)
         Timers:CreateTimer(time, function()
             if not has_arcana then
                 new_spawned_hero:SetOriginalModel("models/heroes/razor/razor.vmdl")
                 new_spawned_hero:SetModel("models/heroes/razor/razor.vmdl")
                 shop:UpdateRazorParticle(new_spawned_hero, false)
             end
+            shop:AddedDonateHero(new_spawned_hero, new_spawned_hero:GetPlayerOwnerID())
         end)
     else
         shop:AddedDonateHero(new_spawned_hero, new_spawned_hero:GetPlayerOwnerID())
@@ -5183,8 +5201,10 @@ if HTTP.GetPlayerData(id) then
    	player.islp = HTTP.GetPlayerData(id).lowPriorityRemaining > 0
 end
 
-player:HeroLevelUp(false)
-player:HeroLevelUp(false)
+Timers:CreateTimer(0.2, function()
+	player:HeroLevelUp(false)
+	player:HeroLevelUp(false)
+end)
 
 if false and test and not player.is_bot then 
 

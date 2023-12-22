@@ -6,6 +6,8 @@ var parentHUDElements = $.GetContextPanel().GetParent().GetParent().GetParent().
  $.GetContextPanel().FindChildTraverse("Pudge_devour_panel").SetParent(parentHUDElements)
  $.GetContextPanel().FindChildTraverse("Snapfire_Shredder_Panel").SetParent(parentHUDElements)
  $.GetContextPanel().FindChildTraverse("Sven_Shield_Panel").SetParent(parentHUDElements)
+ $.GetContextPanel().FindChildTraverse("Bloodseeker_Rage_Panel").SetParent(parentHUDElements)
+ $.GetContextPanel().FindChildTraverse("Bloodseeker_rite_panel").SetParent(parentHUDElements)
  $.GetContextPanel().FindChildTraverse("PangolierShield_panel").SetParent(parentHUDElements)
  $.GetContextPanel().FindChildTraverse("AxeCall_panel").SetParent(parentHUDElements)
  $.GetContextPanel().FindChildTraverse("Antimage_counter_panel").SetParent(parentHUDElements)
@@ -139,6 +141,8 @@ function init()
 
   GameEvents.Subscribe_custom('muerta_quest_panel', muerta_quest_panel)
 
+  GameEvents.Subscribe_custom('bloodseeker_rage_change', bloodseeker_rage_change)
+  GameEvents.Subscribe_custom('bloodseeker_rite_change', bloodseeker_rite_change)
 
   GameEvents.Subscribe_custom('pangolier_stack_change', pangolier_stack_change)
 
@@ -1052,6 +1056,90 @@ function sandking_finale_change(kv)
 }
 
 
+
+
+
+
+
+function bloodseeker_rage_change(kv)
+{
+
+  let main =  parentHUDElements.FindChildTraverse("Bloodseeker_Rage_Panel")
+
+  let rite = parentHUDElements.FindChildTraverse("Bloodseeker_rite_panel")
+
+  let filler =  parentHUDElements.FindChildTraverse("Bloodseeker_Rage_Filler")
+
+  let width = (kv.rage/kv.max) * 95
+  let text = String(width)+'%'
+
+  filler.style.width = text
+
+  if (rite.BHasClass("Bloodseeker_rite_panel"))
+  {
+    main.RemoveClass("Bloodseeker_Rage_Panel")
+    main.AddClass("Bloodseeker_Rage_Panel_hidden")
+    return
+  }
+
+  if (kv.hide == 1)
+  {
+
+    filler.style.width = "0%";
+    main.RemoveClass("Bloodseeker_Rage_Panel")
+    main.AddClass("Bloodseeker_Rage_Panel_hidden")
+    return
+  }
+
+  if (main.BHasClass("Bloodseeker_Rage_Panel_hidden"))
+  {
+    main.RemoveClass("Bloodseeker_Rage_Panel_hidden")
+    main.AddClass("Bloodseeker_Rage_Panel")
+  }
+
+
+  let number =  parentHUDElements.FindChildTraverse("Bloodseeker_Rage_Number")
+  let icon =  parentHUDElements.FindChildTraverse("Bloodseeker_Rage_Icon")
+  number.text = String(kv.stack)
+
+}
+
+
+function bloodseeker_rite_change(kv)
+{
+  let main = parentHUDElements.FindChildTraverse("Bloodseeker_rite_panel")
+
+
+  if (main.BHasClass("Bloodseeker_rite_panel_hidden"))
+  {
+    main.RemoveClass("Bloodseeker_rite_panel_hidden")
+    main.AddClass("Bloodseeker_rite_panel")
+  }
+
+  let filler = main.FindChildTraverse("Bloodseeker_rite_filler")
+
+  if ((kv.hide == 1) && (main.BHasClass("Bloodseeker_rite_panel")))
+  {
+    main.RemoveClass("Bloodseeker_rite_panel")
+    main.AddClass("Bloodseeker_rite_panel_hidden")
+    filler.style.width = '100%'
+
+    return
+  }
+
+
+
+
+  let damage = Math.floor(kv.damage)
+
+  let width = (kv.time/kv.max_time) * 97
+  let text = String(width)+'%'
+
+  filler.style.width = text
+
+  let number = main.FindChildTraverse("Bloodseeker_rite_number")
+  number.text = String(damage)
+}
 
 
 

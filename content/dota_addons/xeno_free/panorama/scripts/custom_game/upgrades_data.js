@@ -66,6 +66,26 @@ Game.GetHeroImage = (id, hero_name) =>
 	            {
 	            	return "npc_dota_hero_phantom_assassin_persona1"
 	            }
+
+	            if (String(hero_items[i]) == "5810" )
+	            {
+	            	return "npc_dota_hero_legion_commander_alt1"
+	            }
+
+	            if (String(hero_items[i]) == "6996" )
+	            {
+	            	return "npc_dota_hero_nevermore_alt1"
+	            }
+
+	            if (String(hero_items[i]) == "23095" )
+	            {
+	            	return "npc_dota_hero_razor_alt1"
+	            }
+
+	            if (String(hero_items[i]) == "2309599" )
+	            {
+	            	return "npc_dota_hero_razor_alt2"
+	            }
 	        }
 	    }
 	}

@@ -539,53 +539,18 @@
 
 		// Special	
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
+		"AbilityValues"
 		{
-			"01"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"move_slow"					"-50"
-			}
-			"02"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"speed"			"1200"
-			}
-			"03"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"duration"				"2.2 2.8 3.4 4"
-			}
-			"04"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"base_damage"			"65 70 75 80"
-			}
-			"05"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"attack_factor"			"-75 -60 -45 -30"
-			}
-			"06"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"attack_factor_tooltip"	"25 40 55 70"
-			}
-			"07"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"radius"				"550 750 950 1150"
-			}
-			"08"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"additional_targets"				"2"
-			}
-			"09"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"additional_targets_radius"				"500"
-			}
+			"move_slow"					"-50"
+			"speed"			"1200"
+			"duration"				"2.2 2.8 3.4 4"
+			"base_damage"			"65 70 75 80"
+			"attack_factor"			"-70 -55 -40 -25"
+			"attack_factor_tooltip"	"30 45 60 75"
+			"radius"				"550 750 950 1150"
+			"additional_targets"				"2"
+			"additional_targets_radius"				"500"
+		
 
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
@@ -627,7 +592,7 @@
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityValues"
 		{
-			"speed"	"80 110 140 170"
+			"speed"	"100 130 160 190"
 			"duration"				"2.5"
 			"blink_range"			"1000"				
 			"lifesteal"				"10 15 20 25"				
@@ -836,7 +801,7 @@
 			"duration"		"3"
 			"radius"			"550"
 			"projectile_speed"			"1000"
-			"damage"				"25"
+			"damage"				"28"
 			"damage_creeps"			"3"
 			
 		}
@@ -2134,33 +2099,14 @@
 
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
+		"AbilityValues"
 		{
-			"01"
-			{
-				"var_type"							"FIELD_FLOAT"
-				"illusion_duration"					"22.0"
-			}
-			"02"
-			{
-				"var_type"							"FIELD_FLOAT"
-				"illusion_outgoing_damage"			"-80 -70 -60 -50"		 
-			}
-			"03"
-			{
-				"var_type"							"FIELD_FLOAT"
-				"illusion_outgoing_tooltip"			"20 30 40 50"
-			}
-			"04"
-			{
-				"var_type"							"FIELD_FLOAT"
-				"illusion_incoming_damage"			"220.0"
-			}
-			"05"
-			{
-				"var_type"							"FIELD_FLOAT"
-				"illusion_incoming_damage_total_tooltip"			"320.0"
-			}	
+			"illusion_duration"					"22.0"
+			"illusion_outgoing_damage"			"-80 -70 -60 -50"	
+			"illusion_outgoing_tooltip"			"20 30 40 50"
+			"illusion_incoming_damage"			"175.0"
+			"illusion_incoming_damage_total_tooltip"			"275.0"
+		
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
 	}
@@ -2534,7 +2480,7 @@
 			"back_damage_reduction"			"16 24 32 40"
 			"side_angle"					"110"
 			"back_angle"					"70"
-			"quill_release_threshold"				"300 275 250 225"
+			"quill_release_threshold"				"275 250 225 200"
 
 
 			"activation_cooldown"					"24"
@@ -4721,48 +4667,17 @@
 		"AbilityManaCost"				"70 75 80 85"
 		"LinkedAbility"					"hoodwink_acorn_shot_custom_2"
 
-		"AbilitySpecial"
+		"AbilityValues"
 		{		
-			"01"
-			{	
-				"var_type"				"FIELD_INTEGER"
-				"bonus_range"			"125 200 275 350"
-			}
-			"02"
-			{	
-				"var_type"				"FIELD_INTEGER"
-				"acorn_shot_damage"		"50 80 110 140"
-			}
-			"03"
-			{	
-				"var_type"				"FIELD_INTEGER"
-				"base_damage_pct"		"75"
-			}
-			"04"
-			{	
-				"var_type"				"FIELD_INTEGER"
-				"bounce_count"			"2 3 4 5"
-			}
-			"05"
-			{	
-				"var_type"				"FIELD_INTEGER"
-				"bounce_range"			"525"
-			}
-			"06"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"debuff_duration"		"0.45"
-			}
-			"07"
-			{	
-				"var_type"				"FIELD_INTEGER"
-				"slow"					"100"
-			}
-			"08"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"bounce_delay"			"0.15"
-			}
+			"bonus_range"			"125 200 275 350"
+			"acorn_shot_damage"		"55 90 125 160"
+			"base_damage_pct"		"75"
+			"bounce_count"			"2 3 4 5"
+			"bounce_range"			"525"
+			"debuff_duration"		"0.45"
+			"slow"					"100"
+			"bounce_delay"			"0.15"
+			
 		}
 	}
 
@@ -4784,38 +4699,15 @@
 		
 		
 		
-		"AbilitySpecial"
+		"AbilityValues"
 		{
-			"01"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"trap_radius"		"265"
-			}
-			"02"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"debuff_duration"		"1.4 1.6 1.8 2"
-			}
-			"03"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"projectile_speed"	"1200"
-			}
-			"04"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"total_damage"		"90 160 230 300"
-			}
-			"05"
-			{
-				"var_type"			"FIELD_FLOAT"
-				"animation_rate"	"0.3"
-			}
-			"06"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"visual_height"		"50"
-			}
+			"trap_radius"		"265"
+			"debuff_duration"		"1.4 1.6 1.8 2"
+			"projectile_speed"	"1200"
+			"total_damage"		"90 180 270 360"
+			"animation_rate"	"0.3"
+			"visual_height"		"50"
+			
 		}
 	}
 	"hoodwink_scurry_custom"
@@ -6094,9 +5986,9 @@
 		"AbilityValues"
 		{
 			"health"					"50"
-			"damage"					"10"
+			"damage"					"8"
 			"cd_low"					"4"
-			"speed"						"50"
+			"speed"						"40"
 			"duration"					"5"
 			
 			
@@ -6209,7 +6101,7 @@
 		{
 			"radius"				"400 475 550 625"
 			"damage"				"25 30 35 40"
-			"damage_reduce"			"20"
+			"damage_reduce"			"15"
 			"tick_rate"				"1.0"
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
@@ -6267,19 +6159,11 @@
 		"MaxLevel"						"1"
 		"AbilityManaCost"				"0"
 
-		"AbilitySpecial"
+		"AbilityValues"
 		{
-			"01"
-			{
-				"var_type"					"FIELD_FLOAT"
-				"time_mixing"						"1.6"
-			}
-
-			"02"
-			{
-				"var_type"					"FIELD_FLOAT"
-				"tower_attack_cd"						"5"
-			}
+			"time_mixing"						"1.8"
+			"tower_attack_cd"						"5"
+			
 
 		}
 	}
@@ -7029,7 +6913,7 @@
 		"BaseClass"             		"ability_lua"
 		"ScriptFile"					"abilities/antimage/antimage_counterspell_custom"	
 		"AbilityTextureName"			"antimage_counterspell"
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_IGNORE_CHANNEL"
 		"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
 		"FightRecapLevel"				"1"
 
@@ -7716,7 +7600,7 @@
 			"min_jump_distance"		"150"
 			"max_jump_distance"		"450 550 650 750"
 			"landing_radius"		"275"
-			"impact_damage"			"70 50 230 310"
+			"impact_damage"			"70 150 230 310"
 			"stun_duration"			"0.8 1.1 1.4 1.7"
 			"min_lob_travel_time"	"0.1"
 			"max_lob_travel_time"	"0.2"
@@ -8426,7 +8310,7 @@
 		"AbilityValues"
 		{
 				"bonus_attack_range" 		"80 130 180 230"
-				"attack_spill_range"		"550 600 650 700"
+				"attack_spill_range"		"600 650 700 750"
 				"attack_spill_width"		"90"
 				"attack_spill_pct"			"80"
 				"creeps_damage"				"100"
@@ -9271,7 +9155,7 @@
             "07"
             {
                 "var_type"                            "FIELD_FLOAT"
-                "attack_speed"                        "1.2"
+                "attack_speed"                        "1.1"
             }
 			"08"
             {
@@ -10074,7 +9958,7 @@
 		
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"9"
+		"AbilityCooldown"				"11"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
@@ -10277,7 +10161,7 @@
 			"radius"			"475"
 			"jump_delay"			"0.25 0.25 0.25 0.25"
 			"slow_movement_speed"	"-75"
-			"slow_attack"			"-50"
+			"slow_attack"			"-20 -30 -40 -50"
 			"slow_duration"			"0.45 0.7 0.95 1.2"
 			
 		}
@@ -11127,7 +11011,7 @@
 				"cleave_ending_width"			"360"
 				"cleave_distance"				"700"
 				"great_cleave_damage"	"20 35 50 65"
-				"bonus_strength"		"2 4 6 8"
+				"bonus_strength"		"3 6 9 12"
 		}
 	}
 
@@ -12303,8 +12187,8 @@
 		"damage"				"25 45 65 85"
 		"dash_speed"			"2000"
 		"attack_interval"		"0.1"
-		"start_radius"			"125"
-		"end_radius"			"125"
+		"start_radius"			"140"
+		"end_radius"			"140"
 		"strikes"				"4"
 	}
 	"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"

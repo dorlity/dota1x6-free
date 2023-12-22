@@ -1518,83 +1518,24 @@
 		
 		// Special	
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
+		"AbilityValues"
 		{
-			"01"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_strength"		"10"
-			}
-			"02"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_agility"			"26"
-			}
-			"03"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_intellect"		"10"
-			}
-			"04"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_attack_speed"	"12"
-			}
-			"05"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"bonus_movement_speed"	"10"
-			}
-			"06"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"images_count"			"2"
-			}			
-			"07"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"tooltip_illusion_duration"			"20"
-			}
-			"08"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"images_do_damage_percent_melee"	"-67"
-			}
-			"09"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"tooltip_damage_outgoing_melee"			"33"
-			}	
-			"10"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"images_take_damage_percent"	"200"
-			}
-			"11"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"tooltip_damage_incoming_total_pct"			"300"
-			}			
-			"12"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"images_do_damage_percent_ranged"	"-72"
-			}
-			"13"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"tooltip_damage_outgoing_ranged"			"28"
-			}
-			"14"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"invuln_duration"		"0.1"
-			}
-			"15"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"vision_radius"			"1000"
-			}
+			"bonus_strength"		"10"
+			"bonus_agility"			"26"
+			"bonus_intellect"		"10"
+			"bonus_attack_speed"	"20"
+			"bonus_movement_speed"	"10"
+			"images_count"			"2"
+			"tooltip_illusion_duration"			"20"
+			"images_do_damage_percent_melee"	"-67"
+			"tooltip_damage_outgoing_melee"			"33"
+			"images_take_damage_percent"	"200"
+			"tooltip_damage_incoming_total_pct"			"300"
+			"images_do_damage_percent_ranged"	"-72"
+			"tooltip_damage_outgoing_ranged"			"28"
+			"invuln_duration"		"0.1"
+			"vision_radius"			"1000"
+			
 		}
 	}
 
@@ -3482,7 +3423,7 @@
 
 		// Stats		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"30.0"
+		"AbilityCooldown"				"25.0"
 
 		// Item Info
 		//-------------------------------------------------------------------------------------------------------------
@@ -3688,11 +3629,11 @@
 		"AbilityValues"
 		{
 
-            "bonus_intellect"       "8"
-            "bonus_strength"        "8"
-            "bonus_agility"         "8"
-            "bonus_hp_regen"        "8"
-            "bonus_armor"           "20"
+            "bonus_intellect"       "6"
+            "bonus_strength"        "6"
+            "bonus_agility"         "6"
+            "bonus_hp_regen"        "6"
+            "bonus_armor"           "16"
             "aura_radius"           "1200"
             "aura_attack_speed"     "-45"
             "blast_damage"          "200"
@@ -6464,7 +6405,7 @@
 "item_recipe_pipe_custom"
     {
         "BaseClass"                     "item_datadriven"
-        "AbilityTextureName"            "item_recipe"
+        "AbilityTextureName"            "item_recipe_pipe"
         "Model"                         "models/props_gameplay/recipe.vmdl"
         "ItemCost"                      "700"  
         "ItemShopTags"                  ""
@@ -6638,7 +6579,7 @@
                 "bonus_intellect"           "16"
                 "status_resistance"             "20"
                 "mana_regen_multiplier"     "50"
-                "spell_amp"         "16"
+                "spell_amp"         "12"
                 "hp_regen_amp"          "22"
                 "spell_lifesteal_amp"   "30"
         }
@@ -7009,7 +6950,7 @@
         
         // Item Info
         //-------------------------------------------------------------------------------------------------------------
-        "ItemCost"                      "800"   
+        "ItemCost"                      "600"   
         "ItemShopTags"                  ""
         "AbilityTextureName"            "item_recipe_meteor_hammer"
         
@@ -7048,6 +6989,7 @@
         "ItemPurchasable"               "1"
         "ItemStackable"                 "0"
         "ItemPermanent"                 "0"
+        "AbilityManaCost"               "50"
         "AbilitySharedCooldown"         "meteor_hammer"
         "ItemDeclarations"              "DECLARE_PURCHASES_TO_TEAMMATES | DECLARE_PURCHASES_TO_SPECTATORS"
         "IsTempestDoubleClonable"       "0"
@@ -7256,9 +7198,9 @@
     //-------------------------------------------------------------------------------------------------------------
     "AbilityValues"
     {
-        "bonus_armor"           "3"
+        "bonus_armor"           "2"
         "bonus_mana"      "250"
-        "bonus_health"          "175"
+        "bonus_health"          "150"
         "duration"              "8"
         "absorb_amount"             "300"
     }
@@ -7418,7 +7360,7 @@
         
         // Stats
         //-------------------------------------------------------------------------------------------------------------
-        "AbilityCooldown"               "6.0"
+        "AbilityCooldown"               "8.0"
 
 
         // Item Info
@@ -7438,7 +7380,7 @@
             "bonus_mana"                "200"           
             "bonus_all_stats"           "8"         
             "slow"                      "-50"
-            "bonus_spell_damage"        "150"
+            "bonus_spell_damage"        "100"
             "bonus_spell_attack"        "75"
             "slow_duration"             "1.5"
             "min_damage_to_activate"    "100"
@@ -7531,7 +7473,7 @@
         "ScriptFile"                    "abilities/items/item_phylactery_custom"
         "AbilityTextureName"            "item_phylactery"
         "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_PASSIVE"
-        "AbilityCooldown"               "6.0"
+        "AbilityCooldown"               "8.0"
         "ItemCost"                      "2400"
         "ItemShopTags"                  "hard_to_tag"
         "ItemQuality"                   "common"
@@ -7946,8 +7888,8 @@
         //-------------------------------------------------------------------------------------------------------------
         "AbilityValues"
         {
-            "bonus_armor"           "6"
-            "bonus_all_stats"       "6"
+            "bonus_armor"           "4"
+            "bonus_all_stats"       "4"
             "self_movement_speed"   "25"
             "bonus_mana"            "300"
             "bonus_health"          "200"
@@ -8025,12 +7967,12 @@
         "AbilityValues"
         {
             "bonus_damage"          "50"
-            "bonus_all_stats"       "8"
+            "bonus_all_stats"       "10"
             "attack_range"          "60"
             "target_armor"          "-6"
             "duration"              "8"
             "projectile_speed"      "1800"
-            "leash_duration"        "3"
+            "leash_duration"        "4"
             "break_radius"        "500"
 
             "corruption_armor"      "-6"
@@ -8322,7 +8264,7 @@
 
         "AbilityTextureName"            "item_revenants_brooch"
 
-        "AbilityManaCost"               "200"
+        "AbilityManaCost"               "150"
         "ItemCost"                      "4900"
         "ItemShopTags"                  "int;hard_to_tag"
         "ItemQuality"                   "rare"
@@ -8334,7 +8276,7 @@
         {
             "bonus_damage"          "70"                
             "spell_lifesteal"       "20"    
-            "manacost_per_hit"      "8"
+            "manacost_per_hit"      "7"
 
             "spell_lifesteal_creep" "4"
 
@@ -8393,7 +8335,7 @@
         //-------------------------------------------------------------------------------------------------------------
         "AbilityValues"
         {
-                "bonus_spell_amp"       "30"
+                "bonus_spell_amp"       "25"
                 "bonus_damage"          "250"
         }
     }
@@ -8432,7 +8374,7 @@
                 "int_damage_multiplier" "1"
                 "slow"  "25"
                 "slow_duration" "4"
-                "active_mres_reduction"     "20"
+                "active_mres_reduction"     "14"
                 "passive_cooldown"      "4"
         }
     }

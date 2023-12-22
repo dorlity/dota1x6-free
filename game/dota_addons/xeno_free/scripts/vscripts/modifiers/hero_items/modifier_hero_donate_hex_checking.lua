@@ -15,7 +15,6 @@ function modifier_hero_donate_hex_checking:OnCreated()
     {
         ["modifier_item_shivas_guard_blast"] = "particles/status_fx/status_effect_frost.vpcf",
         ["modifier_item_mage_slayer_debuff"] = "particles/items3_fx/status_effect_mage_slayer_debuff.vpcf",
-        ["modifier_item_ghost_scepter"] = "particles/status_fx/status_effect_ghost.vpcf",
         ["modifier_ghost_state"] = "particles/status_fx/status_effect_ghost.vpcf",
         ["modifier_item_ethereal_blade_ethereal"] = "particles/status_fx/status_effect_ghost.vpcf",
         ["modifier_item_ethereal_blade_slow"] = "particles/status_fx/status_effect_ghost.vpcf",
@@ -32,6 +31,7 @@ function modifier_hero_donate_hex_checking:OnCreated()
         "modifier_hexxed",
         "modifier_custom_puck_phase_shift",
         "modifier_sheepstick_debuff",
+        "modifier_item_unstable_wand_critter",
     }
     self:StartIntervalThink(0.01)
 end
@@ -61,7 +61,7 @@ function modifier_hero_donate_hex_checking:OnIntervalThink()
     if not IsServer() then return end
     local check_change_model = false
     for _, mod in pairs(self:GetParent():FindAllModifiers()) do
-        if mod.NoDraw ~= nil then
+        if mod.NoDrow ~= nil then
             check_change_model = true
             break
         end

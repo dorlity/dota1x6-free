@@ -138,6 +138,7 @@
         "Ability28"        "custom_ability_sentry"
 		"Ability30"				"custom_ability_dust"
 		"AttributePrimary"		"DOTA_ATTRIBUTE_AGILITY"
+		"VoiceFile"		""
 	} 
 
 
@@ -166,6 +167,7 @@
 		"Ability30"				"custom_ability_dust"
 		"AttributePrimary"		"DOTA_ATTRIBUTE_STRENGTH"
 
+		"VoiceFile"		""
 
 	}
 

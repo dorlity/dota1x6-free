@@ -3215,6 +3215,11 @@ function shop:shop_buy_item_player(data)
                 table.insert(player_items_table, 23098)
                 table.insert(player_items_table, 23099)
                 table.insert(player_items_table, 23097)
+
+                HTTP.BuyItem( data.PlayerID, 23096, 0 )
+                HTTP.BuyItem( data.PlayerID, 23098, 0 )
+                HTTP.BuyItem( data.PlayerID, 23099, 0 )
+                HTTP.BuyItem( data.PlayerID, 23097, 0 )
             end
 		    player_table.items_ids = player_items_table
 		    HTTP.BuyItem( data.PlayerID, item_id, math.abs( cost ) )
@@ -4009,22 +4014,25 @@ shop.items_data_slots = {}
 shop.items_data["npc_dota_hero_juggernaut"] = require("donate_items/npc_dota_hero_juggernaut")
 shop.items_data["npc_dota_hero_phantom_assassin"] = require("donate_items/npc_dota_hero_phantom_assassin")
 shop.items_data["npc_dota_hero_huskar"] = require("donate_items/npc_dota_hero_huskar")
-
-
+shop.items_data["npc_dota_hero_razor"] = require("donate_items/npc_dota_hero_razor")
+shop.items_data["npc_dota_hero_nevermore"] = require("donate_items/npc_dota_hero_nevermore")
+shop.items_data["npc_dota_hero_legion_commander"] = require("donate_items/npc_dota_hero_legion_commander")
 
 shop.items_data_slots["npc_dota_hero_phantom_assassin"] = require("donate_items/npc_dota_hero_phantom_assassin_slots")
 shop.items_data_slots["npc_dota_hero_juggernaut"] = require("donate_items/npc_dota_hero_juggernaut_slots")
 shop.items_data_slots["npc_dota_hero_huskar"] = require("donate_items/npc_dota_hero_huskar_slots")
-
---[[
 shop.items_data_slots["npc_dota_hero_razor"] = require("donate_items/npc_dota_hero_razor_slots")
 shop.items_data_slots["npc_dota_hero_nevermore"] = require("donate_items/npc_dota_hero_nevermore_slots")
 shop.items_data_slots["npc_dota_hero_legion_commander"] = require("donate_items/npc_dota_hero_legion_commander_slots")
 
-shop.items_data["npc_dota_hero_razor"] = require("donate_items/npc_dota_hero_razor")
-shop.items_data["npc_dota_hero_nevermore"] = require("donate_items/npc_dota_hero_nevermore")
-shop.items_data["npc_dota_hero_legion_commander"] = require("donate_items/npc_dota_hero_legion_commander")
-]]
+
+--[[shop.items_data["npc_dota_hero_skeleton_king"] = require("donate_items/npc_dota_hero_skeleton_king")
+shop.items_data_slots["npc_dota_hero_skeleton_king"] = require("donate_items/npc_dota_hero_skeleton_king_slots")
+shop.items_data["npc_dota_hero_queenofpain"] = require("donate_items/npc_dota_hero_queenofpain")
+shop.items_data_slots["npc_dota_hero_queenofpain"] = require("donate_items/npc_dota_hero_queenofpain_slots")
+shop.items_data["npc_dota_hero_monkey_king"] = require("donate_items/npc_dota_hero_monkey_king")
+shop.items_data_slots["npc_dota_hero_monkey_king"] = require("donate_items/npc_dota_hero_monkey_king_slots") ]]--
+
 
 --- Функция добавления предмета игроку ( Из ивента )
 function shop:AddedDonateItemToHero(hero_name, PlayerID, item_id, skip_add)
@@ -4446,6 +4454,30 @@ function shop:SetItemToHero(hero, PlayerID, hero_name, item, starting)
             -- Модель
             local item_model_entity
 
+            local shadow_fiend_changes =
+            {
+                ["models/heroes/shadow_fiend/shadow_fiend_arms.vmdl"] = "kynomi/models/sf_default_arms/shadow_fiend_arms.vmdl",
+                ["models/heroes/shadow_fiend/shadow_fiend_shoulders.vmdl"] = "kynomi/models/sf_default_shoulders/shadow_fiend_shoulders.vmdl",
+                ["models/items/nevermore/sf_souls_tyrant_shoulder/sf_souls_tyrant_shoulder.vmdl"] = "kynomi/models/sf_souls_tyrant_shoulder/sf_souls_tyrant_shoulder.vmdl",
+                ["models/items/nevermore/sf_immortal_flame_shoulder/sf_immortal_flame_shoulder.vmdl"] = "kynomi/models/sf_immortal_flame_shoulder/sf_immortal_flame_shoulder.vmdl",
+                ["models/items/nevermore/sf_immortal_flame_arms/sf_immortal_flame_arms.vmdl"] = "kynomi/models/sf_immortal_flame_arms/sf_immortal_flame_arms.vmdl",
+                ["models/items/shadow_fiend/arms_deso/arms_deso.vmdl"] = "kynomi/models/sf_arms_deso/arms_deso.vmdl",
+            }
+
+            local shadow_fiend_changes_check =
+            {
+                ["kynomi/models/sf_default_arms/shadow_fiend_arms.vmdl"] = true,
+                ["kynomi/models/sf_default_shoulders/shadow_fiend_shoulders.vmdl"] = true,
+                ["kynomi/models/sf_souls_tyrant_shoulder/sf_souls_tyrant_shoulder.vmdl"] = true,
+                ["kynomi/models/sf_immortal_flame_shoulder/sf_immortal_flame_shoulder.vmdl"] = true,
+                ["kynomi/models/sf_immortal_flame_arms/sf_immortal_flame_arms.vmdl"] = true,
+                ["kynomi/models/sf_arms_deso/arms_deso.vmdl"] = true,
+            }
+
+            if shadow_fiend_changes[item_model] ~= nil then
+                item_model = shadow_fiend_changes[item_model]
+            end
+
             if hero:IsIllusion() then
                 item_model_entity = CreateUnitByName("npc_dota_donate_item_illusion", Vector(0, 0, 0), false, nil, nil, hero:GetTeam())
                 item_model_entity:AddNewModifier(hero, nil, "modifier_donate_hero_illusion_item", {})
@@ -4476,8 +4508,16 @@ function shop:SetItemToHero(hero, PlayerID, hero_name, item, starting)
             end
 
             -- Материал
-            if material_group_item ~= nil then
-                item_model_entity:SetMaterialGroup(material_group_item)
+            if shadow_fiend_changes_check[item_model] ~= nil then
+                if hero:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then
+                    item_model_entity:SetMaterialGroup("arcana")
+                else
+                    item_model_entity:SetMaterialGroup("default")
+                end
+            else
+                if material_group_item ~= nil then
+                    item_model_entity:SetMaterialGroup(material_group_item)
+                end
             end
 
             -- Сохранить в массив
@@ -4637,6 +4677,24 @@ function shop:BackupOtherModelDota(hero, item_slot_type)
             item_model_entity:SetOriginalModel( item_model )
         end
 
+        local shadow_fiend_changes =
+        {
+            ["models/heroes/shadow_fiend/shadow_fiend_arms.vmdl"] = "kynomi/models/sf_default_arms/shadow_fiend_arms.vmdl",
+            ["models/heroes/shadow_fiend/shadow_fiend_shoulders.vmdl"] = "kynomi/models/sf_default_shoulders/shadow_fiend_shoulders.vmdl",
+            ["models/items/nevermore/sf_souls_tyrant_shoulder/sf_souls_tyrant_shoulder.vmdl"] = "kynomi/models/sf_souls_tyrant_shoulder/sf_souls_tyrant_shoulder.vmdl",
+            ["models/items/nevermore/sf_immortal_flame_shoulder/sf_immortal_flame_shoulder.vmdl"] = "kynomi/models/sf_immortal_flame_shoulder/sf_immortal_flame_shoulder.vmdl",
+            ["models/items/nevermore/sf_immortal_flame_arms/sf_immortal_flame_arms.vmdl"] = "kynomi/models/sf_immortal_flame_arms/sf_immortal_flame_arms.vmdl",
+            ["models/items/shadow_fiend/arms_deso/arms_deso.vmdl"] = "kynomi/models/sf_arms_deso/arms_deso.vmdl",
+        }
+
+        if shadow_fiend_changes[item_model] ~= nil then
+            if hero:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then
+                item_model_entity:SetMaterialGroup("arcana")
+            else
+                item_model_entity:SetMaterialGroup("default")
+            end
+        end
+
         item_model_entity:SetTeam( hero:GetTeamNumber() )
         item_model_entity:SetOwner( hero )
         item_model_entity:FollowEntity(hero, true)
@@ -4648,6 +4706,8 @@ function shop:BackupOtherModelDota(hero, item_slot_type)
             local material_group_item = item_info["MaterialGroupItem"]
             local particle_items = item_info["ParticlesItems"]
             local particle_heroes = item_info["ParticlesHero"]
+            local is_exclusive = item_info["is_exclusive"]
+            local modifier_item = item_info["Modifier"]
 
             -- Материал
             if material_group_item ~= nil then
@@ -4660,6 +4720,10 @@ function shop:BackupOtherModelDota(hero, item_slot_type)
 
             if hero:IsRealHero() then
                 shop:UpdatePortraitInfo(hero:GetPlayerOwnerID(), item_info["item_id"], nil)
+            end
+
+            if is_exclusive ~= nil and modifier_item ~= nil then
+                hero:AddNewModifier(hero, nil, modifier_item, {})
             end
             
             -- Визуальные частицы
@@ -4682,6 +4746,9 @@ function shop:BackupOtherModelDota(hero, item_slot_type)
                                 end
                             end
                         end
+                    end
+                    if hero.particles_items_data_custom == nil then
+                        hero.particles_items_data_custom = {}
                     end
                     if hero.particles_items_data_custom[item_slot_type] == nil then
                         hero.particles_items_data_custom[item_slot_type] = {}
@@ -4711,6 +4778,9 @@ function shop:BackupOtherModelDota(hero, item_slot_type)
                                     ParticleManager:SetParticleControlEnt( particle_hero_effect, control_point_id, hero, particle_data[2], particle_data[3], Vector(0,0,0), true )
                                 end
                             end
+                        end
+                        if hero.particles_items_data_custom == nil then
+                            hero.particles_items_data_custom = {}
                         end
                         if hero.particles_items_data_custom[item_slot_type] == nil then
                             hero.particles_items_data_custom[item_slot_type] = {}
@@ -4910,13 +4980,28 @@ function shop:DeleteChildrenHero(hero, model, slot_type)
         ['models/heroes/phantom_assassin_persona/phantom_assassin_persona_armor.vmdl'] = true,
         ['models/heroes/phantom_assassin_persona/phantom_assassin_persona_legs.vmdl'] = true,
     }
+
+    local shadow_fiend_changes =
+    {
+        ["models/heroes/shadow_fiend/shadow_fiend_arms.vmdl"] = "kynomi/models/sf_default_arms/shadow_fiend_arms.vmdl",
+        ["models/heroes/shadow_fiend/shadow_fiend_shoulders.vmdl"] = "kynomi/models/sf_default_shoulders/shadow_fiend_shoulders.vmdl",
+        ["models/items/nevermore/sf_souls_tyrant_shoulder/sf_souls_tyrant_shoulder.vmdl"] = "kynomi/models/sf_souls_tyrant_shoulder/sf_souls_tyrant_shoulder.vmdl",
+        ["models/items/nevermore/sf_immortal_flame_shoulder/sf_immortal_flame_shoulder.vmdl"] = "kynomi/models/sf_immortal_flame_shoulder/sf_immortal_flame_shoulder.vmdl",
+        ["models/items/nevermore/sf_immortal_flame_arms/sf_immortal_flame_arms.vmdl"] = "kynomi/models/sf_immortal_flame_arms/sf_immortal_flame_arms.vmdl",
+        ["models/items/shadow_fiend/arms_deso/arms_deso.vmdl"] = "kynomi/models/sf_arms_deso/arms_deso.vmdl",
+    }
+    
     local deleted = false
     if hero ~= nil and hero:IsHero() then
         local children = hero:GetChildren();
         for k,child in pairs(children) do
             if child and child:GetClassname() == "dota_item_wearable" and child:GetModelName() == model then
                 if phantom_assassin_persona_abuse[child:GetModelName()] == nil then
-                    hero.other_model_backup_name[slot_type] = model
+                    if shadow_fiend_changes[model] ~= nil then
+                        hero.other_model_backup_name[slot_type] = shadow_fiend_changes[model]
+                    else
+                        hero.other_model_backup_name[slot_type] = model
+                    end
                 else
                     if not hero:HasModifier("modifier_phantom_assassin_persona_custom") then
                         hero:AddNewModifier(hero, nil, "modifier_phantom_assassin_persona_custom", {})
@@ -5009,21 +5094,26 @@ function shop:ChangeModelHero(hero, model, starting)
 
     if starting then 
         Timers:CreateTimer(1, function()
-            hero:SetOriginalModel(model)
             hero:SetModel(model)
+            hero:SetOriginalModel(model)
             hero:RemoveGesture(ACT_DOTA_SPAWN)
             if model == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
                 hero:AddNewModifier(hero, nil, "modifier_razor_arcana", {})
                 shop:UpdateRazorParticle(hero, true)
+                hero:ManageModelChanges()
+                hero:AddNewModifier(hero, nil, "modifier_hexxed", {duration = FrameTime()})
             end
             if model == "models/heroes/razor/razor.vmdl" then
                 shop:UpdateRazorParticle(hero, false)
             end
         end)
     else
+        hero:SetModel(model)
         hero:SetOriginalModel(model)
-	    hero:SetModel(model)
 	    hero:RemoveGesture(ACT_DOTA_SPAWN)
+        if model == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+            hero:AddNewModifier(hero, nil, "modifier_hexxed", {duration = FrameTime()})
+        end
         Timers:CreateTimer(1, function()
             if model == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
                 hero:AddNewModifier(hero, nil, "modifier_razor_arcana", {})
@@ -5055,30 +5145,42 @@ end
 
 function shop:UpdateRazorParticle(hero, delete)
     if delete then
-        for _, ambient in pairs(hero.razor_ambient_default) do
-            if ambient then
-                ParticleManager:DestroyParticle(ambient, true)
+        Timers:CreateTimer(0.45, function()
+            if hero.razor_ambient_default ~= nil then
+                for _, ambient in pairs(hero.razor_ambient_default) do
+                    if ambient then
+                        ParticleManager:DestroyParticle(ambient, true)
+                    end
+                end
             end
-        end
+        end)
         return
     end
-    Timers:CreateTimer(1, function()
-        hero.razor_ambient_default = {}
-        local whip = ParticleManager:CreateParticle("particles/razor_custom/razor_whip.vpcf", PATTACH_ABSORIGIN_FOLLOW, hero)
-        ParticleManager:SetParticleControlEnt( whip, 0, hero, PATTACH_POINT_FOLLOW, "attach_whip", hero:GetAbsOrigin(), true )
-        ParticleManager:SetParticleControlEnt( whip, 1, hero, PATTACH_POINT_FOLLOW, "attach_whip1", hero:GetAbsOrigin(), true )
-        ParticleManager:SetParticleControlEnt( whip, 2, hero, PATTACH_POINT_FOLLOW, "attach_whip2", hero:GetAbsOrigin(), true )
-        ParticleManager:SetParticleControlEnt( whip, 3, hero, PATTACH_POINT_FOLLOW, "attach_whip3", hero:GetAbsOrigin(), true )
-        ParticleManager:SetParticleControlEnt( whip, 4, hero, PATTACH_POINT_FOLLOW, "attach_whip4", hero:GetAbsOrigin(), true )
-        ParticleManager:SetParticleControlEnt( whip, 5, hero, PATTACH_POINT_FOLLOW, "attach_whip5", hero:GetAbsOrigin(), true )
-        table.insert(hero.razor_ambient_default, whip)
-        local ambient_1 = ParticleManager:CreateParticle("particles/razor_custom/razor_ambient.vpcf", PATTACH_ABSORIGIN_FOLLOW, hero)
-        ParticleManager:SetParticleControlEnt( ambient_1, 3, hero, PATTACH_POINT_FOLLOW, "energyCore", hero:GetAbsOrigin(), true )
-        table.insert(hero.razor_ambient_default, ambient_1)
-        local ambient_2 = ParticleManager:CreateParticle("particles/razor_custom/razor_ambient_main.vpcf", PATTACH_ABSORIGIN_FOLLOW, hero)
-        ParticleManager:SetParticleControlEnt( ambient_2, 0, hero, PATTACH_POINT_FOLLOW, "energyCore", hero:GetAbsOrigin(), true )
-        table.insert(hero.razor_ambient_default, ambient_2)
-
+    Timers:CreateTimer(0.25, function()
+        if hero.razor_ambient_default ~= nil then
+            for _, ambient in pairs(hero.razor_ambient_default) do
+                if ambient then
+                    ParticleManager:DestroyParticle(ambient, true)
+                end
+            end
+        end
+        if hero:GetModelName() == "models/heroes/razor/razor.vmdl" then
+            hero.razor_ambient_default = {}
+            local whip = ParticleManager:CreateParticle("particles/razor_custom/razor_whip.vpcf", PATTACH_ABSORIGIN_FOLLOW, hero)
+            ParticleManager:SetParticleControlEnt( whip, 0, hero, PATTACH_POINT_FOLLOW, "attach_whip", hero:GetAbsOrigin(), true )
+            ParticleManager:SetParticleControlEnt( whip, 1, hero, PATTACH_POINT_FOLLOW, "attach_whip1", hero:GetAbsOrigin(), true )
+            ParticleManager:SetParticleControlEnt( whip, 2, hero, PATTACH_POINT_FOLLOW, "attach_whip2", hero:GetAbsOrigin(), true )
+            ParticleManager:SetParticleControlEnt( whip, 3, hero, PATTACH_POINT_FOLLOW, "attach_whip3", hero:GetAbsOrigin(), true )
+            ParticleManager:SetParticleControlEnt( whip, 4, hero, PATTACH_POINT_FOLLOW, "attach_whip4", hero:GetAbsOrigin(), true )
+            ParticleManager:SetParticleControlEnt( whip, 5, hero, PATTACH_POINT_FOLLOW, "attach_whip5", hero:GetAbsOrigin(), true )
+            table.insert(hero.razor_ambient_default, whip)
+            local ambient_1 = ParticleManager:CreateParticle("particles/razor_custom/razor_ambient.vpcf", PATTACH_ABSORIGIN_FOLLOW, hero)
+            ParticleManager:SetParticleControlEnt( ambient_1, 3, hero, PATTACH_POINT_FOLLOW, "energyCore", hero:GetAbsOrigin(), true )
+            table.insert(hero.razor_ambient_default, ambient_1)
+            local ambient_2 = ParticleManager:CreateParticle("particles/razor_custom/razor_ambient_main.vpcf", PATTACH_ABSORIGIN_FOLLOW, hero)
+            ParticleManager:SetParticleControlEnt( ambient_2, 0, hero, PATTACH_POINT_FOLLOW, "energyCore", hero:GetAbsOrigin(), true )
+            table.insert(hero.razor_ambient_default, ambient_2)
+        end
     end)
 end
 

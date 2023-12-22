@@ -32,6 +32,10 @@ end
 function modifier_ursa_clap:OnIntervalThink()
 if not IsServer() then return end
 
+  if not self:GetParent():IsCreep() then 
+    self:Destroy()
+    return
+  end 
 if self:GetParent():IsSilenced() or self:GetParent():IsStunned() or not self:GetParent():IsAlive() then 
   if self.timer ~= nil then 
     Timers:RemoveTimer(self.timer)

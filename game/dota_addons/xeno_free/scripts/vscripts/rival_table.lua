@@ -158,6 +158,125 @@ rival_table.pa_persona =
 
 
 
+rival_table.legion = 
+{
+    ["npc_dota_hero_underlord"] = {1, 2, 3, 4},
+    ["npc_dota_hero_kunkka"] = {5},
+    ["npc_dota_hero_medusa"] = {6},
+    ["npc_dota_hero_luna"] = {7},
+    ["npc_dota_hero_axe"] = {8},
+    ["npc_dota_hero_rubick"] = {9},
+    ["npc_dota_hero_faceless_void"] = {10},
+    ["npc_dota_hero_chen"] = {11},
+    ["npc_dota_hero_doom_bringer"] = {12, 13, 27},
+    ["npc_dota_hero_shadow_demon"] = {12, 13, 27},
+    ["npc_dota_hero_nevermore"] = {12, 13, 27},
+    ["npc_dota_hero_terrorblade"] = {12, 13, 17, 27},
+    ["npc_dota_hero_dark_seer"] = {14, 15},
+    ["npc_dota_hero_abaddon"] = {16},
+    ["npc_dota_hero_techies"] = {18},
+    ["npc_dota_hero_phoenix"] = {19},
+    ["npc_dota_hero_skywrath_mage"] = {20},
+    ["npc_dota_hero_elder_titan"] = {21},
+    ["npc_dota_hero_undying"] = {22, 23},
+    ["npc_dota_hero_riki"] = {24},
+    ["npc_dota_hero_templar_assassin"] = {24},
+    ["npc_dota_hero_phantom_assassin"] = {24},
+    ["npc_dota_hero_nyx_assassin"] = {24},
+    ["npc_dota_hero_bounty_hunter"] = {24},
+    ["npc_dota_hero_puck"] = {26},
+    ["npc_dota_hero_winter_wyvern"] = {26},
+    ["npc_dota_hero_dragon_knight"] = {26},
+    ["npc_dota_hero_jakiro"] = {26},
+    ["npc_dota_hero_arc_warden"] = {36},
+}
+
+
+
+
+rival_table.legion_arc = 
+{
+    ["npc_dota_hero_underlord"] = {1, 2, 3, 4},
+    ["npc_dota_hero_kunkka"] = {5},
+    ["npc_dota_hero_medusa"] = {6},
+    ["npc_dota_hero_luna"] = {7},
+    ["npc_dota_hero_axe"] = {8},
+    ["npc_dota_hero_rubick"] = {9},
+    ["npc_dota_hero_faceless_void"] = {10},
+    ["npc_dota_hero_chen"] = {11},
+    ["npc_dota_hero_doom_bringer"] = {12, 13, 27},
+    ["npc_dota_hero_shadow_demon"] = {12, 13, 27},
+    ["npc_dota_hero_nevermore"] = {12, 13, 27},
+    ["npc_dota_hero_terrorblade"] = {12, 13, 17, 27},
+    ["npc_dota_hero_dark_seer"] = {14, 15},
+    ["npc_dota_hero_abaddon"] = {16},
+    ["npc_dota_hero_techies"] = {18},
+    ["npc_dota_hero_phoenix"] = {19},
+    ["npc_dota_hero_skywrath_mage"] = {20},
+    ["npc_dota_hero_elder_titan"] = {21},
+    ["npc_dota_hero_undying"] = {22, 23},
+    ["npc_dota_hero_riki"] = {24},
+    ["npc_dota_hero_templar_assassin"] = {24},
+    ["npc_dota_hero_phantom_assassin"] = {24},
+    ["npc_dota_hero_nyx_assassin"] = {24},
+    ["npc_dota_hero_bounty_hunter"] = {24},
+    ["npc_dota_hero_puck"] = {26},
+    ["npc_dota_hero_winter_wyvern"] = {26},
+    ["npc_dota_hero_dragon_knight"] = {26},
+    ["npc_dota_hero_jakiro"] = {26},
+    ["npc_dota_hero_arc_warden"] = {36},
+}
+
+
+
+
+rival_table.nevermore = 
+{
+    ["npc_dota_hero_leshrac"] = {1},
+    ["npc_dota_hero_doom_bringer"] = {2, 3, 4},
+    ["npc_dota_hero_shadow_demon"] = {5, 6, 7, 8, 9, 10},
+    ["npc_dota_hero_terrorblade"] = {11, 12},
+    ["npc_dota_hero_windrunner"] = {13},
+
+}
+
+
+rival_table.nevermore_arc = 
+{
+    ["npc_dota_hero_leshrac"] = {1},
+    ["npc_dota_hero_doom_bringer"] = {2, 3, 4},
+    ["npc_dota_hero_shadow_demon"] = {5, 6, 7, 8, 9, 10},
+    ["npc_dota_hero_terrorblade"] = {11, 12},
+    ["npc_dota_hero_windrunner"] = {13},
+
+}
+
+
+rival_table.razor_arc = 
+{
+    ["npc_dota_hero_"] = {},
+}    
+
+
+rival_table.razor = 
+{
+
+    ["npc_dota_hero_storm_spirit"] = {1, 2},
+    ["npc_dota_hero_zuus"] = {3, 4},
+    ["npc_dota_hero_rattletrap"] = {5},
+    ["npc_dota_hero_sand_king"] = {6},
+    ["npc_dota_hero_tinker"] = {7, 8},
+    ["npc_dota_hero_earthshaker"] = {9},
+    ["npc_dota_hero_weaver"] = {10},
+    ["npc_dota_hero_morphling"] = {11, 12},
+    ["npc_dota_hero_furion"] = {13},
+    ["npc_dota_hero_jakiro"] = {14, 15},
+    ["npc_dota_hero_nevermore"] = {16},
+    ["npc_dota_hero_magnataur"] = {17, 18, 19},
+    ["npc_dota_hero_leshrac"] = {20},
+}    
+
+
 rival_table.blank = 
 {
     ["npc_dota_hero_"] = {},

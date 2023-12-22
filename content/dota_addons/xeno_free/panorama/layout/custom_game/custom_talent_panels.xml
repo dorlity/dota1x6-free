@@ -108,6 +108,14 @@
 			</Panel>
 			<Panel class="Invoker_Meteor_Icon Invoker_Meteor_Disabled" id="Invoker_Meteor_Icon" hittest="false" />
 		</Panel>
+		<Panel class="Bloodseeker_Rage_Panel_hidden" id="Bloodseeker_Rage_Panel" hittest="false">
+			<Panel class="Bloodseeker_Rage_Icon_active" id="Bloodseeker_Rage_Icon" hittest="false">
+				<Label class="Bloodseeker_Rage_Number" id="Bloodseeker_Rage_Number" hittest="false" />
+			</Panel>
+			<Panel class="Bloodseeker_Rage_Bar" hittest="false">
+				<Panel class="Bloodseeker_Rage_Filler" id="Bloodseeker_Rage_Filler" hittest="false" />
+			</Panel>
+		</Panel>
 		<Panel class="Troll_Axes_Panel_hidden" id="Troll_Axes_Panel" hittest="false">
 			<Panel class="Troll_Axes_Bar Troll_Axes_Bar_Ranged Troll_Axes_Disabled" id="Troll_Axes_Bar" hittest="false">
 				<Panel class="Troll_Axes_Filler" id="Troll_Axes_Filler" hittest="false" />
@@ -271,6 +279,13 @@
 			<Panel class="InvokerUlt_Bar_hero" id="InvokerUlt_Bar" hittest="false">
 				<Label class="InvokerUlt_filler" id="InvokerUlt_filler" hittest="false" />
 				<Label class="InvokerUlt_number" id="InvokerUlt_number" hittest="false" />
+			</Panel>
+		</Panel>
+		<Panel class="Bloodseeker_rite_panel_hidden" id="Bloodseeker_rite_panel" hittest="false">
+			<Panel class="Bloodseeker_rite_Icon" id="Bloodseeker_rite_Icon" hittest="false" />
+			<Panel class="Bloodseeker_rite_Bar_hero" id="Bloodseeker_rite_Bar" hittest="false">
+				<Label class="Bloodseeker_rite_filler" id="Bloodseeker_rite_filler" hittest="false" />
+				<Label class="Bloodseeker_rite_number" id="Bloodseeker_rite_number" hittest="false" />
 			</Panel>
 		</Panel>
 		<Panel class="Antimage_counter_panel_hidden" id="Antimage_counter_panel" hittest="false">

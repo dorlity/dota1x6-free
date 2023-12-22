@@ -2552,9 +2552,9 @@
 
 
 "font_disc_modifier_up_range" "19"
-"upgrade_disc_modifier_up_range_1" "<b><font color='#53ea48'>+50</font></b> дальности атаки в ближнем и дальнем бою<br><br><b><font color='#53ea48'>+100</font></b> дальности применения способностей<br><br>Эффект не суммируется с Aether Lens, Dragon Lance и Penta-Edged Sword"
-"upgrade_disc_modifier_up_range_2" "<b><font color='#53ea48'>+75</font></b> дальности атаки в ближнем и дальнем бою<br><br><b><font color='#53ea48'>+150</font></b> дальности применения способностей<br><br>Эффект не суммируется с Aether Lens, Dragon Lance и Penta-Edged Sword"
-"upgrade_disc_modifier_up_range_3" "<b><font color='#53ea48'>+100</font></b> дальности атаки в ближнем и дальнем бою<br><br><b><font color='#53ea48'>+200</font></b> дальности применения способностей<br><br>Эффект не суммируется с Aether Lens, Dragon Lance и Penta-Edged Sword"
+"upgrade_disc_modifier_up_range_1" "<b><font color='#53ea48'>+50</font></b> дальности атаки в ближнем и дальнем бою<br><br><b><font color='#53ea48'>+100</font></b> дальности применения способностей<br><br>Эффект не суммируется с Aether Lens, Dragon Lance и Celestial Spear"
+"upgrade_disc_modifier_up_range_2" "<b><font color='#53ea48'>+75</font></b> дальности атаки в ближнем и дальнем бою<br><br><b><font color='#53ea48'>+150</font></b> дальности применения способностей<br><br>Эффект не суммируется с Aether Lens, Dragon Lance и Celestial Spear"
+"upgrade_disc_modifier_up_range_3" "<b><font color='#53ea48'>+100</font></b> дальности атаки в ближнем и дальнем бою<br><br><b><font color='#53ea48'>+200</font></b> дальности применения способностей<br><br>Эффект не суммируется с Aether Lens, Dragon Lance и Celestial Spear"
 
 
 
@@ -3104,7 +3104,6 @@
 "DOTA_Tooltip_ability_custom_phantom_assassin_phantom_strike_Lore"						"Шёлковая вуаль Мортред — это последнее, что увидит её несчастная цель."
 "DOTA_Tooltip_ability_custom_phantom_assassin_phantom_strike_duration"					"ДЛИТЕЛЬНОСТЬ:"
 "DOTA_Tooltip_ability_custom_phantom_assassin_phantom_strike_speed"		"ДОП. СКОРОСТЬ АТАКИ:"
-"DOTA_Tooltip_ability_custom_phantom_assassin_phantom_strike_lifesteal"		"%ВАМПИРИЗМ:"
 "DOTA_Tooltip_ability_custom_phantom_assassin_phantom_strike_abilitycastrange"			"ДАЛЬНОСТЬ ПРИМЕНЕНИЯ:"
 
 "DOTA_Tooltip_ability_custom_phantom_assassin_phantom_strike_legendary"							"Elusiveness"
@@ -3890,6 +3889,11 @@
 "Never.Quest_8"	"Нанесите героям урон от минимум 12 душ за одно применение Requiem of Souls"
 
 
+"eternalharverst"    "Eternal Harvest"
+"soulcorplence"       "Soul Corpulence"
+"soulstyrant"       "Souls Tyrant"
+"twilight_effigy"       "Twilight Effigy"
+
 
 "DOTA_Tooltip_ability_custom_nevermore_shadowraze_close"									"Shadowraze"
 "DOTA_Tooltip_ability_custom_nevermore_shadowraze_close_Description"						"Герой опустошает участок земли прямо перед собой, нанося урон всем врагам в зоне действия. Накладывает на жертву складывающийся эффект, увеличивающий урон от этой способности с каждым её попаданием и снижающий скорость передвижения противников.<br><br>Замедление суммируется максимум %slow_max% раза"
@@ -4384,6 +4388,13 @@
 "Legion.Quest_6"	"Развейте негативные эффекты, используя Press the Attack"
 "Legion.Quest_7"	"Восстановите здоровье, используя вампиризм Moment of Courage против героев"
 "Legion.Quest_8"	"Получите постоянный бонус к урону от побед Duel"
+
+"daemonfell"    "Daemonfell Flame"
+"honorservant"  "Honored Servant of the Empire"
+"radiantconqueror"  "Radiant Conqueror"
+"birdofpray"        "Bird of Pray"
+"triumphimperatrix" "Triumph of the Imperatrix"
+"desolate_conquest" "Desolate Conquest"
 
 
 
@@ -9359,7 +9370,7 @@
 "hero_change_npc_dota_hero_axe_5" "Перезарядка снижена с 100/85/70 сек до <b><font color='#53ea48'>20</font></b> сек"
 "hero_change_npc_dota_hero_axe_6" "Убийство <b><font color='#53ea48'>крипов</font></b> завершает перезарядку способности"
 "hero_change_npc_dota_hero_axe_7" "Броня за убийство героя снижена с 1/1.5/2 до <b><font color='#ff0000'>1</font></b> на всех уровнях"
-"hero_change_npc_dota_hero_axe_8" "Снижение урона ослаблено до <b><font color='#ff0000'>4%</font></b>"
+"hero_change_npc_dota_hero_axe_8" "Снижает весь урон на <b><font color='#ff0000'>3%</font></b> за заряд"
 
 
 
@@ -12966,42 +12977,46 @@
 
 
 
-"Voice.Blood.1_1"	"Смех"
-"Voice.Blood.1_2"	"Было твое - стало мое." 
-"Voice.Blood.2_1"	"Что, нравится вкус крови?" 
-"Voice.Blood.2_2"	"Почему не бежишь?" 
-"Voice.Blood.3_1"	"Даже я, слепец, вижу как это прекрасно!" 
-"Voice.Blood.3_2"	"Приляг… будешь печенье?" 
-"Voice.Blood.4_1"	"Не надо расстраиваться.. Будь позитивнее!" 
-"Voice.Blood.5_1"	"Может хватит уже пряток?" 
-"Voice.Blood.6_1"	"Эх, в этом даже крови не было." 
-
-
-"Blood.Quest_1"	"Займите 1 место, используя основной легендарный талант Bloodrage"
-"Blood.Quest_2"	"Займите 1 место, используя основной легендарный талант Blood Rite"
-"Blood.Quest_3"	"Займите 1 место, используя основной легендарный талант Thirst"
-"Blood.Quest_4"	"Займите 1 место, используя основной легендарный талант Rupture"
-
-
-"Blood.Quest_5"	"Совершите атаки по героям, имея меньше 50% здоровья"
-"Blood.Quest_6"	"Обезмолвите героев с помощью Blood Rite"
-"Blood.Quest_7"	"Убейте разных героев хотя бы 1 раз"
-"Blood.Quest_8"	"Нанесите героям чистый урон с помощью Rupture"
 
 
 
 
-"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom"									"Bloodrage"
-"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_Description"						"Пробуждает в существе жажду крови, из-за которой оно атакует быстрее и наносит больше урона заклинаниями, но каждую секунду теряет долю от своего здоровья. Даёт союзным героям половину от скорости атаки."
-"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_Lore"								"Стригвир делится с другими своей животной жаждой кровопролития."
-"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_duration"							"ДЛИТЕЛЬНОСТЬ:"
-"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_attack_speed"						"ДОП. СКОРОСТЬ АТАКИ:"
-"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_spell_amp"							"%ДОП. УРОН ОТ ЗАКЛИНАНИЙ:"
-"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_damage_pct"							"%ПОТЕРЯ МАКС. ЗДОРОВЬЯ В СЕКУНДУ:"
-"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_shard_description"				    "Каждая атака под действием этой способности лечит героя на %shard_damage% здоровья и наносит жертве столько же чистого урона"
+"Voice.Blood.1_1"   "Смех"
+"Voice.Blood.1_2"   "Было твое - стало мое." 
+"Voice.Blood.2_1"   "Что, нравится вкус крови?" 
+"Voice.Blood.2_2"   "Почему не бежишь?" 
+"Voice.Blood.3_1"   "Даже я, слепец, вижу как это прекрасно!" 
+"Voice.Blood.3_2"   "Приляг… будешь печенье?" 
+"Voice.Blood.4_1"   "Не надо расстраиваться.. Будь позитивнее!" 
+"Voice.Blood.5_1"   "Может хватит уже пряток?" 
+"Voice.Blood.6_1"   "Эх, в этом даже крови не было." 
 
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_custom"					"Bloodrage"
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_custom_Description"		"Скорость атаки увеличена на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT%</font></b>, урон от заклинаний увеличен на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE%%%</font></b><br><br>Теряет <b><font color='#ff0000'>%fMODIFIER_PROPERTY_TOOLTIP%%%</font></b> здоровья в секунду<br><br>Весь наносимый урон увеличен на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE%%%</font></b>"
+
+"Blood.Quest_1" "Займите 1 место, используя основной легендарный талант Bloodrage"
+"Blood.Quest_2" "Займите 1 место, используя основной легендарный талант Blood Rite"
+"Blood.Quest_3" "Займите 1 место, используя основной легендарный талант Thirst"
+"Blood.Quest_4" "Займите 1 место, используя основной легендарный талант Rupture"
+
+
+"Blood.Quest_5" "Совершите атаки по героям, имея меньше 50% здоровья"
+"Blood.Quest_6" "Обезмолвите героев с помощью Blood Rite"
+"Blood.Quest_7" "Убейте разных героев хотя бы 1 раз"
+"Blood.Quest_8" "Нанесите героям чистый урон с помощью Rupture"
+
+
+
+
+"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom"                                 "Bloodrage"
+"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_Description"                     "Пробуждает в существе жажду крови, из-за которой оно атакует быстрее и наносит больше урона заклинаниями, но каждую секунду теряет долю от своего здоровья. Даёт союзным героям половину от скорости атаки."
+"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_Lore"                                "Стригвир делится с другими своей животной жаждой кровопролития."
+"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_duration"                            "ДЛИТЕЛЬНОСТЬ:"
+"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_attack_speed"                        "ДОП. СКОРОСТЬ АТАКИ:"
+"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_spell_amp"                           "%ДОП. УРОН ОТ ЗАКЛИНАНИЙ:"
+"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_damage_pct"                          "%ПОТЕРЯ МАКС. ЗДОРОВЬЯ В СЕКУНДУ:"
+"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_shard_description"                   "Каждая атака под действием этой способности лечит героя на %shard_damage% здоровья и наносит жертве столько же чистого урона"
+
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_custom"                    "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_custom_Description"        "Скорость атаки увеличена на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT%</font></b>, урон от заклинаний увеличен на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE%%%</font></b><br><br>Теряет <b><font color='#ff0000'>%fMODIFIER_PROPERTY_TOOLTIP%%%</font></b> здоровья в секунду<br><br>Весь наносимый урон увеличен на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE%%%</font></b>"
 
 "hero_change_npc_dota_hero_bloodseeker_1" "Бонусы даются только за <b><font color='#ff0000'>1</font></b> героя с наименьшим уровнем здоровья"
 "hero_change_npc_dota_hero_bloodseeker_2" "Макс. скорость передвижения увеличена с 40% до <b><font color='#53ea48'>50%</font></b>"
@@ -13010,10 +13025,10 @@
 
 
 
-"npc_dota_hero_bloodseeker_legendary_1"		"Bloodrage значительно увеличивает ваш урон, но расходует больше здоровья"
-"npc_dota_hero_bloodseeker_legendary_2" 	"Blood Rite расходует ваше здоровье и наносит больше урона"
-"npc_dota_hero_bloodseeker_legendary_3" 	"Активная<br><br>Получает максимальные бонусы Thirst и обзор на героев. Убийства дают постоянный бонус к атрибутам"
-"npc_dota_hero_bloodseeker_legendary_4"  	"Новая способность<br><br>Притягивает цель и значительно увеличивает наносимый ей урон"
+"npc_dota_hero_bloodseeker_legendary_1"     "Bloodrage значительно увеличивает ваш урон, но расходует больше здоровья"
+"npc_dota_hero_bloodseeker_legendary_2"     "Blood Rite расходует ваше здоровье и наносит больше урона"
+"npc_dota_hero_bloodseeker_legendary_3"     "Активная<br><br>Получает максимальные бонусы Thirst и обзор на героев. Убийства дают постоянный бонус к атрибутам"
+"npc_dota_hero_bloodseeker_legendary_4"     "Новая способность<br><br>Притягивает цель и значительно увеличивает наносимый ей урон"
 
 
 
@@ -13054,8 +13069,8 @@
 "talent_disc_modifier_bloodseeker_bloodrage_3_3" "Спустя 4 секунды действия Bloodrage, входящий по вам урон снижается на <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#53ea48'>12%</font></b>, а скорость передвижения увеличивается на <b><font color='#297016'>20</font></b>/<b><font color='#297016'>30</font></b>/<b><font color='#53ea48'>40</font></b><br><br>Эффект работает до конца Bloodrage"
 
 
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_incoming"					"Bloodrage"
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_incoming_Description"		"Входящий урон снижен на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE%%%</font></b>, скорость передвижения увеличена на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT%</font></b>"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_incoming"                  "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_incoming_Description"      "Входящий урон снижен на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE%%%</font></b>, скорость передвижения увеличена на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT%</font></b>"
 
 
 "font_disc_modifier_bloodseeker_bloodrage_4" "18"
@@ -13067,8 +13082,8 @@
 "talent_disc_modifier_bloodseeker_bloodrage_4_2" "Атаки под действием Bloodrage оставляют цели кровотечение, которое наносит 70 магического урона в секунду за каждый свой заряд и исцеляет вас на 100% от наносимого урона<br><br>Эффект суммируется <b><font color='#297016'>5</font></b>/<b><font color='#53ea48'>8</font></b> раз"
 "mini_disc_modifier_bloodseeker_bloodrage_4" "Атаки под действием Bloodrage оставляют цели кровотечение"
 
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_blood"					"Bloodrage"
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_blood_Description"		"Получает <b><font color='#ff0000'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> магического урона в секунду"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_blood"                 "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_blood_Description"     "Получает <b><font color='#ff0000'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> магического урона в секунду"
 
 
 
@@ -13076,14 +13091,14 @@
 "upgrade_disc_modifier_bloodseeker_bloodrage_5_1" "Совершив 8 атак под действием Bloodrage, вы получаете щит, который поглощает весь урон и дает <b><font color='#53ea48'>25%</font></b> сопротивления эффектам<br><br>Прочность щита: <b><font color='#53ea48'>15%</font></b> от макс. здоровья<br><br>Перезарядка: 8 сек"
 "mini_disc_modifier_bloodseeker_bloodrage_5" "Атаки под действием Bloodrage дают щит, поглощающий урон"
 
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_cd"					"Bloodrage"
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_cd_Description"		"Перезарядка щита от Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_cd"                 "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_cd_Description"     "Перезарядка щита от Bloodrage"
 
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_count"					"Bloodrage"
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_count_Description"		"Атаки под действием Bloodrage дают щит, поглощающий урон"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_count"                  "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_count_Description"      "Атаки под действием Bloodrage дают щит, поглощающий урон"
 
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield"					"Bloodrage"
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_Description"		"Щит поглощает весь урон. Сопротивление эффектам увеличено на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING%%%</font></b>"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield"                    "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_Description"        "Щит поглощает весь урон. Сопротивление эффектам увеличено на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING%%%</font></b>"
 
 
 
@@ -13094,8 +13109,8 @@
 "upgrade_disc_modifier_bloodseeker_bloodrage_6_1" "Пока уровень вашего здоровья ниже 30%, Bloodrage восстанавливает вам <b><font color='#53ea48'>1.5%</font></b> здоровья в секунду вместо нанесения урона"
 "mini_disc_modifier_bloodseeker_bloodrage_6" "Bloodrage исцеляет на низком здоровье"
 
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_tracker"					"Bloodrage"
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_tracker_Description"		"Восстанавливает <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%%%</font></b> здоровья в секунду"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_tracker"                   "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_tracker_Description"       "Восстанавливает <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%%%</font></b> здоровья в секунду"
 
 
 
@@ -13104,31 +13119,31 @@
 "upgrade_disc_modifier_bloodseeker_bloodrage_7" "Bloodrage становится переключаемой способностью<br><br>Каждую секунду, Bloodrage увеличивает наносимый вами урон на <b><font color='#fb9531'>2%</font></b>, но отнимает на 0.3% здоровья больше<br><br>После 10 суммирований, ваш урон увеличивается еще на <b><font color='#fb9531'>10%</font></b>, но вы время от времени провоцируетесь на ближайшего противника на 2 секунды"
 "mini_disc_modifier_bloodseeker_bloodrage_7" "Bloodrage становится переключаемой способностью"
 
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_taunt"					"Bloodrage"
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_taunt_Description"		"Скорость передвижения увеличена на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE%%%</font></b>, атакует ближайшего противника"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_taunt"                 "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_taunt_Description"     "Скорость передвижения увеличена на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE%%%</font></b>, атакует ближайшего противника"
 
 
 
 
 
 
-"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom"									"Blood Rite"
-"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_Description"						"Герой окропляет выбранную область святой кровью. Через %delay_plus_castpoint_tooltip% сек. ритуал завершается, нанося противникам урон и запрещая им применять способности."
-"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_Lore"								"Бескожие близнецы всегда готовы помочь тем, кто проливает кровь на поле боя."
-"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_silence_duration"					"ДЛИТЕЛЬНОСТЬ БЕЗМОЛВИЯ:"
-"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_damage"			"УРОН:"
-"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_radius"			"ОБЛАСТЬ ДЕЙСТВИЯ:"
-"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_Note0"			"Задержка перед срабатыванием составляет %delay% сек. + %abilitycastpoint% сек. анимации героя."
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom"                                    "Blood Rite"
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_Description"                        "Герой окропляет выбранную область святой кровью. Через %delay_plus_castpoint_tooltip% сек. ритуал завершается, нанося противникам урон и запрещая им применять способности."
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_Lore"                               "Бескожие близнецы всегда готовы помочь тем, кто проливает кровь на поле боя."
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_silence_duration"                   "ДЛИТЕЛЬНОСТЬ БЕЗМОЛВИЯ:"
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_damage"         "УРОН:"
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_radius"         "ОБЛАСТЬ ДЕЙСТВИЯ:"
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_Note0"          "Задержка перед срабатыванием составляет %delay% сек. + %abilitycastpoint% сек. анимации героя."
 
 
 
-"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_end"									"Blood Rite"
-"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_end_Description"						"Моментально завершает ритуал Blood Rite"
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_end"                                    "Blood Rite"
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_end_Description"                        "Моментально завершает ритуал Blood Rite"
 
 
 
-"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_silence"					"Blood Rite"
-"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_silence_Description"		"Обезмолвлен"
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_silence"                   "Blood Rite"
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_silence_Description"       "Обезмолвлен"
 
 
 
@@ -13145,8 +13160,8 @@
 "talent_disc_modifier_bloodseeker_bloodrite_1_2" "Перед нанесением урона, Blood Rite увеличивает весь входящий по целям урон на <b><font color='#297016'>6%</font></b>/<b><font color='#53ea48'>9%</font></b>/<b><font color='#297016'>12%</font></b> на 5 секунд"
 "talent_disc_modifier_bloodseeker_bloodrite_1_3" "Перед нанесением урона, Blood Rite увеличивает весь входящий по целям урон на <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#53ea48'>12%</font></b> на 5 секунд"
 
-"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_slow_blood"					"Blood Rite"
-"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_slow_blood_Description"		"Входящий урон увеличен на %dMODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE%%%"
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_slow_blood"                    "Blood Rite"
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_slow_blood_Description"        "Входящий урон увеличен на %dMODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE%%%"
 
 
 
@@ -13186,11 +13201,11 @@
 "mini_disc_modifier_bloodseeker_bloodrite_4" "Атака после Blood Rite обездвиживает и ворует силу"
 
 
-"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack_str"					"Blood Rite"
-"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack_str_Description"		"Сила изменена на %dMODIFIER_PROPERTY_STATS_STRENGTH_BONUS%"
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack_str"                    "Blood Rite"
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack_str_Description"        "Сила изменена на %dMODIFIER_PROPERTY_STATS_STRENGTH_BONUS%"
 
-"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack"					"Blood Rite"
-"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack_Description"		"Следующая атака обездвижит цель и сворует у нее силу"
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack"                    "Blood Rite"
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack_Description"        "Следующая атака обездвижит цель и сворует у нее силу"
 
 
 
@@ -13213,23 +13228,23 @@
 
 
 
-"DOTA_Tooltip_ability_bloodseeker_thirst_custom"										"Thirst"
-"DOTA_Tooltip_ability_bloodseeker_thirst_custom_Description"							"Герой упивается ранениями противников, излечиваясь при убийстве любого существа или если противник погиб в радиусе %half_bonus_aoe%.<br><br>Способность также даёт дополнительную скорость передвижения, когда здоровье любого вражеского героя становится меньше %min_bonus_pct%%%. Чем ниже уровень здоровья, тем сильнее эффект. Если здоровье вражеского героя упадёт ниже %invis_threshold_pct%%%, его станет видно в любой точке карты, даже если он невидим.<br><br><b><font color='#ff0000'>Бонус дается только за 1 героя с наименьшим уровнем здоровья</font></b>"
-"DOTA_Tooltip_ability_bloodseeker_thirst_custom_Lore"									"Когда проливается кровь, Стригвира охватывает неистовство."
-"DOTA_Tooltip_ability_bloodseeker_thirst_custom_Note0"									"Не реагирует на иллюзии."
-"DOTA_Tooltip_ability_bloodseeker_thirst_custom_Note1"									"Максимальный бонус к скорости передвижения достигается, если здоровье противника равно %max_bonus_pct%%% или ниже."
-"DOTA_Tooltip_ability_bloodseeker_thirst_custom_Note2"									"Эффект пропадает через %linger_duration% сек. после смерти цели."
-"DOTA_Tooltip_ability_bloodseeker_thirst_custom_min_bonus_pct"							"%МИН. ПОРОГ ЗДОРОВЬЯ:"
-"DOTA_Tooltip_ability_bloodseeker_thirst_custom_bonus_movement_speed"					"%МАКС. СКОРОСТЬ ПЕРЕДВИЖЕНИЯ ЗА ГЕРОЯ:"
-"DOTA_Tooltip_ability_bloodseeker_thirst_custom_hero_kill_heal"					"%ЛЕЧЕНИЕ ОТ МАКС. ЗДОРОВЬЯ ГЕРОЕВ:"			
-"DOTA_Tooltip_ability_bloodseeker_thirst_custom_creep_kill_heal"					"%ЛЕЧЕНИЕ ОТ МАКС. ЗДОРОВЬЯ КРИПОВ:"			
-"DOTA_Tooltip_ability_bloodseeker_thirst_custom_visibility_threshold_pct"				"%ПОРОГ ЗДОРОВЬЯ ДЛЯ ВИДИМОСТИ:"
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom"                                        "Thirst"
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_Description"                            "Герой упивается ранениями противников, излечиваясь при убийстве любого существа или если противник погиб в радиусе %half_bonus_aoe%.<br><br>Способность также даёт дополнительную скорость передвижения, когда здоровье любого вражеского героя становится меньше %min_bonus_pct%%%. Чем ниже уровень здоровья, тем сильнее эффект. Если здоровье вражеского героя упадёт ниже %invis_threshold_pct%%%, его станет видно в любой точке карты, даже если он невидим.<br><br><b><font color='#ff0000'>Бонус дается только за 1 героя с наименьшим уровнем здоровья</font></b>"
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_Lore"                                   "Когда проливается кровь, Стригвира охватывает неистовство."
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_Note0"                                  "Не реагирует на иллюзии."
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_Note1"                                  "Максимальный бонус к скорости передвижения достигается, если здоровье противника равно %max_bonus_pct%%% или ниже."
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_Note2"                                  "Эффект пропадает через %linger_duration% сек. после смерти цели."
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_min_bonus_pct"                          "%МИН. ПОРОГ ЗДОРОВЬЯ:"
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_bonus_movement_speed"                   "%МАКС. СКОРОСТЬ ПЕРЕДВИЖЕНИЯ ЗА ГЕРОЯ:"
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_hero_kill_heal"                 "%ЛЕЧЕНИЕ ОТ МАКС. ЗДОРОВЬЯ ГЕРОЕВ:"            
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_creep_kill_heal"                    "%ЛЕЧЕНИЕ ОТ МАКС. ЗДОРОВЬЯ КРИПОВ:"            
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_visibility_threshold_pct"               "%ПОРОГ ЗДОРОВЬЯ ДЛЯ ВИДИМОСТИ:"
 
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_visual"				"Скорость от Thirst"
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_visual_Description"	"Существо чует раненого врага. Скорость передвижения увеличена."
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_visual"                "Скорость от Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_visual_Description"    "Существо чует раненого врага. Скорость передвижения увеличена."
 
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_debuff"				"Thirst"
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_debuff_Description"	"Bloodseeker чувствует ваши увечья и точно знает, где вы."
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_debuff"                "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_debuff_Description"    "Bloodseeker чувствует ваши увечья и точно знает, где вы."
 
 
 
@@ -13257,8 +13272,8 @@
 "talent_disc_modifier_bloodseeker_thirst_2_2" "Убийства крипов дают вам щит, поглощающий <b><font color='#297016'>30</font></b>/<b><font color='#53ea48'>45</font></b>/<b><font color='#297016'>60</font></b> урона и увеличивающий скорость передвижения на <b><font color='#297016'>30</font></b>/<b><font color='#53ea48'>45</font></b>/<b><font color='#297016'>60</font></b><br><br>Щит суммируется 10 раз"
 "talent_disc_modifier_bloodseeker_thirst_2_3" "Убийства крипов дают вам щит, поглощающий <b><font color='#297016'>30</font></b>/<b><font color='#297016'>45</font></b>/<b><font color='#53ea48'>60</font></b> урона и увеличивающий скорость передвижения на <b><font color='#297016'>30</font></b>/<b><font color='#297016'>45</font></b>/<b><font color='#53ea48'>60</font></b><br><br>Щит суммируется 10 раз"
 
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_shield"					"Thirst"
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_shield_Description"		"Поглощает входящий урон и увеличивает скорость передвижения на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT%</font></b>"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_shield"                    "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_shield_Description"        "Поглощает входящий урон и увеличивает скорость передвижения на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT%</font></b>"
 
 
 
@@ -13272,8 +13287,8 @@
 "talent_disc_modifier_bloodseeker_thirst_3_2" "Если в радиусе 500 есть противник с уровнем здоровья ниже 50%, вы восстанавливаете <b><font color='#297016'>1.5%</font></b>/<b><font color='#53ea48'>2%</font></b>/<b><font color='#297016'>2.5%</font></b> здоровья в секунду"
 "talent_disc_modifier_bloodseeker_thirst_3_3" "Если в радиусе 500 есть противник с уровнем здоровья ниже 50%, вы восстанавливаете <b><font color='#297016'>1.5%</font></b>/<b><font color='#297016'>2%</font></b>/<b><font color='#53ea48'>2.5%</font></b> здоровья в секунду"
 
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_heal"					"Thirst"
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_heal_Description"		"Восстанавливает <b><font color='#53ea48'>%fMODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE%%%</font></b> здоровья в секунду"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_heal"                  "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_heal_Description"      "Восстанавливает <b><font color='#53ea48'>%fMODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE%%%</font></b> здоровья в секунду"
 
 
 
@@ -13287,8 +13302,8 @@
 "mini_disc_modifier_bloodseeker_thirst_4" "Атаки восстанавливают часть максимального здоровья"
 
 
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_attack"					"Thirst"
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_attack_Description"		"Каждая <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> атака наносит дополнительно <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP2%</font></b> урона и исцеляет на это значение"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_attack"                    "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_attack_Description"        "Каждая <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> атака наносит дополнительно <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP2%</font></b> урона и исцеляет на это значение"
 
 
 
@@ -13301,14 +13316,14 @@
 "upgrade_disc_modifier_bloodseeker_thirst_6_1" "<b><font color='#53ea48'>+10%</font></b> к порогу здоровья для обнаружения и максимальных бонусов Thirst<br><br>При обнаружении героя, входящий по вам урон снижается на <b><font color='#53ea48'>20%</font></b>, а базовое время атаки снижается до <b><font color='#53ea48'>1.5</font></b>"
 "mini_disc_modifier_bloodseeker_thirst_6" "Получает усиление от героев с низким здоровьем"
 
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_resist"					"Thirst"
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_resist_Description"		"Сопротивление эффектам увеличено на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING%%%</font></b>, базовое время атаки снижено до <b><font color='#53ea48'>%fMODIFIER_PROPERTY_BASE_ATTACK_TIME_CONSTANT%</font></b>"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_resist"                    "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_resist_Description"        "Сопротивление эффектам увеличено на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING%%%</font></b>, базовое время атаки снижено до <b><font color='#53ea48'>%fMODIFIER_PROPERTY_BASE_ATTACK_TIME_CONSTANT%</font></b>"
 
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision"					"Thirst"
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision_Description"		"Получает обзор на героев в радиусе <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b>. Бонусы Thirst увеличены до максимума"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision"                    "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision_Description"        "Получает обзор на героев в радиусе <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b>. Бонусы Thirst увеличены до максимума"
 
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision_count"					"Thirst"
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision_count_Description"		"Убив <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> крипов, вы получите обзор на героях неподалёку"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision_count"                  "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision_count_Description"      "Убив <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> крипов, вы получите обзор на героях неподалёку"
 
 
 
@@ -13322,25 +13337,25 @@
 
 
 
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_legendary"					"Blood Essence"
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_legendary_Description"		"Ловкость и сила увеличены на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b>"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_legendary"                 "Blood Essence"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_legendary_Description"     "Ловкость и сила увеличены на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b>"
 
 
 
-"DOTA_Tooltip_ability_bloodseeker_rupture_custom"										"Rupture"
-"DOTA_Tooltip_ability_bloodseeker_rupture_custom_Description"							"Разрывает кожу врага, нанося жертве начальный урон, зависящий от её текущего здоровья. Если цель передвигается, то она получает урон, зависящий от преодолённого расстояния и проходящий сквозь невосприимчивость к магии.<br><br><b><font color='#53ea48'>Порог дистанции для нанесения урона увеличен до %no_damage_distance%</font></b>"
-"DOTA_Tooltip_ability_bloodseeker_rupture_custom_Lore"									"Когда за тобой охотится Стригвир, любая рана становится смертельной."
-"DOTA_Tooltip_ability_bloodseeker_rupture_custom_duration"								"ДЛИТЕЛЬНОСТЬ:"
-"DOTA_Tooltip_ability_bloodseeker_rupture_custom_movement_damage_pct"					"%УРОН ПРИ ПЕРЕДВИЖЕНИИ:"
-"DOTA_Tooltip_ability_bloodseeker_rupture_custom_hp_pct"					"%УРОН ОТ ЗДОРОВЬЯ:"
-"DOTA_Tooltip_ability_bloodseeker_rupture_custom_abilitycastrange"					"ДАЛЬНОСТЬ ПРИМЕНЕНИЯ:"
-"DOTA_Tooltip_ability_bloodseeker_rupture_custom_max_charges_scepter"					        "ЗАРЯДОВ СО СКИПЕТРОМ:"
-"DOTA_Tooltip_ability_bloodseeker_rupture_custom_charge_restore_time_scepter"					"ВРЕМЯ ВОССТАНОВЛЕНИЯ ЗАРЯДА:"
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom"                                       "Rupture"
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_Description"                           "Разрывает кожу врага, нанося жертве начальный урон, зависящий от её текущего здоровья. Если цель передвигается, то она получает урон, зависящий от преодолённого расстояния и проходящий сквозь невосприимчивость к магии.<br><br><b><font color='#53ea48'>Порог дистанции для нанесения урона увеличен до %no_damage_distance%</font></b>"
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_Lore"                                  "Когда за тобой охотится Стригвир, любая рана становится смертельной."
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_duration"                              "ДЛИТЕЛЬНОСТЬ:"
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_movement_damage_pct"                   "%УРОН ПРИ ПЕРЕДВИЖЕНИИ:"
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_hp_pct"                    "%УРОН ОТ ЗДОРОВЬЯ:"
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_abilitycastrange"                  "ДАЛЬНОСТЬ ПРИМЕНЕНИЯ:"
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_max_charges_scepter"                           "ЗАРЯДОВ СО СКИПЕТРОМ:"
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_charge_restore_time_scepter"                   "ВРЕМЯ ВОССТАНОВЛЕНИЯ ЗАРЯДА:"
 
 
 
-"DOTA_Tooltip_modifier_bloodseeker_rupture_custom"						"Rupture"
-"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_Description"			"Процент от пройденного вами расстояния будет наноситься в качестве урона"		
+"DOTA_Tooltip_modifier_bloodseeker_rupture_custom"                      "Rupture"
+"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_Description"          "Процент от пройденного вами расстояния будет наноситься в качестве урона"      
 
 
 
@@ -13390,8 +13405,8 @@
 "talent_disc_modifier_bloodseeker_rupture_2_3" "Rupture снижает весь наносимый целью урон на <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#53ea48'>12%</font></b>, а исцеление и регенерацию на <b><font color='#297016'>10%</font></b>/<b><font color='#297016'>15%</font></b>/<b><font color='#53ea48'>20%</font></b>"
 
 
-"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_reduction"					"Rupture"
-"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_reduction_Description"		"Исцеление и регенерация снижены на <b><font color='#ff0000'>%dMODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET%%%</font></b>, наносимый урон снижен на <b><font color='#ff0000'>%dMODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE%%%</font></b>"
+"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_reduction"                    "Rupture"
+"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_reduction_Description"        "Исцеление и регенерация снижены на <b><font color='#ff0000'>%dMODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET%%%</font></b>, наносимый урон снижен на <b><font color='#ff0000'>%dMODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE%%%</font></b>"
 
 
 
@@ -13422,8 +13437,8 @@
 
 
 
-"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_blood"					"Rupture"
-"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_blood_Description"		"Получает <b><font color='#ff0000'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> магического урона в секунду"
+"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_blood"                    "Rupture"
+"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_blood_Description"        "Получает <b><font color='#ff0000'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> магического урона в секунду"
 
 
 
@@ -13439,6 +13454,34 @@
 "font_disc_modifier_bloodseeker_rupture_7" "17"
 "upgrade_disc_modifier_bloodseeker_rupture_7" "Новая способность<br>Перезарядка: *cd* сек<br><br>В течение *!duration* сек вы притягиваете цель к себе<br><br>Под действием эффекта противник получает на *!damage%* больше урона из всех источников, а вы исцеляетесь на *!heal%* от всего наносимого ему урона"
 "mini_disc_modifier_bloodseeker_rupture_7" "Новая способность: Притягивает цель"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -16206,7 +16249,7 @@
 
 "vote_end_date" "Дата окончания голосования: "
 
-"vote_hero_won_date"	"Примерная дата выхода: <b><font color='#fdec85'>Вторая половина Декабря 2023</font></b>"
+"vote_hero_won_date"	"Примерная дата выхода: <b><font color='#fdec85'>Вторая половина Января 2023</font></b>"
 
 "active_vote_top" "Проходит голосование за <b><font color='#ffa142'>нового героя</font></b>!"
 "active_new_shop_heroes" "Доступны <b><font color='#ffa142'>новые предметы</font></b> для героев!"
@@ -18161,7 +18204,7 @@ mini_disc_modifier_snapfire_cookie_4" "После прыжка Firesnap Cookie, 
 
 
 "DOTA_Tooltip_modifier_muerta_pierce_the_veil_custom_scepter_buff"			"Pierce the Veil"					
-"DOTA_Tooltip_modifier_muerta_pierce_the_veil_custom_scepter_buff_Description"		"Урон от способностей за убийства героев навсегда увеличен на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE%%%</font></b>"
+"DOTA_Tooltip_modifier_muerta_pierce_the_veil_custom_scepter_buff_Description"		"Совершено убийств с помощью Pierce the Veil: %dMODIFIER_PROPERTY_TOOLTIP%<br><br>Урон от способностей увеличен на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE%%%</font></b><br>(Требует Aghanim Shard)"
 
 
 
@@ -19808,6 +19851,11 @@ mini_disc_modifier_snapfire_cookie_4" "После прыжка Firesnap Cookie, 
 "Razor.Quest_8"    "Нанесите урон героям с помощью Eye of the Storm"
 
 
+"basilisklord"  "Test of the Basilisk Lord"
+"forlornmaze"       "Menace of the Forlorn Maze"
+"cruelassemblage"    "Cruel Assemblage"
+"razor_arcana"      "Voidstorm Asylum (Arcana)"
+
 
 
 "DOTA_Tooltip_ability_razor_plasma_field_custom"                                       "Plasma Field"
@@ -20521,34 +20569,7 @@ mini_disc_modifier_snapfire_cookie_4" "После прыжка Firesnap Cookie, 
 
 
 
-_invoke_6" "Все ваши способности получают *!level* дополнительный уровень от Quas Wex и Exort<br><br>Применение способностей сокращает перезарядку ваших предметов на *!cd* сек"
-"mini_disc_modifier_invoker_invoke_6" "Применение способностей перезаряжает предметы"
-
-
-"font_disc_modifier_invoker_invoke_7" "17"
-"upgrade_disc_modifier_invoker_invoke_7" "Новый активный предмет<br><br>На *!duration* сек вы получаете усиление, а перезарядка Invoke снижается до *!cd* сек<br><br>По окончании, ваше местоположение, здоровье, мана и перезарядка способностей возвращаются в исходное значение<br><br>Предмет усиливается с каждым попаданием заклинанием"
-"mini_disc_modifier_invoker_invoke_7" "Новый предмет: Сбрасывает перезарядку способностей"
-
-
-
-
-"no_selected_bot"   "Выберите героя противника"
-"for_self"      "Для себя"
-"for_hero"      "Для героя:"
-"self_talent"   "Выбрать талант"
-"unique_item"   "Уникальный предмет"
-"level_one"     "+1 ур."
-"level_max"     "+30 ур."
-"create_hero"   "Создать героя"
-"bot_item"      "Выдать предмет"
-"bot_talent"    "Выдать талант"
-"item_damage"   "Урон"
-"item_surv"     "Выживаемость"
-"item_util"     "Утилити"
-"item_neutral"  "Нейтральные"
-"for_general"   "Прочее"
-"stop_timer"    "Остановить таймер"
-"wtf_mode"      "Режим WTF"
+e"      "Режим WTF"
 "refresh_button"    "Обновить ресурсы"
 
 

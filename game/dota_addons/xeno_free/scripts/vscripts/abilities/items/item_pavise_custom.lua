@@ -82,7 +82,7 @@ end
 function modifier_item_pavise_custom_active:DeclareFunctions()
 	return 
 {
-	--MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
+	MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
   MODIFIER_PROPERTY_INCOMING_PHYSICAL_DAMAGE_CONSTANT,
 }
 end
@@ -99,6 +99,11 @@ if IsClient() then
   end 
 end
 
+end
+
+
+
+function modifier_item_pavise_custom_active:GetModifierIncomingDamageConstant(params)
 if not IsServer() then return end
 
 if self:GetStackCount() == 0 then return end

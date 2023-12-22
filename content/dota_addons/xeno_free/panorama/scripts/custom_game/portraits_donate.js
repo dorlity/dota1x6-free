@@ -5,6 +5,10 @@ var killer_name = null
 var similar_id = 
 {
     4239: [4239, 4560, 4561],
+    23097: [23097, 2309799],
+    23096: [23096, 2309699],
+    9784: [9784, 978499, 9784999], 
+    9780: [9780, 978099, 9780999], 
 }
 
 var first_timer_loading = -1
@@ -105,6 +109,103 @@ var unique_cameras_heroes_items =
         [4494],
         [2428],
     ],
+
+    "npc_dota_hero_legion_commander":
+    [
+
+        [5810, 9236, 8821],
+        [5810, 9236, 13052],
+        [5810, 9236, 13986],
+        [5810, 9236, 25759],
+        [5810, 9236, 29256],
+        [5810, 9236, 9780],
+        [5810, 9236],
+        [5810, 8824],
+        [5810, 13050],
+        [5810, 13988],
+        [5810, 25761],
+        [5810, 29254],
+        [5810, 9784],
+        [9236, 8821],
+        [9236, 13052],
+        [9236, 13986],
+        [9236, 25759],
+        [9236, 29256],
+        [9236, 9780],
+        [9784],
+        [5810],
+        [9236],
+        [8824],
+        [13050],
+        [13988],
+        [25761],
+        [29254],
+    ],
+
+    "npc_dota_hero_nevermore":
+    [
+        [6996, 9020],
+        [6996, 22844],
+        [6996, 12677],
+        [6996, 13507],
+        [6996, 18036],
+        [6996, 8259],
+        [9021],
+        [18035],
+        [22845],
+        [12678],
+        [13505],
+        [6996],
+        [8259],
+    ],
+
+    "npc_dota_hero_razor":
+    [
+        [2309599, 6646, 14812],
+        [2309599, 6646, 18132],
+        [2309599, 6646, 19500],
+        [2309599, 6646, 23097],
+        [2309599, 6916, 14812],
+        [2309599, 6916, 18132],
+        [2309599, 6916, 19500],
+        [2309599, 6916, 23097],
+        [2309599, 14814],
+        [2309599, 18130],
+        [2309599, 19503],
+        [2309599, 23096],
+        [2309599, 6646],
+        [2309599, 6916],
+        [23095, 6646, 14812],
+        [23095, 6646, 18132],
+        [23095, 6646, 19500],
+        [23095, 6646, 23097],
+        [23095, 6916, 14812],
+        [23095, 6916, 18132],
+        [23095, 6916, 19500],
+        [23095, 6916, 23097],
+        [23095, 14814],
+        [23095, 18130],
+        [23095, 19503],
+        [23095, 23096],
+        [23095, 6646],
+        [23095, 6916],
+        [6916, 14812],
+        [6916, 18132],
+        [6916, 19500],
+        [6916, 23097],
+        [6646, 14812],
+        [6646, 18132],
+        [6646, 19500],
+        [6646, 23097],
+        [23095],
+        [2309599],
+        [14814],
+        [18130],
+        [19503],
+        [23096],
+        [6646],
+        [6916]
+    ]
 }
 
 function Think()
@@ -170,6 +271,7 @@ function ChangeKillCamCamera(data, KillCamHeroRender)
             portrait_video_kill_cam.LerpToCameraEntity( camera_name, 0 )
             $.Schedule(0.1, function()
             { 
+
                 last_hero_entity_camera_kill_cam = camera_name + "_unit"
                 portrait_video_kill_cam.FireEntityInput(last_hero_entity_camera_kill_cam, "Enable", "", 0.0);   
             })
@@ -271,6 +373,8 @@ function GetCameraInfo(hero_name, player_id)
             {   
                 for (var d = 0; d < item_id_list.length; d++) 
                 {
+
+
                     camera_name = camera_name + "_" + item_id_list[d]
                     light_name = light_name + "_" + item_id_list[d]
                 }
@@ -278,6 +382,7 @@ function GetCameraInfo(hero_name, player_id)
             }
         }
     }
+
     return [camera_name, light_name]
 }
 
@@ -330,6 +435,7 @@ function ChangeCamera(camera_name, light_name, dotahud, portraitHUDOverlay)
 
         $.Schedule(0.1, function()
         { 
+            
             last_hero_entity_camera_portrait = camera_name + "_unit"
             portrait_video.FireEntityInput(last_hero_entity_camera_portrait, "Enable", "", 0.0);   
         }) 

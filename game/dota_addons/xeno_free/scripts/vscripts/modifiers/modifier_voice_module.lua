@@ -28,7 +28,7 @@ self.kill_timer = 2
 
 self.rivaL_chance = 30
 
-if false and test then 
+if test then 
     self.rivaL_chance = 100
     self.cast_cd = 2
     self.lasthit_cd = 1
@@ -474,6 +474,137 @@ end
 
 
 
+if self.parent:GetUnitName() == "npc_dota_hero_legion_commander" then 
+
+    if ability:GetName() == "custom_legion_commander_overwhelming_odds" then
+        for_player = true 
+
+        if self.parent:HasModifier("modifier_legion_commander_arcana_custom") then
+            string_table = 
+            {
+                {"legion_commander_custom_legcom_dem_overwhelmingodds_", 2, 4},
+            }
+        else 
+            string_table = 
+            {
+                {"legion_commander_custom_legcom_overwhelmingodds_", 2, 4},
+            }
+        end 
+    end 
+
+    if ability:GetName() == "custom_legion_commander_press_the_attack" then
+        for_player = true 
+
+        if self.parent:HasModifier("modifier_legion_commander_arcana_custom") then
+            string_table = 
+            {
+                {"legion_commander_custom_legcom_dem_presstheattack_", 3, 6},
+            }
+        else 
+            string_table = 
+            {
+                {"legion_commander_custom_legcom_presstheattack_", 3, 6},
+            }
+        end 
+    end 
+
+
+    if ability:GetName() == "custom_legion_commander_duel" then
+
+        if self.parent:HasModifier("modifier_legion_commander_arcana_custom") then
+            string_table = 
+            {
+                {"legion_commander_custom_legcom_dem_duel_", 1, 9},
+            }
+        else 
+            string_table = 
+            {
+                {"legion_commander_custom_legcom_duel_", 1, 9},
+            }
+        end 
+    end 
+end 
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_nevermore" then 
+
+    if ability:GetName() == "custom_nevermore_requiem" then
+        priority = true
+        if self.parent:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then
+        
+            string_table = 
+            {
+                {"nevermore_custom_nev_arc_ability_requiem_", 1, 8},
+                {"nevermore_custom_nev_arc_ability_requiem_", 11, 14},
+            }
+        else 
+            string_table = 
+            {
+                {"nevermore_custom_nev_ability_requiem_", 1, 8},
+                {"nevermore_custom_nev_ability_requiem_", 11, 14},
+            }
+        end 
+    end
+end 
+
+
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_razor" then 
+
+
+    if ability:GetName() == "razor_plasma_field_custom" then
+        priority = true
+        if self.parent:GetModelName() == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+        
+            string_table = 
+            {
+                {"razor_rz_custom_vsa_ability_plasma_", 1, 4},
+                {"razor_rz_custom_vsa_ability_plasma_", 7, 11},
+            }
+        else 
+            string_table = 
+            {
+                {"razor_raz_custom_ability_plasma_", 1, 9}
+            }
+        end 
+    end
+
+    if ability:GetName() == "razor_static_link_custom" then
+        for_player = true
+        if self.parent:GetModelName() == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+
+            string_table = 
+            {
+                {"razor_rz_custom_vsa_ability_static_", 1, 12},
+            }
+        else 
+            string_table = 
+            {
+                {"razor_raz_custom_ability_static_", 1, 5}
+            }
+        end 
+    end
+
+    if ability:GetName() == "razor_eye_of_the_storm_custom" then
+        for_player = true
+        if self.parent:GetModelName() == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+
+            string_table = 
+            {
+                {"razor_rz_custom_vsa_ability_storm_", 1, 10},
+            }
+        else 
+            string_table = 
+            {
+                {"razor_raz_custom_ability_storm_", 1, 6}
+            }
+        end 
+        end
+
+end 
+
+
 for _,data in pairs(string_table) do 
     for i = data[2],data[3] do 
         table.insert(sounds, data[1]..self:GetNumber(i))
@@ -539,6 +670,59 @@ if self.parent:GetUnitName() == "npc_dota_hero_phantom_assassin" then
     end 
 end 
 
+if self.parent:GetUnitName() == "npc_dota_hero_legion_commander" then 
+
+    if self.parent:HasModifier("modifier_legion_commander_arcana_custom") then
+    
+        string_table = 
+        {
+            {"legion_commander_custom_legcom_dem_levelup_", 1, 5},
+            {"legion_commander_custom_legcom_dem_levelup_", 7, 14},
+        }
+    else 
+        string_table = 
+        {
+            {"legion_commander_custom_legcom_levelup_", 1, 5},
+            {"legion_commander_custom_legcom_levelup_", 7, 14},
+        }
+    end 
+end 
+
+if self.parent:GetUnitName() == "npc_dota_hero_nevermore" then 
+
+    if self.parent:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then
+    
+        string_table = 
+        {
+            {"nevermore_custom_nev_arc_level_", 1, 10},
+        }
+    else 
+        string_table = 
+        {
+            {"nevermore_custom_nev_level_", 1, 10},
+        }
+    end 
+
+end 
+
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_razor" then 
+
+    if self.parent:GetModelName() == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+    
+        string_table = 
+        {
+            {"razor_rz_custom_vsa_level_", 1, 10},
+        }
+    else 
+        string_table = 
+        {
+            {"razor_raz_custom_level_", 1, 10}
+        }
+    end 
+
+end 
 
 
 
@@ -553,6 +737,9 @@ if #sounds > 0 then
 end 
 
 end 
+
+
+
 
 
 function modifier_voice_module:BountyEvent()
@@ -585,6 +772,47 @@ if self.parent:GetUnitName() == "npc_dota_hero_phantom_assassin" then
     end 
 end 
 
+
+if self.parent:GetUnitName() == "npc_dota_hero_legion_commander" then 
+
+    if self.parent:HasModifier("modifier_legion_commander_arcana_custom") then
+    
+        table.insert(sounds, "legion_commander_custom_legcom_dem_itemcommon_01")
+        table.insert(sounds, "legion_commander_custom_legcom_dem_itemcommon_02")
+    else 
+        table.insert(sounds, "legion_commander_custom_legcom_itemcommon_01")
+        table.insert(sounds, "legion_commander_custom_legcom_itemcommon_02")
+    end 
+
+end 
+
+if self.parent:GetUnitName() == "npc_dota_hero_nevermore" then 
+
+    if self.parent:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then
+    
+        table.insert(sounds, "nevermore_custom_nev_arc_lasthit_03")
+    else 
+        table.insert(sounds, "nevermore_custom_nev_lasthit_03")
+    end 
+
+end 
+
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_razor" then 
+
+    if self.parent:GetModelName() == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+    
+        table.insert(sounds, "razor_rz_custom_vsa_bounty_01")
+        table.insert(sounds, "razor_rz_custom_vsa_bounty_01_02")
+        table.insert(sounds, "razor_rz_custom_vsa_bounty_02")
+        table.insert(sounds, "razor_rz_custom_vsa_bounty_03")
+    else 
+        table.insert(sounds, "razor_raz_custom_lasthit_07")
+        table.insert(sounds, "razor_raz_custom_lasthit_01")
+    end 
+
+end 
 
 
 
@@ -637,6 +865,61 @@ if self.parent:GetUnitName() == "npc_dota_hero_phantom_assassin" then
     end 
 end 
 
+
+if self.parent:GetUnitName() == "npc_dota_hero_legion_commander" then 
+
+    if self.parent:HasModifier("modifier_legion_commander_arcana_custom") then
+    
+        string_table = 
+        {
+            {"legion_commander_custom_legcom_dem_respawn_", 1, 5},
+            {"legion_commander_custom_legcom_dem_respawn_", 10, 14},
+        }
+    else 
+        string_table = 
+        {
+            {"legion_commander_custom_legcom_respawn_", 1, 5},
+            {"legion_commander_custom_legcom_respawn_", 10, 14},
+        }
+    end 
+end 
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_nevermore" then 
+
+    if self.parent:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then
+    
+        string_table = 
+        {
+            {"nevermore_custom_nev_arc_respawn_", 1, 10},
+        }
+    else 
+        string_table = 
+        {
+            {"nevermore_custom_nev_respawn_", 1, 10},
+        }
+    end 
+
+end 
+
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_razor" then 
+
+    if self.parent:GetModelName() == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+    
+        string_table = 
+        {
+            {"razor_rz_custom_vsa_respawn_", 1, 14},
+        }
+    else 
+        string_table = 
+        {
+            {"razor_raz_custom_respawn_", 1, 10}
+        }
+    end 
+
+end 
 
 
 for _,data in pairs(string_table) do 
@@ -746,6 +1029,70 @@ if self.parent:GetUnitName() == "npc_dota_hero_phantom_assassin" then
     return string_table
 end 
 
+if self.parent:GetUnitName() == "npc_dota_hero_legion_commander" then 
+
+    if self.parent:HasModifier("modifier_legion_commander_arcana_custom") then
+    
+        string_table = 
+        {
+            {"legion_commander_custom_legcom_dem_pain_", 1, 13},
+            {"legion_commander_custom_legcom_dem_underattack_", 1, 1},
+        }
+    else 
+        string_table = 
+        {
+            {"legion_commander_custom_legcom_pain_", 1, 13},
+            {"legion_commander_custom_legcom_underattack_", 1, 1},
+        }
+    end 
+
+    return string_table
+end 
+
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_nevermore" then 
+
+    if self.parent:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then
+    
+        string_table = 
+        {
+            {"nevermore_custom_nev_arc_pain_", 1, 9},
+            {"nevermore_custom_nev_arc_underattack_", 1, 1},
+        }
+    else 
+        string_table = 
+        {
+            {"nevermore_custom_nev_pain_", 1, 9},
+            {"nevermore_custom_nev_underattack_", 1, 1},
+        }
+    end 
+
+    return string_table
+end 
+
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_razor" then 
+
+    if self.parent:GetModelName() == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+    
+        string_table = 
+        {
+            {"razor_rz_custom_vsa_pain_", 1, 6},
+            {"razor_rz_custom_vsa_underattack_", 1, 3},
+        }
+    else 
+        string_table = 
+        {
+            {"razor_raz_custom_pain_", 1, 12},
+            {"razor_raz_custom_underattack_", 1, 1}
+        }
+    end 
+
+    return string_table
+end 
+
 return string_table
 end
 
@@ -817,6 +1164,85 @@ if self.parent:GetUnitName() == "npc_dota_hero_phantom_assassin" then
     return string_table
 end
 
+
+if self.parent:GetUnitName() == "npc_dota_hero_legion_commander" then 
+
+    if self.parent:HasModifier("modifier_legion_commander_arcana_custom") then
+
+        string_table = 
+        {
+            {"legion_commander_custom_legcom_dem_econ_move_", 1, 5},
+            {"legion_commander_custom_legcom_dem_move_", 1, 18},
+            {"legion_commander_custom_legcom_dem_move_", 22, 22},
+            {"legion_commander_custom_legcom_dem_move_", 25, 27},
+            {"legion_commander_custom_legcom_dem_move_", 30, 30},
+        }
+    else 
+        string_table = 
+        {
+            {"legion_commander_custom_legcom_move_", 1, 18},
+            {"legion_commander_custom_legcom_move_", 22, 22},
+            {"legion_commander_custom_legcom_move_", 25, 27},
+            {"legion_commander_custom_legcom_move_", 30, 30},
+        }
+    end
+
+    return string_table
+end
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_nevermore" then 
+
+    if self.parent:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then
+    
+        string_table = 
+        {
+            {"nevermore_custom_nev_arc_move_", 1, 7},
+            {"nevermore_custom_nev_arc_move_", 9, 15},
+        }
+    else 
+        string_table = 
+        {
+            {"nevermore_custom_nev_move_", 1, 7},
+            {"nevermore_custom_nev_move_", 9, 15},
+        }
+    end 
+
+    return string_table
+end 
+
+
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_razor" then 
+
+    if self.parent:GetModelName() == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+    
+        if self.parent:GetHealthPercent() <= 30 then 
+            string_table = 
+            {
+                {"razor_rz_custom_vsa_move_pain_", 1, 8},
+            }
+        else 
+            string_table = 
+            {
+                {"razor_rz_custom_vsa_move_", 1, 21},
+            }
+
+        end
+    else 
+        string_table = 
+        {
+            {"razor_raz_custom_move_", 1, 13},
+        }
+    end 
+
+    return string_table
+end 
+
+
+
+
 return string_table
 end
 
@@ -873,6 +1299,81 @@ if self.parent:GetUnitName() == "npc_dota_hero_phantom_assassin" then
 
     return string_table
 end 
+
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_legion_commander" then 
+
+    if self.parent:HasModifier("modifier_legion_commander_arcana_custom") then
+
+        string_table = 
+        {
+            {"legion_commander_custom_legcom_dem_attack_", 1, 2},
+            {"legion_commander_custom_legcom_dem_attack_", 4, 10},
+            {"legion_commander_custom_legcom_dem_attack_", 12, 12},
+            {"legion_commander_custom_legcom_dem_attack_", 14, 15},
+            {"legion_commander_custom_legcom_dem_econ_attack_", 1, 3},
+        }
+    else 
+        string_table = 
+        {
+            {"legion_commander_custom_legcom_attack_", 1, 2},
+            {"legion_commander_custom_legcom_attack_", 4, 10},
+            {"legion_commander_custom_legcom_attack_", 12, 12},
+            {"legion_commander_custom_legcom_attack_", 14, 15},
+        }
+    end
+
+    return string_table
+end
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_nevermore" then 
+
+    if self.parent:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then
+    
+        string_table = 
+        {
+            {"nevermore_custom_nev_arc_attack_", 1, 12},
+        }
+    else 
+        string_table = 
+        {
+            {"nevermore_custom_nev_attack_", 1, 12},
+        }
+    end 
+
+    return string_table
+end 
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_razor" then 
+
+    if self.parent:GetModelName() == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+    
+        if self.parent:GetHealthPercent() <= 30 then 
+            string_table = 
+            {
+                {"razor_rz_custom_vsa_attack_pain_", 1, 8},
+            }
+        else 
+            string_table = 
+            {
+                {"razor_rz_custom_vsa_attack_", 1, 17},
+                {"razor_rz_custom_vsa_attack_close_", 1, 10}
+            }
+
+        end
+    else 
+        string_table = 
+        {
+            {"razor_raz_custom_attack_", 1, 12},
+        }
+    end 
+
+    return string_table
+end 
+
 
 return string_table
 end
@@ -933,6 +1434,73 @@ if self.parent:GetUnitName() == "npc_dota_hero_phantom_assassin" then
     return string_table
 end
 
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_legion_commander" then 
+
+    if self.parent:HasModifier("modifier_legion_commander_arcana_custom") then
+        string_table = 
+        {
+            {"legion_commander_custom_legcom_dem_cast_", 1, 3},
+        }
+    else 
+        string_table = 
+        {
+            {"legion_commander_custom_legcom_cast_", 1, 3},
+        }
+    end 
+    return string_table
+end 
+
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_nevermore" then 
+
+    if self.parent:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then
+    
+        string_table = 
+        {
+            {"nevermore_custom_nev_arc_cast_", 1, 3},
+        }
+    else 
+        string_table = 
+        {
+            {"nevermore_custom_nev_cast_", 1, 3},
+        }
+    end 
+
+    return string_table
+end 
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_razor" then 
+
+    if self.parent:GetModelName() == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+    
+        if self.parent:GetHealthPercent() <= 30 then 
+            string_table = 
+            {
+                {"razor_rz_custom_vsa_cast_pain_", 1, 4},
+            }
+        else 
+            string_table = 
+            {
+                {"razor_rz_custom_vsa_cast_", 1, 5},
+            }
+
+        end
+    else 
+        string_table = 
+        {
+            {"razor_raz_custom_cast_", 1, 2},
+        }
+    end 
+
+    return string_table
+end 
+
+
+
 return string_table
 end
 
@@ -986,6 +1554,74 @@ if self.parent:GetUnitName() == "npc_dota_hero_phantom_assassin" then
     
     return string_table
 end 
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_legion_commander" then 
+
+    if self.parent:HasModifier("modifier_legion_commander_arcana_custom") then
+        string_table = 
+        {
+            {"legion_commander_custom_legcom_dem_death_", 1, 4},
+            {"legion_commander_custom_legcom_dem_death_", 6, 8},
+            {"legion_commander_custom_legcom_dem_death_", 10, 14},
+            {"legion_commander_custom_legcom_dem_econ_death_", 1, 3},
+        }
+    else 
+        string_table = 
+        {
+            {"legion_commander_custom_legcom_death_", 1, 4},
+            {"legion_commander_custom_legcom_death_", 6, 8},
+            {"legion_commander_custom_legcom_death_", 10, 14},
+        }
+    end 
+    return string_table
+end 
+
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_nevermore" then 
+
+    if self.parent:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then
+    
+        string_table = 
+        {
+            {"nevermore_custom_nev_arc_death_", 1, 1},
+            {"nevermore_custom_nev_arc_death_", 3, 11},
+            {"nevermore_custom_nev_arc_death_", 15, 19},
+        }
+    else 
+        string_table = 
+        {
+            {"nevermore_custom_nev_death_", 1, 1},
+            {"nevermore_custom_nev_death_", 3, 11},
+            {"nevermore_custom_nev_death_", 15, 19},
+        }
+    end 
+
+    return string_table
+end 
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_razor" then 
+
+    if self.parent:GetModelName() == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+
+        string_table = 
+        {
+            {"razor_rz_custom_vsa_death_", 1, 12},
+        }
+
+    else 
+        string_table = 
+        {
+            {"razor_raz_custom_death_", 1, 11},
+        }
+    end 
+
+    return string_table
+end 
+
+
 
 return string_table
 end 
@@ -1044,6 +1680,75 @@ if self.parent:GetUnitName() == "npc_dota_hero_phantom_assassin" then
     end
     return string_table
 end 
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_legion_commander" then 
+
+    if self.parent:HasModifier("modifier_legion_commander_arcana_custom") then
+        string_table = 
+        {
+            {"legion_commander_custom_legcom_dem_lasthit_", 1, 5},
+            {"legion_commander_custom_legcom_dem_lasthit_", 7, 13},
+        }
+    else 
+        string_table = 
+        {
+            {"legion_commander_custom_legcom_lasthit_", 1, 5},
+            {"legion_commander_custom_legcom_lasthit_", 7, 13},
+        }
+    end 
+    return string_table
+end 
+
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_nevermore" then 
+
+    if self.parent:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then
+    
+        string_table = 
+        {
+            {"nevermore_custom_nev_arc_lasthit_", 1, 7},
+        }
+    else 
+        string_table = 
+        {
+            {"nevermore_custom_nev_lasthit_", 1, 7},
+        }
+    end 
+
+    return string_table
+end 
+
+
+    
+
+if self.parent:GetUnitName() == "npc_dota_hero_razor" then 
+
+    if self.parent:GetModelName() == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+    
+        if self.parent:GetHealthPercent() <= 30 then 
+            string_table = 
+            {
+                {"razor_rz_custom_vsa_lasthit_pain_", 1, 8},
+            }
+        else 
+            string_table = 
+            {
+                {"razor_rz_custom_vsa_lasthit_", 1, 11},
+            }
+
+        end
+    else 
+        string_table = 
+        {
+            {"razor_raz_custom_lasthit_", 1, 8},
+        }
+    end 
+
+    return string_table
+end 
+
 
 
 return string_table
@@ -1169,6 +1874,165 @@ if self.parent:GetUnitName() == "npc_dota_hero_phantom_assassin" then
 
     return string_table
 end 
+
+
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_legion_commander" then 
+
+
+    if my_game.KillCount == 0 then 
+
+    if self.parent:HasModifier("modifier_legion_commander_arcana_custom") then
+            string_table = {{"legion_commander_custom_legcom_dem_firstblood_", 1, 3}}
+        else 
+            string_table = {{"legion_commander_custom_legcom_firstblood_", 1, 3}}
+        end
+    else
+
+        local key = ""
+        if self.parent:HasModifier("modifier_legion_commander_arcana_custom") then
+            unit_table = rival_table.legion_arc[unit:GetUnitName()]
+            key = "legion_commander_custom_legcom_dem_rival_"
+        else 
+            unit_table = rival_table.legion[unit:GetUnitName()]
+            key = "legion_commander_custom_legcom_rival_"
+        end 
+
+        if unit_table and RollPseudoRandomPercentage(self.rivaL_chance,4251,self.parent) then 
+
+            for i = 1, #unit_table do 
+                table.insert(string_table, {key, unit_table[i], unit_table[i], 0})
+            end 
+
+        else 
+
+            if self.parent:HasModifier("modifier_legion_commander_arcana_custom") then
+                string_table = 
+                {
+                    {"legion_commander_custom_legcom_dem_kill_", 1, 10},
+                    {"legion_commander_custom_legcom_dem_kill_", 12, 19},
+                    {"legion_commander_custom_legcom_dem_laugh_", 4, 7},
+                }
+            else
+                string_table = 
+                {
+                    {"legion_commander_custom_legcom_kill_", 1, 10},
+                    {"legion_commander_custom_legcom_kill_", 12, 19},
+                    {"legion_commander_legcom_laugh_", 4, 7},
+
+
+                }
+            end 
+        end 
+    end 
+
+    return string_table
+end 
+
+
+
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_nevermore" then 
+
+
+    if my_game.KillCount == 0 then 
+
+        if self.parent:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then
+            string_table = {{"nevermore_custom_nev_arc_firstblood_", 1, 3}}
+        else 
+            string_table = {{"nevermore_custom_nev_firstblood_", 1, 3}}
+        end
+    else
+
+        local key = ""
+        if self.parent:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then
+            unit_table = rival_table.nevermore_arc[unit:GetUnitName()]
+            key = "nevermore_custom_nev_arc_rival_"
+        else 
+            unit_table = rival_table.nevermore[unit:GetUnitName()]
+            key = "nevermore_custom_nev_rival_"
+        end 
+
+        if unit_table and RollPseudoRandomPercentage(self.rivaL_chance,4251,self.parent) then 
+            
+            for i = 1, #unit_table do 
+                table.insert(string_table, {key, unit_table[i], unit_table[i], 0})
+            end 
+        
+        else 
+
+            if self.parent:GetModelName() == "models/heroes/shadow_fiend/shadow_fiend_arcana.vmdl" then
+                string_table = 
+                {
+                    {"nevermore_custom_nev_arc_kill_", 1, 13},
+                    {"nevermore_custom_nev_arc_laugh_", 2, 4},
+                }
+            else
+                string_table = 
+                {
+                    {"nevermore_custom_nev_kill_", 1, 13},
+                    {"nevermore_custom_nev_laugh_", 2, 4},
+                }
+            end 
+        end 
+    end 
+
+    return string_table
+end 
+
+
+
+
+if self.parent:GetUnitName() == "npc_dota_hero_razor" then 
+
+
+    if my_game.KillCount == 0 then 
+
+        if self.parent:GetModelName() == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+            string_table = {{"razor_rz_custom_vsa_firstblood_", 1, 5}}
+        else 
+            string_table = {{"razor_raz_custom_firstblood_", 1, 1}}
+        end
+    else
+
+        local key = ""
+        if self.parent:GetModelName() == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+            unit_table = rival_table.razor_arc[unit:GetUnitName()]
+            key = "razor_rz_custom_vsa_rival_"
+        else 
+            unit_table = rival_table.razor[unit:GetUnitName()]
+            key = "razor_raz_custom_rival_"
+        end 
+
+        if unit_table and RollPseudoRandomPercentage(self.rivaL_chance,4251,self.parent) then 
+            
+            for i = 1, #unit_table do 
+                table.insert(string_table, {key, unit_table[i], unit_table[i], 0})
+            end 
+        
+        else 
+
+            if self.parent:GetModelName() == "models/items/razor/razor_arcana/razor_arcana.vmdl" then
+                string_table = 
+                {
+                    {"razor_rz_custom_vsa_kill_", 1, 18},
+                    {"razor_rz_custom_vsa_laugh_", 4, 10},
+                }
+            else
+                string_table = 
+                {
+                    {"razor_raz_custom_kill_", 1, 15},
+                    {"razor_raz_custom_laugh_", 1, 6},
+                }
+            end 
+        end 
+    end 
+
+    return string_table
+end 
+
 
 
 

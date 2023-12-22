@@ -31,6 +31,13 @@ end
 
 function modifier_satyr_purge:OnIntervalThink()
 if not IsServer() then return end
+
+
+  if not self:GetParent():IsCreep() then 
+    self:Destroy()
+    return
+  end 
+
 if not self:GetParent():IsSilenced() and self:GetParent():GetAttackTarget() ~= nil and not self:GetParent():HasModifier("modifier_satyr_purge_cd") and
  not  self:GetParent():HasModifier("modifier_neutral_cast") and  not self:GetParent():GetAttackTarget():HasModifier("modifier_satyr_purge_slow")
  and not self:GetParent():GetAttackTarget():IsMagicImmune()

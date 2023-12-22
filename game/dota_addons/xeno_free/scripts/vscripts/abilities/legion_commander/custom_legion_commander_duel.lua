@@ -179,6 +179,16 @@ function modifier_duel_buff:IsPurgable() return false end
 function modifier_duel_buff:IsDebuff() return true end
 function modifier_duel_buff:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 
+
+
+function modifier_duel_buff:GetStatusEffectName()
+  return "particles/status_fx/status_effect_legion_commander_duel.vpcf"
+end 
+
+function modifier_duel_buff:StatusEffectPriority()
+return 999999
+end
+
 function modifier_duel_buff:DeclareFunctions()
 return
 {
@@ -972,11 +982,14 @@ end
 
 function modifier_duel_custom_scepter:OnIntervalThink()
 if not IsServer() then return end
-
+if not self.thinker or self.thinker:IsNull() then return end
 
 
 self:CheckPos(self.target)
 self:CheckPos(self.caster)
+
+
+if not self.thinker or self.thinker:IsNull() then return end
 
 local enemies = FindUnitsInRadius(self.caster:GetTeamNumber(),self.thinker:GetAbsOrigin(),nil,self.radius,DOTA_UNIT_TARGET_TEAM_ENEMY,DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES,FIND_ANY_ORDER,false)
 

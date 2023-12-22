@@ -140,7 +140,7 @@ end
 function modifier_item_solar_crest_custom_speed:DeclareFunctions()
 return 
 {
-   -- MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
+   MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
     MODIFIER_PROPERTY_INCOMING_PHYSICAL_DAMAGE_CONSTANT,
     MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
     MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
@@ -148,8 +148,8 @@ return
 end
 
 
-
 function modifier_item_solar_crest_custom_speed:GetModifierIncomingPhysicalDamageConstant(params)
+
 
 if IsClient() then 
   if params.report_max then 
@@ -158,6 +158,16 @@ if IsClient() then
     return self:GetStackCount()
   end 
 end
+
+end
+
+
+
+
+
+
+
+function modifier_item_solar_crest_custom_speed:GetModifierIncomingDamageConstant(params)
 
 if not IsServer() then return end
 

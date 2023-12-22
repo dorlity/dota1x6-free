@@ -443,6 +443,26 @@
 "gothic"    "Gothic Whisper"
 
 
+"eternalharverst"    "Eternal Harvest"
+"soulcorplence"       "Soul Corpulence"
+"soulstyrant"       "Souls Tyrant"
+"twilight_effigy"       "Twilight Effigy"
+
+
+"basilisklord"  "Test of the Basilisk Lord"
+"forlornmaze"       "Menace of the Forlorn Maze"
+"cruelassemblage"    "Cruel Assemblage"
+"razor_arcana"      "Voidstorm Asylum (Arcana)"
+
+"daemonfell"    "Daemonfell Flame"
+"honorservant"  "Honored Servant of the Empire"
+"radiantconqueror"  "Radiant Conqueror"
+"birdofpray"        "Bird of Pray"
+"triumphimperatrix" "Triumph of the Imperatrix"
+"desolate_conquest" "Desolate Conquest"
+
+
+
 
 
 
@@ -639,7 +659,7 @@
 
 "vote_end_date" "Voting end date: "
 
-"vote_hero_won_date"	"Estimated release date: <b><font color='#fdec85'>Second half of November 2023</font></b>"
+"vote_hero_won_date"	"Estimated release date: <b><font color='#fdec85'>Second half of January 2023</font></b>"
 
 "active_vote_top" "Voting for <b><font color='#ffa142'>new hero</font></b> is active!"
 
@@ -3672,9 +3692,9 @@
 
 
 "font_disc_modifier_up_range" "19"
-"upgrade_disc_modifier_up_range_1" "<b><font color='#53ea48'>+50</font></b> melee and ranged attack range<br><br><b><font color='#53ea48'>+100</font></b> abilities cast range<br><br>This effect does not stack with Aether Lens, Dragon Lance, and Penta-Edged Sword"
-"upgrade_disc_modifier_up_range_2" "<b><font color='#53ea48'>+75</font></b> melee and ranged attack range<br><br><b><font color='#53ea48'>+150</font></b> abilities cast range<br><br>This effect does not stack with Aether Lens, Dragon Lance, and Penta-Edged Sword"
-"upgrade_disc_modifier_up_range_3" "<b><font color='#53ea48'>+100</font></b> melee and ranged attack range<br><br><b><font color='#53ea48'>+200</font></b> abilities cast range<br><br>This effect does not stack with Aether Lens, Dragon Lance, and Penta-Edged Sword"
+"upgrade_disc_modifier_up_range_1" "<b><font color='#53ea48'>+50</font></b> melee and ranged attack range<br><br><b><font color='#53ea48'>+100</font></b> abilities cast range<br><br>This effect does not stack with Aether Lens, Dragon Lance, and Celestial Spear"
+"upgrade_disc_modifier_up_range_2" "<b><font color='#53ea48'>+75</font></b> melee and ranged attack range<br><br><b><font color='#53ea48'>+150</font></b> abilities cast range<br><br>This effect does not stack with Aether Lens, Dragon Lance, and Celestial Spear"
+"upgrade_disc_modifier_up_range_3" "<b><font color='#53ea48'>+100</font></b> melee and ranged attack range<br><br><b><font color='#53ea48'>+200</font></b> abilities cast range<br><br>This effect does not stack with Aether Lens, Dragon Lance, and Celestial Spear"
 
 
 "font_disc_modifier_up_teamfight" "20"
@@ -4216,7 +4236,6 @@
 "DOTA_Tooltip_ability_custom_phantom_assassin_phantom_strike_duration"					"DURATION:"
 "DOTA_Tooltip_ability_custom_phantom_assassin_phantom_strike_speed"						"BONUS ATTACK SPEED:"
 "DOTA_Tooltip_ability_custom_phantom_assassin_phantom_strike_abilitycastrange"			"CAST RANGE:"
-"DOTA_Tooltip_ability_custom_phantom_assassin_phantom_strike_lifesteal"		"%LIFESTEAL:"
 
 "DOTA_Tooltip_ability_custom_phantom_assassin_phantom_strike_legendary"							"Elusiveness"
 "DOTA_Tooltip_ability_custom_phantom_assassin_phantom_strike_legendary_Description"				"For %duration% seconds, you summon illusions that apply Phantom Strike to the target. Illusion Creation Interval: %interval% sec<br><br>Only triggers if the enemy is in %max_range% range from you"
@@ -10514,10 +10533,10 @@
 "hero_change_npc_dota_hero_axe_2" "Duration reduced to <b><font color='#ff0000'>2.5</font></b> seconds"
 "hero_change_npc_dota_hero_axe_3" "Cooldown changed to <b><font color='#ff0000'>13</font></b> seconds"
 "hero_change_npc_dota_hero_axe_4" "Illusions deal <b><font color='#ff0000'>2</font></b> times less damage"
-"hero_change_npc_dota_hero_axe_5" "Cooldown reduced from 100/85/70 sec to <b><font color='#53ea48'>40</font></b>"
+"hero_change_npc_dota_hero_axe_5" "Cooldown reduced from 100/85/70 sec to <b><font color='#53ea48'>20</font></b>"
 "hero_change_npc_dota_hero_axe_6" "<b><font color='#53ea48'>Creep</font></b> kills also end ability cooldown"
 "hero_change_npc_dota_hero_axe_7" "Armor per hero kill reduced from 1/1.5/2 to <b><font color='#ff0000'>1</font></b>"
-"hero_change_npc_dota_hero_axe_8" "Damage reduction reduced to <b><font color='#ff0000'>5%</font></b>, additional chance reduced to <b><font color='#ff0000'>6%</font></b>"
+"hero_change_npc_dota_hero_axe_8" "Reduces all damage by <b><font color='#ff0000'>3%</font></b> per stack"
 
 
 
@@ -17826,7 +17845,7 @@ OTA_Tooltip_modifier_templar_assassin_psi_blades_custom_psi"				"Psi Blades"
 
 
 "DOTA_Tooltip_modifier_muerta_pierce_the_veil_custom_scepter_buff"			"Pierce the Veil"					
-"DOTA_Tooltip_modifier_muerta_pierce_the_veil_custom_scepter_buff_Description"		"Spell amplification for hero kills increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE%%%</font></b>"
+"DOTA_Tooltip_modifier_muerta_pierce_the_veil_custom_scepter_buff_Description"		"Kills during Pierce the Veil: %dMODIFIER_PROPERTY_TOOLTIP%<br><br>Spell amplification increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE%%%</font></b><br>(Aghanim Shard required)"
 
 
 
@@ -20487,16 +20506,7 @@ OTA_Tooltip_modifier_templar_assassin_psi_blades_custom_psi"				"Psi Blades"
 
 
 
- sec"
-
-"DOTA_Tooltip_modifier_razor_unstable_current_custom_heal" "Storm Surge"
-"DOTA_Tooltip_modifier_razor_unstable_current_custom_heal_Description" "Restores <b><font color='#53ea48'>%fMODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE%%%</font></b> health per second"
-
-
-"font_disc_modifier_razor_current_3" "18"
-"upgrade_disc_modifier_razor_current_3" "When an enemy attacks you, your strength and agility increases by *!str*<br><br>The effect stacks *max* times and gains *spell* stacks from targeted spells or items"
-
-"DOTA_Tooltip_modifier_razor_unstable_current_custom_stats" "Storm Surge"
+A_Tooltip_modifier_razor_unstable_current_custom_stats" "Storm Surge"
 "DOTA_Tooltip_modifier_razor_unstable_current_custom_stats_Description" "Strength and Agility increased by <b><font color='#53ea48'>%fMODIFIER_PROPERTY_STATS_AGILITY_BONUS%</font></b>"
 
 "font_disc_modifier_razor_current_4" "18"

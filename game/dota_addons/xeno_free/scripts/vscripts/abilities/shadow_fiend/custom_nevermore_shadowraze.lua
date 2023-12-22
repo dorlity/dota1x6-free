@@ -52,6 +52,7 @@ PrecacheResource( "particle", "particles/sf_double_.vpcf", context )
 PrecacheResource( "particle", "particles/sf_refresh_a.vpcf", context )
 PrecacheResource( "particle", "particles/econ/items/shadow_fiend/sf_fire_arcana/sf_fire_arcana_shadowraze_triple.vpcf", context )
 
+my_game:PrecacheShopItems("npc_dota_hero_nevermore", context)
 end
 
 
@@ -181,10 +182,6 @@ function custom_nevermore_shadowraze_close:OnSpellStart()
 	local raze_radius = ability:GetSpecialValueFor("shadowraze_radius")
 	local raze_distance = ability:GetSpecialValueFor("shadowraze_range")
 
-
-	local t = CustomNetTables:GetTableValue("server_data", tostring(caster:GetPlayerID()))
-
-	print(t.total_games)
 
 	local raze_point = caster:GetAbsOrigin() + caster:GetForwardVector() * raze_distance
 

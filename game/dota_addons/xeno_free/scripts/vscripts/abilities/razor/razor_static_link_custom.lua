@@ -16,17 +16,17 @@ LinkLuaModifier("modifier_razor_static_link_custom_leash", "abilities/razor/razo
 razor_static_link_custom = class({})
 
 function razor_static_link_custom:GetAbilityTextureName()
-    if self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
-        return "razor/arcana/razor_static_link_alt2"
-    end
-    if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
-        return "razor/arcana/razor_static_link_alt1"
-    end
     if self:GetCaster():HasModifier("modifier_razor_head_immortal_custom") then
         return "razor_static_link_alt"
     end
     if self:GetCaster():HasModifier("modifier_razor_head_immortal_custom_golden") then
         return "razor_static_link_alt_gold"
+    end
+    if self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
+        return "razor/arcana/razor_static_link_alt2"
+    end
+    if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
+        return "razor/arcana/razor_static_link_alt1"
     end
     return "razor_static_link"  
 end
@@ -253,15 +253,17 @@ end
 
 
 local particleFile = "particles/units/heroes/hero_razor/razor_static_link.vpcf"
-if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
-    particleFile = "particles/econ/items/razor/razor_arcana/razor_arcana_static_link.vpcf"
-elseif self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
-    particleFile = "particles/econ/items/razor/razor_arcana/razor_arcana_static_link_v2.vpcf"
-elseif self:GetCaster():HasModifier("modifier_razor_head_immortal_custom") then
+if self:GetCaster():HasModifier("modifier_razor_head_immortal_custom") then
     particleFile = "particles/econ/items/razor/razor_punctured_crest/razor_static_link_blade.vpcf"
 elseif self:GetCaster():HasModifier("modifier_razor_head_immortal_custom_golden") then
     particleFile = "particles/econ/items/razor/razor_punctured_crest_golden/razor_static_link_blade_golden.vpcf"
+elseif self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
+    particleFile = "particles/econ/items/razor/razor_arcana/razor_arcana_static_link.vpcf"
+elseif self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
+    particleFile = "particles/econ/items/razor/razor_arcana/razor_arcana_static_link_v2.vpcf"
 end
+
+
 self.particle = ParticleManager:CreateParticle(particleFile, PATTACH_POINT_FOLLOW, self.caster)
 ParticleManager:SetParticleControlEnt(self.particle, 0, self.caster, PATTACH_POINT_FOLLOW, "attach_static", self.caster:GetAbsOrigin(), true)
 ParticleManager:SetParticleControlEnt(self.particle, 1, self.target, PATTACH_POINT_FOLLOW, "attach_hitloc", self.target:GetAbsOrigin(), true)
