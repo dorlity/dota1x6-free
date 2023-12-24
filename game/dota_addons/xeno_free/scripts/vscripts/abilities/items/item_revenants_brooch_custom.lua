@@ -15,6 +15,8 @@ end
 
 
 function item_revenants_brooch_custom:GetAbilityTextureName()
+if not self or not self:GetCaster() then return end 
+
     if self:GetCaster():HasModifier("modifier_revenants_brooch_custom_counter") then
         return "item_revenants_brooch_active"
     end
@@ -62,6 +64,7 @@ function modifier_revenants_brooch_custom:OnCreated()
 self.bonus_damage = self:GetAbility():GetSpecialValueFor("bonus_damage")
 self.lifesteal = self:GetAbility():GetSpecialValueFor("spell_lifesteal")/100
 self.lifesteal_creeps = self:GetAbility():GetSpecialValueFor("spell_lifesteal_creep")
+
 end
 
 
@@ -102,9 +105,22 @@ end
 function modifier_revenants_brooch_custom_counter:OnCreated(params)
 self.damage_reduce = self:GetAbility():GetSpecialValueFor("damage_reduction")
 self.mana_cost = self:GetAbility():GetSpecialValueFor("manacost_per_hit")/100
+self.parent = self:GetParent()
 
+self:StartIntervalThink(0.2)
 end
 
+function modifier_revenants_brooch_custom_counter:OnIntervalThink()
+if not IsServer() then return end 
+
+local item = self.parent:FindItemInInventory(self:GetAbility():GetName())
+
+if not item or item:IsInBackpack() then 
+    self:Destroy()
+    return
+end 
+
+end 
 
 
 function modifier_revenants_brooch_custom_counter:DeclareFunctions()

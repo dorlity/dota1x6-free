@@ -2718,14 +2718,14 @@ global_values =
         },
         ["modifier_axe_culling_3"] =
         {
-            damage = {80, 120, 160},
+            damage = {60, 90, 120},
             range = {80, 120, 160},
         },
         ["modifier_axe_culling_4"] =
         {
             damage = {1, 1.5},
-            heal_reduce = {-2.5, -4},
-            max = 10,
+            heal_reduce = {-3, -5},
+            max = 8,
             duration = 6,
         },
         ["modifier_axe_culling_5"] =
@@ -2739,7 +2739,7 @@ global_values =
         ["modifier_axe_culling_6"] =
         {
             duration = 5,
-            damage = 3,
+            damage = 2.5,
             heal = 30,
             heal_creeps = 0.25,
             max = 8,
@@ -2748,11 +2748,11 @@ global_values =
         },
         ["modifier_axe_culling_legendary"] =
         {
-            damage = 10,
+            damage = 8,
             cd = 15,
             cd_low = 4,
             health = 50,
-            speed = 50,
+            speed = 40,
             duration = 5,
         },
     },
@@ -2787,15 +2787,15 @@ global_values =
         },
         ["modifier_alchemist_spray_6"] =
         {
-            radius = 100,
+            radius = 80,
             timer = 4,
             silence = 2
         },
         ["modifier_alchemist_spray_legendary"] =
         {
-            delay = 1.6,
+            delay = 1.8,
             slow = -25,
-            damage_reduce = -20,
+            damage_reduce = -15,
             damage = 70
         },
 
@@ -2909,22 +2909,22 @@ global_values =
         ["modifier_alchemist_rage_3"] =
         {
             chance = 20,
-            armor = {3, 5, 7},
+            armor = {4, 6, 8},
             duration = 4
         },
         ["modifier_alchemist_rage_4"] =
         {
             heal = {8, 12},
             speed = {8, 12},
-            max = 8,
+            max = 10,
             duration = 4
         },
         ["modifier_alchemist_rage_5"] =
         {
             speed = 40,
             duration = 4,
-            slow = -20,
-            slow_duration = 2
+            slow = -25,
+            slow_duration = 3
         },
         ["modifier_alchemist_rage_6"] =
         {
@@ -2935,9 +2935,9 @@ global_values =
         ["modifier_alchemist_rage_legendary"] =
         {
             bva = -0.2,
-            status = 30,
+            status = 35,
             bonus_range = 50,
-            cd = 2
+            cd = 1.5
         },
 
     },
@@ -3193,7 +3193,7 @@ global_values =
         ["modifier_antimage_counter_4"] =
         {
             radius = 350,
-            damage = {12, 20},
+            damage = {10, 15},
             duration = 3,
             heal = 50
         },
@@ -3206,7 +3206,7 @@ global_values =
         ["modifier_antimage_counter_6"] =
         {
             health = 30,
-            damage_reduce = -40,
+            damage_reduce = -30,
         },
         ["modifier_antimage_counter_7"] =
         {
@@ -3214,7 +3214,7 @@ global_values =
             shield = 10,
             radius = 500,
             stun = 1.2,
-            damage = 50,
+            damage = 40,
             damage_duration = 4
         },
 
@@ -3719,7 +3719,10 @@ global_values =
         },
         ["modifier_bloodseeker_bloodrage_3"] =
         {
-            
+            move = {-2, -3, -4},
+            attack = {-4, -6, -8},
+            max = 6,
+            duration = 4,
         },
         ["modifier_bloodseeker_bloodrage_4"] =
         {   
@@ -3730,11 +3733,16 @@ global_values =
         },
         ["modifier_bloodseeker_bloodrage_5"] =
         {
-            
+            duration = 8,
+            max = 8,
+            health = 10,
+            status = 25,
         },
         ["modifier_bloodseeker_bloodrage_6"] =
         {
-            
+            health = 30,
+            damage_reduce = -15,
+            heal = 1.5,
         },
         ["modifier_bloodseeker_bloodrage_7"] =
         {
@@ -3753,7 +3761,6 @@ global_values =
 
         ["modifier_bloodseeker_bloodrite_1"] =
         {
-            radius = {50, 75, 100},
             damage = {6, 9, 12},
             duration = 6
         },
@@ -3763,7 +3770,8 @@ global_values =
         },
         ["modifier_bloodseeker_bloodrite_3"] =
         {
-            
+            cd = {-2, -3, -4},
+            mana = {-40, -60, -80}
         },
         ["modifier_bloodseeker_bloodrite_4"] =
         {
@@ -3774,12 +3782,14 @@ global_values =
         },
         ["modifier_bloodseeker_bloodrite_5"] =
         {
-            cd = -1,
             bkb = 2,
         },
         ["modifier_bloodseeker_bloodrite_6"] =
         {
-            
+            duration = 0.4,
+            slow = -30,
+            cast = 0,
+            radius = 100,
         },
         ["modifier_bloodseeker_bloodrite_7"] =
         {
@@ -3787,17 +3797,20 @@ global_values =
             damage = 60,
             self_damage = 3,
             interval = 0.5,
+            delay = 2,
         },
 
 
 
         ["modifier_bloodseeker_thirst_1"] =
         {
-            
+            damage = {30, 45, 60},
+            speed = {8, 12, 16}
         },
         ["modifier_bloodseeker_thirst_2"] =
         {
-            
+            heal = {15, 25, 35},
+            creeps = 3,
         },
         ["modifier_bloodseeker_thirst_3"] =
         {
@@ -3805,7 +3818,12 @@ global_values =
         },
         ["modifier_bloodseeker_thirst_4"] =
         {
-            
+            radius = 700,
+            str = {2, 3},
+            agi = {2, 3},
+            max = 12,
+           -- is_perma = 1,
+            mod_name = "modifier_bloodseeker_thirst_custom_stats",
         },
         ["modifier_bloodseeker_thirst_5"] =
         {
@@ -3813,10 +3831,14 @@ global_values =
         },
         ["modifier_bloodseeker_thirst_6"] =
         {
-            
+            health = 10,
+            status = 25,
+            radius = 700
         },
         ["modifier_bloodseeker_thirst_7"] =
         {
+
+
             radius = 700,
             max = 15,
             creeps_count = 3,

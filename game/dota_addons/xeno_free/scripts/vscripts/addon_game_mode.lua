@@ -3202,7 +3202,7 @@ function my_game:Destroy_All_Units(caster)
 
 local thirst = caster:FindAbilityByName("bloodseeker_thirst_custom")
 
-if thirst and caster:HasModifier("modifier_bloodseeker_thirst_7") then 
+if  thirst and caster:HasModifier("modifier_bloodseeker_thirst_7") then 
 	local mod = caster:FindModifierByName("modifier_bloodseeker_thirst_custom_legendary")
 
 	if mod then 

@@ -3,7 +3,6 @@ LinkLuaModifier("modifier_bloodseeker_bloodrage_tracker", "abilities/bloodseeker
 LinkLuaModifier("modifier_bloodseeker_bloodrage_blood", "abilities/bloodseeker/bloodseeker_bloodrage_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_bloodseeker_bloodrage_blood_count", "abilities/bloodseeker/bloodseeker_bloodrage_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_bloodseeker_bloodrage_taunt", "abilities/bloodseeker/bloodseeker_bloodrage_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_bloodseeker_bloodrage_incoming", "abilities/bloodseeker/bloodseeker_bloodrage_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_bloodseeker_bloodrage_shield", "abilities/bloodseeker/bloodseeker_bloodrage_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_bloodseeker_bloodrage_shield_count", "abilities/bloodseeker/bloodseeker_bloodrage_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_bloodseeker_bloodrage_shield_cd", "abilities/bloodseeker/bloodseeker_bloodrage_custom", LUA_MODIFIER_MOTION_NONE)
@@ -17,17 +16,6 @@ bloodseeker_bloodrage_custom = class({})
 bloodseeker_bloodrage_custom.damage_heal = {0.06 ,0.09, 0.12}
 bloodseeker_bloodrage_custom.damage_creeps = 0.33
 
-
-bloodseeker_bloodrage_custom.shield_health = 0.15
-bloodseeker_bloodrage_custom.shield_max = 8
-bloodseeker_bloodrage_custom.shield_duration = 10
-bloodseeker_bloodrage_custom.shield_cd = 8
-bloodseeker_bloodrage_custom.shield_attack_duration = 8
-bloodseeker_bloodrage_custom.shield_status = 25
-
-bloodseeker_bloodrage_custom.reduce_delay = 4
-bloodseeker_bloodrage_custom.reduce_damage = {-6, -9, -12}
-bloodseeker_bloodrage_custom.reduce_move = {20, 30, 40}
 
 
 
@@ -698,33 +686,7 @@ end
 
 
 
-modifier_bloodseeker_bloodrage_incoming = class({})
-function modifier_bloodseeker_bloodrage_incoming:IsHidden() return false end
-function modifier_bloodseeker_bloodrage_incoming:IsPurgable() return false end
-function modifier_bloodseeker_bloodrage_incoming:GetTexture() return "buffs/bloodrage_incoming" end
-function modifier_bloodseeker_bloodrage_incoming:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
-	MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT
-}
-end
 
-function modifier_bloodseeker_bloodrage_incoming:GetModifierMoveSpeedBonus_Constant()
-return self:GetAbility().reduce_move[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_bloodrage_3")]
-end
-
-function modifier_bloodseeker_bloodrage_incoming:GetModifierIncomingDamage_Percentage()
-return self:GetAbility().reduce_damage[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_bloodrage_3")]
-end
-
-
-function modifier_bloodseeker_bloodrage_incoming:OnCreated(table)
-if not IsServer() then return end
-self.pfx = ParticleManager:CreateParticle("particles/bloodrage_reduction.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-self:AddParticle(self.pfx, false, false, -1, false, false)
-
-end
 
 
 modifier_bloodseeker_bloodrage_shield_cd = class({})
@@ -844,20 +806,44 @@ end
 
 
 modifier_bloodseeker_bloodrage_slow = class({})
-function modifier_bloodseeker_bloodrage_slow:IsHidden() return true end
+function modifier_bloodseeker_bloodrage_slow:IsHidden() return false end
 function modifier_bloodseeker_bloodrage_slow:IsPurgable() return true end
+function modifier_bloodseeker_bloodrage_slow:GetTexture() return "buffs/bloodrage_slow" end
 function modifier_bloodseeker_bloodrage_slow:OnCreated()
 
-self.slow = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrage_3", "slow")
+self.move = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrage_3", "move")
+self.attack = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrage_3", "attack")
+self.max = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrage_3", "max")
+
+self:SetStackCount(1)
 end 
+
+
+function modifier_bloodseeker_bloodrage_slow:OnRefresh()
+if not IsServer() then return end
+if self:GetStackCount() >= self.max then return end 
+
+self:IncrementStackCount()
+
+if self:GetStackCount() >= self.max then 
+	self:GetParent():EmitSound("DOTA_Item.Maim")
+end 
+
+end 
+
 
 function modifier_bloodseeker_bloodrage_slow:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
 }
 end
 
 function modifier_bloodseeker_bloodrage_slow:GetModifierMoveSpeedBonus_Percentage()
-return self.slow
+return self.move*self:GetStackCount()
+end
+
+function modifier_bloodseeker_bloodrage_slow:GetModifierAttackSpeedBonus_Constant()
+return self.attack*self:GetStackCount()
 end
