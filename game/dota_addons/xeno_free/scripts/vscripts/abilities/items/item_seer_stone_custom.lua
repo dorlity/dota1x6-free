@@ -27,17 +27,18 @@ modifier_item_seer_stone_custom = class({})
 
 function modifier_item_seer_stone_custom:IsHidden() return true end
 function modifier_item_seer_stone_custom:IsPurgable() return false end
+function modifier_item_seer_stone_custom:RemoveOnDeath() return false end
 function modifier_item_seer_stone_custom:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_item_seer_stone_custom:DeclareFunctions()
-    local funcs = {
-        MODIFIER_PROPERTY_MANA_REGEN_CONSTANT,
-        MODIFIER_PROPERTY_BONUS_DAY_VISION,
-        MODIFIER_PROPERTY_BONUS_NIGHT_VISION,
-        MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
-        MODIFIER_PROPERTY_CAST_RANGE_BONUS_STACKING,
-        MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE
+local funcs = {
+    MODIFIER_PROPERTY_MANA_REGEN_CONSTANT,
+    MODIFIER_PROPERTY_BONUS_DAY_VISION,
+    MODIFIER_PROPERTY_BONUS_NIGHT_VISION,
+    MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
+    MODIFIER_PROPERTY_CAST_RANGE_BONUS_STACKING,
+    MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE
 
-    }
+}
 
     return funcs
 end

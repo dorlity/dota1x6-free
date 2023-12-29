@@ -377,19 +377,14 @@ _G.rating_thresh =
 		['min'] = 0,
 		['max'] = 500,
 	},
-	["ranked_500-800"] = 
+	["ranked_500-1000"] = 
 	{
 		['min'] = 500,
-		['max'] = 800,
+		['max'] = 1000,
 	},
-	["ranked_800-1200"] = 
+	["ranked_1000-x"] = 
 	{
-		['min'] = 800,
-		['max'] = 1200,
-	},
-	["ranked_1200-x"] = 
-	{
-		['min'] = 1200,
+		['min'] = 1000,
 		['max'] = 99999,
 	},
 }
@@ -663,6 +658,7 @@ _G.NoCdItems =
 	["item_ultimate_scepter"] = true,
 	["item_tranquil_boots_custom"] = true,
 	["item_falcon_blade_custom"] = true,
+	["item_basher"] = true
 }
 
 _G.custom_voice = 
@@ -845,6 +841,7 @@ PrecacheResource( "soundfile", "soundevents/razor_vo_custom.vsndevts", context )
 
 PrecacheResource( "soundfile", "soundevents/npc_dota_hero_juggernaut.vsndevts", context ) 
 PrecacheResource( "soundfile", "soundevents/npc_dota_hero_bloodseeker.vsndevts", context ) 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_bristleback.vsndevts", context )
 PrecacheResource( "soundfile", "soundevents/npc_dota_hero_razor.vsndevts", context ) 
 PrecacheResource( "soundfile", "soundevents/npc_dota_hero_nevermore.vsndevts", context ) 
 PrecacheResource( "soundfile", "soundevents/npc_dota_hero_antimage.vsndevts", context ) 
@@ -3202,7 +3199,7 @@ function my_game:Destroy_All_Units(caster)
 
 local thirst = caster:FindAbilityByName("bloodseeker_thirst_custom")
 
-if  thirst and caster:HasModifier("modifier_bloodseeker_thirst_7") then 
+if false and thirst and caster:HasModifier("modifier_bloodseeker_thirst_7") then 
 	local mod = caster:FindModifierByName("modifier_bloodseeker_thirst_custom_legendary")
 
 	if mod then 
@@ -4251,10 +4248,11 @@ end
 
 
 function my_game:GiveGlobalVision(kv)
-	if kv.PlayerID == nil then return end
+if kv.PlayerID == nil then return end
 
 local team = PlayerResource:GetTeam(kv.PlayerID)
 
+if players[team] then return end
 if my_game:CheckParty(kv.PlayerID) == true then
  CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(kv.PlayerID), "CreateIngameErrorMessage", {message = "teammate_alive"})
  return
@@ -5574,7 +5572,7 @@ function my_game:ExecuteOrderFilterCustom( ord )
     and ord.order_type ~= DOTA_UNIT_ORDER_SELL_ITEM  then 
      return false end
 
-
+--[[
     if hero and hero:HasModifier("modifier_bristle_spray_legendary") and hero:IsAlive() and ord.order_type == DOTA_UNIT_ORDER_CAST_TOGGLE_AUTO then 
     	local ability = EntIndexToHScript(ord.entindex_ability)
     	if ability and ability:GetName() == "bristleback_quill_spray_custom" then 
@@ -5586,7 +5584,7 @@ function my_game:ExecuteOrderFilterCustom( ord )
     		end
     	end
     end
-
+]]--
     local ability = EntIndexToHScript(ord.entindex_ability)
 
     if hero and ability 

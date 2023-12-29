@@ -548,7 +548,7 @@ ProjectileManager:ProjectileDodge(self:GetCaster())
 effect = ParticleManager:CreateParticle("particles/items3_fx/blink_overwhelming_end.vpcf", PATTACH_WORLDORIGIN, nil)
 ParticleManager:SetParticleControl(effect, 0, self:GetCaster():GetAbsOrigin())
 
-local damage = self:GetCursorTarget():GetMaxHealth()*self:GetCaster():GetTalentValue("modifier_axe_culling_legendary", "damage")/100
+local damage = self:GetCursorTarget():GetHealth()*self:GetCaster():GetTalentValue("modifier_axe_culling_legendary", "damage")/100
 
 if target:IsCreep() then 
 	damage = damage/3

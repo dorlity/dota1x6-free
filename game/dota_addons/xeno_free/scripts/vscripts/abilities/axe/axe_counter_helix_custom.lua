@@ -63,13 +63,11 @@ if not IsServer() then return end
 
 local duration = 0
 
-duration = (self:GetCaster():GetTalentValue("modifier_axe_helix_legendary", "max") - 1)*self:GetCaster():GetTalentValue("modifier_axe_helix_legendary", "interval") + FrameTime()
-
 for _,mod_c in pairs(self:GetCaster():FindAllModifiersByName("modifier_axe_counter_helix_custom_attack")) do
 	mod_c:Destroy()
 end
 
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_axe_counter_helix_custom_legendary", {duration = duration })
+self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_axe_counter_helix_custom_legendary", { })
 
 end
 
@@ -148,9 +146,13 @@ for _,enemy in pairs(enemies) do
 		  activity = ACT_DOTA_FLAIL,
 		})
 
-		mod:SetEndCallback(function()
-			enemy:AddNewModifier(self:GetCaster(), self, "modifier_axe_counter_helix_custom_root", {duration = (1 - enemy:GetStatusResistance())*root_duration})
-		end)
+
+		if mod then 
+			mod:SetEndCallback(function()
+				enemy:AddNewModifier(self:GetCaster(), self, "modifier_axe_counter_helix_custom_root", {duration = (1 - enemy:GetStatusResistance())*root_duration})
+			end)
+
+		end
 
 	end 
 
@@ -348,6 +350,7 @@ function modifier_axe_counter_helix_custom_legendary:IsPurgable() return false e
 function modifier_axe_counter_helix_custom_legendary:OnCreated(table)
 
 self.resist = self:GetCaster():GetTalentValue("modifier_axe_helix_legendary", "status")
+self.count = self:GetCaster():GetTalentValue("modifier_axe_helix_legendary", "max")
 
 if not IsServer() then return end
 self.RemoveForDuel = true
@@ -366,6 +369,13 @@ local effect_cast = ParticleManager:CreateParticle( "particles/econ/items/axe/ax
 ParticleManager:ReleaseParticleIndex( effect_cast )
 
 self:GetAbility():Spin(1, 0)
+
+self:IncrementStackCount()
+if self:GetStackCount() >= self.count then 
+	self:Destroy()
+	return
+end 
+
 end
 
 function modifier_axe_counter_helix_custom_legendary:CheckState()

@@ -384,7 +384,7 @@ skills = {
 
 	npc_dota_hero_bristleback = {
 		{"modifier_bristle_goo_max",1,"blue",3,"blue_skill","Goo",25,1,"Goo_1",0},
-		{"modifier_bristle_goo_proc",1,"blue",3,"blue_skill","Goo",25,1,"Goo_2",1},
+		{"modifier_bristle_goo_proc",1,"blue",3,"blue_skill","Goo",25,1,"Goo_2",0},
 		{"modifier_bristle_goo_ground",1,"blue",3,"blue_skill","Goo",2,1,"Goo_3",1},
 	
 		{"modifier_bristle_spray_damage",1,"blue",3,"blue_skill","Spray",25,2,"Spray_1",0},
@@ -392,27 +392,27 @@ skills = {
 		{"modifier_bristle_spray_heal",1,"blue",3,"blue_skill","Spray",22,2,"Spray_3",0},
 	
 		{"modifier_bristle_back_spray",1,"blue",3,"blue_skill","Back",25,3,"Back_1",0},
-		{"modifier_bristle_back_return",1,"blue",3,"blue_skill","Back",25,3,"Back_2",1},
+		{"modifier_bristle_back_return",1,"blue",3,"blue_skill","Back",25,3,"Back_2",0},
 		{"modifier_bristle_back_heal",1,"blue",3,"blue_skill","Back",22,3,"Back_3",0},
 	
-		{"modifier_bristle_warpath_damage",1,"blue",3,"blue_skill","Warpath",22,4,"Warpath_5",0},
-		{"modifier_bristle_warpath_resist",1,"blue",3,"blue_skill","Warpath",25,4,"Warpath_1",0},
+		{"modifier_bristle_warpath_damage",1,"blue",3,"blue_skill","Warpath",22,4,"Warpath_1",0},
+		{"modifier_bristle_warpath_resist",1,"blue",3,"blue_skill","Warpath",25,4,"Warpath_2",0},
 		{"modifier_bristle_warpath_pierce",1,"blue",3,"blue_skill","Warpath",22,4,"Warpath_3",1},
 
-		{"modifier_bristle_goo_damage",1,"purple",2,"purple_skill","Goo",18,1,"Goo_4",1},
-		{"modifier_bristle_goo_stack",1,"purple",1,"purple_skill","Goo",25,1,"Goo_5",1},
+		{"modifier_bristle_goo_damage",1,"purple",2,"purple_skill","Goo",18,1,"Goo_4",0},
+		{"modifier_bristle_goo_stack",1,"purple",1,"purple_skill","Goo",25,1,"Goo_5",0},
 		{"modifier_bristle_goo_status",1,"purple",1,"purple_skill","Goo",18,1,"Goo_6",0},
 	
 		{"modifier_bristle_spray_double",1,"purple",2,"purple_skill","Spray",22,2,"Spray_4",1},
 		{"modifier_bristle_spray_lowhp",1,"purple",1,"purple_skill","Spray",18,2,"Spray_5",0},
 		{"modifier_bristle_spray_reduce",1,"purple",1,"purple_skill","Spray",22,2,"Spray_6",0},
 	
-		{"modifier_bristle_back_damage",1,"purple",2,"purple_skill","Back",22,3,"Back_4",1},
-		{"modifier_bristle_back_reflect",1,"purple",1,"purple_skill","Back",22,3,"Back_5",1},
+		{"modifier_bristle_back_damage",1,"purple",2,"purple_skill","Back",22,3,"Back_4",0},
+		{"modifier_bristle_back_reflect",1,"purple",1,"purple_skill","Back",22,3,"Back_5",0},
 		{"modifier_bristle_back_ground",1,"purple",1,"purple_skill","Back",22,3,"Back_6",0},
 	
 		{"modifier_bristle_warpath_bash",1,"purple",2,"purple_skill","Warpath",22,4,"Warpath_4",1},
-		{"modifier_bristle_warpath_max",1,"purple",1,"purple_skill","Warpath",18,4,"Warpath_2",0},
+		{"modifier_bristle_warpath_max",1,"purple",1,"purple_skill","Warpath",18,4,"Warpath_5",0},
 		{"modifier_bristle_warpath_lowhp",1,"purple",1,"purple_skill","Warpath",22,4,"Warpath_6",1},
 
 		{"modifier_bristle_goo_legendary",1,"orange",0,"orange_skill","Goo",25,1,1},
@@ -1018,14 +1018,14 @@ skills = {
 	npc_dota_hero_bloodseeker = {
 		{"modifier_bloodseeker_bloodrage_1",1,"blue",3,"blue_skill","bloodrage",25,1,"bloodrage_1",0},
 		{"modifier_bloodseeker_bloodrage_2",1,"blue",3,"blue_skill","bloodrage",25,1,"bloodrage_2",0},
-		{"modifier_bloodseeker_bloodrage_3",1,"blue",3,"blue_skill","bloodrage",25,1,"bloodrage_3",1},
+		{"modifier_bloodseeker_bloodrage_3",1,"blue",3,"blue_skill","bloodrage",25,1,"bloodrage_3",0},
 	
-		{"modifier_bloodseeker_bloodrite_1",1,"blue",3,"blue_skill","bloodrite",25,2,"bloodrite_1",1},
+		{"modifier_bloodseeker_bloodrite_1",1,"blue",3,"blue_skill","bloodrite",25,2,"bloodrite_1",0},
 		{"modifier_bloodseeker_bloodrite_2",1,"blue",3,"blue_skill","bloodrite",25,2,"bloodrite_2",1},
-		{"modifier_bloodseeker_bloodrite_3",1,"blue",3,"blue_skill","bloodrite",25,2,"bloodrite_3",1},
+		{"modifier_bloodseeker_bloodrite_3",1,"blue",3,"blue_skill","bloodrite",25,2,"bloodrite_3",0},
 	
 		{"modifier_bloodseeker_thirst_1",1,"blue",3,"blue_skill","thirst",25,3,"thirst_1",0},
-		{"modifier_bloodseeker_thirst_2",1,"blue",3,"blue_skill","thirst",25,3,"thirst_6",0},
+		{"modifier_bloodseeker_thirst_2",1,"blue",3,"blue_skill","thirst",25,3,"thirst_2",0},
 		{"modifier_bloodseeker_thirst_3",1,"blue",3,"blue_skill","thirst",25,3,"thirst_3",0},
 	
 		{"modifier_bloodseeker_rupture_1",1,"blue",3,"blue_skill","rupture",25,4,"rupture_1",0},
@@ -1036,17 +1036,17 @@ skills = {
 		{"modifier_bloodseeker_bloodrage_5",1,"purple",1,"purple_skill","bloodrage",25,1,"bloodrage_5",0},
 		{"modifier_bloodseeker_bloodrage_6",1,"purple",1,"purple_skill","bloodrage",25,1,"bloodrage_6",1},
 	
-		{"modifier_bloodseeker_bloodrite_4",1,"purple",2,"purple_skill","bloodrite",25,2,"bloodrite_4",1},
+		{"modifier_bloodseeker_bloodrite_4",1,"purple",2,"purple_skill","bloodrite",25,2,"bloodrite_4",0},
 		{"modifier_bloodseeker_bloodrite_5",1,"purple",1,"purple_skill","bloodrite",25,2,"bloodrite_5",1},
 		{"modifier_bloodseeker_bloodrite_6",1,"purple",1,"purple_skill","bloodrite",25,2,"bloodrite_6",1},
 	
-		{"modifier_bloodseeker_thirst_4",1,"purple",2,"purple_skill","thirst",25,3,"thirst_4",1},
-		{"modifier_bloodseeker_thirst_5",1,"purple",1,"purple_skill","thirst",25,3,"thirst_2",0},
-		{"modifier_bloodseeker_thirst_6",1,"purple",1,"purple_skill","thirst",25,3,"thirst_5",1},
+		{"modifier_bloodseeker_thirst_4",1,"purple",2,"purple_skill","thirst",25,3,"thirst_4",0},
+		{"modifier_bloodseeker_thirst_5",1,"purple",1,"purple_skill","thirst",25,3,"thirst_5",0},
+		{"modifier_bloodseeker_thirst_6",1,"purple",1,"purple_skill","thirst",25,3,"thirst_6",0},
 	
-		{"modifier_bloodseeker_rupture_4",1,"purple",2,"purple_skill","rupture",25,4,"rupture_4",1},
-		{"modifier_bloodseeker_rupture_5",1,"purple",1,"purple_skill","rupture",25,4,"rupture_5",1},
-		{"modifier_bloodseeker_rupture_6",1,"purple",1,"purple_skill","rupture",25,4,"rupture_6",1},
+		{"modifier_bloodseeker_rupture_4",1,"purple",2,"purple_skill","rupture",25,4,"rupture_4",0},
+		{"modifier_bloodseeker_rupture_5",1,"purple",1,"purple_skill","rupture",25,4,"rupture_5",0},
+		{"modifier_bloodseeker_rupture_6",1,"purple",1,"purple_skill","rupture",25,4,"rupture_6",0},
 
 		{"modifier_bloodseeker_bloodrage_7",1,"orange",0,"orange_skill","bloodrage",18,1,1},
 		{"modifier_bloodseeker_bloodrite_7",1,"orange",0,"orange_skill","bloodrite",22,1,2},

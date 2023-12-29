@@ -380,8 +380,16 @@ function modifier_void_spirit_astral_step_tracker:DeclareFunctions()
 return
 {
     MODIFIER_EVENT_ON_ABILITY_EXECUTED,
+    MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
     MODIFIER_EVENT_ON_TAKEDAMAGE
 }
+end
+
+
+function modifier_void_spirit_astral_step_tracker:GetModifierDamageOutgoing_Percentage()
+if not self:GetParent():HasModifier("modifier_void_step_1") then return end 
+
+return self:GetParent():GetTalentValue("modifier_void_step_1", "attack")
 end
 
 

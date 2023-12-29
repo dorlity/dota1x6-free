@@ -856,7 +856,7 @@ global_values =
             duration = 5,
             stun = 1,
             stun_stacks = 6,
-            damage = 25
+            damage = 20
         },
 
 
@@ -922,7 +922,7 @@ global_values =
         ["modifier_legion_moment_damage"] =
         {
             damage = {4, 6, 8},
-            max = 4,
+            max = 3,
             duration = 6
         },
         ["modifier_legion_moment_armor"] =
@@ -936,7 +936,7 @@ global_values =
         ["modifier_legion_moment_lowhp"] =
         {
             duration = 5,
-            damage_reduce = -25,
+            damage_reduce = -20,
             lifesteal = 65,
             cd = 30,
             health = 30
@@ -950,9 +950,9 @@ global_values =
         ["modifier_legion_moment_legendary"] =
         {
             move = 10,
-            speed = 30,
+            speed = 20,
             damage_reduce = -10,
-            lifesteal = 25,
+            lifesteal = 20,
             chance = 2,
             toggle = 3            
         },
@@ -1115,108 +1115,136 @@ global_values =
     {
         ["modifier_bristle_goo_max"] =
         {
+            duration = {1, 1.5, 2},
             max = {2, 3, 4}
         },
         ["modifier_bristle_goo_proc"] =
         {
-            
+            damage_reduce = {-2, -3, -4},
+            heal = {4, 6, 8},
+            heal_creeps = 0.33,
+            max = 4,
         },
         ["modifier_bristle_goo_ground"] =
         {
+            damage = 50,
+            duration = {2, 3, 4},
+            interval = 1,
         },
         ["modifier_bristle_goo_damage"] =
         {
-            
-            chance = {25, 40},
-            damage = 40,
-            radius = 150,
-            interval = 1,
-            armor = -3,
-            duration = 8
+            duration = 3,
+            chance = {20, 30},
+            speed = {20, 30}
         },
         ["modifier_bristle_goo_stack"] =
         {
-            chance = 20,
-            duration = 1,
-            more_stacks = 1
+            range = 160,
+            cd = -0.6,
+            slow = -5
         },
         ["modifier_bristle_goo_status"] =
         {
-            
+            armor = -1,
+            stun = 0.2,
         },
         ["modifier_bristle_goo_legendary"] =
         {
-            
+            chance = 3,
+            stun = 0.5, 
+            damage = 40,
         },
 
 
 
         ["modifier_bristle_spray_damage"] =
         {
-            
+            damage = {8, 12, 16},
+            mana = {-10, -15, -20}
         },
         ["modifier_bristle_spray_max"] =
         {
             damage = {50, 75, 100},
-            chance = 25,
-            slow = {-20, -30, -40},
+            chance = 30,
+            slow = {-40, -60, -80},
             duration = 1
         },
         ["modifier_bristle_spray_heal"] =
         {
-            
+            heal = {2, 3, 4},
+            passive = 3
         },
         ["modifier_bristle_spray_double"] =
         {
-            
+            chance = {15, 25},
+            damage = {80, 120}
         },
         ["modifier_bristle_spray_lowhp"] =
         {
             health = 30,
-            cd = 1.5,
+            cd = -50,
             heal = 20,
             heal_creeps = 3   
         },
         ["modifier_bristle_spray_reduce"] =
         {
-            
+            heal_reduce = -1.5,
+            duration = 20,
+            radius = 100
         },
         ["modifier_bristle_spray_legendary"] =
         {
-            cd = 2.5,
-            cost = 4.5
+            cost = 0.6,
+            cd = -0.3,
+            max = 8,
+            duration = 5
         },
 
 
 
         ["modifier_bristle_back_spray"] =
         {
-            
+            damage = {-10, -15, -20},
+            damage_reduce = {4, 6, 8}
         },
         ["modifier_bristle_back_return"] =
         {
-            
+            armor = -1,
+            duration = 3,
+            slow = -4,
+            max = {4, 6, 8},
+            radius = 500,
         },
         ["modifier_bristle_back_heal"] =
         {
-            
+            shield = {8, 12, 16},
+            timer = 5,
         },
         ["modifier_bristle_back_damage"] =
         {
-            
+            damage = {80, 120},
+            radius = 350,
+            interval = 1,
+            str = {2, 3},
+            duration = 12,
         },
         ["modifier_bristle_back_reflect"] =
         {
-            
+            duration = 4,
+            heal = 10,
+            cd = 10
         },
         ["modifier_bristle_back_ground"] =
         {
-            
+            taunt = 1.6,
+            range = 80,
+            cd = 16,
+            cd_reduce = -1,
         },
         ["modifier_bristle_back_legendary"] =
         {
-            cd = 22,
-            duration = 6,
+            cd = 14,
+            duration = 4,
             spray_damage = -50,
         },
 
@@ -1224,38 +1252,60 @@ global_values =
 
         ["modifier_bristle_warpath_damage"] =
         {
-            damage = {6, 8, 10}
+            damage = {3, 5, 7},
+            speed = {3, 5, 7}
         },
         ["modifier_bristle_warpath_resist"] =
         {
-            
+            armor = {1, 1.5, 2},
+            max = 6,
+            status = {2, 3, 4},
+            duration = 5
         },
         ["modifier_bristle_warpath_pierce"] =
         {
-            
+            chance = {20, 30, 40},
+            range = {40, 60, 80},
+            slow = -50,
+            duration = 1
         },
         ["modifier_bristle_warpath_bash"] =
         {
-            
+            duration = 5,
+            damage = {15, 25},
+            heal = {30, 50},
+            heal_creeps = 3, 
+            chance = 25,
         },
         ["modifier_bristle_warpath_max"] =
         {
-            
+            max = 2,
+            chance = 25,
+            cdr = 20,
         },
         ["modifier_bristle_warpath_lowhp"] =
         {
-            
+            health = 30,
+            bkb = 2.5,
+            cd = 40   
         },
         ["modifier_bristle_warpath_legendary"] =
         {
-            
+            cd = 10,
+            damage = 400,
+            stun = 1,
+            cast = 2,
+            cast_inc = -0.2,
+            max = 7,
+            duration = 5,
+            radius = 200,
         },
     },
     npc_dota_hero_puck =
     {
         ["modifier_puck_orb_damage"] =
         {
-            
+
         },
         ["modifier_puck_orb_cd"] =
         {
@@ -1539,7 +1589,8 @@ global_values =
 
         ["modifier_void_step_1"] =
         {
-            damage = {20, 30, 40}
+            attack = {8, 12, 16},
+            damage = {15, 20, 25},
         },
         ["modifier_void_step_2"] =
         {
@@ -1560,8 +1611,8 @@ global_values =
         },
         ["modifier_void_step_5"] =
         {  
-            cd = 12,
-            range = 300,
+            cd = 14,
+            range = 150,
             cd_inc = 2,
             stun = 0.5
         },
@@ -1575,7 +1626,7 @@ global_values =
         {
             cd = 24,
             duration = 6,
-            damage = 40,
+            damage = 50,
         },
     },
 
@@ -2718,7 +2769,7 @@ global_values =
         },
         ["modifier_axe_culling_3"] =
         {
-            damage = {60, 90, 120},
+            damage = {50, 75, 100},
             range = {80, 120, 160},
         },
         ["modifier_axe_culling_4"] =
@@ -2748,7 +2799,7 @@ global_values =
         },
         ["modifier_axe_culling_legendary"] =
         {
-            damage = 8,
+            damage = 10,
             cd = 15,
             cd_low = 4,
             health = 50,
@@ -2935,7 +2986,7 @@ global_values =
         ["modifier_alchemist_rage_legendary"] =
         {
             bva = -0.2,
-            status = 35,
+            status = 40,
             bonus_range = 50,
             cd = 1.5
         },
@@ -3710,7 +3761,9 @@ global_values =
     {
         ["modifier_bloodseeker_bloodrage_1"] =
         {
-            
+            range = {40, 60, 80},
+            status = {8, 12, 16},
+            duration = 2
         },
         ["modifier_bloodseeker_bloodrage_2"] =
         {
@@ -3726,22 +3779,22 @@ global_values =
         },
         ["modifier_bloodseeker_bloodrage_4"] =
         {   
-            duration = 5,
+            duration = 6,
             damage = {10, 15},
             heal = 50,
             interval = 0.5,
         },
         ["modifier_bloodseeker_bloodrage_5"] =
         {
-            duration = 8,
-            max = 8,
-            health = 10,
-            status = 25,
+            damage_reduce = -20,
+            duration = 2,
+            mana = 0
         },
         ["modifier_bloodseeker_bloodrage_6"] =
         {
+            cost_reduce = -0.5,
             health = 30,
-            damage_reduce = -15,
+            bva = 1.5,
             heal = 1.5,
         },
         ["modifier_bloodseeker_bloodrage_7"] =
@@ -3804,8 +3857,8 @@ global_values =
 
         ["modifier_bloodseeker_thirst_1"] =
         {
-            damage = {30, 45, 60},
-            speed = {8, 12, 16}
+            speed = {6, 9, 12},
+            magic = {10, 15, 20},
         },
         ["modifier_bloodseeker_thirst_2"] =
         {
@@ -3814,72 +3867,88 @@ global_values =
         },
         ["modifier_bloodseeker_thirst_3"] =
         {
-            
+            cleave = {20, 30, 40},
+            damage = {30, 45, 60},
         },
         ["modifier_bloodseeker_thirst_4"] =
         {
             radius = 700,
             str = {2, 3},
             agi = {2, 3},
-            max = 12,
-           -- is_perma = 1,
+            max = 15,
+            is_perma = 1,
             mod_name = "modifier_bloodseeker_thirst_custom_stats",
+            max_stats = {10, 15},
         },
         ["modifier_bloodseeker_thirst_5"] =
         {
-            
+            cd = 6,
+            stun = 1,
+            heal = 10,
+            max_health = 80,
+            min_health = 20,
         },
         ["modifier_bloodseeker_thirst_6"] =
         {
             health = 10,
             status = 25,
-            radius = 700
+            radius = 700,
+            duration = 4,
+            cd = 4
         },
         ["modifier_bloodseeker_thirst_7"] =
         {
 
-
             radius = 700,
-            max = 15,
-            creeps_count = 3,
-            heroes_stack = 5,
+            cd = 150,
             vision_radius = 4000,
-            duration = 50,
-            creeps_stack = 1,
+            duration = 40,
+            cd_creeps = -1,
+            cd_heroes = -10,
+            bonus = 25
         },
 
 
 
         ["modifier_bloodseeker_rupture_1"] =
         {
-            
+            damage = {30, 45, 60},
+            timer = 3,
+            interval = 0.5,
+            radius = 200,
         },
         ["modifier_bloodseeker_rupture_2"] =
         {
-            
+            damage_reduce = {-8, -12, -16},
+            armor = {-3, -4, -5}
         },
         ["modifier_bloodseeker_rupture_3"] =
         {
-            
+            duration = {2, 3, 4},
+            range = {100, 150, 200}
         },
         ["modifier_bloodseeker_rupture_4"] =
         {
-            
+            damage = 5,
+            heal_reduce = -5,
+            max = {5, 8},
         },
         ["modifier_bloodseeker_rupture_5"] =
         {
-            
+            cd = -1.5,
+            cd_items = -0.5
         },
         ["modifier_bloodseeker_rupture_6"] =
         {
-            
+            cast = -0.2,
+            fear = 1.5
         },
         ["modifier_bloodseeker_rupture_7"] =
         {
             cd = 14,
-            damage = 50,
-            heal = 70,
-            duration = 3.5
+            damage = 65,
+            heal = 100,
+            duration = 2.1
         },
     },
 

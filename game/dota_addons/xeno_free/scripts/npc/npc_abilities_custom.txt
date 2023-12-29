@@ -1694,7 +1694,7 @@
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityValues"
 		{
-			"duration"			"6"
+			"duration"			"5"
 			"radius"			"500"
 			"damage"			"100"
 			"speed"				"60"
@@ -2376,10 +2376,9 @@
 		{
 			"goo_speed"				"1000"
 			"goo_duration"			"5.0"
-			"armor_per_stack"		"1 1.5 2 2.5"
-			"move_slow_per_stack"	"7 8 9 10"
+			"armor_per_stack"		"-1 -1.5 -2 -2.5"
+			"move_slow_per_stack"	"-7 -8 -9 -10"
 			"stack_limit"			"4"
-			"goo_duration_creep"			"10.0"
 			"cast_shard"			"0.1"
 			"aoe_radius"			"220"		
 		}
@@ -2419,39 +2418,15 @@
 
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
+		"AbilityValues"
 		{
-			"01"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"radius"				"700"
-			}
-			"02"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"quill_base_damage"		"25 45 65 85"
-			}
-			"03"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"quill_stack_damage"	"28 30 32 34"
-				"LinkedSpecialBonus"	"special_bonus_unique_bristleback_2"
-			}
-			"04"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"quill_stack_duration"	"14.0"
-			}
-			"05"
-			{
-				"var_type"				"FIELD_FLOAT"
-				"max_damage"			"500.0"
-			}
-			"06"
-			{
-				"var_type"				"FIELD_INTEGER"
-				"projectile_speed"		"2400"
-			}
+			"radius"				"700"
+			"quill_base_damage"		"25 45 65 85"
+			"quill_stack_damage"	"28 30 32 34"
+			"quill_stack_duration"	"14.0"
+			"max_damage"			"500.0"
+			"projectile_speed"		"2400"
+			
 		}
 	}
 
@@ -2506,7 +2481,7 @@
 		"BaseClass"             		"ability_lua"
 		"ScriptFile"					"abilities/bristleback/bristleback_bristleback_custom"
 		"AbilityTextureName"			"flawless_protection"																// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_IGNORE_PSEUDO_QUEUE | DOTA_ABILITY_BEHAVIOR_IGNORE_SILENCE"
 		"AbilitySound"					"Hero_Bristleback.Bristleback"
 		"MaxLevel"						"1"
 
@@ -2514,7 +2489,7 @@
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityValues"
 		{
-			"duration"		"6"
+			"duration"		"4"
 			"spray_damage"		"-50"
 		}
 		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
@@ -2538,37 +2513,17 @@
 		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_YES"
 		"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES"
 
-		// Casting
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityDuration"				"10.0 10.0 10.0"
 		"AbilityCastPoint"				"1"
-	//	"AbilityCastAnimation"		"ACT_DOTA_VICTORY"
 		
 
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
+		"AbilityValues"
 		{
-			"01"
-			{
-				"var_type"						"FIELD_INTEGER"
-				"damage_per_stack"					"15 20 25"
-			}
-			"02"
-			{
-				"var_type"						"FIELD_FLOAT"
-				"move_speed_per_stack"				"1 2 3"
-			}
-			"03"
-			{
-				"var_type"						"FIELD_FLOAT"
-				"stack_duration"				"16 18 20"
-			}
-			"04"
-			{
-				"var_type"						"FIELD_INTEGER"
-				"max_stacks"					"8 10 12"
-			}
+			"damage_per_stack"					"15 20 25"
+			"move_speed_per_stack"				"2 3 4"
+			"stack_duration"				"16 18 20"
+			"max_stacks"					"8 10 12"
 		}
 	}
 
@@ -3413,7 +3368,7 @@
 		"AbilityValues"
 		{
 			"duration"				"6"
-			"damage"				"40"
+			"damage"				"50"
 			"return"				"3"
 		}
 	}
@@ -5986,7 +5941,7 @@
 		"AbilityValues"
 		{
 			"health"					"50"
-			"damage"					"8"
+			"damage"					"10"
 			"cd_low"					"4"
 			"speed"						"40"
 			"duration"					"5"
@@ -8493,7 +8448,7 @@
 		"BaseClass"             		"ability_lua"
 		"ScriptFile"					"abilities/bloodseeker/bloodseeker_bloodrage_custom"
 		"AbilityTextureName"			"bloodseeker_bloodrage"
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_IGNORE_CHANNEL"
 		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
 		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
 		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
@@ -8615,7 +8570,7 @@
 		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
 		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
 
-		"AbilityCastPoint"				"1.4"
+		"AbilityCastPoint"				"0.5"
 
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
@@ -8632,7 +8587,7 @@
 			"linger_duration"			"4.0"
 			
 		}
-		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
+		"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_6"
 	}
 
 	//=================================================================================================================
@@ -8654,7 +8609,6 @@
 		"FightRecapLevel"				"2"
 		"AbilitySound"					"hero_bloodseeker.rupture"
 		"AbilityCastRange"				"800"
-		"HasScepterUpgrade"				"1"
 		"LinkedAbility"				"bloodseeker_rupture_custom_legendary"
 
 		// Casting
@@ -8664,25 +8618,24 @@
 
 		// Time		
 		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"75 70 65"
+		"AbilityCooldown"				"60"
 
 		// Cost
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityManaCost"				"100 150 200"
 			
-		// Stats
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityModifierSupportValue"	"0.0"	// Only does damage
+
 
 		// Special
 		//-------------------------------------------------------------------------------------------------------------
 		"AbilityValues"
 		{
-				"duration"					"9 10 11"
-				"movement_damage_pct"		"35 45 55"
-				"hp_pct"					"10"
-				"damage_cap_amount"			"200"
-				"no_damage_distance"		"1800"
+			"duration"					"9 10 11"
+			"movement_damage_pct"		"35 45 55"
+			"hp_pct"					"10"
+			"damage_cap_amount"			"200"
+			"no_damage_distance"		"1800"
+			"creeps_damage"				"80 120 160"
 		}
 	}
 
@@ -8707,11 +8660,12 @@
 		"AbilityValues"
 		{
 
-			"duration"				    	"3.5"
-			"knockback_duration"		"0.5"
-			"knockback_count"			"4"
-			"damage_heal"						"70"
-			"incoming_damage"					"50"
+			"duration"				    	"2.1"
+			"knockback_duration"		"0.3"
+			"knockback_cd"				"0.6"
+			"knockback_count"			"3"
+			"damage_heal"						"100"
+			"incoming_damage"					"65"
 		}
 	}	
 
@@ -8748,11 +8702,12 @@
         {
             "hp_cost_per_second"    "6"
             "damage_per_second"    "4"
+            "creeps_damage"		  "80"
             "radius"                "450"
             "movement_slow"            "30"
-            "thirst_bonus_pct"        "50"
-            "creeps_damage_max"		  "300"
-            "tower_damage"		  	"50"
+            "attacks"			"8"
+            "shield"			"12"
+            "shield_duration"		"8"
         }
     }
 

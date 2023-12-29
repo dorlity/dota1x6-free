@@ -10,7 +10,10 @@ function modifier_bristle_back_ground:IsPurgable() return false end
 
 function modifier_bristle_back_ground:OnCreated(table)
 if not IsServer() then return end
-  self:SetStackCount(1)
+self:SetStackCount(1)
+if not self:GetParent():HasAbility("bristleback_bristleback_custom") then return end
+
+self:GetParent():AddNewModifier(self:GetParent(), self:GetParent():FindAbilityByName("bristleback_bristleback_custom"), "modifier_bristleback_bristleback_custom_taunt_cd", {})
 
 end
 

@@ -1,30 +1,18 @@
 LinkLuaModifier("modifier_bloodseeker_rupture_custom", "abilities/bloodseeker/bloodseeker_rupture_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_bloodseeker_rupture_custom_reduction", "abilities/bloodseeker/bloodseeker_rupture_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_bloodseeker_rupture_custom_tracker", "abilities/bloodseeker/bloodseeker_rupture_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_bloodseeker_rupture_custom_legendary", "abilities/bloodseeker/bloodseeker_rupture_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_bloodseeker_rupture_custom_legendary_knockback", "abilities/bloodseeker/bloodseeker_rupture_custom", LUA_MODIFIER_MOTION_HORIZONTAL)
 LinkLuaModifier("modifier_bloodseeker_rupture_custom_blood_tracker", "abilities/bloodseeker/bloodseeker_rupture_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_bloodseeker_rupture_custom_blood", "abilities/bloodseeker/bloodseeker_rupture_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_bloodseeker_rupture_custom_damage", "abilities/bloodseeker/bloodseeker_rupture_custom", LUA_MODIFIER_MOTION_NONE)
 
 bloodseeker_rupture_custom = class({})
 
-bloodseeker_rupture_custom.bonus_damage = {0.1, 0.15, 0.20}
 
 bloodseeker_rupture_custom.cast_range = 200
 bloodseeker_rupture_custom.cast_duration = 1
 
-bloodseeker_rupture_custom.cd = {10, 20, 30}
 
-bloodseeker_rupture_custom.reduction_heal = {-10, -15, -20}
-bloodseeker_rupture_custom.reduction_damage = {-6, -9, -12}
 
-bloodseeker_rupture_custom.fear_health = 40
-bloodseeker_rupture_custom.fear_duration = 1.5
-
-bloodseeker_rupture_custom.blood_interval = 3
-bloodseeker_rupture_custom.blood_duration = 8
-bloodseeker_rupture_custom.blood_radius = 200
-bloodseeker_rupture_custom.blood_damage = {60, 100}
-bloodseeker_rupture_custom.blood_damage_interval = 0.5
 
 
 
@@ -39,16 +27,54 @@ PrecacheResource( "particle", 'particles/bs_pull.vpcf', context )
 
 end
 
+function bloodseeker_rupture_custom:GetCastPoint()
+
+local bonus = 0
+if self:GetCaster():HasModifier("modifier_bloodseeker_rupture_6") then 
+  bonus = self:GetCaster():GetTalentValue("modifier_bloodseeker_rupture_6", "cast")
+end
+
+return self:GetSpecialValueFor("AbilityCastPoint") + bonus
+end
 
 
+
+function bloodseeker_rupture_custom:GetCastAnimation()
+if self:GetCaster():HasModifier("modifier_bloodseeker_rupture_6") then 
+	return 0
+end 
+	return ACT_DOTA_CAST_ABILITY_6
+end
+
+
+function bloodseeker_rupture_custom:GetIntrinsicModifierName()
+return "modifier_bloodseeker_rupture_custom_tracker"
+end
+
+function bloodseeker_rupture_custom:OnAbilityPhaseStart()
+
+if self:GetCaster():HasModifier("modifier_bloodseeker_rupture_6") then 
+  self:GetCaster():StartGestureWithPlaybackRate(ACT_DOTA_CAST_ABILITY_6, 1.4)
+end
+
+return true
+end
+
+function bloodseeker_rupture_custom:OnAbilityPhaseInterrupted()
+
+if self:GetCaster():HasModifier("modifier_bloodseeker_rupture_6") then 
+  self:GetCaster():RemoveGesture(ACT_DOTA_CAST_ABILITY_6)
+end
+
+end
 
 
 
 function bloodseeker_rupture_custom:GetCastRange(vLocation, hTarget)
 
 local upgrade = 0
-if self:GetCaster():HasModifier("modifier_bloodseeker_rupture_5") then 
-  upgrade = self.cast_range
+if self:GetCaster():HasModifier("modifier_bloodseeker_rupture_3") then 
+  upgrade = self:GetCaster():GetTalentValue("modifier_bloodseeker_rupture_3", "range")
 end
 return self.BaseClass.GetCastRange(self , vLocation , hTarget) + upgrade 
 end
@@ -56,10 +82,6 @@ end
 
 function bloodseeker_rupture_custom:GetCooldown(iLevel)
 local upgrade_cooldown = 0 
-if self:GetCaster():HasModifier("modifier_bloodseeker_rupture_3") then 
-  upgrade_cooldown = self.cd[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_rupture_3")]
-end
-
 return self.BaseClass.GetCooldown(self, iLevel) - upgrade_cooldown
 end
 
@@ -73,22 +95,29 @@ if new_target then
 	target = new_target
 end
 
-
-
-
-local duration = self:GetSpecialValueFor("duration")*(1 - target:GetStatusResistance())
+local duration = (self:GetSpecialValueFor("duration") + self:GetCaster():GetTalentValue("modifier_bloodseeker_rupture_3", "duration")) *(1 - target:GetStatusResistance())
 
 if self:GetCaster():IsIllusion() then 
 	duration = 6*(1 - target:GetStatusResistance())
 end
 
+
+
+
+
+
 if target:TriggerSpellAbsorb(self) then return end
 
-target:AddNewModifier(self:GetCaster(), self, "modifier_bloodseeker_rupture_custom", {duration = duration})
+if self:GetCaster():HasModifier("modifier_bloodseeker_rupture_6") then 
+	target:EmitSound("BS.Rupture_fear")
+	
+	local duration = self:GetCaster():GetTalentValue("modifier_bloodseeker_rupture_6", "fear")
 
-if self:GetCaster():HasModifier("modifier_bloodseeker_rupture_2") then 
-	target:AddNewModifier(self:GetCaster(), self, "modifier_bloodseeker_rupture_custom_reduction", {duration = duration})
+	target:AddNewModifier(self:GetCaster(), self, "modifier_nevermore_requiem_fear", {duration  = duration * (1 - target:GetStatusResistance())})
+	 
 end
+
+target:AddNewModifier(self:GetCaster(), self, "modifier_bloodseeker_rupture_custom", {duration = duration})
 
 self:GetCaster():EmitSound("hero_bloodseeker.rupture.cast")
 target:EmitSound("hero_bloodseeker.rupture")
@@ -106,9 +135,18 @@ function modifier_bloodseeker_rupture_custom:IsPurgable() return false end
 function modifier_bloodseeker_rupture_custom:OnCreated()
 self.no_damage_distance = self:GetAbility():GetSpecialValueFor("no_damage_distance")
 
+self.heal_reduce = self:GetCaster():GetTalentValue("modifier_bloodseeker_rupture_4", "heal_reduce")
+self.damage_inc = self:GetCaster():GetTalentValue("modifier_bloodseeker_rupture_4", "damage")
+
+self.damage_reduce = self:GetCaster():GetTalentValue("modifier_bloodseeker_rupture_2", "damage_reduce")
+self.armor_reduce = self:GetCaster():GetTalentValue("modifier_bloodseeker_rupture_2", "armor")
+
 if not IsServer() then return end
 
+self.parent = self:GetParent()
 self:Init()
+
+self:GetParent():EmitSound("hero_bloodseeker.rupture_FP")
 
 self.RemoveForDuel = true
 self.origin = self:GetParent():GetAbsOrigin()
@@ -117,11 +155,18 @@ local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_blo
 ParticleManager:SetParticleControlEnt(particle, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
 self:AddParticle(particle, false, false, -1, false, false)
 
+self.blood_timer = self:GetCaster():GetTalentValue("modifier_bloodseeker_rupture_1", "timer")
+
+self.fear_health = self:GetCaster():GetTalentValue("modifier_bloodseeker_rupture_6", "health", true)
+self.fear_duration = self:GetCaster():GetTalentValue("modifier_bloodseeker_rupture_6", 'fear', true)
+
 self.interval = 0.25
-self.count = self:GetAbility().blood_interval - self.interval
+self.count = self.blood_timer - self.interval
+
+self.creeps_damage = self:GetAbility():GetSpecialValueFor("creeps_damage")*self.interval
 
 self:OnIntervalThink()
-self:StartIntervalThink(0.25)
+self:StartIntervalThink(self.interval)
 end
 
 
@@ -132,19 +177,13 @@ if not IsServer() then return end
 self.movement_damage_pct = self:GetAbility():GetSpecialValueFor("movement_damage_pct") / 100
 
 
-self:GetParent():EmitSound("hero_bloodseeker.rupture_FP")
-self.feared = false
-
 local hp_pct = self:GetAbility():GetSpecialValueFor("hp_pct") / 100
-local damage = self:GetParent():GetHealth() * hp_pct
-if self:GetCaster():HasModifier("modifier_bloodseeker_rupture_1") then 
-	damage = damage*(1 + self:GetAbility().bonus_damage[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_rupture_1")])
-end
+local damage = self.parent:GetHealth() * hp_pct
 
-ApplyDamage({ attacker = self:GetCaster(), victim = self:GetParent(), damage = damage, damage_type = DAMAGE_TYPE_PURE, ability = self:GetAbility() })
-
+ApplyDamage({ attacker = self:GetCaster(), victim = self.parent, damage = damage, damage_type = DAMAGE_TYPE_PURE, ability = self:GetAbility() })
 
 end
+
 
 function modifier_bloodseeker_rupture_custom:OnRefresh()
 self:Init()
@@ -156,47 +195,50 @@ end
 
 
 function modifier_bloodseeker_rupture_custom:OnDestroy()
-	if not IsServer() then return end
-	self:GetParent():StopSound("hero_bloodseeker.rupture_FP")
+if not IsServer() then return end
+	self.parent:StopSound("hero_bloodseeker.rupture_FP")
 end
+
 
 function modifier_bloodseeker_rupture_custom:OnIntervalThink()
 if not IsServer() then return end
 
-if self:GetCaster():HasModifier("modifier_bloodseeker_rupture_4") then 
-
+if self:GetCaster():HasModifier("modifier_bloodseeker_rupture_1") and self.blood_timer ~= 0 then 
 	self.count = self.count + self.interval
-	if self.count >= self:GetAbility().blood_interval then 
+	if self.count >= self.blood_timer then 
 		self.count = 0
+		local duration = math.max(2 , self:GetRemainingTime())
+		CreateModifierThinker(self:GetCaster(), self:GetAbility(), "modifier_bloodseeker_rupture_custom_blood_tracker", {duration = duration}, self.parent:GetAbsOrigin(), self:GetCaster():GetTeamNumber(), false)
+		self.parent:EmitSound("BB.Goo_poison")
 
-	    CreateModifierThinker(self:GetCaster(), self:GetAbility(), "modifier_bloodseeker_rupture_custom_blood_tracker", {duration = self:GetAbility().blood_duration}, self:GetParent():GetAbsOrigin(), self:GetCaster():GetTeamNumber(), false)
-	    self:GetParent():EmitSound("BB.Goo_poison")
-
-	    local particle = ParticleManager:CreateParticle("particles/bloodseeker_ground.vpcf", PATTACH_WORLDORIGIN, nil)
-	    ParticleManager:SetParticleControl(particle, 1, self:GetParent():GetAbsOrigin())
-	    ParticleManager:SetParticleControl(particle, 3, self:GetParent():GetAbsOrigin())
-	    ParticleManager:ReleaseParticleIndex(particle)
-
+		local particle = ParticleManager:CreateParticle("particles/bloodseeker_ground.vpcf", PATTACH_WORLDORIGIN, nil)
+		ParticleManager:SetParticleControl(particle, 1, self.parent:GetAbsOrigin())
+		ParticleManager:SetParticleControl(particle, 2, Vector( duration, 0, 0))
+		ParticleManager:SetParticleControl(particle, 3, self.parent:GetAbsOrigin())
+		ParticleManager:ReleaseParticleIndex(particle)
 	end
-
 end
 
-local current_origin = self:GetParent():GetAbsOrigin()
+
+
+if self.parent:IsCreep() then 
+	ApplyDamage({victim = self.parent, attacker = self:GetCaster(), damage = self.creeps_damage, damage_type = DAMAGE_TYPE_PURE, damage_flags = DOTA_DAMAGE_FLAG_NONE, ability = self:GetAbility()})
+	return
+end 
+
+
+
+local current_origin = self.parent:GetAbsOrigin()
 local distance = (self.origin - current_origin):Length2D()
 if distance < self.no_damage_distance then
 	local damage = distance * self.movement_damage_pct
 
-
-	if self:GetCaster():HasModifier("modifier_bloodseeker_rupture_1") then 
-		damage = damage*(1 + self:GetAbility().bonus_damage[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_rupture_1")])
-	end
-
-
 	if damage > 0 then
-		ApplyDamage({victim = self:GetParent(), attacker = self:GetCaster(), damage = damage, damage_type = DAMAGE_TYPE_PURE, damage_flags = DOTA_DAMAGE_FLAG_NONE, ability = self:GetAbility()})
+		ApplyDamage({victim = self.parent, attacker = self:GetCaster(), damage = damage, damage_type = DAMAGE_TYPE_PURE, damage_flags = DOTA_DAMAGE_FLAG_NONE, ability = self:GetAbility()})
 	end
 end
-self.origin = self:GetParent():GetAbsOrigin()
+
+self.origin = self.parent:GetAbsOrigin()
 end
 
 
@@ -207,86 +249,81 @@ function modifier_bloodseeker_rupture_custom:GetStatusEffectName()
 end
 
 function modifier_bloodseeker_rupture_custom:StatusEffectPriority()
-	return 500
-end
-
-
-		
-
-function modifier_bloodseeker_rupture_custom:OnAbilityExecuted( params )
-if not self:GetCaster():HasModifier("modifier_bloodseeker_rupture_5") then return end
-if not IsServer() then return end
-if params.unit~=self:GetParent() then return end
-if not params.ability then return end
-if not params.ability:ProcsMagicStick() then return end
-if params.ability:IsItem() or params.ability:IsToggle() then return end
-if UnvalidAbilities[params.ability:GetName()] then return end
-
-
-local particle = ParticleManager:CreateParticle("particles/brist_proc.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-ParticleManager:ReleaseParticleIndex(particle)
-
-self:GetParent():EmitSound("BS.Rupture_duration")
-self:SetDuration(self:GetRemainingTime() + self:GetAbility().cast_duration, true)
+	return 500111
 end
 
 function modifier_bloodseeker_rupture_custom:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_TAKEDAMAGE,
-    MODIFIER_EVENT_ON_ABILITY_EXECUTED,
-}
-end
-
-
-function modifier_bloodseeker_rupture_custom:OnTakeDamage(params)
-if not IsServer() then return end
-if self:GetParent() ~= params.unit then return end
-if not self:GetParent():IsAlive() then return end
-if not self:GetCaster():HasModifier("modifier_bloodseeker_rupture_6") then return end
-if self:GetParent():GetHealthPercent() > self:GetAbility().fear_health then return end
-if self.feared then return end
-
-self:GetParent():EmitSound("BS.Rupture_fear")
-self.feared = true
-self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_nevermore_requiem_fear", {duration  = self:GetAbility().fear_duration * (1 - self:GetParent():GetStatusResistance())})
-
-
-end
-
-
-
-modifier_bloodseeker_rupture_custom_reduction = class({})
-function modifier_bloodseeker_rupture_custom_reduction:IsHidden() return false end
-function modifier_bloodseeker_rupture_custom_reduction:IsPurgable() return false end
-function modifier_bloodseeker_rupture_custom_reduction:GetTexture() return "buffs/dismember_regen" end
-
-function modifier_bloodseeker_rupture_custom_reduction:DeclareFunctions()
-return
-{
   MODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET,
   MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE,
   MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE,
-  MODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE
+  MODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE,
+  MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
+	MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE
 }
 end
 
 
-function modifier_bloodseeker_rupture_custom_reduction:GetModifierLifestealRegenAmplify_Percentage() 
-return self:GetAbility().reduction_heal[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_rupture_2")]
+
+function modifier_bloodseeker_rupture_custom:GetModifierLifestealRegenAmplify_Percentage() 
+return self.heal_reduce*self:GetStackCount()
 end
 
-function modifier_bloodseeker_rupture_custom_reduction:GetModifierHealAmplify_PercentageTarget()
-return self:GetAbility().reduction_heal[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_rupture_2")]
+function modifier_bloodseeker_rupture_custom:GetModifierHealAmplify_PercentageTarget()
+return self.heal_reduce*self:GetStackCount()
 end
 
-function modifier_bloodseeker_rupture_custom_reduction:GetModifierHPRegenAmplify_Percentage() 
-return self:GetAbility().reduction_heal[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_rupture_2")]
+function modifier_bloodseeker_rupture_custom:GetModifierHPRegenAmplify_Percentage() 
+return self.heal_reduce*self:GetStackCount()
 end
 
-function modifier_bloodseeker_rupture_custom_reduction:GetModifierTotalDamageOutgoing_Percentage()
-return self:GetAbility().reduction_damage[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_rupture_2")]
+
+function modifier_bloodseeker_rupture_custom:GetModifierTotalDamageOutgoing_Percentage()
+return self.damage_reduce
 end
+
+function modifier_bloodseeker_rupture_custom:GetModifierPhysicalArmorBonus()
+return self.armor_reduce
+end
+
+
+
+function modifier_bloodseeker_rupture_custom:GetModifierIncomingDamage_Percentage(params)
+if not IsServer() then return end 
+if not params.inflictor then return end 
+if params.inflictor ~= self:GetAbility() then return end 
+
+return self.damage_inc*self:GetStackCount()
+end 
+
+
+
+function modifier_bloodseeker_rupture_custom:OnStackCountChanged(iStackCount)
+if not IsServer() then return end
+
+if not self.effect_cast then 
+
+	self.effect_cast = ParticleManager:CreateParticle( "particles/bloodseeker/bloodrage_stack_main.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent() )
+	self:AddParticle(self.effect_cast,false, false, -1, false, false) 
+end
+
+local k1 = 0
+local k2 = self:GetStackCount()
+
+if k2 >= 10 then 
+    k1 = 1
+    k2 = self:GetStackCount() - 10
+end
+
+ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( k1, k2, 0 ) )
+
+
+end
+
+
+
+
 
 
 
@@ -344,6 +381,7 @@ self.heal = self:GetCaster():GetTalentValue("modifier_bloodseeker_rupture_7", "h
 if not IsServer() then return end
 self.knockback_count = self:GetAbility():GetSpecialValueFor("knockback_count")
 self.knockback_duration = self:GetAbility():GetSpecialValueFor("knockback_duration")
+self.knockback_cd = self:GetAbility():GetSpecialValueFor("knockback_cd")
 self.knockback_distance = ((self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Length2D() - 100)/self.knockback_count
 
 
@@ -357,7 +395,7 @@ ParticleManager:SetParticleControlEnt(self.effect_cast, 1, self:GetParent(), PAT
 self:AddParticle(self.effect_cast, false, false, -1, false, false)
 
 self:OnIntervalThink()
-self:StartIntervalThink(self:GetAbility():GetSpecialValueFor("knockback_duration")*2)
+self:StartIntervalThink(self.knockback_cd  + self.knockback_duration)
 end
 
 
@@ -367,7 +405,7 @@ if not IsServer() then return end
 
 self:GetParent():EmitSound("BS.Rupture_legendary")
 
-self:GetCaster():StartGesture(ACT_DOTA_CAST_ABILITY_6)
+self:GetCaster():StartGestureWithPlaybackRate(ACT_DOTA_CAST_ABILITY_6, 1.2)
 self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_bloodseeker_rupture_custom_legendary_knockback", {distance = self.knockback_distance, duration = self.knockback_duration})
 end
 
@@ -479,60 +517,84 @@ end
 modifier_bloodseeker_rupture_custom_blood_tracker = class({})
 function modifier_bloodseeker_rupture_custom_blood_tracker:IsHidden() return false end
 function modifier_bloodseeker_rupture_custom_blood_tracker:IsPurgable() return false end
-function modifier_bloodseeker_rupture_custom_blood_tracker:IsAura() return true end
-function modifier_bloodseeker_rupture_custom_blood_tracker:GetAuraDuration() return 0.1 end
-function modifier_bloodseeker_rupture_custom_blood_tracker:GetAuraRadius() return self:GetAbility().blood_radius
- end
+
 
 function modifier_bloodseeker_rupture_custom_blood_tracker:OnCreated(table)
 if not IsServer() then return end
+
+self.radius = self:GetCaster():GetTalentValue("modifier_bloodseeker_rupture_1", "radius")
+self.interval = self:GetCaster():GetTalentValue("modifier_bloodseeker_rupture_1", "interval")
+self.damage = self:GetCaster():GetTalentValue("modifier_bloodseeker_rupture_1", "damage")*self.interval
+
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+
+self:StartIntervalThink(self.interval)
 end
 
 
-function modifier_bloodseeker_rupture_custom_blood_tracker:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_ENEMY end
-function modifier_bloodseeker_rupture_custom_blood_tracker:GetAuraSearchType() return DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO end
-function modifier_bloodseeker_rupture_custom_blood_tracker:GetModifierAura() return "modifier_bloodseeker_rupture_custom_blood" end
+function modifier_bloodseeker_rupture_custom_blood_tracker:OnIntervalThink()
+if not IsServer() then return end
 
+for _,target in pairs(self.caster:FindTargets(self.radius, self.parent:GetAbsOrigin())) do 
+	ApplyDamage({victim = target, attacker = self.caster, damage = self.damage, damage_type = DAMAGE_TYPE_PURE, ability = self:GetAbility()})
+end 
 
-modifier_bloodseeker_rupture_custom_blood = class({})
-function modifier_bloodseeker_rupture_custom_blood:IsHidden() return false end
-function modifier_bloodseeker_rupture_custom_blood:IsPurgable() return false end
-function modifier_bloodseeker_rupture_custom_blood:GetTexture() return "buffs/Rupture_blood" end
-function modifier_bloodseeker_rupture_custom_blood:GetAttributes()
-return MODIFIER_ATTRIBUTE_MULTIPLE
 end
 
-function modifier_bloodseeker_rupture_custom_blood:DeclareFunctions()
+
+
+
+modifier_bloodseeker_rupture_custom_tracker = class({})
+function modifier_bloodseeker_rupture_custom_tracker:IsHidden() return true end
+function modifier_bloodseeker_rupture_custom_tracker:IsPurgable() return false end
+function modifier_bloodseeker_rupture_custom_tracker:OnCreated()
+
+self.parent = self:GetParent()
+
+self.cd_items = self:GetCaster():GetTalentValue("modifier_bloodseeker_rupture_5", "cd_items", true)
+self.cd_ability = self.parent:GetTalentValue("modifier_bloodseeker_rupture_5", "cd", true)
+end 
+
+function modifier_bloodseeker_rupture_custom_tracker:DeclareFunctions()
 return
 {
-  MODIFIER_PROPERTY_TOOLTIP
+	MODIFIER_EVENT_ON_ATTACK_LANDED,
 }
 end
 
-function modifier_bloodseeker_rupture_custom_blood:OnTooltip()
-return self.damage
-end
-
-
-
-function modifier_bloodseeker_rupture_custom_blood:OnCreated(table)
-
-self.damage = self:GetAbility().blood_damage[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_rupture_4")]*self:GetAbility().blood_damage_interval
-
+function modifier_bloodseeker_rupture_custom_tracker:OnAttackLanded(params)
 if not IsServer() then return end
-self:StartIntervalThink(self:GetAbility().blood_damage_interval)
-self:OnIntervalThink()
-end
+if self.parent ~= params.attacker then return end 
+if not params.target:IsHero() and not params.target:IsCreep() then return end 
 
-function modifier_bloodseeker_rupture_custom_blood:OnIntervalThink()
-if not IsServer() then return end
 
-local damage =  ApplyDamage({victim = self:GetParent(), attacker = self:GetCaster(), damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility()})
+local mod = params.target:FindModifierByName("modifier_bloodseeker_rupture_custom")
 
-SendOverheadEventMessage(self:GetParent(), 4, self:GetParent(), damage, nil)
-self:GetCaster():GenericHeal(damage, self:GetAbility(), true)
+if self.parent:HasModifier("modifier_bloodseeker_rupture_5") then 
+	self.parent:CdAbility(self:GetAbility(), self.cd_ability)
+	
+	if mod then 
+		self.parent:CdItems(self.cd_items)
+	end 
+end 
 
-end
+if not self.parent:HasModifier("modifier_bloodseeker_rupture_4") then return end
+if not mod then return end
+
+if mod:GetStackCount() < self:GetCaster():GetTalentValue("modifier_bloodseeker_rupture_4", "max") then 
+	mod:IncrementStackCount()
+end 
+
+
+end 
+
+
+
+
+
+
+
 
 
 

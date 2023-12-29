@@ -16,8 +16,6 @@ alchemist_chemical_rage_custom = class({})
 
 
 
-alchemist_chemical_rage_custom.cleave_attack = 0.40
-
 
 alchemist_enrage_potion = class({})
 
@@ -28,7 +26,7 @@ function alchemist_chemical_rage_custom:GetManaCost(level)
 if self:GetCaster():HasModifier("modifier_alchemist_rage_6") then
 	return self:GetCaster():GetTalentValue("modifier_alchemist_rage_6", "mana")
 end
-
+ 
 return self.BaseClass.GetManaCost(self,level)
 end
 
@@ -348,7 +346,7 @@ end
 function modifier_alchemist_chemical_rage_custom_legendary:CheckState()
 	return {
 		[MODIFIER_STATE_DISARMED] = true,
-		[MODIFIER_STATE_SILENCED] = true,
+	--	[MODIFIER_STATE_SILENCED] = true,
 		[MODIFIER_STATE_MUTED] = true,
 	}
 end
@@ -368,12 +366,16 @@ self.attack_max = 1/self.caster:GetAttacksPerSecond(true)
 
 self.interval = 0.01
 
-function modifier_alchemist_chemical_rage_custom_legendary:GetEffectName() return "particles/alchemist/rage_legendary.vpcf" end
-
+--function modifier_alchemist_chemical_rage_custom_legendary:GetEffectName() return "particles/alchemist/rage_legendary.vpcf" end
 
 local effect = ParticleManager:CreateParticle("particles/alchemist/rage_legendary.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-ParticleManager:SetParticleControlEnt(effect, 2, self:GetCaster(), PATTACH_OVERHEAD_FOLLOW, nil, self:GetCaster():GetAbsOrigin(), false) 
+--ParticleManager:SetParticleControlEnt(effect, 2, self:GetCaster(), PATTACH_OVERHEAD_FOLLOW, nil, self:GetCaster():GetAbsOrigin(), false) 
 self:AddParticle( effect, false, false, -1, false, false  )
+
+
+self.particle = ParticleManager:CreateParticle("particles/items4_fx/nullifier_mute.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())
+ParticleManager:SetParticleControl(self.particle, 1, self:GetParent():GetAbsOrigin())
+self:AddParticle(self.particle, false, false, -1, false, false)
 
 for i = 1,3 do 
 

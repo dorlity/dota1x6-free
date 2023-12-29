@@ -1,4 +1,3 @@
-var portrait_video = null
 var portrait_video_kill_cam = null
 var selected_portrait = null
 var killer_name = null
@@ -161,42 +160,42 @@ var unique_cameras_heroes_items =
 
     "npc_dota_hero_razor":
     [
-        [2309599, 6646, 14812],
-        [2309599, 6646, 18132],
-        [2309599, 6646, 19500],
-        [2309599, 6646, 23097],
-        [2309599, 6916, 14812],
-        [2309599, 6916, 18132],
-        [2309599, 6916, 19500],
-        [2309599, 6916, 23097],
+      //  [2309599, 6646, 14812],
+     //   [2309599, 6646, 18132],
+     //   [2309599, 6646, 19500],
+    //    [2309599, 6646, 23097],
+    //    [2309599, 6916, 14812],
+      //  [2309599, 6916, 18132],
+      //  [2309599, 6916, 19500],
+     //   [2309599, 6916, 23097],
         [2309599, 14814],
         [2309599, 18130],
         [2309599, 19503],
         [2309599, 23096],
         [2309599, 6646],
         [2309599, 6916],
-        [23095, 6646, 14812],
-        [23095, 6646, 18132],
-        [23095, 6646, 19500],
-        [23095, 6646, 23097],
-        [23095, 6916, 14812],
-        [23095, 6916, 18132],
-        [23095, 6916, 19500],
-        [23095, 6916, 23097],
+      //  [23095, 6646, 14812],
+      //  [23095, 6646, 18132],
+      //  [23095, 6646, 19500],
+      //  [23095, 6646, 23097],
+      //  [23095, 6916, 14812],
+       // [23095, 6916, 18132],
+      //  [23095, 6916, 19500],
+     //   [23095, 6916, 23097],
         [23095, 14814],
         [23095, 18130],
         [23095, 19503],
         [23095, 23096],
         [23095, 6646],
         [23095, 6916],
-        [6916, 14812],
-        [6916, 18132],
-        [6916, 19500],
-        [6916, 23097],
-        [6646, 14812],
-        [6646, 18132],
-        [6646, 19500],
-        [6646, 23097],
+       // [6916, 14812],
+       // [6916, 18132],
+       // [6916, 19500],
+       // [6916, 23097],
+       // [6646, 14812],
+       // [6646, 18132],
+       // [6646, 19500],
+       // [6646, 23097],
         [23095],
         [2309599],
         [14814],
@@ -208,128 +207,137 @@ var unique_cameras_heroes_items =
     ]
 }
 
+var allow_camera_change =
+{
+    "npc_dota_hero_juggernaut" : true,
+    "npc_dota_hero_phantom_assassin" : true,
+    "npc_dota_hero_huskar" : true,
+    "npc_dota_hero_razor" : true,
+    "npc_dota_hero_nevermore" : true,
+    "npc_dota_hero_legion_commander" : true,
+}
+
+var portraits_panels = {}
+
 function Think()
 {
 	UpdateMainHudHero()
     $.Schedule(1/144, Think)
 }
 
-function UpdateKillCam(data)
-{
-    var KillCam = $.GetContextPanel().GetParent().GetParent().GetParent().FindChildTraverse("KillCam");
-    if (KillCam)
-    {
-        let KillCamHeroImageOrMovie = KillCam.FindChildTraverse("KillCamHeroImageOrMovie")
-        if (KillCamHeroImageOrMovie)
-        {
-            let KillCamHeroRender = KillCamHeroImageOrMovie.GetChild(0)
-            if (KillCamHeroRender)  
-            { 
-                ChangeKillCamCamera(data, KillCamHeroRender)
-            }
-        }
-    }
-}
-
-function ChangeKillCamCamera(data, KillCamHeroRender)
-{
-    let portrait_donate_hero = KillCamHeroRender.FindChildTraverse("portrait_donate_hero")
-    if (data && data.heroname != null)
-    {
-        let hero_name = data.heroname
-        let player_id = data.id
-        let camera_info = GetCameraInfo(hero_name, player_id)
-        let camera_name = camera_info[0]
-        let camera_light = camera_info[1]
-        if (portrait_video_kill_cam == null)
-        { 
-            if (portrait_donate_hero)
-            {
-                portrait_donate_hero.DeleteAsync(0)
-            }
-            portrait_video_kill_cam = $.CreatePanel("DOTAScenePanel", KillCamHeroRender, "portrait_donate_hero", { class:"portrait_donate_hero", style: "width:100px;height:100px;", map: "portraits", light: camera_light, particleonly:"false", camera: camera_name, renderdeferred:"false", antialias:"false", renderwaterreflections:"false" });
-            portrait_video_kill_cam.style.width = "100%"
-            portrait_video_kill_cam.style.height = "100%"
-            portrait_video_kill_cam.style.opacity = "1"
-            $.RegisterEventHandler("DOTAScenePanelSceneLoaded", portrait_video_kill_cam, function () 
-            {
-                $.Schedule(0.2, function () 
-                {
-                    RemovedTimerKillCam()
-                });
-            });
-            ChangeUnitCameraKillCam(camera_name)
-        }
-        else
-        {
-            let hero_name = data.heroname
-            let player_id = data.id
-            let camera_info = GetCameraInfo(hero_name, player_id)
-            let camera_name = camera_info[0]
-            let camera_light = camera_info[1]
-            portrait_video_kill_cam.style.opacity = "1"
-            portrait_video_kill_cam.LerpToCameraEntity( camera_name, 0 )
-            $.Schedule(0.1, function()
-            { 
-
-                last_hero_entity_camera_kill_cam = camera_name + "_unit"
-                portrait_video_kill_cam.FireEntityInput(last_hero_entity_camera_kill_cam, "Enable", "", 0.0);   
-            })
-        }
-    }
-    else if (data == null || (data && data.heroname == null))
-    {
-        if (portrait_video_kill_cam != null)
-        {
-            portrait_video_kill_cam.style.opacity = "0"
-        }
-    }
-}
-
 function UpdateMainHudHero(fast)
 {
-    var dotahud = $.GetContextPanel().GetParent().GetParent().GetParent().FindChildTraverse("portraitHUD");
-    var hero_table_check = CustomNetTables.GetTableValue("heroes_donate_portraits", Entities.GetUnitName( Players.GetLocalPlayerPortraitUnit()))
-    var portraitHUDOverlay = $.GetContextPanel().GetParent().GetParent().GetParent().FindChildTraverse("portraitHUDOverlay");
+    let hero_current = Entities.GetUnitName( Players.GetLocalPlayerPortraitUnit() )
+    let portraitHUDOverlay = $.GetContextPanel().GetParent().GetParent().GetParent().FindChildTraverse("portraitHUDOverlay");
 
-	if (selected_portrait != Entities.GetUnitName( Players.GetLocalPlayerPortraitUnit()) || fast)
-	{
-		if (portrait_video != null )
-		{
-			portrait_video.style.opacity = "0"
-            if (portraitHUDOverlay)
-            {
-                portraitHUDOverlay.style.visibility = "visible"
-            }
-		}
-        if (hero_table_check && hero_table_check.donate == 1)
-	    {
-            let hero_name = Entities.GetUnitName( Players.GetLocalPlayerPortraitUnit())
-            let player_id = Entities.GetPlayerOwnerID( Players.GetLocalPlayerPortraitUnit() )
-            let camera_info = GetCameraInfo(hero_name, player_id)
-            ChangeCamera(camera_info[0], camera_info[1], dotahud, portraitHUDOverlay)
-        }
-	}
-
-    if (hero_table_check && hero_table_check.donate == 1)
-	{
-        if (Entities.IsHexed( Players.GetLocalPlayerPortraitUnit() ))
+    if ( (selected_portrait != hero_current) || fast)
+    {
+        if (allow_camera_change[hero_current] == null)
         {
-            if (portrait_video)
+            for (var i = 0; i <= Object.keys(portraits_panels).length; i++) 
             {
-                portrait_video.style.opacity = "0"
+                if (portraits_panels[Object.keys(portraits_panels)[i]])
+                {
+                    portraits_panels[Object.keys(portraits_panels)[i]].style.visibility = "collapse"
+                }
             }
-        }
+        } 
         else
         {
-            if (portrait_video)
+            for (var i = 0; i <= Object.keys(portraits_panels).length; i++) 
             {
-                portrait_video.style.opacity = "1"
+                if (portraits_panels[Object.keys(portraits_panels)[i]])
+                {
+                    portraits_panels[Object.keys(portraits_panels)[i]].style.visibility = "collapse"
+                }
             }
+            let player_id = Entities.GetPlayerOwnerID( Players.GetLocalPlayerPortraitUnit() )
+            let camera_info = GetCameraInfo(hero_current, player_id)
+            ChangeCamera(camera_info[0], camera_info[1], portraits_panels[hero_current], hero_current)  
         }
     }
 
-    selected_portrait = Entities.GetUnitName( Players.GetLocalPlayerPortraitUnit())
+    if (portraits_panels[hero_current] != null)
+    {
+        if (Entities.IsHexed( Players.GetLocalPlayerPortraitUnit() ))
+        {
+            portraits_panels[hero_current].style.visibility = "collapse"
+        }
+        else
+        {
+            portraits_panels[hero_current].style.visibility = "visible"
+        }
+        if (portraitHUDOverlay)
+        {
+            portraitHUDOverlay.style.visibility = "collapse"
+        }
+    }
+    else
+    {
+        if (portraitHUDOverlay)
+        {
+            portraitHUDOverlay.style.visibility = "visible"
+        }
+    }
+
+    selected_portrait = hero_current
+}
+ 
+function ChangeCamera(camera_name, light_name, scene_panel, hero_name)
+{
+
+
+    let dotahud = $.GetContextPanel().GetParent().GetParent().GetParent().FindChildTraverse("portraitHUD");
+    
+    if (scene_panel == null)
+    {
+        let portrait_video = $.CreatePanel("DOTAScenePanel", dotahud, "portrait_donate_hero", { class:"portrait_donate_hero", style: "width:100px;height:100px;", map: "portraits/"+hero_name, light:light_name, particleonly:"false", camera: camera_name, renderdeferred:"false", antialias:"false", renderwaterreflections:"false", deferredalpha:"false", environment:"default" })
+        portrait_video.style.width = "143px"
+        portrait_video.style.height = "175px"
+        portrait_video.style.marginLeft = "14px"
+        portraits_panels[hero_name] = portrait_video
+
+        $.RegisterEventHandler("DOTAScenePanelSceneLoaded", portraits_panels[hero_name], function() 
+        {
+            $.Schedule(0.2, function () 
+            {
+                RemovedTimer()
+                UpdateMainHudHero(true)
+            });
+        });
+        
+        ChangeUnitCamera(camera_name, hero_name)
+    }
+    else
+    {
+        scene_panel.style.visibility = "visible"
+        scene_panel.LerpToCameraEntity( camera_name, 0 )
+        $.Schedule(0.1, function()
+        { 
+            last_hero_entity_camera_portrait = camera_name + "_unit"
+            scene_panel.FireEntityInput(last_hero_entity_camera_portrait, "Enable", "", 0.0);   
+        }) 
+    }
+}
+ 
+function ChangeUnitCamera(camera_name, hero_name)
+{
+    first_timer_loading = $.Schedule(0.1, function ()
+    {
+        first_timer_loading = -1
+        last_hero_entity_camera_portrait = camera_name + "_unit"
+        portraits_panels[hero_name].FireEntityInput(last_hero_entity_camera_portrait, "Enable", "", 0.0);
+        ChangeUnitCamera(camera_name, hero_name)
+    })
+}
+
+function RemovedTimer()
+{
+    if (first_timer_loading != -1)
+    {
+        $.CancelScheduled(first_timer_loading)
+        first_timer_loading = -1
+    }
 }
 
 function GetCameraInfo(hero_name, player_id)
@@ -373,8 +381,6 @@ function GetCameraInfo(hero_name, player_id)
             {   
                 for (var d = 0; d < item_id_list.length; d++) 
                 {
-
-
                     camera_name = camera_name + "_" + item_id_list[d]
                     light_name = light_name + "_" + item_id_list[d]
                 }
@@ -384,103 +390,6 @@ function GetCameraInfo(hero_name, player_id)
     }
 
     return [camera_name, light_name]
-}
-
-function ChangeCamera(camera_name, light_name, dotahud, portraitHUDOverlay)
-{
-    if (dotahud == null)
-    {
-        dotahud = $.GetContextPanel().GetParent().GetParent().GetParent().FindChildTraverse("portraitHUD");
-        portraitHUDOverlay = $.GetContextPanel().GetParent().GetParent().GetParent().FindChildTraverse("portraitHUDOverlay");
-    }
-    if (portrait_video == null)
-    {
-        let portrait_donate_hero = dotahud.FindChildTraverse("portrait_donate_hero")
-        if (portrait_donate_hero)
-        {
-            portrait_donate_hero.DeleteAsync(0)
-        }   
-        if (portraitHUDOverlay)
-        {
-            portraitHUDOverlay.style.visibility = "collapse"
-        }
-        portrait_video = $.CreatePanel("DOTAScenePanel", dotahud, "portrait_donate_hero", { class:"portrait_donate_hero", style: "width:100px;height:100px;", map: "portraits", light:light_name, particleonly:"false", camera: camera_name, renderdeferred:"false", antialias:"false", renderwaterreflections:"false" }); //$.CreatePanel("MoviePanel", dotahud, 'portrait_donate_hero', { class:"portrait_donate_hero", style: "width:100px;height:100px;", src:"file://{resources}/videos/heroes/" + Entities.GetUnitName( Players.GetLocalPlayerPortraitUnit()) +".webm",  repeat:"true", hittest:"false", autoplay:"onload"});
-        portrait_video.style.width = "143px"
-        portrait_video.style.height = "175px"
-        portrait_video.style.marginLeft = "14px"
-
-        $.RegisterEventHandler("DOTAScenePanelSceneLoaded", portrait_video, function () 
-        {
-            $.Schedule(0.2, function () 
-            {
-                RemovedTimer()
-                UpdateMainHudHero(true)
-            });
-        });
-
-        if (last_hero_entity_camera_portrait != null)
-        {
-            //portrait_video.FireEntityInput(last_hero_entity_camera_portrait, "Disable", "", 0.0); 
-        }
-        ChangeUnitCamera(camera_name)  
-    }
-    else
-    {
-        portrait_video.style.opacity = "1"
-        if (portraitHUDOverlay)
-        {
-            portraitHUDOverlay.style.visibility = "collapse"
-        }
-        portrait_video.LerpToCameraEntity( camera_name, 0 )
-
-        $.Schedule(0.1, function()
-        { 
-            
-            last_hero_entity_camera_portrait = camera_name + "_unit"
-            portrait_video.FireEntityInput(last_hero_entity_camera_portrait, "Enable", "", 0.0);   
-        }) 
-    }
-}
-
-function ChangeUnitCamera(camera_name)
-{
-    first_timer_loading = $.Schedule(0.1, function ()
-    {
-        first_timer_loading = -1
-        last_hero_entity_camera_portrait = camera_name + "_unit"
-        portrait_video.FireEntityInput(last_hero_entity_camera_portrait, "Enable", "", 0.0);    
-        ChangeUnitCamera(camera_name)
-    })
-}
-
-function HasItemUneqieupPortrait(item_id, player_id, hero)
-{
-	let player_table = CustomNetTables.GetTableValue("sub_data", String(player_id));
-	if (player_table && player_table.player_items_onequip)
-	{
-        if (player_table["player_items_onequip"])
-		{
-			let hero_items = player_table["player_items_onequip"][String(hero)]
-			for (var i = 1; i <= Object.keys(hero_items).length; i++) 
-			{
-                if (similar_id[item_id] != null)
-                {
-                    for (var j = 0; j <= Object.keys(similar_id[item_id]).length; j++) 
-                    {
-                        if (String(hero_items[i]) == String(similar_id[item_id][j]))
-                        {
-                            return true
-                        }
-                    }
-                }
-				if (String(hero_items[i]) == String(item_id))
-				{
-					return true
-				}
-			}
-		}
-	}
-	return false
 }
 
 function GetHeroesItems(player_id, hero)
@@ -498,7 +407,6 @@ function GetHeroesItems(player_id, hero)
 }
 
 CustomNetTables.SubscribeNetTableListener( "heroes_items_info", UpdateSubDataPortraits );
-CustomNetTables.SubscribeNetTableListener( "heroes_donate_portraits", UpdateKillCamData );
 
 function UpdateSubDataPortraits(table, key, data ) 
 {
@@ -511,11 +419,87 @@ function UpdateSubDataPortraits(table, key, data )
             {
                 let hero_name = Entities.GetUnitName( Players.GetLocalPlayerPortraitUnit())
                 let camera_info = GetCameraInfo(hero_name, player_id)
-                ChangeCamera(camera_info[0], camera_info[1])
+                ChangeCamera(camera_info[0], camera_info[1], portraits_panels[hero_name], hero_name)
             }
 		}
 	}
 }
+
+function UpdateKillCam(data)
+{
+    var KillCam = $.GetContextPanel().GetParent().GetParent().GetParent().FindChildTraverse("KillCam");
+    if (KillCam)
+    {
+        let KillCamHeroImageOrMovie = KillCam.FindChildTraverse("KillCamHeroImageOrMovie")
+        if (KillCamHeroImageOrMovie)
+        {
+            let KillCamHeroRender = KillCamHeroImageOrMovie.GetChild(0)
+            if (KillCamHeroRender)  
+            { 
+                ChangeKillCamCamera(data, KillCamHeroRender)
+            }
+        }
+    }
+}
+
+function ChangeKillCamCamera(data, KillCamHeroRender, hero_name)
+{
+    let portrait_donate_hero = KillCamHeroRender.FindChildTraverse("portrait_donate_hero")
+    if (data && data.heroname != null)
+    {
+        let hero_name = data.heroname
+        let player_id = data.id
+        let camera_info = GetCameraInfo(hero_name, player_id)
+        let camera_name = camera_info[0]
+        let camera_light = camera_info[1]
+        if (portrait_donate_hero != null)
+        {
+            portrait_donate_hero.DeleteAsync(0)
+            portrait_video_kill_cam = null
+        }
+        if (portrait_video_kill_cam == null)
+        { 
+            portrait_video_kill_cam = $.CreatePanel("DOTAScenePanel", KillCamHeroRender, "portrait_donate_hero", { class:"portrait_donate_hero", style: "width:100px;height:100px;", map: "portraits/"+hero_name, light: camera_light, particleonly:"false", camera: camera_name, renderdeferred:"false", antialias:"false", renderwaterreflections:"false" });
+            portrait_video_kill_cam.style.width = "100%"
+            portrait_video_kill_cam.style.height = "100%"
+            portrait_video_kill_cam.style.visibility = "visible"
+            $.RegisterEventHandler("DOTAScenePanelSceneLoaded", portrait_video_kill_cam, function () 
+            {
+                $.Schedule(0.2, function () 
+                {
+                    RemovedTimerKillCam()
+                });
+            });
+            ChangeUnitCameraKillCam(camera_name)
+        }
+        else
+        {
+            let hero_name = data.heroname
+            let player_id = data.id
+            let camera_info = GetCameraInfo(hero_name, player_id)
+            let camera_name = camera_info[0]
+            let camera_light = camera_info[1]
+            portrait_video_kill_cam.style.visibility = "visible"
+            portrait_video_kill_cam.LerpToCameraEntity( camera_name, 0 )
+            $.Schedule(0.1, function()
+            { 
+
+                last_hero_entity_camera_kill_cam = camera_name + "_unit"
+                portrait_video_kill_cam.FireEntityInput(last_hero_entity_camera_kill_cam, "Enable", "", 0.0);   
+            })
+        }
+    }
+    else if (data == null || (data && data.heroname == null))
+    {
+        if (portrait_video_kill_cam != null)
+        {
+            portrait_donate_hero.DeleteAsync(0)
+            portrait_video_kill_cam = null
+        }
+    }
+}
+
+CustomNetTables.SubscribeNetTableListener( "heroes_donate_portraits", UpdateKillCamData );
 
 function UpdateKillCamData(table, key, data ) 
 {
@@ -527,16 +511,6 @@ function UpdateKillCamData(table, key, data )
 		}
 	}
 } 
-
-
-function RemovedTimer()
-{
-    if (first_timer_loading != -1)
-    {
-        $.CancelScheduled(first_timer_loading)
-        first_timer_loading = -1
-    }
-}
 
 function RemovedTimerKillCam()
 {
@@ -557,5 +531,5 @@ function ChangeUnitCameraKillCam(camera_name)
         ChangeUnitCameraKillCam(camera_name)
     })
 }
-
-Think() 
+ 
+Think()

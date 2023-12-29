@@ -11,7 +11,6 @@ function modifier_bloodseeker_thirst_3:IsPurgable() return false end
 function modifier_bloodseeker_thirst_3:OnCreated(table)
 if not IsServer() then return end
   self:SetStackCount(1)
-  self:GetParent():AddNewModifier(self:GetParent(), self:GetParent():FindAbilityByName("bloodseeker_thirst_custom") , "modifier_bloodseeker_thirst_custom_heal", {})
 end
 
 

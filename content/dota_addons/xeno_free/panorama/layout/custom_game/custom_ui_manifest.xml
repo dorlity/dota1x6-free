@@ -6,7 +6,6 @@
 		<include src="s2r://panorama/scripts/custom_game/vector_targeting_marci.vjs_c" />
 		<include src="s2r://panorama/scripts/custom_game/vector_targeting.vjs_c" />
 		<include src="s2r://panorama/scripts/custom_game/custom_ability_particles.vjs_c" />
-		<include src="s2r://panorama/scripts/custom_game/portraits_donate.vjs_c" />
 	</scripts>
 	<script><![CDATA[
 
@@ -91,6 +90,7 @@ GameEvents.Subscribe_custom("CreateIngameErrorMessage", function(data)
 		<CustomUIElement type="Hud" layoutfile="s2r://panorama/layout/custom_game/test_mode.vxml_c" />
 		<CustomUIElement type="Hud" layoutfile="s2r://panorama/layout/custom_game/upgrades_show.vxml_c" />
 		<CustomUIElement type="Hud" layoutfile="s2r://panorama/layout/custom_game/upgrades.vxml_c" />
+		<CustomUIElement type="Hud" layoutfile="s2r://panorama/layout/custom_game/portrait_custom.vxml_c" />
 		<CustomUIElement type="EndScreen" layoutfile="s2r://panorama/layout/custom_game/multiteam_end_screen.vxml_c" />
 		<CustomUIElement type="Hud" layoutfile="s2r://panorama/layout/custom_game/multiteam_end_screen.vxml_c" />
 		<CustomUIElement type="Hud" layoutfile="s2r://panorama/layout/custom_game/custom_buff_panel.vxml_c" />

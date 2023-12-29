@@ -4,9 +4,8 @@
 	[
 		"unranked",
 		"ranked_0-500_start",
-		"ranked_500-800",
-		"ranked_800-1200",
-		"ranked_1200-x",
+		"ranked_500-1000",
+		"ranked_1000-x",
 	]
 	IsPlayable = 1
 	PenaltiesEnabled = false
@@ -22,15 +21,11 @@
 		},
 		{
 			MaxPlayers = 6
-			map = "ranked_500-800"
+			map = "ranked_500-1000"
 		},
 		{
 			MaxPlayers = 6
-			map = "ranked_800-1200"
-		},
-		{
-			MaxPlayers = 6
-			map = "ranked_1200-x"
+			map = "ranked_1000-x"
 		},
 	]
 	HideInTools = false

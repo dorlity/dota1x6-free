@@ -10,12 +10,8 @@ function modifier_bristle_spray_lowhp:IsPurgable() return false end
 
 function modifier_bristle_spray_lowhp:OnCreated(table)
 if not IsServer() then return end
-  self:SetStackCount(1)
-  local ability = self:GetParent():FindAbilityByName("bristleback_quill_spray_custom")
+self:SetStackCount(1)
 
-  if ability then 
-  	self:GetParent():AddNewModifier(self:GetParent(), ability, "modifier_custom_bristleback_quill_spray_lowhp_tracker", {})
-  end
 
 end
 

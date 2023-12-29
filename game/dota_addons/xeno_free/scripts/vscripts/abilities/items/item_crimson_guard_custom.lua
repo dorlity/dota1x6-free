@@ -67,16 +67,13 @@ end
 
 function modifier_item_crimson_guard_custom:GetModifierPhysical_ConstantBlock(params)
 if not IsServer() then return end
-if self:GetParent():HasModifier("modifier_item_crimson_guard_custom_active") then return end
 if not RollPseudoRandomPercentage(self.chance, 2622,self:GetParent()) then return end
 if self:GetParent() == params.attacker then return end
 if params.inflictor then return end
 if params.damage_type ~= DAMAGE_TYPE_PHYSICAL then return end
 
 local block = self.block
-if self:GetParent():IsRangedAttacker() then 
---	block = self.range_block
-end
+
 
 return block
 end
@@ -97,7 +94,6 @@ function modifier_item_crimson_guard_custom_active:IsPurgeException() return fal
 function modifier_item_crimson_guard_custom_active:OnCreated( params )
 if not IsServer() then return end
 
-self.block = self:GetAbility():GetSpecialValueFor("block_damage_active")
 self.reduce = self:GetAbility():GetSpecialValueFor("active_reduce")
 
 local pfx = ParticleManager:CreateParticle("particles/items2_fx/vanguard_active.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())
@@ -108,26 +104,34 @@ end
 
 
 function modifier_item_crimson_guard_custom_active:DeclareFunctions()
-	return 
+return 
 {
-    MODIFIER_PROPERTY_PHYSICAL_CONSTANT_BLOCK,
     MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE
 }
 end
 
 
 
-function modifier_item_crimson_guard_custom_active:GetModifierPhysical_ConstantBlock(params)
-if not IsServer() then return end
-if self:GetParent() == params.attacker then return end
-if params.inflictor then return end
-if params.damage_type ~= DAMAGE_TYPE_PHYSICAL then return end
-
-return self.block
-end
-
 
 function modifier_item_crimson_guard_custom_active:GetModifierIncomingDamage_Percentage(params)
 if params.inflictor then return end
+if params.damage < 2 then return end
+
+if IsServer() then 
+
+	local forward = self:GetParent():GetAbsOrigin() - params.attacker:GetAbsOrigin()
+	forward.z = 0
+	forward = forward:Normalized()
+
+	local particle_2 = ParticleManager:CreateParticle("particles/items/crimson_guard_hit.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
+	ParticleManager:SetParticleControlEnt(particle_2, 0, self:GetParent(), PATTACH_POINT, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+	ParticleManager:SetParticleControl(particle_2, 1, self:GetParent():GetAbsOrigin())
+	ParticleManager:SetParticleControlForward(particle_2, 1, forward)
+	ParticleManager:SetParticleControlEnt(particle_2, 2, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), false)
+	ParticleManager:ReleaseParticleIndex(particle_2)
+
+	self:GetParent():EmitSound("Crimson.Damage")
+end 
+
 return self.reduce
 end

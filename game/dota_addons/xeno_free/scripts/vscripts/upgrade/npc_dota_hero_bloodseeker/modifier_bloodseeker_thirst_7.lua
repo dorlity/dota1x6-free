@@ -14,7 +14,7 @@ self:SetStackCount(1)
 
 local ability = self:GetParent():FindAbilityByName("bloodseeker_thirst_custom")
 if ability and ability:GetLevel() > 0 then 
-	self:GetParent():AddNewModifier(self:GetParent(), self:GetParent():FindAbilityByName("bloodseeker_thirst_custom"), "modifier_bloodseeker_thirst_custom_legendary", {})
+	--self:GetParent():AddNewModifier(self:GetParent(), self:GetParent():FindAbilityByName("bloodseeker_thirst_custom"), "modifier_bloodseeker_thirst_custom_legendary", {})
 end
 
 end

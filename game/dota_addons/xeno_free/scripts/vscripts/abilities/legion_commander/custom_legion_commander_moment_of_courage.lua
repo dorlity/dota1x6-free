@@ -17,10 +17,6 @@ custom_legion_commander_moment_of_courage = class({})
 
 
 
-custom_legion_commander_moment_of_courage.reduction_inc = {-3, -4.5, -6}
-custom_legion_commander_moment_of_courage.reduction_duration = 4
-custom_legion_commander_moment_of_courage.reduction_max = 3
-
 
 
 
@@ -633,7 +629,7 @@ function modifier_moment_of_courage_custom_legendary_defence:IsPurgable() return
 function modifier_moment_of_courage_custom_legendary_defence:RemoveOnDeath() return false end
 function modifier_moment_of_courage_custom_legendary_defence:OnCreated(table)
 
-self.damage_reduce = self:GetCaster():GetTalentValue("modifier_legion_moment_legendary", "damage_reduce")
+self.damage_reduce = self:GetCaster():GetTalentValue("modifier_legion_moment_legendary", "damage_reduce", true)
 
 if not IsServer() then return end
 

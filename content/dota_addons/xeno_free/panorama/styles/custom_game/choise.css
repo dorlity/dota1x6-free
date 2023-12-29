@@ -387,7 +387,7 @@
 	visibility: visible;
 	align: center center;
 	background-size: contain;
-	background-image: url("s2r://panorama/images/custom_game/minimap_png.vtex");
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_bristleback/warpath_6_png.vtex");
 }
 
 .card_body_skill

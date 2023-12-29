@@ -10,6 +10,7 @@ var parentHUDElements = $.GetContextPanel().GetParent().GetParent().GetParent().
  $.GetContextPanel().FindChildTraverse("Bloodseeker_rite_panel").SetParent(parentHUDElements)
  $.GetContextPanel().FindChildTraverse("PangolierShield_panel").SetParent(parentHUDElements)
  $.GetContextPanel().FindChildTraverse("AxeCall_panel").SetParent(parentHUDElements)
+ $.GetContextPanel().FindChildTraverse("BristleSpray_panel").SetParent(parentHUDElements)
  $.GetContextPanel().FindChildTraverse("Antimage_counter_panel").SetParent(parentHUDElements)
  $.GetContextPanel().FindChildTraverse("LegionPress_panel").SetParent(parentHUDElements)
  $.GetContextPanel().FindChildTraverse("LegionOdds_panel").SetParent(parentHUDElements)
@@ -120,6 +121,8 @@ function init()
 
   GameEvents.Subscribe_custom('void_mark_change', void_mark_change)
 
+  GameEvents.Subscribe_custom('bristle_taunt_change', bristle_taunt_change)
+
   GameEvents.Subscribe_custom('sven_shield_change', sven_shield_change)
   GameEvents.Subscribe_custom('sven_shield_hide', sven_shield_hide)
 
@@ -136,6 +139,8 @@ function init()
   GameEvents.Subscribe_custom('hoodwink_change', hoodwink_change)
 
   GameEvents.Subscribe_custom('lina_change', lina_change)
+
+  GameEvents.Subscribe_custom('bristle_spray_change', bristle_spray_change)
 
   GameEvents.Subscribe_custom('razor_eye_change', razor_eye_change)
 
@@ -733,6 +738,48 @@ function invoker_ult_change(kv)
   }
 
 }
+
+
+
+
+
+
+function bristle_spray_change(kv)
+{
+  let main = parentHUDElements.FindChildTraverse("BristleSpray_panel")
+
+
+  if (main.BHasClass("BristleSpray_panel_hidden"))
+  {
+    main.RemoveClass("BristleSpray_panel_hidden")
+    main.AddClass("BristleSpray_panel")
+  }
+
+  let filler = main.FindChildTraverse("BristleSpray_filler")
+
+  if ((kv.hide == 1) && (main.BHasClass("BristleSpray_panel")))
+  {
+    main.RemoveClass("BristleSpray_panel")
+    main.AddClass("BristleSpray_panel_hidden")
+    filler.style.width = '100%'
+
+    return
+  }
+
+
+
+
+  let damage = Math.floor(kv.damage)
+
+  let width = (kv.time/kv.max_time) * 97
+  let text = String(width)+'%'
+
+  filler.style.width = text
+
+  let number = main.FindChildTraverse("BristleSpray_number")
+  number.text = String(damage)
+}
+
 
 
 
@@ -1982,6 +2029,64 @@ function void_mark_change(kv)
  }
 
 }
+
+
+
+
+
+
+
+function bristle_taunt_change(kv)
+{
+
+  let main = $.GetContextPanel().FindChildTraverse("Bristle_Taunt_Panel")
+  if (main.BHasClass("Bristle_Taunt_Panel_hidden"))
+  {
+    main.RemoveClass("Bristle_Taunt_Panel_hidden")
+    main.AddClass("Bristle_Taunt_Panel")
+  }
+
+
+  let filler = $.GetContextPanel().FindChildTraverse("Bristle_Taunt_Filler")
+
+  let width = (kv.damage/kv.max) * 95
+  let text = String(width)+'%'
+
+  filler.style.width = text
+
+  let number = $.GetContextPanel().FindChildTraverse("Bristle_Taunt_Number")
+  let icon = $.GetContextPanel().FindChildTraverse("Bristle_Taunt_Icon")
+
+
+  if ((kv.max - kv.damage) <= 0)
+  {
+    number.text = ''
+  }else 
+  {
+     number.text = String(kv.max - kv.damage)
+  }
+
+  if (kv.damage >= kv.max)
+  {
+    if (icon.BHasClass("Bristle_Taunt_Icon"))
+    {
+      icon.RemoveClass("Bristle_Taunt_Icon")
+      icon.AddClass("Bristle_Taunt_Icon_active")
+    }
+ }else 
+ {
+    if (icon.BHasClass("Bristle_Taunt_Icon_active"))
+    {
+      icon.RemoveClass("Bristle_Taunt_Icon_active")
+      icon.AddClass("Bristle_Taunt_Icon")
+    }
+  
+ }
+
+}
+
+
+
 
 
 

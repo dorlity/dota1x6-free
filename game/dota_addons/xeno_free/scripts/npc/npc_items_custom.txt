@@ -6490,9 +6490,9 @@
             "bonus_stats"        "15"
             "mana_restore_pct"                      "20"
             "spell_damage_increase"                 "2"
-            "spell_damage_duration"                 "8"
+            "spell_damage_duration"                 "6"
             "spell_damage_max"                      "6"
-            "spell_resist_increase"                 "4"
+            "spell_resist_increase"                 "3"
             "spell_damage_thresh"                   "300"
         }
     }
@@ -6781,8 +6781,7 @@
                 "block_chance"          "60"
                 "duration"  "5"
                 "bonus_aoe_radius"      "1200"
-                "block_damage_active" "100"
-                "active_reduce"          "-40"
+                "active_reduce"          "-60"
         }
     }
 
@@ -8280,7 +8279,7 @@
 
             "spell_lifesteal_creep" "4"
 
-            "damage_reduction"      "-20"
+            "damage_reduction"      "-10"
             
         }
     }
@@ -8557,6 +8556,41 @@
             "radius"                "2000"
         }
     }
+
+
+
+
+
+"item_desolator_2"
+    {
+        // General
+        //-------------------------------------------------------------------------------------------------------------
+        "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_PASSIVE"
+            
+        // Item Info
+        //-------------------------------------------------------------------------------------------------------------
+        "ItemCost"                      "0"
+        "ItemIsNeutralDrop"             "1"
+        "ItemPurchasable"               "0"
+        "ItemSellable"              "0"
+        "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_YES"
+
+
+        "Model"                         "models/props_gameplay/neutral_box.vmdl"
+        
+        // Special  
+        //-------------------------------------------------------------------------------------------------------------
+        "AbilityValues"
+        {
+                "bonus_damage"          "75"
+                "corruption_armor"      "-12"
+                "corruption_duration"   "7.0"
+        }
+    }
+
+
+
+
 
 }
 

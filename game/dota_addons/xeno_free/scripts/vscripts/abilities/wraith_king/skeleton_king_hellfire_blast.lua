@@ -67,6 +67,8 @@ return self.BaseClass.GetCastRange(self , vLocation , hTarget)
 end
 
 
+
+
 function skeleton_king_hellfire_blast_custom:GetCooldown(level)
 local bonus = 0
 
@@ -76,6 +78,9 @@ end
 
 return self.BaseClass.GetCooldown( self, level ) + bonus
 end
+
+
+
 
 function skeleton_king_hellfire_blast_custom:GetManaCost(level)
     return self.BaseClass.GetManaCost(self, level)

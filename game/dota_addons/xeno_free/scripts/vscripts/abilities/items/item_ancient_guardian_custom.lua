@@ -11,6 +11,7 @@ modifier_item_ancient_guardian_custom = class({})
 
 function modifier_item_ancient_guardian_custom:IsHidden() return true end
 function modifier_item_ancient_guardian_custom:IsPurgable() return false end
+function modifier_item_ancient_guardian_custom:RemoveOnDeath() return false end
 function modifier_item_ancient_guardian_custom:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_item_ancient_guardian_custom:DeclareFunctions()
     local funcs = {

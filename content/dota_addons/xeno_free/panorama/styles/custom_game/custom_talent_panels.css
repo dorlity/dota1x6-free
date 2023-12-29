@@ -947,6 +947,95 @@
 	text-align: center;
 }
 
+.BristleSpray_panel
+{
+	width: 400px;
+	height: 100px;
+	align: center center;
+	margin-top: 425px;
+	z-index: 100;
+}
+
+.BristleSpray_panel_hidden
+{
+	width: 400px;
+	height: 100px;
+	align: center center;
+	margin-top: 425px;
+	z-index: 100;
+	visibility: collapse;
+}
+
+.BristleSpray_Bar_hero
+{
+	width: 80%;
+	height: 40%;
+	border: 1px solid #986008;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #1f0904 ), to( #250903 ) );
+	vertical-align: center;
+	margin-left: 1%;
+	border-radius: 5px;
+}
+
+.BristleSpray_toplabel_hero
+{
+	width: 60%;
+	height: 30%;
+	border: 1px solid #222;
+	margin-left: 11%;
+	margin-top: 12%;
+	visibility: collapse;
+}
+
+.BristleSpray_filler
+{
+	width: 97%;
+	height: 70%;
+	border-radius: 3px;
+	background-size: contain;
+	background-color: gradient( linear, 0% 0%, 100% 0%, from( #8e4c1f ), to( #ca6826 ) );
+	margin-left: 1%;
+	align: left center;
+	transition-property: width;
+	transition-duration: 0.1s;
+}
+
+.BristleSpray_Icon
+{
+	width: 17.54%;
+	height: 70%;
+	margin-right: 1%;
+	background-size: contain;
+	align: right center;
+	border: 1px solid #986008;
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_bristleback/spray_png.vtex");
+	border-radius: 8px;
+}
+
+.BristleSpray_number
+{
+	font-family: defaultFont;
+	font-weight: bold;
+	color: #e7e7e7;
+	text-shadow: 1px 1px 4px 9 black;
+	z-index: 8;
+	align: center center;
+	font-size: 35px;
+	text-align: center;
+}
+
+.BristleSpray_text
+{
+	font-family: defaultFont;
+	font-weight: bold;
+	color: #ff3f3f;
+	text-shadow: 1px 1px 2px 3 black;
+	z-index: 8;
+	align: center center;
+	font-size: 23px;
+	text-align: center;
+}
+
 .Antimage_counter_panel
 {
 	width: 400px;
@@ -3021,6 +3110,111 @@
 	100%
 	{
 		box-shadow: fill #c07cff 0px 0px 5px -2px;
+	}
+	
+}
+
+.Bristle_Taunt_Panel
+{
+	width: 200px;
+	height: 50px;
+	align: left top;
+	margin-top: 20px;
+	margin-left: 50px;
+	z-index: 100;
+	flow-children: right;
+}
+
+.Bristle_Taunt_Panel_hidden
+{
+	width: 200px;
+	height: 50px;
+	align: left top;
+	margin-top: 20px;
+	margin-left: 50px;
+	z-index: 100;
+	flow-children: right;
+	visibility: collapse;
+}
+
+.Bristle_Taunt_Bar
+{
+	width: 75%;
+	height: 60%;
+	border: 1px solid #986008;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #1f0904 ), to( #250903 ) );
+	vertical-align: center;
+	margin-left: 1%;
+}
+
+.Bristle_Taunt_Filler
+{
+	width: 95%;
+	height: 80%;
+	background-size: contain;
+	background-color: gradient( linear, 0% 100%, 0% 0%, from( #4b3859 ), to( #b19072 ) );
+	margin-left: 2%;
+	align: left center;
+	transition-property: width;
+	transition-duration: 0.2s;
+}
+
+.Bristle_Taunt_Icon_active
+{
+	width: 17.54%;
+	height: 70%;
+	margin-left: 1%;
+	background-size: contain;
+	vertical-align: center;
+	border: 1px solid #4b3859;
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_bristleback/back_6_png.vtex");
+	animation-name: Bristle_Taunt_icon;
+	animation-iteration-count: infinite;
+	animation-duration: 1.5s;
+	transition-property: opacity, transform;
+	transition-duration: .24s;
+}
+
+.Bristle_Taunt_Icon
+{
+	width: 17.54%;
+	height: 70%;
+	margin-left: 1%;
+	background-size: contain;
+	vertical-align: center;
+	border: 1px solid #4b3859;
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_bristleback/back_6_png.vtex");
+	wash-color: #555555;
+	saturation: 0.1;
+}
+
+.Bristle_Taunt_Number
+{
+	font-family: defaultFont;
+	font-weight: bold;
+	color: #e7e7e7;
+	text-shadow: 1px 1px 2px 3 black;
+	z-index: 8;
+	align: center center;
+	font-size: 19px;
+	text-align: center;
+}
+
+@keyframes 'Bristle_Taunt_icon'
+{
+	0%
+	{
+		box-shadow: fill #6515af 0px 0px 5px -2px;
+	}
+	
+	50%
+	{
+		box-shadow: fill #6515af 0px 0px 13px -3px;
+	}
+	
+	100%
+	{
+		box-shadow: fill #6515af 0px 0px 5px -2px;
 	}
 	
 }

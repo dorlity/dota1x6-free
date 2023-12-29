@@ -127,6 +127,7 @@ self.heal = self:GetCaster():GetTalentValue("modifier_pudge_flesh_1", "heal")/10
 
 if not IsServer() then return end
 
+self.RemoveForDuel = true
 
 self.damage_block = self:GetAbility():GetSpecialValueFor("damage_block")
 

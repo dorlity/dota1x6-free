@@ -87,6 +87,13 @@
 			</Panel>
 			<Panel class="Void_Mark_Icon" id="Void_Mark_Icon" hittest="false" />
 		</Panel>
+		<Panel class="Bristle_Taunt_Panel_hidden" id="Bristle_Taunt_Panel" hittest="false">
+			<Panel class="Bristle_Taunt_Bar" hittest="false">
+				<Panel class="Bristle_Taunt_Filler" id="Bristle_Taunt_Filler" hittest="false" />
+				<Label class="Bristle_Taunt_Number" id="Bristle_Taunt_Number" hittest="false" />
+			</Panel>
+			<Panel class="Bristle_Taunt_Icon" id="Bristle_Taunt_Icon" hittest="false" />
+		</Panel>
 		<Panel class="Courage_Crit_Panel_hidden" id="Courage_Crit_Panel" hittest="false">
 			<Panel class="Courage_Crit_Bar" hittest="false">
 				<Panel class="Courage_Crit_Filler" id="Courage_Crit_Filler" hittest="false" />
@@ -293,6 +300,14 @@
 			<Panel class="Antimage_counter_Bar_hero" id="Antimage_counter_Bar" hittest="false">
 				<Label class="Antimage_counter_filler" id="Antimage_counter_filler" hittest="false" />
 				<Label class="Antimage_counter_number" id="Antimage_counter_number" hittest="false" />
+			</Panel>
+		</Panel>
+		<Panel class="BristleSpray_panel_hidden" id="BristleSpray_panel" hittest="false">
+			<Panel class="BristleSpray_Icon" id="BristleSpray_Icon" hittest="false">
+				<Label class="BristleSpray_number" id="BristleSpray_number" hittest="false" />
+			</Panel>
+			<Panel class="BristleSpray_Bar_hero" id="BristleSpray_Bar" hittest="false">
+				<Label class="BristleSpray_filler" id="BristleSpray_filler" hittest="false" />
 			</Panel>
 		</Panel>
 		<Panel class="AxeCall_panel_hidden" id="AxeCall_panel" hittest="false">

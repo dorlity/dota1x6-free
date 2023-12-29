@@ -659,7 +659,7 @@
 
 "vote_end_date" "Voting end date: "
 
-"vote_hero_won_date"	"Estimated release date: <b><font color='#fdec85'>Second half of January 2023</font></b>"
+"vote_hero_won_date"	"Estimated release date: <b><font color='#fdec85'>Second half of January 2024</font></b>"
 
 "active_vote_top" "Voting for <b><font color='#ffa142'>new hero</font></b> is active!"
 
@@ -6690,82 +6690,47 @@
 
 "npc_dota_hero_bristleback_legendary_1" "Any damage to the Viscous Nasal Goo target can stun"
 "npc_dota_hero_bristleback_legendary_2" "Quill Spray spends health and cooldowns faster"
-"npc_dota_hero_bristleback_legendary_3" "Active<br><br>For 6 seconds Bristleback effect works from all sides"
+"npc_dota_hero_bristleback_legendary_3" "Active<br><br>For 4 sec Bristleback effect works from all sides"
 "npc_dota_hero_bristleback_legendary_4" "Active<br><br>Smashes ground, dealing critical damage"
 
 "hero_change_npc_dota_hero_bristleback_1" "Armor reduction reduced from 2 + 3 per charge to <b><font color='#ff0000'>2.5 per charge</font></b>"
 "hero_change_npc_dota_hero_bristleback_2" "Slow reduced from 15% + 12% per charge to <b><font color='#ff0000'>10% per charge</font></b>"
 "hero_change_npc_dota_hero_bristleback_3" "Also applies on all enemies in <b><font color='#53ea48'>220</font></b> aoe near the target"
-"hero_change_npc_dota_hero_bristleback_4" "Movespeed bonus reduced from 2/3/4% to <b><font color='#ff0000'>1/2/3%</font></b>"
-"hero_change_npc_dota_hero_bristleback_5" "While active, Bristleback <b><font color='#53ea48'>is not disabled</font></b> by break"
+"hero_change_npc_dota_hero_bristleback_4" "While active, Bristleback <b><font color='#53ea48'>is not disabled</font></b> by break"
 
 
 
 "DOTA_Tooltip_modifier_bristleback_viscous_nasal_goo_custom"				"Viscous Nasal Goo"
-"DOTA_Tooltip_modifier_bristleback_viscous_nasal_goo_custom_Description"	"Losing %fMODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS% armor and slowed by %dMODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE%%%."
+"DOTA_Tooltip_modifier_bristleback_viscous_nasal_goo_custom_Description"	"Losing %fMODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS% armor and slowed by %dMODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE%%%.<br><br>All outgoing damage reduced by %dMODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE%%%"
 
+"font_disc_modifier_bristle_goo_max" "20"
+"upgrade_disc_modifier_bristle_goo_max" "*!+duration* sec Viscous Nasal Goo duration<br><br>*!+max* Viscous Nasal Goo max stacks"
 
-"font_disc_modifier_bristle_goo_max" "23"
-"upgrade_disc_modifier_bristle_goo_max" "*!+max* Viscous Nasal Goo maximum stack"
-
-
-"font_disc_modifier_bristle_goo_proc" "20"
-"upgrade_disc_modifier_bristle_goo_proc_1" "When you attack an enemy or the enemy attacks you, with a <b><font color='#53ea48'>8%</font></b> chance it receives 1 Viscous Nasal Goo stack"
-"upgrade_disc_modifier_bristle_goo_proc_2" "When you attack an enemy or the enemy attacks you, with a <b><font color='#53ea48'>12%</font></b> chance it receives 1 Viscous Nasal Goo stack"
-"upgrade_disc_modifier_bristle_goo_proc_3" "When you attack an enemy or the enemy attacks you, with a <b><font color='#53ea48'>16%</font></b> chance it receives 1 Viscous Nasal Goo stack"
-
-"talent_disc_modifier_bristle_goo_proc_0" "When you attack an enemy or the enemy attacks you, with a <b><font color='#297016'>8%</font></b>/<b><font color='#297016'>12%</font></b>/<b><font color='#297016'>16%</font></b> chance it receives 1 Viscous Nasal Goo stack"
-"talent_disc_modifier_bristle_goo_proc_1" "When you attack an enemy or the enemy attacks you, with a <b><font color='#53ea48'>8%</font></b>/<b><font color='#297016'>12%</font></b>/<b><font color='#297016'>16%</font></b> chance it receives 1 Viscous Nasal Goo stack"
-"talent_disc_modifier_bristle_goo_proc_2" "When you attack an enemy or the enemy attacks you, with a <b><font color='#297016'>8%</font></b>/<b><font color='#53ea48'>12%</font></b>/<b><font color='#297016'>16%</font></b> chance it receives 1 Viscous Nasal Goo stack"
-"talent_disc_modifier_bristle_goo_proc_3" "When you attack an enemy or the enemy attacks you, with a <b><font color='#297016'>8%</font></b>/<b><font color='#297016'>12%</font></b>/<b><font color='#53ea48'>16%</font></b> chance it receives 1 Viscous Nasal Goo stack"
-
-
+"font_disc_modifier_bristle_goo_proc" "19"
+"upgrade_disc_modifier_bristle_goo_proc" "Viscous Nasal Goo reduces targets outgoing damage by *!damage_reduce%* and gives you *!heal%* lifesteal from any damage against it<br><br>The effect stacks up to *max* times"
 
 "font_disc_modifier_bristle_goo_ground" "19"
-"upgrade_disc_modifier_bristle_goo_ground_1" "Viscous Nasal Goo deals 30 physical damage per second<br><br>Effect duration: <b><font color='#53ea48'>2</font></b> second"
-"upgrade_disc_modifier_bristle_goo_ground_2" "Viscous Nasal Goo deals 30 physical damage per second<br><br>Effect duration: <b><font color='#53ea48'>3</font></b> seconds"
-"upgrade_disc_modifier_bristle_goo_ground_3" "Viscous Nasal Goo deals 30 physical damage per second<br><br>Effect duration: <b><font color='#53ea48'>4</font></b> seconds"
-
-"talent_disc_modifier_bristle_goo_ground_0" "Viscous Nasal Goo deals 30 physical damage per second<br><br>Effect duration: <b><font color='#297016'>2</font></b>/<b><font color='#297016'>3</font></b>/<b><font color='#297016'>4</font></b> seconds"
-"talent_disc_modifier_bristle_goo_ground_1" "Viscous Nasal Goo deals 30 physical damage per second<br><br>Effect duration: <b><font color='#53ea48'>2</font></b>/<b><font color='#297016'>3</font></b>/<b><font color='#297016'>4</font></b> second"
-"talent_disc_modifier_bristle_goo_ground_2" "Viscous Nasal Goo deals 30 physical damage per second<br><br>Effect duration: <b><font color='#297016'>2</font></b>/<b><font color='#53ea48'>3</font></b>/<b><font color='#297016'>4</font></b> seconds"
-"talent_disc_modifier_bristle_goo_ground_3" "Viscous Nasal Goo deals 30 physical damage per second<br><br>Effect duration: <b><font color='#297016'>2</font></b>/<b><font color='#297016'>3</font></b>/<b><font color='#53ea48'>4</font></b> seconds"
-
-"DOTA_Tooltip_modifier_bristleback_viscous_nasal_goo_ground_poison"						"Poisoned"
-"DOTA_Tooltip_modifier_bristleback_viscous_nasal_goo_ground_poison_Description"			"Receives <b><font color='#ff0000'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> damage per second. Armor reduced by <b><font color='#ff0000'>%dMODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS%</font></b>"
-
-
-
-
+"upgrade_disc_modifier_bristle_goo_ground" "Viscous Nasal Goo deals *damage* physical damage to the target per sec<br><br>Effect duration: *!duration* sec"
 
 "font_disc_modifier_bristle_goo_damage" "18"
-"upgrade_disc_modifier_bristle_goo_damage" "Viscous Nasal Goo has a *!chance%* chance to leave a poisonous area that deals *damage* physical damage per second and reduces armor by *armor*<br><br>Effect stacks"
-"mini_disc_modifier_bristle_goo_damage" "Viscous Nasal Goo can leave a poisonous area"
+"upgrade_disc_modifier_bristle_goo_damage" "Your attacks have a *!chance%* chance to apply 1 stack of Viscous Nasal Goo to the target<br><br>Your attack speed increases by *!speed* per each ability stack on the target"
+"mini_disc_modifier_bristle_goo_damage" "Viscous Nasal Goo increases attack speed and procs from attacks"
 
+"DOTA_Tooltip_modifier_bristleback_viscous_nasal_goo_speed" "Viscous Nasal Goo"
+"DOTA_Tooltip_modifier_bristleback_viscous_nasal_goo_speed_Description" "Attack speed increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT%</font></b>"
 
-
-
-
-"font_disc_modifier_bristle_goo_stack" "19"
-"upgrade_disc_modifier_bristle_goo_stack" "*!+duration* sec Viscous Nasal Goo duration<br><br>With a *!chance%* chance Viscous Nasal Goo will leave *more_stacks* additional stack"
-"mini_disc_modifier_bristle_goo_stack" "Viscous Nasal Goo can trigger twice"
-
-
-"DOTA_Tooltip_modifier_bristleback_viscous_nasal_goo_stack_cd"					"Enormous Spit"
-"DOTA_Tooltip_modifier_bristleback_viscous_nasal_goo_stack_cd_Description"		"Эффект Enormous Spit перезаряжается"
-
+"font_disc_modifier_bristle_goo_stack" "18"
+"upgrade_disc_modifier_bristle_goo_stack" "*!+range* cast range of abilities and items<br><br>*!-cd* sec Viscous Nasal Goo cooldown<br><br>*!+slow%* slow per Viscous Nasal Goo stack"
+"mini_disc_modifier_bristle_goo_stack" "Viscous Nasal Goo cooldowns faster and slows more"
 
 "font_disc_modifier_bristle_goo_status" "18"
-"upgrade_disc_modifier_bristle_goo_status_1" "<b><font color='#53ea48'>+1</font></b> armor reduction per Viscous Nasal Goo stack<br><br>When Viscous Nasal Goo with at least 4 stacks ends, the enemy receives stun for <b><font color='#53ea48'>1</font></b> second and 1 stack of Viscous Nasal Goo"
-"mini_disc_modifier_bristle_goo_status" "Viscous Nasal Goo stuns at the end of the effect"
-
-
-
+"upgrade_disc_modifier_bristle_goo_status" "*!+armor* armor reduction per Viscous Nasal Goo stack<br><br>When the effect is dispelled, enemy stuns for *!stun* sec per dispelled stack, and also receives 1 Viscous Nasal Goo stack"
+"mini_disc_modifier_bristle_goo_status" "Viscous Nasal Goo stuns when dispelled"
 
 
 "font_disc_modifier_bristle_goo_legendary" "17"
-"upgrade_disc_modifier_bristle_goo_legendary" "Whenever you deal any damage to an enemy, you have a chance to stun it for 0.5 sec and deal additional physical damage equal to <b><font color='#fb9531'>2%</font></b> of targets max health<br><br>For each Viscous Nasal Goo effect on target, the chance increases by <b><font color='#fb9531'>3%</font></b>"
-"mini_disc_modifier_bristle_goo_legendary" "Viscous Nasal Goo targets can be stunned with any damage"
+"upgrade_disc_modifier_bristle_goo_legendary" "Whenever you deal any damage to an enemy, you have a chance to stun it for *stun* sec and deal physical damage equal to *!damage%* of your attack damage<br><br>Effect chance: *!chance%* per Viscous Nasal Goo stack on the target"
+"mini_disc_modifier_bristle_goo_legendary" "Can stun the target of Viscous Nasal Goo with any damage"
 
 
 
@@ -6784,75 +6749,38 @@
 "DOTA_Tooltip_ability_bristleback_quill_spray_custom_quill_stack_duration"		"STACK DURATION:"
 "DOTA_Tooltip_ability_bristleback_quill_spray_custom_max_damage"				"MAX DAMAGE:"
 "DOTA_Tooltip_modifier_custom_bristleback_quill_spray"						"Quill Spray"
-"DOTA_Tooltip_modifier_custom_bristleback_quill_spray_Description"			"Each stack increases damage taken from Quill Spray"
+"DOTA_Tooltip_modifier_custom_bristleback_quill_spray_Description"			"Each stack increases damage taken from Quill Spray<br><br>Healing reduced by <b><font color='#ff0000'>%fMODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE%%%</font></b>"
 
 
 
-
-"font_disc_modifier_bristle_spray_damage" "24"
-"upgrade_disc_modifier_bristle_spray_damage_1" "<b><font color='#53ea48'>+8</font></b> Quill Spray stack damage"
-"upgrade_disc_modifier_bristle_spray_damage_2" "<b><font color='#53ea48'>+12</font></b> Quill Spray stack damage"
-"upgrade_disc_modifier_bristle_spray_damage_3" "<b><font color='#53ea48'>+16</font></b> Quill Spray stack damage"
-
-"talent_disc_modifier_bristle_spray_damage_0" "<b><font color='#297016'>+8</font></b>/<b><font color='#297016'>+12</font></b>/<b><font color='#297016'>+16</font></b> Quill Spray stack damage"
-"talent_disc_modifier_bristle_spray_damage_1" "<b><font color='#53ea48'>+8</font></b>/<b><font color='#297016'>+12</font></b>/<b><font color='#297016'>+16</font></b> Quill Spray stack damage"
-"talent_disc_modifier_bristle_spray_damage_2" "<b><font color='#297016'>+8</font></b>/<b><font color='#53ea48'>+12</font></b>/<b><font color='#297016'>+16</font></b> Quill Spray stack damage"
-"talent_disc_modifier_bristle_spray_damage_3" "<b><font color='#297016'>+8</font></b>/<b><font color='#297016'>+12</font></b>/<b><font color='#53ea48'>+16</font></b> Quill Spray stack damage"
-
-
+"font_disc_modifier_bristle_spray_damage" "20"
+"upgrade_disc_modifier_bristle_spray_damage" "*!+damage* Quill Spray damage increase per stack<br><br>*!-mana* Quill Spray mana cost"
 
 "font_disc_modifier_bristle_spray_max" "19"
-"upgrade_disc_modifier_bristle_spray_max" "Quill Spray has a *chance%* chance to slow enemies by *!slow%* for *duration* sec and deal additional *!damage* magic damage"
+"upgrade_disc_modifier_bristle_spray_max" "Quill Spray has a *chance%* chance to deal additional *!damage* magic damage and reduce attack speed by *!slow* for *duration* sec"
 
 "font_disc_modifier_bristle_spray_heal" "19"
-"upgrade_disc_modifier_bristle_spray_heal_1" "Quill Spray heals you for <b><font color='#53ea48'>1%</font></b> of maximum health<br><br>The effect works only on active Quill Spray"
-"upgrade_disc_modifier_bristle_spray_heal_2" "Quill Spray heals you for <b><font color='#53ea48'>1.5%</font></b> of maximum health<br><br>The effect works only on active Quill Spray"
-"upgrade_disc_modifier_bristle_spray_heal_3" "Quill Spray heals you for <b><font color='#53ea48'>2%</font></b> of maximum health<br><br>The effect works only on active Quill Spray"
+"upgrade_disc_modifier_bristle_spray_heal" "Quill Spray restores *!heal%* of your missing health<br><br>Healing is *passive* times weaker when triggered from back damage"
 
-"talent_disc_modifier_bristle_spray_heal_0" "Quill Spray heals you for <b><font color='#297016'>1%</font></b>/<b><font color='#297016'>1.5%</font></b>/<b><font color='#297016'>2%</font></b> of maximum health<br><br>The effect works only on active Quill Spray"
-"talent_disc_modifier_bristle_spray_heal_1" "Quill Spray heals you for <b><font color='#53ea48'>1%</font></b>/<b><font color='#297016'>1.5%</font></b>/<b><font color='#297016'>2%</font></b> of maximum health<br><br>The effect works only on active Quill Spray"
-"talent_disc_modifier_bristle_spray_heal_2" "Quill Spray heals you for <b><font color='#297016'>1%</font></b>/<b><font color='#53ea48'>1.5%</font></b>/<b><font color='#297016'>2%</font></b> of maximum health<br><br>The effect works only on active Quill Spray"
-"talent_disc_modifier_bristle_spray_heal_3" "Quill Spray heals you for <b><font color='#297016'>1%</font></b>/<b><font color='#297016'>1.5%</font></b>/<b><font color='#53ea48'>2%</font></b> of maximum health<br><br>The effect works only on active Quill Spray"
-
-
-
-"font_disc_modifier_bristle_spray_double" "20"
-"upgrade_disc_modifier_bristle_spray_double_1" "With a <b><font color='#53ea48'>20%</font></b> chance Quill Spray will trigger twice<br><br>The effect works only on active Quill Spray<br><br>The effect cannot be triggered by itself"
-"upgrade_disc_modifier_bristle_spray_double_2" "With a <b><font color='#53ea48'>35%</font></b> chance Quill Spray will trigger twice<br><br>The effect works only on active Quill Spray<br><br>The effect cannot be triggered by itself"
-
-"talent_disc_modifier_bristle_spray_double_0" "With a <b><font color='#297016'>20%</font></b>/<b><font color='#297016'>35%</font></b> chance Quill Spray will trigger twice<br><br>The effect works only on active Quill Spray<br><br>The effect cannot be triggered by itself"
-"talent_disc_modifier_bristle_spray_double_1" "With a <b><font color='#53ea48'>20%</font></b>/<b><font color='#297016'>35%</font></b> chance Quill Spray will trigger twice<br><br>The effect works only on active Quill Spray<br><br>The effect cannot be triggered by itself"
-"talent_disc_modifier_bristle_spray_double_2" "With a <b><font color='#297016'>20%</font></b>/<b><font color='#53ea48'>35%</font></b> chance Quill Spray will trigger twice<br><br>The effect works only on active Quill Spray<br><br>The effect cannot be triggered by itself"
-"mini_disc_modifier_bristle_spray_double" "Quill Spray can trigger twice"
-
-
+"font_disc_modifier_bristle_spray_double" "18"
+"upgrade_disc_modifier_bristle_spray_double" "*!+damage* Quill Spray maximum damage<br><br>Casting abilities has a *!chance%* chance to also trigger Quill Spray"
+"mini_disc_modifier_bristle_spray_double" "Quill Spray can trigger when casting abilities"
 
 
 "font_disc_modifier_bristle_spray_lowhp" "18"
-"upgrade_disc_modifier_bristle_spray_lowhp" "While your health is below *!health%*, Quill Spray cooldown reduces to *cd* sec, and you receive *!heal%* lifesteal from all outgoing damage<br><br>Lifesteal is *heal_creeps*x weaker against creeps"
-"mini_disc_modifier_bristle_spray_lowhp" "At low health, Quill Spray cooldown reduces"
+"upgrade_disc_modifier_bristle_spray_lowhp" "While you are below *health%* health, Quill Spray cooldowns *!cd%* faster and you gain *!heal%* lifesteal from all outgoing damage<br><br>Lifesteal is *heal_creeps*x weaker against creeps"
+"mini_disc_modifier_bristle_spray_lowhp" "Quill Spray cooldown faster at low health"
 
-"DOTA_Tooltip_modifier_custom_bristleback_quill_spray_lowhp_tracker"						"Fierce Defense"
-"DOTA_Tooltip_modifier_custom_bristleback_quill_spray_lowhp_tracker_Description"			" Quill Spray cooldown reduces to 1.5 seconds"
+"DOTA_Tooltip_modifier_custom_bristleback_quill_spray_tracker" "Fierce Defense"
+"DOTA_Tooltip_modifier_custom_bristleback_quill_spray_tracker_Description" "Quill Spray cooldown reduced, heals from all outgoing damage"
 
+"font_disc_modifier_bristle_spray_reduce" "18"
+"upgrade_disc_modifier_bristle_spray_reduce" "*!+radius* Quill Spray radius<br><br>*!+duration* sec Quill Spray effect duration<br><br>Each Quill Spray stack reduces targets healing by *!heal_reduce%*"
+"mini_disc_modifier_bristle_spray_reduce" "Quill Spray reduces the targets healing and lasts longer"
 
-"font_disc_modifier_bristle_spray_reduce" "21"
-"upgrade_disc_modifier_bristle_spray_reduce_1" "Each Quill Spray stack reduces target's healing and regeneration by <b><font color='#53ea48'>1.5%</font></b><br><br><b><font color='#53ea48'>+20</font></b> Quill Spray duration"
-"mini_disc_modifier_bristle_spray_reduce" "Quill Spray reduces target's healing and regeneration"
-
-
-
-
-
-"font_disc_modifier_bristle_spray_legendary" "18"
-"upgrade_disc_modifier_bristle_spray_legendary" "Quill Spray becomes an auto-cast ability<br><br>If auto-cast is activated, ability cast costs *cost%* of your maximum health and its cooldown reduces by *!cd* times"
+"font_disc_modifier_bristle_spray_legendary" "17"
+"upgrade_disc_modifier_bristle_spray_legendary" "Quill Spray becomes a toggle ability<br><br>When activated, casting the ability reduces its cooldown by *!cd* sec and increases its cost by *cost%* of max health<br><br>Effect stacks *!max* times and resets if you dont cast Quill Spray for *duration* sec"
 "mini_disc_modifier_bristle_spray_legendary" "Quill Spray can be used more often at the cost of health"
-
-"DOTA_Tooltip_modifier_custom_bristleback_quill_spray_legendary"						"Quill Spray"
-"DOTA_Tooltip_modifier_custom_bristleback_quill_spray_legendary_Description"			"Quill Spray cooldowns faster, but consumes health"
-
-
-
 
 
 
@@ -6877,96 +6805,61 @@
 
 
 
+"font_disc_modifier_bristle_back_spray" "19"
+"upgrade_disc_modifier_bristle_back_spray" "*!-damage* damage threshold for Quill Spray trigger<br><br>*!+damage_reduce%* damage reduction from back and sides"
 
 
-"font_disc_modifier_bristle_back_spray" "24"
-"upgrade_disc_modifier_bristle_back_spray_1" "<b><font color='#53ea48'>-10</font></b> Bristleback Quill Spray threshold"
-"upgrade_disc_modifier_bristle_back_spray_2" "<b><font color='#53ea48'>-20</font></b> Bristleback Quill Spray threshold"
-"upgrade_disc_modifier_bristle_back_spray_3" "<b><font color='#53ea48'>-30</font></b> Bristleback Quill Spray threshold"
-
-"talent_disc_modifier_bristle_back_spray_0" "<b><font color='#297016'>-10</font></b>/<b><font color='#297016'>-20</font></b>/<b><font color='#297016'>-30</font></b> Bristleback Quill Spray threshold"
-"talent_disc_modifier_bristle_back_spray_1" "<b><font color='#53ea48'>-10</font></b>/<b><font color='#297016'>-20</font></b>/<b><font color='#297016'>-30</font></b> Bristleback Quill Spray threshold"
-"talent_disc_modifier_bristle_back_spray_2" "<b><font color='#297016'>-10</font></b>/<b><font color='#53ea48'>-20</font></b>/<b><font color='#297016'>-30</font></b> Bristleback Quill Spray threshold"
-"talent_disc_modifier_bristle_back_spray_3" "<b><font color='#297016'>-10</font></b>/<b><font color='#297016'>-20</font></b>/<b><font color='#53ea48'>-30</font></b> Bristleback Quill Spray threshold"
+"font_disc_modifier_bristle_back_return" "19"
+"upgrade_disc_modifier_bristle_back_return" "Enemies within *radius* aoe lose *armor* armor and *slow%* movement speed per sec<br><br>The effect stacks *!max* times"
 
 
-"font_disc_modifier_bristle_back_return" "20"
-"upgrade_disc_modifier_bristle_back_return_1" "When enemy attacks you on rear, it receives physical damage equal to <b><font color='#53ea48'>10%</font></b> of your attack damage"
-"upgrade_disc_modifier_bristle_back_return_2" "When enemy attacks you on rear, it receives physical damage equal to <b><font color='#53ea48'>15%</font></b> of your attack damage"
-"upgrade_disc_modifier_bristle_back_return_3" "When enemy attacks you on rear, it receives physical damage equal to <b><font color='#53ea48'>20%</font></b> of your attack damage"
-
-"talent_disc_modifier_bristle_back_return_0" "When enemy attacks you from on rear, it receives physical damage equal to <b><font color='#297016'>10%</font></b>/<b><font color='#297016'>15%</font></b>/<b><font color='#297016'>20%</font></b> of your attack damage"
-"talent_disc_modifier_bristle_back_return_1" "When enemy attacks you from on rear, it receives physical damage equal to <b><font color='#53ea48'>10%</font></b>/<b><font color='#297016'>15%</font></b>/<b><font color='#297016'>20%</font></b> of your attack damage"
-"talent_disc_modifier_bristle_back_return_2" "When enemy attacks you from on rear, it receives physical damage equal to <b><font color='#297016'>10%</font></b>/<b><font color='#53ea48'>15%</font></b>/<b><font color='#297016'>20%</font></b> of your attack damage"
-"talent_disc_modifier_bristle_back_return_3" "When enemy attacks you from on rear, it receives physical damage equal to <b><font color='#297016'>10%</font></b>/<b><font color='#297016'>15%</font></b>/<b><font color='#53ea48'>20%</font></b> of your attack damage"
+"DOTA_Tooltip_modifier_bristleback_bristleback_custom_armor" "Bristleback"
+"DOTA_Tooltip_modifier_bristleback_bristleback_custom_armor_Description" "Armor reduced by <b><font color='#ff0000'>%dMODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS%</font></b>, movement speed reduced by <b><font color='#ff0000'>%dMODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE%%%</font></b>"
 
 
+"font_disc_modifier_bristle_back_heal" "19"
+"upgrade_disc_modifier_bristle_back_heal" "You gain a shield equal to *!shield%* of your max health<br><br>The shield refreshes if you dont take frontal damage for *timer* sec"
 
-"DOTA_Tooltip_modifier_bristleback_bristleback_reflect_cd"					"Spell Absorb"
-"DOTA_Tooltip_modifier_bristleback_bristleback_reflect_cd_Description"		"Spell absorb cooldown"
-
-"DOTA_Tooltip_modifier_bristleback_bristleback_reflect_ready"					"Spell Absorb"
-"DOTA_Tooltip_modifier_bristleback_bristleback_reflect_ready_Description"		"Absorbs the next spell in the back"
-
-
-"font_disc_modifier_bristle_back_heal" "22"
-"upgrade_disc_modifier_bristle_back_heal_1" "<b><font color='#53ea48'>+5%</font></b> damage reduction from back and sides"
-"upgrade_disc_modifier_bristle_back_heal_2" "<b><font color='#53ea48'>+7.5%</font></b> damage reduction from back and sides"
-"upgrade_disc_modifier_bristle_back_heal_3" "<b><font color='#53ea48'>+10%</font></b> damage reduction from back and sides"
-
-"talent_disc_modifier_bristle_back_heal_0" "<b><font color='#297016'>+5%</font></b>/<b><font color='#297016'>+7.5%</font></b>/<b><font color='#297016'>+10%</font></b> damage reduction from back and sides"
-"talent_disc_modifier_bristle_back_heal_1" "<b><font color='#53ea48'>+5%</font></b>/<b><font color='#297016'>+7.5%</font></b>/<b><font color='#297016'>+10%</font></b> damage reduction from back and sides"
-"talent_disc_modifier_bristle_back_heal_2" "<b><font color='#297016'>+5%</font></b>/<b><font color='#53ea48'>+7.5%</font></b>/<b><font color='#297016'>+10%</font></b> damage reduction from back and sides"
-"talent_disc_modifier_bristle_back_heal_3" "<b><font color='#297016'>+5%</font></b>/<b><font color='#297016'>+7.5%</font></b>/<b><font color='#53ea48'>+10%</font></b> damage reduction from back and sides"
-
-
+"DOTA_Tooltip_modifier_bristleback_bristleback_custom_timer" "Bristleback"
+"DOTA_Tooltip_modifier_bristleback_bristleback_custom_timer_Description" "Shield cooldown"
 
 
 
 
 "font_disc_modifier_bristle_back_damage" "18"
-"upgrade_disc_modifier_bristle_back_damage_1" "Each time Quill Spray procs from back damage, your spell damage increases by <b><font color='#53ea48'>2%</font></b> and your attack speed increases by <b><font color='#53ea48'>10</font></b><br><br>Each stack of effect lasts 8 seconds"
-"upgrade_disc_modifier_bristle_back_damage_2" "Each time Quill Spray procs from back damage, your spell damage increases by <b><font color='#53ea48'>3%</font></b> and your attack speed increases by <b><font color='#53ea48'>15</font></b><br><br>Each stack of effect lasts 8 seconds"
-
-"talent_disc_modifier_bristle_back_damage_0" "Each time Quill Spray procs from back damage, your spell damage increases by <b><font color='#297016'>2%</font></b>/<b><font color='#297016'>3%</font></b> and your attack speed increases by <b><font color='#297016'>10</font></b>/<b><font color='#297016'>15</font></b><br><br>Each stack of effect lasts 8 seconds"
-"talent_disc_modifier_bristle_back_damage_1" "Each time Quill Spray procs from back damage, your spell damage increases by <b><font color='#53ea48'>2%</font></b>/<b><font color='#297016'>3%</font></b> and your attack speed increases by <b><font color='#53ea48'>10</font></b>/<b><font color='#297016'>15</font></b><br><br>Each stack of effect lasts 8 seconds"
-"talent_disc_modifier_bristle_back_damage_2" "Each time Quill Spray procs from back damage, your spell damage increases by <b><font color='#297016'>2%</font></b>/<b><font color='#53ea48'>3%</font></b> and your attack speed increases by <b><font color='#297016'>10</font></b>/<b><font color='#53ea48'>15</font></b><br><br>Each stack of effect lasts 8 seconds"
-"mini_disc_modifier_bristle_back_damage" "Урон в спину дает прибавку к урону"
+"upgrade_disc_modifier_bristle_back_damage" "Enemies near you receive physical damage equal to *!damage%* of your strength per sec<br><br>Quill Spray from back damage increases your strength by *!str*. Each stack of the effect lasts *duration* sec"
+"mini_disc_modifier_bristle_back_damage" "Quill Spray from back damage increases strength"
 
 
-"DOTA_Tooltip_modifier_bristleback_bristleback_damage_count"					"Enrage"
-"DOTA_Tooltip_modifier_bristleback_bristleback_damage_count_Description"		"Spell damage increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE%%%</font></b> attack speed increased by <<b><font color='#53ea48'>%dMODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT%</font></b>"
+"DOTA_Tooltip_modifier_bristleback_bristleback_custom_str_count" "Enrage"
+"DOTA_Tooltip_modifier_bristleback_bristleback_custom_str_count_Description" "Strength increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_STATS_STRENGTH_BONUS%</font></b>"
 
 
+"font_disc_modifier_bristle_back_reflect" "18"
+"upgrade_disc_modifier_bristle_back_reflect" "When enemy casts a targeted spell to your back, you gain a *!duration* sec effect that blocks 1 targeted spell and restores *!heal%* health<br><br>Cooldown: *cd* sec"
+"mini_disc_modifier_bristle_back_reflect" "Absorbs spells from the back"
 
 
-"font_disc_modifier_bristle_back_reflect" "24"
-"upgrade_disc_modifier_bristle_back_reflect_1" "Once every <b><font color='#53ea48'>12</font></b> seconds you absorb an ability or an item directed at your back"
-"mini_disc_modifier_bristle_back_reflect" "Absorbs spells in the back"
+"DOTA_Tooltip_modifier_bristleback_bristleback_custom_reflect_cd" "Spell Absorb"
+"DOTA_Tooltip_modifier_bristleback_bristleback_custom_reflect_cd_Description" "Spell Absorption Cooldown"
 
-
+"DOTA_Tooltip_modifier_bristleback_bristleback_custom_reflect_ready" "Spell Absorb"
+"DOTA_Tooltip_modifier_bristleback_bristleback_custom_reflect_ready_Description" "Absorbs a targeted spell, restoring <b><font color='#53ea48'>%fMODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE%%%</font></b> health per second"
 
 
 "font_disc_modifier_bristle_back_ground" "18"
-"upgrade_disc_modifier_bristle_back_ground_1" "After Quill Spray procs from back damage 5 times, you heal for <b><font color='#53ea48'>6%</font></b> health and taunt nearby enemies for <b><font color='#53ea48'>2</font></b> sec<br><br>Cooldown: 8 seconds"
-"mini_disc_modifier_bristle_back_ground" "Can taunt nearby enemies after receiving damage"
-
-"DOTA_Tooltip_modifier_bristleback_bristleback_taunt_stack"					"Bristleback"
-"DOTA_Tooltip_modifier_bristleback_bristleback_taunt_stack_Description"		"After Quill Spray procs from back damage, you can taunt enemies nearby"
-
-"DOTA_Tooltip_modifier_bristleback_bristleback_taunt_cd"					"Bristleback"
-"DOTA_Tooltip_modifier_bristleback_bristleback_taunt_cd_Description"		"Taunt cooldown"
+"upgrade_disc_modifier_bristle_back_ground" "Every *cd* sec, your attack taunts the target for *!taunt* sec and has increased by *!range* range<br><br>Quill Spray triggers from back damage reduces effect cooldown by *cd_reduce* sec"
+"mini_disc_modifier_bristle_back_ground" "Attack can spore the enemy"
 
 
 
+"font_disc_modifier_bristle_back_legendary" "17"
+"upgrade_disc_modifier_bristle_back_legendary" "New ability<br>Cooldown: *cd* sec<br><br>For *!duration* sec Bristleback passive effect works from any side, and the damage threshold for Quill Spray triggers reduces by *!spray_damage*<br><br>The ability can be cast during stun and silence"
+"mini_disc_modifier_bristle_back_legendary" "New ability<br>Defends from all sides"
 
+"DOTA_Tooltip_modifier_bristleback_bristleback_custom_legendary_active" "Flawless Protection"
+"DOTA_Tooltip_modifier_bristleback_bristleback_custom_legendary_active_Description" "Bristleback works from any direction, and the damage threshold for Quill Spray reduces"
 
-"font_disc_modifier_bristle_back_legendary" "18"
-"upgrade_disc_modifier_bristle_back_legendary" "New ability<br>Cooldown: *cd* sec<br><br>For *!duration* seconds passive Bristleback effect works from any side<br><br>Effect also reduces damage threshold for triggering Quill Spray by *!spray_damage*"
-"mini_disc_modifier_bristle_back_legendary" "Active: Protects from any side"
-
-"DOTA_Tooltip_modifier_bristleback_bristleback_legendary_active"					"Flawless Protection"
-"DOTA_Tooltip_modifier_bristleback_bristleback_legendary_active_Description"		"Bristleback works from either side, Quill Spray threshold reduced by 50"
 
 
 
@@ -6988,87 +6881,42 @@
 
 
 "DOTA_Tooltip_modifier_custom_bristleback_warpath_buff"							"Warpath"
-"DOTA_Tooltip_modifier_custom_bristleback_warpath_buff_Description"				"Moving %dMODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE%%% faster and dealing %dMODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE% bonus damage."									
+"DOTA_Tooltip_modifier_custom_bristleback_warpath_buff_Description"				"Moving %dMODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE%%% faster and dealing %dMODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE% bonus damage.<br><br>Attack speed increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT%</font></b><br><br>Cooldowns reduced by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_COOLDOWN_PERCENTAGE%%%</font></b>"									
 
 
 
-
-
-
-
-"font_disc_modifier_bristle_warpath_damage" "23"
-"upgrade_disc_modifier_bristle_warpath_damage" "*!+damage* Warpath damage per stack"
-
+"font_disc_modifier_bristle_warpath_damage" "20"
+"upgrade_disc_modifier_bristle_warpath_damage" "*!+damage* damage and *!+speed* attack speed per each Warpath stack"
 
 "font_disc_modifier_bristle_warpath_resist" "19"
-"upgrade_disc_modifier_bristle_warpath_resist_1" "Casting abilities near enemies increases your armor by 1.5 and your attack speed by 10<br><br>Effect stacks <b><font color='#53ea48'>4</font></b> times"
-"upgrade_disc_modifier_bristle_warpath_resist_2" "Casting abilities near enemies increases your armor by 1.5 and your attack speed by 10<br><br>Effect stacks <b><font color='#53ea48'>6</font></b> times"
-"upgrade_disc_modifier_bristle_warpath_resist_3" "Casting abilities near enemies increases your armor by 1.5 and your attack speed by 10<br><br>Effect stacks <b><font color='#53ea48'>8</font></b> times"
+"upgrade_disc_modifier_bristle_warpath_resist" "Your attacks increase your armor by *!armor* and status resistance by *!status%* for *duration* sec<br><br>Effect stacks *max* times"
 
-"talent_disc_modifier_bristle_warpath_resist_0" "Casting abilities near enemies increases your armor by 1.5 and your attack speed by 10<br><br>Effect stacks <b><font color='#297016'>4</font></b>/<b><font color='#297016'>6</font></b>/<b><font color='#297016'>8</font></b> timesа"
-"talent_disc_modifier_bristle_warpath_resist_1" "Casting abilities near enemies increases your armor by 1.5 and your attack speed by 10<br><br>Effect stacks <b><font color='#53ea48'>4</font></b>/<b><font color='#297016'>6</font></b>/<b><font color='#297016'>8</font></b> times"
-"talent_disc_modifier_bristle_warpath_resist_2" "Casting abilities near enemies increases your armor by 1.5 and your attack speed by 10<br><br>Effect stacks <b><font color='#297016'>4</font></b>/<b><font color='#53ea48'>6</font></b>/<b><font color='#297016'>8</font></b> times"
-"talent_disc_modifier_bristle_warpath_resist_3" "Casting abilities near enemies increases your armor by 1.5 and your attack speed by 10<br><br>Effect stacks <b><font color='#297016'>4</font></b>/<b><font color='#297016'>6</font></b>/<b><font color='#53ea48'>8</font></b> times"
+"DOTA_Tooltip_modifier_custom_bristleback_warpath_resist" "Warpath"
+"DOTA_Tooltip_modifier_custom_bristleback_warpath_resist_Description" "Armor increased by <b><font color='#53ea48'>%fMODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS%</font></b>, status resistance increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING%%%</font></b>"
 
+"font_disc_modifier_bristle_warpath_pierce" "19"
+"upgrade_disc_modifier_bristle_warpath_pierce" "*!+range* attack range<br><br>Attacks has a *!chance%* chance to slow the target by *slow%* for *duration* sec"
 
-"DOTA_Tooltip_modifier_custom_bristleback_warpath_speed"					"Warpath"
-"DOTA_Tooltip_modifier_custom_bristleback_warpath_speed_Description"		"Armor increased by <b><font color='#53ea48'>%fMODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS%</font></b>, attack speed increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT%</font></b>"
+"font_disc_modifier_bristle_warpath_bash" "18"
+"upgrade_disc_modifier_bristle_warpath_bash" "Casting abilities has *chance%* chance to increase your attack damage by *!damage%* and lifesteal from attack by *!heal%*<br><br>Effect duration: *duration* sec"
+"mini_disc_modifier_bristle_warpath_bash" "Casting abilities can increase attack damage and lifesteal"
 
-
-
-"font_disc_modifier_bristle_warpath_pierce" "20"
-"upgrade_disc_modifier_bristle_warpath_pierce_1" "Your attacks have a chance to greatly slow enemy for 0.5s and ignore 20% of its armor<br><br>Chance: <b><font color='#53ea48'>20%</font></b>"
-"upgrade_disc_modifier_bristle_warpath_pierce_2" "Your attacks have a chance to greatly slow enemy for 0.5s and ignore 20% of its armor<br><br>Chance: <b><font color='#53ea48'>30%</font></b>"
-"upgrade_disc_modifier_bristle_warpath_pierce_3" "Your attacks have a chance to greatly slow enemy for 0.5s and ignore 20% of its armor<br><br>Chance: <b><font color='#53ea48'>40%</font></b>"
-
-"talent_disc_modifier_bristle_warpath_pierce_0" "Your attacks have a chance to greatly slow enemy for 0.5s and ignore 20% of its armor<br><br>Chance: <b><font color='#297016'>20%</font></b>/<b><font color='#297016'>30%</font></b>/<b><font color='#297016'>40%</font></b>"
-"talent_disc_modifier_bristle_warpath_pierce_1" "Your attacks have a chance to greatly slow enemy for 0.5s and ignore 20% of its armor<br><br>Chance: <b><font color='#53ea48'>20%</font></b>/<b><font color='#297016'>30%</font></b>/<b><font color='#297016'>40%</font></b>"
-"talent_disc_modifier_bristle_warpath_pierce_2" "Your attacks have a chance to greatly slow enemy for 0.5s and ignore 20% of its armor<br><br>Chance: <b><font color='#297016'>20%</font></b>/<b><font color='#53ea48'>30%</font></b>/<b><font color='#297016'>40%</font></b>"
-"talent_disc_modifier_bristle_warpath_pierce_3" "Your attacks have a chance to greatly slow enemy for 0.5s and ignore 20% of its armor<br><br>Chance: <b><font color='#297016'>20%</font></b>/<b><font color='#297016'>30%</font></b>/<b><font color='#53ea48'>40%</font></b>"
-
-
-
-
-
-"font_disc_modifier_bristle_warpath_bash" "19" 
-"upgrade_disc_modifier_bristle_warpath_bash_1" "Each time you use an ability, you can gain the 'Rampage' effect<br><br>Under this effect, your attack damage increases by 20%, and you gain 50% lifesteal<br><br>Proc chance: <b><font color='#53ea48'>15%</font></b>"
-"upgrade_disc_modifier_bristle_warpath_bash_2" "Each time you use an ability, you can gain the 'Rampage' effect<br><br>Under this effect, your attack damage increases by 20%, and you gain 50% lifesteal<br><br>Proc chance: <b><font color='#53ea48'>25%</font></b>"
-
-"talent_disc_modifier_bristle_warpath_bash_0" "Each time you use an ability, you can gain the 'Rampage' effect<br><br>Under this effect, your attack damage increases by 20%, and you gain 50% lifesteal<br><br>Proc chance: <b><font color='#297016'>15%</font></b>/<b><font color='#297016'>25%</font></b>"
-"talent_disc_modifier_bristle_warpath_bash_1" "Each time you use an ability, you can gain the 'Rampage' effect<br><br>Under this effect, your attack damage increases by 20%, and you gain 50% lifesteal<br><br>Proc chance: <b><font color='#53ea48'>15%</font></b>/<b><font color='#297016'>25%</font></b>"
-"talent_disc_modifier_bristle_warpath_bash_2" "Each time you use an ability, you can gain the 'Rampage' effect<br><br>Under this effect, your attack damage increases by 20%, and you gain 50% lifesteal<br><br>Proc chance: <b><font color='#297016'>15%</font></b>/<b><font color='#53ea48'>25%</font></b>"
-"mini_disc_modifier_bristle_warpath_bash" "Each time you use an ability, you can gain empower"
-
-
-"DOTA_Tooltip_modifier_custom_bristleback_warpath_rampage"					"Rampage"
-"DOTA_Tooltip_modifier_custom_bristleback_warpath_rampage_Description"		"Attack damage increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE%%%</font></b>, lifesteal increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%%%</font></b>"
-
-
+"DOTA_Tooltip_modifier_custom_bristleback_warpath_rampage" "Rampage"
+"DOTA_Tooltip_modifier_custom_bristleback_warpath_rampage_Description" "Attack damage increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE%%%</font></b>, receives <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%%%</font></b> lifesteal"
 
 "font_disc_modifier_bristle_warpath_max" "18"
-"upgrade_disc_modifier_bristle_warpath_max_1" "Each your attack increases your status resistance by <b><font color='#53ea48'>5%</font></b> and movespeed by <b><font color='#53ea48'>3%</font></b> for 5 seconds<br><br>Effect stacks 8 times"
-"mini_disc_modifier_bristle_warpath_max" "Attacks increases status resistance"
+"upgrade_disc_modifier_bristle_warpath_max" "*!+max* max Warpath stacks<br><br>Attacks have a *!chance%* chance to grant 1 Warpath stack<br><br>While you have max Warpath stacks, your cooldowns reduce by *!cdr%*"
+"mini_disc_modifier_bristle_warpath_max" "Warpath reduces item and ability cooldowns"
 
-"DOTA_Tooltip_modifier_custom_bristleback_warpath_lowhp"					"Furious Regeneration"
-"DOTA_Tooltip_modifier_custom_bristleback_warpath_lowhp_Description"		"Gains magic immunity"
-"DOTA_Tooltip_modifier_custom_bristleback_warpath_lowhp_cd"					"Furious Regeneration cooldown"
-"DOTA_Tooltip_modifier_custom_bristleback_warpath_lowhp_cd_Description"					"Furious Regeneration cooldown"
+"font_disc_modifier_bristle_warpath_lowhp" "18"
+"upgrade_disc_modifier_bristle_warpath_lowhp" "When your health drops below *health%*, you apply a strong dispel, gain Black King Bar effect for *!bkb* sec and maximum Warpath stacks<br><br>Cooldown: *cd* seconds"
+"mini_disc_modifier_bristle_warpath_lowhp" "At low health, gains magic immunity"
 
-
-"DOTA_Tooltip_modifier_custom_bristleback_warpath_resist"					"Rampage"
-"DOTA_Tooltip_modifier_custom_bristleback_warpath_resist_Description"		"Status resistance increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING%%%</font></b>, movespeed increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE%%%</font></b>"
-
-
-"font_disc_modifier_bristle_warpath_lowhp" "19"
-"upgrade_disc_modifier_bristle_warpath_lowhp_1" "When your health drops below <b><font color='#53ea48'>30%</font></b>, you apply a strong dispel, gain 3 charges of Warpath and Black King Bar effect for 2 seconds<br><br>Cooldown: 40 seconds"
-"mini_disc_modifier_bristle_warpath_lowhp" "On low health gain magic immunity"
-
+"DOTA_Tooltip_modifier_custom_bristleback_warpath_lowhp_cd" "Spell Immunity cooldown"
 
 "font_disc_modifier_bristle_warpath_legendary" "17"
-"upgrade_disc_modifier_bristle_warpath_legendary" "Active (Cooldown: 12 seconds)<br><br>After a short delay, hits the ground with a hammer, inflicting <b><font color='#fb9531'>400%</font></b> critical damage to all enemies in front and stunning them for 1.5 seconds<br><br>Ability cooldown decreases to 2 seconds if it does not hit enemies"
-"mini_disc_modifier_bristle_warpath_legendary" "Active<br>Deals a devastating aoe strike"
-
-
+"upgrade_disc_modifier_bristle_warpath_legendary" "Active<br>Cooldown: *cd* sec<br><br>After preparing for *cast* sec, hits the ground, causing *!damage%* critical damage to enemies and stunning them for *!stun* sec<br><br>Your attacks reduce abilities cast time by *!cast_inc* sec, stacking *max* times"
+"mini_disc_modifier_bristle_warpath_legendary" "Active<br>Deals a crushing blow to an area"
 
 
 
@@ -7842,8 +7690,8 @@
 
 
 
-"font_disc_modifier_void_step_1" "21"
-"upgrade_disc_modifier_void_step_1" "Astral Step mark damage increases by *!damage%* of your attack damage"
+"font_disc_modifier_void_step_1" "19"
+"upgrade_disc_modifier_void_step_1" "*!+attack%* attack damage<br><br>Astral Step mark damage increases by *!damage%* of attack damage"
 
 "font_disc_modifier_void_step_2" "23"
 "upgrade_disc_modifier_void_step_2" "*!-cd* sec Astral Step cooldown"
@@ -10717,7 +10565,7 @@
 "DOTA_Tooltip_modifier_axe_culling_blade_custom_Description"		"Axe releases a war cry, giving all nearby allies %dMODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE%%% bonus movement and %dMODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS% bonus armor"
 
 "DOTA_Tooltip_ability_axe_culling_blade_custom_legendary"										"Siegebreaker"
-"DOTA_Tooltip_ability_axe_culling_blade_custom_legendary_Description"							"You teleport to the target and deal pure damage, based on its maximum health. You also gain +%speed% attack speed for %duration% secк<br><br>If target health level remains higher then %health%%%, cooldown reduces to %cd_low% sec"
+"DOTA_Tooltip_ability_axe_culling_blade_custom_legendary_Description"							"You teleport to the target and deal pure damage, based on its current health. You also gain +%speed% attack speed for %duration% secк<br><br>If target health level remains higher then %health%%%, cooldown reduces to %cd_low% sec"
 "DOTA_Tooltip_ability_axe_culling_blade_custom_legendary_damage"							"%DAMAGE FROM MAX. HEALTH:"
 
 
@@ -10767,7 +10615,7 @@
 
 
 "font_disc_modifier_axe_culling_legendary" "17"
-"upgrade_disc_modifier_axe_culling_legendary" "New Ability<br>Cooldown: *cd* sec<br><br>You teleport to the target, deal pure damage equal to *!damage%* of its max health, and gain *!+speed* attack speed by *duration* sec<br><br>If the targets health remains above *health%*, ability cooldown reduces to *!cd_low* sec"
+"upgrade_disc_modifier_axe_culling_legendary" "New Ability<br>Cooldown: *cd* sec<br><br>You teleport to the target, deal pure damage equal to *!damage%* of its current health, and gain *!+speed* attack speed by *duration* sec<br><br>If the targets health remains above *health%*, ability cooldown reduces to *!cd_low* sec"
 "mini_disc_modifier_axe_culling_legendary" "New ability: You teleport to the target and deal damage"
 
 
@@ -13583,114 +13431,63 @@ OTA_Tooltip_modifier_templar_assassin_psi_blades_custom_psi"				"Psi Blades"
 
 
 "DOTA_Tooltip_modifier_bloodseeker_bloodrage_custom"					"Bloodrage"
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_custom_Description"		"Attack speed increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT%</font></b>, spell amplification increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE%%%</font></b><br><br>Loses <b><font color='#ff0000'>%fMODIFIER_PROPERTY_TOOLTIP%%%</font></b> helth per second<br><br>All outgoing damage increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE%%%</font></b>"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_custom_Description"		"Attack speed increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT%</font></b>, spell amplification increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE%%%</font></b>"
 
 
 
-
-"npc_dota_hero_bloodseeker_legendary_1" "Bloodrage greatly increases your damage but costs more health"
-"npc_dota_hero_bloodseeker_legendary_2" "Blood Rite consumes your health and deals increased damage"
-"npc_dota_hero_bloodseeker_legendary_3" "Active<br><br>Grants maximum Thirst bonuses and vision over heroes. Kills permanently increase strength and agility"
+"npc_dota_hero_bloodseeker_legendary_1" "Bloodrage becomes toggleable and increases attack speed and damage over time"
+"npc_dota_hero_bloodseeker_legendary_2" "Blood Rite consumes your health<br><br>Blood Rite damage increases by all incoming damage"
+"npc_dota_hero_bloodseeker_legendary_3" "Active<br><br>Receives maximum Thirst bonuses and vision on heroes. Kills reduce the cooldown of the ability"
 "npc_dota_hero_bloodseeker_legendary_4" "New Ability<br><br>Pulls the target and significantly increases its incoming damage"
 
 
-
-"hero_change_npc_dota_hero_bloodseeker_1" "Gives bonuses only for <b><font color='#ff0000'>1</font></b> hero with lowest health level"
-"hero_change_npc_dota_hero_bloodseeker_2" "Max. movespeed increased from 40% to <b><font color='#53ea48'>50%</font></b>"
-"hero_change_npc_dota_hero_bloodseeker_3" "Distance threshold increased from 1300 to <b><font color='#53ea48'>1800</font></b>"
-"hero_change_npc_dota_hero_bloodseeker_4" "Damage/health loss reduced from 7%/7%  to <b><font color='#ff0000'>4%</font></b>/<b><font color='#53ea48'>6%</font></b>"
-
+"hero_change_npc_dota_hero_bloodseeker_1" "<b><font color='#53ea48'>10</font></b> sec cooldown starts after the ritual ends"
+"hero_change_npc_dota_hero_bloodseeker_2" "Bonuses are only given for <b><font color='#ff0000'>1</font></b> hero with the lowest health level"
+"hero_change_npc_dota_hero_bloodseeker_3" "Max movement speed increased from 40% to <b><font color='#53ea48'>50%</font></b>"
+"hero_change_npc_dota_hero_bloodseeker_4" "Cooldown reduced to <b><font color='#53ea48'>60</font></b> sec, deals damage to creeps"
+"hero_change_npc_dota_hero_bloodseeker_5" "Distance threshold increased from 1300 to <b><font color='#53ea48'>1800</font></b>"
+"hero_change_npc_dota_hero_bloodseeker_6" "Damage/Health Loss changed. Grants a shield for attacks"
 
 
 
 
 "font_disc_modifier_bloodseeker_bloodrage_1" "19"
-"upgrade_disc_modifier_bloodseeker_bloodrage_1_1" "Under Bloodrage effect, you heal for <b><font color='#53ea48'>6%</font></b> of any damage dealt<br><br>Effect is 3x weaker against creeps"
-"upgrade_disc_modifier_bloodseeker_bloodrage_1_2" "Under Bloodrage effect, you heal for <b><font color='#53ea48'>9%</font></b> of any damage dealt<br><br>Effect is 3x weaker against creeps"
-"upgrade_disc_modifier_bloodseeker_bloodrage_1_3" "Under Bloodrage effect, you heal for <b><font color='#53ea48'>12%</font></b> of any damage dealt<br><br>Effect is 3x weaker against creeps"
+"upgrade_disc_modifier_bloodseeker_bloodrage_1" "*!+range* attack range<br><br>Bloodrage attacks increase status resistance by *!status%* for *duration* sec"
 
-"talent_disc_modifier_bloodseeker_bloodrage_1_0" "Under Bloodrage effect, you heal for <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#297016'>12%</font></b> of any damage dealt<br><br>Effect is 3x weaker against creeps"
-"talent_disc_modifier_bloodseeker_bloodrage_1_1" "Under Bloodrage effect, you heal for <b><font color='#53ea48'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#297016'>12%</font></b> of any damage dealt<br><br>Effect is 3x weaker against creeps"
-"talent_disc_modifier_bloodseeker_bloodrage_1_2" "Under Bloodrage effect, you heal for <b><font color='#297016'>6%</font></b>/<b><font color='#53ea48'>9%</font></b>/<b><font color='#297016'>12%</font></b> of any damage dealt<br><br>Effect is 3x weaker against creeps"
-"talent_disc_modifier_bloodseeker_bloodrage_1_3" "Under Bloodrage effect, you heal for <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#53ea48'>12%</font></b> of any damage dealt<br><br>Effect is 3x weaker against creeps"
+"font_disc_modifier_bloodseeker_bloodrage_2" "20"
+"upgrade_disc_modifier_bloodseeker_bloodrage_2" "*!+speed* attack speed from Bloodrage<br><br>*!+damage%* spell damage from Bloodrage"
 
+"font_disc_modifier_bloodseeker_bloodrage_3" "19"
+"upgrade_disc_modifier_bloodseeker_bloodrage_3" "Bloodrage attacks reduce the targets movement speed by *!move%* and attack speed by *!attack* by *duration* sec<br><br>Stacks *max* times"
 
-"font_disc_modifier_bloodseeker_bloodrage_2" "21"
-"upgrade_disc_modifier_bloodseeker_bloodrage_2_1" "<b><font color='#53ea48'>+20</font></b> Bloodrage attack speed<br><br><b><font color='#53ea48'>+4%</font></b> Bloodrage spell amplification"
-"upgrade_disc_modifier_bloodseeker_bloodrage_2_2" "<b><font color='#53ea48'>+30</font></b> Bloodrage attack speed<br><br><b><font color='#53ea48'>+6%</font></b> Bloodrage spell amplification"
-"upgrade_disc_modifier_bloodseeker_bloodrage_2_3" "<b><font color='#53ea48'>+40</font></b> Bloodrage attack speed<br><br><b><font color='#53ea48'>+8%</font></b> Bloodrage spell amplification"
-
-"talent_disc_modifier_bloodseeker_bloodrage_2_0" "<b><font color='#297016'>+20</font></b>/<b><font color='#297016'>+30</font></b>/<b><font color='#297016'>+40</font></b> Bloodrage attack speed<br><br><b><font color='#297016'>+4%</font></b>/<b><font color='#297016'>+6%</font></b>/<b><font color='#297016'>+8%</font></b> Bloodrage spell amplification"
-"talent_disc_modifier_bloodseeker_bloodrage_2_1" "<b><font color='#53ea48'>+20</font></b>/<b><font color='#297016'>+30</font></b>/<b><font color='#297016'>+40</font></b> Bloodrage attack speed<br><br><b><font color='#53ea48'>+4%</font></b>/<b><font color='#297016'>+6%</font></b>/<b><font color='#297016'>+8%</font></b> Bloodrage spell amplification"
-"talent_disc_modifier_bloodseeker_bloodrage_2_2" "<b><font color='#297016'>+20</font></b>/<b><font color='#53ea48'>+30</font></b>/<b><font color='#297016'>+40</font></b> Bloodrage attack speed<br><br><b><font color='#297016'>+4%</font></b>/<b><font color='#53ea48'>+6%</font></b>/<b><font color='#297016'>+8%</font></b> Bloodrage spell amplification"
-"talent_disc_modifier_bloodseeker_bloodrage_2_3" "<b><font color='#297016'>+20</font></b>/<b><font color='#297016'>+30</font></b>/<b><font color='#53ea48'>+40</font></b> Bloodrage attack speed<br><br><b><font color='#297016'>+4%</font></b>/<b><font color='#297016'>+6%</font></b>/<b><font color='#53ea48'>+8%</font></b> Bloodrage spell amplification"
-
-
-
-
-"font_disc_modifier_bloodseeker_bloodrage_3" "18"
-"upgrade_disc_modifier_bloodseeker_bloodrage_3_1" "After 4 seconds under Bloodrage effect, your incoming damage reduces by <b><font color='#53ea48'>6%</font></b>, and movespeed increases by <b><font color='#53ea48'>20</font></b><br><br>Effect works until Bloodrage end"
-"upgrade_disc_modifier_bloodseeker_bloodrage_3_2" "After 4 seconds under Bloodrage effect, your incoming damage reduces by <b><font color='#53ea48'>9%</font></b>, and movespeed increases by <b><font color='#53ea48'>30</font></b><br><br>Effect works until Bloodrage end"
-"upgrade_disc_modifier_bloodseeker_bloodrage_3_3" "After 4 seconds under Bloodrage effect, your incoming damage reduces by <b><font color='#53ea48'>12%</font></b>, and movespeed increases by <b><font color='#53ea48'>40</font></b><br><br>Effect works until Bloodrage end"
-
-
-"talent_disc_modifier_bloodseeker_bloodrage_3_0" "After 4 seconds under Bloodrage effect, your incoming damage reduces by <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#297016'>12%</font></b>, and movespeed increases by <b><font color='#297016'>20</font></b>/<b><font color='#297016'>30</font></b>/<b><font color='#297016'>40</font></b><br><br>Effect works until Bloodrage end"
-"talent_disc_modifier_bloodseeker_bloodrage_3_1" "After 4 seconds under Bloodrage effect, your incoming damage reduces by <b><font color='#53ea48'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#297016'>12%</font></b>, and movespeed increases by <b><font color='#53ea48'>20</font></b>/<b><font color='#297016'>30</font></b>/<b><font color='#297016'>40</font></b><br><br>Effect works until Bloodrage end"
-"talent_disc_modifier_bloodseeker_bloodrage_3_2" "After 4 seconds under Bloodrage effect, your incoming damage reduces by <b><font color='#297016'>6%</font></b>/<b><font color='#53ea48'>9%</font></b>/<b><font color='#297016'>12%</font></b>, and movespeed increases by <b><font color='#297016'>20</font></b>/<b><font color='#53ea48'>30</font></b>/<b><font color='#297016'>40</font></b><br><br>Effect works until Bloodrage end"
-"talent_disc_modifier_bloodseeker_bloodrage_3_3" "After 4 seconds under Bloodrage effect, your incoming damage reduces by <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#53ea48'>12%</font></b>, and movespeed increases by <b><font color='#297016'>20</font></b>/<b><font color='#297016'>30</font></b>/<b><font color='#53ea48'>40</font></b><br><br>Effect works until Bloodrage end"
-
-
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_incoming"					"Bloodrage"
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_incoming_Description"		"Incoming damage reduced by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE%%%</font></b>, movespeed increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT%</font></b>"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_slow" "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_slow_Description" "Movement speed reduced by <b><font color='#ff0000'>%dMODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE%%%</font></b>, attack speed reduced by <b><font color='#ff0000'>%dMODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT%</font></b>"
 
 
 "font_disc_modifier_bloodseeker_bloodrage_4" "18"
-"upgrade_disc_modifier_bloodseeker_bloodrage_4_1" "Bloodrage attacks leave the target bleeding, dealing 70 magic damage over 5 seconds and healing you for 100% of the damage dealt<br><br>The effect stacks <b><font color='#53ea48'>5</font></b> times"
-"upgrade_disc_modifier_bloodseeker_bloodrage_4_2" "Bloodrage attacks leave the target bleeding, dealing 70 magic damage over 5 seconds and healing you for 100% of the damage dealt<br><br>The effect stacks <b><font color='#53ea48'>8</font></b> times"
+"upgrade_disc_modifier_bloodseeker_bloodrage_4" "Your attacks leave a bleed that deals *!damage* magic damage per second and heals for *heal%* of the damage dealt<br><br>Each bleed lasts *duration* seconds"
+"mini_disc_modifier_bloodseeker_bloodrage_4" "Attacks leave a bleed and heal"
 
-"talent_disc_modifier_bloodseeker_bloodrage_4_0" "Bloodrage attacks leave the target bleeding, dealing 70 magic damage over 5 seconds and healing you for 100% of the damage dealt<br><br>The effect stacks <b><font color='#297016'>5</font></b>/<b><font color='#297016'>8</font></b> times"
-"talent_disc_modifier_bloodseeker_bloodrage_4_1" "Bloodrage attacks leave the target bleeding, dealing 70 magic damage over 5 seconds and healing you for 100% of the damage dealt<br><br>The effect stacks <b><font color='#53ea48'>5</font></b>/<b><font color='#297016'>8</font></b> times"
-"talent_disc_modifier_bloodseeker_bloodrage_4_2" "Bloodrage attacks leave the target bleeding, dealing 70 magic damage over 5 seconds and healing you for 100% of the damage dealt<br><br>The effect stacks <b><font color='#297016'>5</font></b>/<b><font color='#53ea48'>8</font></b> times"
-"mini_disc_modifier_bloodseeker_bloodrage_4" "Bloodrage attacks leave the target bleeding"
-
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_blood"					"Bloodrage"
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_blood_Description"		"Receives <b><font color='#ff0000'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> magical damage per second"
-
-
-
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_blood_count" "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_blood_count_Description" "Takes magic damage"
 
 "font_disc_modifier_bloodseeker_bloodrage_5" "18"
-"upgrade_disc_modifier_bloodseeker_bloodrage_5_1" "After 8 Bloodrage attacks, you receive a shield, that absorbs all damage and increases status resistance by <b><font color='#53ea48'>25%</font></b><br><br>Shield durability: <b><font color='#53ea48'>15%</font></b> of your max. health<br><br>Cooldown: 8 sec"
-"mini_disc_modifier_bloodseeker_bloodrage_5" "Bloodrage attacks grant shield, thats absorbs damage"
-
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_cd"					"Bloodrage"
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_cd_Description"		"Bloodrage shield cooldown"
-
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_count"					"Bloodrage"
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_count_Description"		"Bloodrage attacks can grant you a shield"
-
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield"					"Bloodrage"
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_Description"		"The shield absorbs all incoming damage. Status resistance increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING%%%</font></b>"
+"upgrade_disc_modifier_bloodseeker_bloodrage_5" "Bloodrage no longer costs mana and can be cast while stunned<br><br>Bloodrage reduces incoming damage by *!damage_reduce%* while stunned, disarmed, or hexed. The effect persists for *duration* seconds"
+"mini_disc_modifier_bloodseeker_bloodrage_5" "Bloodrage reduces damage while losing control"
 
 
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_reduce" "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_reduce_Description" "Incoming damage reduced by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE%%%</font></b>"
 
 
-"font_disc_modifier_bloodseeker_bloodrage_6" "19"
-"upgrade_disc_modifier_bloodseeker_bloodrage_6_1" "While your health is below 30%, Bloodrage heals you <b><font color='#53ea48'>1.5%</font></b> health per second instead of dealing damage"
+"font_disc_modifier_bloodseeker_bloodrage_6" "18"
+"upgrade_disc_modifier_bloodseeker_bloodrage_6" "While you are below *health%* health, Bloodrage reduces your base attack time to *!bva* and heals you *!heal%* health per second instead of dealing damage"
 "mini_disc_modifier_bloodseeker_bloodrage_6" "Bloodrage heals on low health"
 
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_tracker"					"Bloodrage"
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_tracker_Description"		"Regenerates <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%%%</font></b> health per second"
-
-
-
-
-"font_disc_modifier_bloodseeker_bloodrage_7" "16"
-"upgrade_disc_modifier_bloodseeker_bloodrage_7" "Bloodrage becomes a toggle ability<br><br>Each second, Bloodrage increases your outgoing damage by <b><font color='#fb9531'>2%</font></b>, but takes 0.3% more health<br><br>After 10 stacks, your damage increases by an additional <b><font color='#fb9531'>10%</font></b>, but you occasionally get taunted to the nearest enemy for 2 seconds"
+"font_disc_modifier_bloodseeker_bloodrage_7" "17"
+"upgrade_disc_modifier_bloodseeker_bloodrage_7" "Bloodrage becomes toggleable and grants up to *!+speed* attack speed and *!+damage%* spell damage over *max_timer* sec of duration<br><br>If you do not attack while under the effect, the 'Madness' bar fills. When it's full, Bloodrage will end and you'll lose control for *taunt* sec"
 "mini_disc_modifier_bloodseeker_bloodrage_7" "Bloodrage becomes a toggle ability"
 
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_taunt"					"Bloodrage"
-"DOTA_Tooltip_modifier_bloodseeker_bloodrage_taunt_Description"		"Movespeed increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE%%%</font></b>, taunted to the nearest enemy"
 
 
 
@@ -13706,11 +13503,8 @@ OTA_Tooltip_modifier_templar_assassin_psi_blades_custom_psi"				"Psi Blades"
 
 
 
-
-
 "DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_end"									"Blood Rite"
 "DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_end_Description"						"Instantly end Blood Rite ritual"
-
 
 
 "DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_silence"					"Blood Rite"
@@ -13719,90 +13513,43 @@ OTA_Tooltip_modifier_templar_assassin_psi_blades_custom_psi"				"Psi Blades"
 
 
 
+"font_disc_modifier_bloodseeker_bloodrite_1" "19"
+"upgrade_disc_modifier_bloodseeker_bloodrite_1" "Blood Rite Ritual increases incoming damage to enemies by *!damage%*<br><br>The effect persists for *duration* sec if ability hits the enemy"
+
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_slow_blood" "Blood Rite"
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_slow_blood_Description" "Incoming damage increased by <b><font color='#ff0000'>%dMODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE%%%</font></b>"
+
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_slow_aura" "Blood Rite"
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_slow_aura_Description" "Incoming damage increased by <b><font color='#ff0000'>%dMODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE%%%</font></b>, movement speed reduced by <b><font color='#ff0000'> %dMODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE%%%</font></b>"
 
 
+"font_disc_modifier_bloodseeker_bloodrite_2" "20"
+"upgrade_disc_modifier_bloodseeker_bloodrite_2" "If you were in the Blood Rite area, you restore *!heal%* health"
 
-"font_disc_modifier_bloodseeker_bloodrite_1" "20"
-"upgrade_disc_modifier_bloodseeker_bloodrite_1_1" "Before dealing damage, Blood Rite increases targets incoming damage by <b><font color='#53ea48'>6%</font></b> for 5 sec"
-"upgrade_disc_modifier_bloodseeker_bloodrite_1_2" "Before dealing damage, Blood Rite increases targets incoming damage by <b><font color='#53ea48'>9%</font></b> for 5 sec"
-"upgrade_disc_modifier_bloodseeker_bloodrite_1_3" "Before dealing damage, Blood Rite increases targets incoming damage by <b><font color='#53ea48'>12%</font></b> for 5 sec"
+"font_disc_modifier_bloodseeker_bloodrite_3" "20"
+"upgrade_disc_modifier_bloodseeker_bloodrite_3" "*!-cd* sec Blood Rite cooldown<br><br>*!-mana* Blood Rite mana cost"
 
-"talent_disc_modifier_bloodseeker_bloodrite_1_0" "Before dealing damage, Blood Rite increases targets incoming damage by <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#297016'>12%</font></b> for 5 sec"
-"talent_disc_modifier_bloodseeker_bloodrite_1_1" "Before dealing damage, Blood Rite increases targets incoming damage by <b><font color='#53ea48'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#297016'>12%</font></b> for 5 sec"
-"talent_disc_modifier_bloodseeker_bloodrite_1_2" "Before dealing damage, Blood Rite increases targets incoming damage by <b><font color='#297016'>6%</font></b>/<b><font color='#53ea48'>9%</font></b>/<b><font color='#297016'>12%</font></b> for 5 sec"
-"talent_disc_modifier_bloodseeker_bloodrite_1_3" "Before dealing damage, Blood Rite increases targets incoming damage by <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#53ea48'>12%</font></b> for 5 sec"
+"font_disc_modifier_bloodseeker_bloodrite_4" "18"
+"upgrade_disc_modifier_bloodseeker_bloodrite_4" "The next attack after casting Blood Rite taunts the target for *!taunt* sec and steals *!str%* strength from it for *duration* sec<br><br>The range of this attack is increased by *range*"
+"mini_disc_modifier_bloodseeker_bloodrite_4" "The attack after Blood Rite taunts and steals power"
 
-"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_slow_blood"					"Blood Rite"
-"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_slow_blood_Description"		"All incoming damage increased by %dMODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE%%%"
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack_str" "Blood Rite"
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack_str_Description" "Strength changed by %dMODIFIER_PROPERTY_STATS_STRENGTH_BONUS%"
 
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack" "Blood Rite"
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack_Description" "The next attack will taunt the target and steal its strength"
 
+"font_disc_modifier_bloodseeker_bloodrite_5" "18"
+"upgrade_disc_modifier_bloodseeker_bloodrite_5" "If you were in the Blood Rite area, you apply a strong dispel and gain Black King Bar effect for *!bkb* sec"
+"mini_disc_modifier_bloodseeker_bloodrite_5" "Blood Rite grants magic immunity and dispels effects"
 
-
-
-
-"font_disc_modifier_bloodseeker_bloodrite_2" "21"
-"upgrade_disc_modifier_bloodseeker_bloodrite_2_1" "If you were in the ritual area, Blood Rite will restore you <b><font color='#53ea48'>15%</font></b> health"
-"upgrade_disc_modifier_bloodseeker_bloodrite_2_2" "If you were in the ritual area, Blood Rite will restore you <b><font color='#53ea48'>20%</font></b> health"
-"upgrade_disc_modifier_bloodseeker_bloodrite_2_3" "If you were in the ritual area, Blood Rite will restore you <b><font color='#53ea48'>25%</font></b> health"
-
-"talent_disc_modifier_bloodseeker_bloodrite_2_0" "If you were in the ritual area, Blood Rite will restore you <b><font color='#297016'>15%</font></b>/<b><font color='#297016'>20%</font></b>/<b><font color='#297016'>25%</font></b> health"
-"talent_disc_modifier_bloodseeker_bloodrite_2_1" "If you were in the ritual area, Blood Rite will restore you <b><font color='#53ea48'>15%</font></b>/<b><font color='#297016'>20%</font></b>/<b><font color='#297016'>25%</font></b> health"
-"talent_disc_modifier_bloodseeker_bloodrite_2_2" "If you were in the ritual area, Blood Rite will restore you <b><font color='#297016'>15%</font></b>/<b><font color='#53ea48'>20%</font></b>/<b><font color='#297016'>25%</font></b> health"
-"talent_disc_modifier_bloodseeker_bloodrite_2_3" "If you were in the ritual area, Blood Rite will restore you <b><font color='#297016'>15%</font></b>/<b><font color='#297016'>20%</font></b>/<b><font color='#53ea48'>25%</font></b> health"
-
-
-
-
-"font_disc_modifier_bloodseeker_bloodrite_3" "19"
-"upgrade_disc_modifier_bloodseeker_bloodrite_3_1" "Under the effect of Blood Rite ritual and silence, enemies lose <b><font color='#53ea48'>20%</font></b> movespeed and <b><font color='#53ea48'>20</font></b> attack speed"
-"upgrade_disc_modifier_bloodseeker_bloodrite_3_2" "Under the effect of Blood Rite ritual and silence, enemies lose <b><font color='#53ea48'>30%</font></b> movespeed and <b><font color='#53ea48'>30</font></b> attack speed"
-"upgrade_disc_modifier_bloodseeker_bloodrite_3_3" "Under the effect of Blood Rite ritual and silence, enemies lose <b><font color='#53ea48'>40%</font></b> movespeed and <b><font color='#53ea48'>40</font></b> attack speed"
-
-"talent_disc_modifier_bloodseeker_bloodrite_3_0" "Under the effect of Blood Rite ritual and silence, enemies lose <b><font color='#297016'>20%</font></b>/<b><font color='#297016'>30%</font></b>/<b><font color='#297016'>40%</font></b> movespeed and <b><font color='#297016'>20</font></b>/<b><font color='#297016'>30</font></b>/<b><font color='#297016'>40</font></b> attack speed"
-"talent_disc_modifier_bloodseeker_bloodrite_3_1" "Under the effect of Blood Rite ritual and silence, enemies lose <b><font color='#53ea48'>20%</font></b>/<b><font color='#297016'>30%</font></b>/<b><font color='#297016'>40%</font></b> movespeed and <b><font color='#53ea48'>20</font></b>/<b><font color='#297016'>30</font></b>/<b><font color='#297016'>40</font></b> attack speed"
-"talent_disc_modifier_bloodseeker_bloodrite_3_2" "Under the effect of Blood Rite ritual and silence, enemies lose <b><font color='#297016'>20%</font></b>/<b><font color='#53ea48'>30%</font></b>/<b><font color='#297016'>40%</font></b> movespeed and <b><font color='#297016'>20</font></b>/<b><font color='#53ea48'>30</font></b>/<b><font color='#297016'>40</font></b> attack speed"
-"talent_disc_modifier_bloodseeker_bloodrite_3_3" "Under the effect of Blood Rite ritual and silence, enemies lose <b><font color='#297016'>20%</font></b>/<b><font color='#297016'>30%</font></b>/<b><font color='#53ea48'>40%</font></b> movespeed and <b><font color='#297016'>20</font></b>/<b><font color='#297016'>30</font></b>/<b><font color='#53ea48'>40</font></b> attack speed"
-
-
-
-
-
-"font_disc_modifier_bloodseeker_bloodrite_4" "19"
-"upgrade_disc_modifier_bloodseeker_bloodrite_4_1" "After using Blood Rite, your next attack will root the target for <b><font color='#53ea48'>1</font></b> seconds and steal <b><font color='#53ea48'>10%</font></b> of its strength for 6 seconds"
-"upgrade_disc_modifier_bloodseeker_bloodrite_4_2" "After using Blood Rite, your next attack will root the target fo <b><font color='#53ea48'>1.5</font></b> seconds and steal <b><font color='#53ea48'>15%</font></b> of its strength for 6 seconds"
-
-"talent_disc_modifier_bloodseeker_bloodrite_4_0" "After using Blood Rite, your next attack will root the target fo <b><font color='#297016'>1</font></b>/<b><font color='#297016'>1.5</font></b> seconds and steal <b><font color='#297016'>10%</font></b>/<b><font color='#297016'>15%</font></b> of its strength for 6 seconds"
-"talent_disc_modifier_bloodseeker_bloodrite_4_1" "After using Blood Rite, your next attack will root the target fo <b><font color='#53ea48'>1</font></b>/<b><font color='#297016'>1.5</font></b> seconds and steal <b><font color='#53ea48'>10%</font></b>/<b><font color='#297016'>15%</font></b> of its strength for 6 seconds"
-"talent_disc_modifier_bloodseeker_bloodrite_4_2" "After using Blood Rite, your next attack will root the target fo <b><font color='#297016'>1</font></b>/<b><font color='#53ea48'>1.5</font></b> seconds and steal <b><font color='#297016'>10%</font></b>/<b><font color='#53ea48'>15%</font></b> of its strength for 6 seconds"
-"mini_disc_modifier_bloodseeker_bloodrite_4" "After using Blood Rite, your next attack will root the target"
-
-
-"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack_str"					"Blood Rite"
-"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack_str_Description"		"Strength changed by %dMODIFIER_PROPERTY_STATS_STRENGTH_BONUS%"
-
-"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack"					"Blood Rite"
-"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack_Description"		"Your next attack will root the target"
-
-
-
-
-"font_disc_modifier_bloodseeker_bloodrite_5" "19"
-"upgrade_disc_modifier_bloodseeker_bloodrite_5_1" "If you were in the ritual area, Blood Rite will apply a strong dispel on you and receive Black King Bar effect for <b><font color='#53ea48'>1.5</font></b> seconds"
-"mini_disc_modifier_bloodseeker_bloodrite_5" "Blood Rite dispels and grants magic immunity"
-
-
-
-"font_disc_modifier_bloodseeker_bloodrite_6" "19"
-"upgrade_disc_modifier_bloodseeker_bloodrite_6_1" "<b><font color='#53ea48'>-1</font></b> second Blood Rite cooldown<br><br>At the beginning and end of the ritual, Blood Rite pulls enemies to the center of its action"
-"mini_disc_modifier_bloodseeker_bloodrite_6" "Blood Rite pulls enemies to the center of its action"
-
-
+"font_disc_modifier_bloodseeker_bloodrite_6" "18"
+"upgrade_disc_modifier_bloodseeker_bloodrite_6" "*!+radius* Blood Rite radius<br><br>The ability casts instantly and pulls enemies to its center<br><br>Silence and ritual slow enemies by *!slow%*"
+"mini_disc_modifier_bloodseeker_bloodrite_6" "Blood Rite pulls enemies into its center"
 
 "font_disc_modifier_bloodseeker_bloodrite_7" "17"
-"upgrade_disc_modifier_bloodseeker_bloodrite_7" "The Blood Rite ritual now ends when the ability is cast again. Maximum duration: <b><font color='#fb9531'>5</font></b> sec<br><br>While you are in the area of the Blood Rite ritual, you lose 4% of your maximum health. Blood Rite damage increases by <b><font color='#fb9531'>100%</font></b> from damage received this way"
-"mini_disc_modifier_bloodseeker_bloodrite_7" "Blood Rite damage increases from maximum health"
-
-
+"upgrade_disc_modifier_bloodseeker_bloodrite_7" "Blood Rite ritual now lasts up to *!duration* sec costs *self_damage%* health per second<br><br>Blood Rite damage increases by *!damage%* of all damage you take during the ritual, including self-inflicted damage<br><br>You can end the ritual after *delay* seconds"
+"mini_disc_modifier_bloodseeker_bloodrite_7" "Blood Rite's damage increases based on incoming damage"
 
 
 
@@ -13831,99 +13578,50 @@ OTA_Tooltip_modifier_templar_assassin_psi_blades_custom_psi"				"Psi Blades"
 
 
 
-
-
-
-"font_disc_modifier_bloodseeker_thirst_1" "21"
-"upgrade_disc_modifier_bloodseeker_thirst_1_1" "Thirst increases your attack damage by a maximum of <b><font color='#53ea48'>15%</font></b>, based of enemies missing health"
-"upgrade_disc_modifier_bloodseeker_thirst_1_2" "Thirst increases your attack damage by a maximum of <b><font color='#53ea48'>20%</font></b>, based of enemies missing health"
-"upgrade_disc_modifier_bloodseeker_thirst_1_3" "Thirst increases your attack damage by a maximum of <b><font color='#53ea48'>25%</font></b>, based of enemies missing health"
-
-"talent_disc_modifier_bloodseeker_thirst_1_0" "Thirst increases your attack damage by a maximum of <b><font color='#297016'>15%</font></b>/<b><font color='#297016'>20%</font></b>/<b><font color='#297016'>25%</font></b>, based of enemies missing health"
-"talent_disc_modifier_bloodseeker_thirst_1_1" "Thirst increases your attack damage by a maximum of <b><font color='#53ea48'>15%</font></b>/<b><font color='#297016'>20%</font></b>/<b><font color='#297016'>25%</font></b>, based of enemies missing health"
-"talent_disc_modifier_bloodseeker_thirst_1_2" "Thirst increases your attack damage by a maximum of <b><font color='#297016'>15%</font></b>/<b><font color='#53ea48'>20%</font></b>/<b><font color='#297016'>25%</font></b>, based of enemies missing health"
-"talent_disc_modifier_bloodseeker_thirst_1_3" "Thirst increases your attack damage by a maximum of <b><font color='#297016'>15%</font></b>/<b><font color='#297016'>20%</font></b>/<b><font color='#53ea48'>25%</font></b>, based of enemies missing health"
-
-
+"font_disc_modifier_bloodseeker_thirst_1" "19"
+"upgrade_disc_modifier_bloodseeker_thirst_1" "*!+speed%* max movement speed from Thirst<br><br>Thirst grants up to *!magic%* magic resistance, based on enemy health"
 
 "font_disc_modifier_bloodseeker_thirst_2" "19"
-"upgrade_disc_modifier_bloodseeker_thirst_2_1" "Killing creeps grants you a shield, that absorbs <b><font color='#53ea48'>30</font></b> damage and increases movespeed by <b><font color='#53ea48'>30</font></b><br><br>Shield stacks 10 раз"
-"upgrade_disc_modifier_bloodseeker_thirst_2_2" "Killing creeps grants you a shield, that absorbs <b><font color='#53ea48'>45</font></b> damage and increases movespeed by <b><font color='#53ea48'>45</font></b><br><br>Shield stacks 10 раз"
-"upgrade_disc_modifier_bloodseeker_thirst_2_3" "Killing creeps grants you a shield, that absorbs <b><font color='#53ea48'>60</font></b> damage and increases movespeed by <b><font color='#53ea48'>60</font></b><br><br>Shield stacks 10 раз"
-
-"talent_disc_modifier_bloodseeker_thirst_2_0" "Killing creeps grants you a shield, that absorbs <b><font color='#297016'>30</font></b>/<b><font color='#297016'>45</font></b>/<b><font color='#297016'>60</font></b> damage and increases movespeed by <b><font color='#297016'>30</font></b>/<b><font color='#297016'>45</font></b>/<b><font color='#297016'>60</font></b><br><br>Shield stacks 10 раз"
-"talent_disc_modifier_bloodseeker_thirst_2_1" "Killing creeps grants you a shield, that absorbs <b><font color='#53ea48'>30</font></b>/<b><font color='#297016'>45</font></b>/<b><font color='#297016'>60</font></b> damage and increases movespeed by <b><font color='#53ea48'>30</font></b>/<b><font color='#297016'>45</font></b>/<b><font color='#297016'>60</font></b><br><br>Shield stacks 10 раз"
-"talent_disc_modifier_bloodseeker_thirst_2_2" "Killing creeps grants you a shield, that absorbs <b><font color='#297016'>30</font></b>/<b><font color='#53ea48'>45</font></b>/<b><font color='#297016'>60</font></b> damage and increases movespeed by <b><font color='#297016'>30</font></b>/<b><font color='#53ea48'>45</font></b>/<b><font color='#297016'>60</font></b><br><br>Shield stacks 10 раз"
-"talent_disc_modifier_bloodseeker_thirst_2_3" "Killing creeps grants you a shield, that absorbs <b><font color='#297016'>30</font></b>/<b><font color='#297016'>45</font></b>/<b><font color='#53ea48'>60</font></b> damage and increases movespeed by <b><font color='#297016'>30</font></b>/<b><font color='#297016'>45</font></b>/<b><font color='#53ea48'>60</font></b><br><br>Shield stacks 10 раз"
-
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_shield"					"Thirst"
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_shield_Description"		"Shield absorbs all incoming damage and increases movespeed by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT%</font></b>"
-
+"upgrade_disc_modifier_bloodseeker_thirst_2" "You heal by a maximum of *!heal%* from any damage dealt<br><br>The lower the targets health, the stronger the healing"
 
 "font_disc_modifier_bloodseeker_thirst_3" "20"
-"upgrade_disc_modifier_bloodseeker_thirst_3_1" "If there is an enemy with less than 50% health within 500 radius of you, you regenerate <b><font color='#53ea48'>1.5%</font></b> health per second"
-"upgrade_disc_modifier_bloodseeker_thirst_3_2" "If there is an enemy with less than 50% health within 500 radius of you, you regenerate <b><font color='#53ea48'>2%</font></b> health per second"
-"upgrade_disc_modifier_bloodseeker_thirst_3_3" "If there is an enemy with less than 50% health within 500 radius of you, you regenerate <b><font color='#53ea48'>2.5%</font></b> health per second"
+"upgrade_disc_modifier_bloodseeker_thirst_3" "*!+cleave%* cleave damage<br><br>Thirst grants up to *!damage* attack damage, based on enemy health"
 
-"talent_disc_modifier_bloodseeker_thirst_3_0" "If there is an enemy with less than 50% health within 500 radius of you, you regenerate <b><font color='#297016'>1.5%</font></b>/<b><font color='#297016'>2%</font></b>/<b><font color='#297016'>2.5%</font></b> health per second"
-"talent_disc_modifier_bloodseeker_thirst_3_1" "If there is an enemy with less than 50% health within 500 radius of you, you regenerate <b><font color='#53ea48'>1.5%</font></b>/<b><font color='#297016'>2%</font></b>/<b><font color='#297016'>2.5%</font></b> health per second"
-"talent_disc_modifier_bloodseeker_thirst_3_2" "If there is an enemy with less than 50% health within 500 radius of you, you regenerate <b><font color='#297016'>1.5%</font></b>/<b><font color='#53ea48'>2%</font></b>/<b><font color='#297016'>2.5%</font></b> health per second"
-"talent_disc_modifier_bloodseeker_thirst_3_3" "If there is an enemy with less than 50% health within 500 radius of you, you regenerate <b><font color='#297016'>1.5%</font></b>/<b><font color='#297016'>2%</font></b>/<b><font color='#53ea48'>2.5%</font></b> health per second"
+"font_disc_modifier_bloodseeker_thirst_4" "18"
+"upgrade_disc_modifier_bloodseeker_thirst_4" "Thirst increases your Strength and Agility up to *!max_stats%*, based on enemy health<br><br>When a hero dies near you, your Strength and Agility permanently increase by *!str*. Stacks *max* times"
+"mini_disc_modifier_bloodseeker_thirst_4" "Killing heroes increases strength and agility"
 
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_heal"					"Thirst"
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_heal_Description"		"Regenerates <b><font color='#53ea48'>%dMODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE%%%</font></b> health per second"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_stats" "Blood Essence"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_stats_Description" "Agility and Strength increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_STATS_STRENGTH_BONUS%</font></b>"
 
-
-
+"font_disc_modifier_bloodseeker_thirst_5" "18"
+"upgrade_disc_modifier_bloodseeker_thirst_5" "Your attack stuns the target for *!stun* sec and restores *!heal%* health<br><br>The effect has a *cd* sec cooldown and triggers on targets with health above *max_health%* or below *min_health%*"
+"mini_disc_modifier_bloodseeker_thirst_5" "Attacks stun targets with full or low health"
 
 
-
-"font_disc_modifier_bloodseeker_thirst_4" "19"
-"upgrade_disc_modifier_bloodseeker_thirst_4_1" "Your each 6 attack restores <b><font color='#53ea48'>4%</font></b> of your max. health<br><br>Damage of such attack also increases by this value"
-"upgrade_disc_modifier_bloodseeker_thirst_4_2" "Your each 6 attack restores <b><font color='#53ea48'>6%</font></b> of your max. health<br><br>Damage of such attack also increases by this value"
-
-"talent_disc_modifier_bloodseeker_thirst_4_0" "Your each 6 attack restores <b><font color='#297016'>4%</font></b>/<b><font color='#297016'>6%</font></b> of your max. health<br><br>Damage of such attack also increases by this value"
-"talent_disc_modifier_bloodseeker_thirst_4_1" "Your each 6 attack restores <b><font color='#53ea48'>4%</font></b>/<b><font color='#297016'>6%</font></b> of your max. health<br><br>Damage of such attack also increases by this value"
-"talent_disc_modifier_bloodseeker_thirst_4_2" "Your each 6 attack restores <b><font color='#297016'>4%</font></b>/<b><font color='#53ea48'>6%</font></b> of your max. health<br><br>Damage of such attack also increases by this value"
-"mini_disc_modifier_bloodseeker_thirst_4" "Your attack heals you for part of maximum health"
-
-
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_attack"					"Thirst"
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_attack_Description"		"Each <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> attack deals additional <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP2%</font></b> damage and heals by an equal amount"
-
-
-
-
-
-"font_disc_modifier_bloodseeker_thirst_5" "19"
-"upgrade_disc_modifier_bloodseeker_thirst_5_1" "<b><font color='#53ea48'>+15%</font></b> Thirst maximum movespeed bonus<br><br>While your health is above 90%, your status resistance increases by <b><font color='#53ea48'>20%</font></b> and you cannot be slowed"
-"mini_disc_modifier_bloodseeker_thirst_5" "While on full health, can not be slowed"
-
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_attack_cd" "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_attack_cd_Description" "Stun Attack Cooldown"
 
 "font_disc_modifier_bloodseeker_thirst_6" "18"
-"upgrade_disc_modifier_bloodseeker_thirst_6_1" "<b><font color='#53ea48'>+10%</font></b> health threshold for Thirst maximum bonuses and vision<br><br>If Thirst reveals enemy hero, your incoming damage reduces by <b><font color='#53ea48'>20%</font></b>, and base attack time reduces to <b><font color='#53ea48'>1.5</font></b>"
-"mini_disc_modifier_bloodseeker_thirst_6" "Receives a buff from heroes with low health"
+"upgrade_disc_modifier_bloodseeker_thirst_6" "*!+health%* health threshold for detection and max. Thirst bonuses<br><br>If a detected hero is near you, you gain *!status%* status resistance for *duration* seconds and you cannot be slowed<br><br>Cooldown: *cd* sec"
+"mini_disc_modifier_bloodseeker_thirst_6" "Receives buffs from heroes with low health"
 
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_resist"					"Thirst"
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_resist_Description"		"Status resistance increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING%%%</font></b>, base attack time reduced to <b><font color='#53ea48'>%fMODIFIER_PROPERTY_BASE_ATTACK_TIME_CONSTANT%</font></b>"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_resist" "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_resist_Description" "Status resistance increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING%%%</font></b>, cannot be slowed"
 
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision"					"Thirst"
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision_Description"		"Received vision on enemy heroes in <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> aoe. Thirst grants maximum bonuses"
-
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision_count"					"Thirst"
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision_count_Description"		"After killing <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> kills, you will receive vision on enemy heroes"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_resist_cd" "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_resist_cd_Description" "Status resistance cooldown"
 
 
+"font_disc_modifier_bloodseeker_thirst_7" "17"
+"upgrade_disc_modifier_bloodseeker_thirst_7" "Active<br>Cooldown: *cd* sec<br><br>For *!duration* sec grants vision on heroes within *vision_radius* aoe, and maximum Thirst bonuses enhanced by *!bonus%*<br><br>Killing creeps reduces the cooldown of the ability by *cd_creeps* sec, and heroes by *cd_heroes* sec"
+"mini_disc_modifier_bloodseeker_thirst_7" "Active: Gain hero vision and Thirst bonuses"
 
-
-"font_disc_modifier_bloodseeker_thirst_7" "16"
-"upgrade_disc_modifier_bloodseeker_thirst_7" "For each *creeps_count* creeps killed, you get *!+creeps_stack* strength and agility<br><br>The effect stacks *max* times, after which the ability can be cast, to get maximum Thirst bonuses and vision on heroes within *vision_radius* aoe for *!duration* sec<br><br>At the end of the effect, you lose all bonuses, but gain *+!heroes_stack* strength and agility permanently for each hero died nearby"
-"mini_disc_modifier_bloodseeker_thirst_7" "Active: Starts a hunt for heroes, receiving attribute bonus"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision" "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision_Description" "Thirst bonuses increased to maximum.<br><br>Gains vision on heroes."
 
 
 
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_legendary"					"Blood Essence"
-"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_legendary_Description"		"Strength and agility increased by <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%%%</font></b>"
 
 
 "DOTA_Tooltip_ability_bloodseeker_rupture_custom"										"Rupture"
@@ -13938,21 +13636,24 @@ OTA_Tooltip_modifier_templar_assassin_psi_blades_custom_psi"				"Psi Blades"
 
 
 "DOTA_Tooltip_modifier_bloodseeker_rupture_custom"						"Rupture"
-"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_Description"			"Deals a percentage of the distance you move as damage"
+"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_Description"			"Deals a percentage of the distance you move as damage.<br><br>Healing and regeneration reduced by <b><font color='#ff0000'>%dMODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET%%%</font></b>, outgoing damage reduced by <b><font color='#ff0000'>%dMODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE%%%</font></b>"
 
 
 "DOTA_Tooltip_ability_bloodseeker_blood_mist_custom"                                       "Blood Mist"
-"DOTA_Tooltip_ability_bloodseeker_blood_mist_custom_Description"                           "Bloodseeker sprays his blood continuously in the area around him, damaging himself to damage and slow his enemies. While active, Thirst's healing is increased. Cannot be turned off while on cooldown.<br><br><b><font color='#ff0000'>Maximum damage per second against creeps - %creeps_damage_max%</font></b>"
-"DOTA_Tooltip_ability_bloodseeker_blood_mist_custom_hp_cost_per_second"                    "%HP PER SECOND COST/DAMAGE:"
-"DOTA_Tooltip_ability_bloodseeker_blood_mist_custom_radius"                            "RADIUS:"
-"DOTA_Tooltip_ability_bloodseeker_blood_mist_custom_movement_slow"                     "%MOVE SPEED SLOW:"
-"DOTA_Tooltip_ability_bloodseeker_blood_mist_custom_thirst_bonus_pct"                      "%THIRST HEAL BONUS:"
+"DOTA_Tooltip_ability_bloodseeker_blood_mist_custom_Description"                           "While the ability is active, you lose health, deal damage to enemies within %radius% radius and slow them by %movement_slow%%%. Deals damage to heroes based on their max. health, and fixed damage to creeps.<br><br>After %attacks% attacks while the effect is active, you <b><font color='#53ea48'>receive a shield</font></b> that absorbs %shield%%% of max. health."
+"DOTA_Tooltip_ability_bloodseeker_blood_mist_custom_hp_cost_per_second"                    "%HEALTH LOSS (MAGICAL):"
+"DOTA_Tooltip_ability_bloodseeker_blood_mist_custom_damage_per_second"                    "%DAMAGE TO HEROES:"
+"DOTA_Tooltip_ability_bloodseeker_blood_mist_custom_creeps_damage"                    		"DAMAGE TO CREEPS:"
 
 "DOTA_Tooltip_modifier_bloodseeker_blood_mist_custom"                                  "Blood Mist"
 "DOTA_Tooltip_modifier_bloodseeker_blood_mist_custom_Description"                      "Spraying blood to damage and slow nearby enemies. Thirst healing increased."
 
 "DOTA_Tooltip_modifier_bloodseeker_blood_mist_custom_slow"                             "Blood Mist"
 "DOTA_Tooltip_modifier_bloodseeker_blood_mist_custom_slow_Description"                 "Slowed by %dMODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE%%% by the blood of Bloodseeker."
+
+
+"DOTA_Tooltip_modifier_bloodseeker_blood_mist_custom_shield"          "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_blood_mist_custom_shield_Description"    "A shield that absorbs incoming damage."
 
 "DOTA_Tooltip_ability_bloodseeker_rupture_custom_legendary"                                       "Blood Link"
 "DOTA_Tooltip_ability_bloodseeker_rupture_custom_legendary_Description"                           "<b>CHANNELED</b><br><br>For %duration% sec pulls the target towards you<br><br>Under this effects the target receives %incoming_damage%%% more damage from all sources, and you heal by %damage_heal%%% of all damage dealt to the target"
@@ -13963,73 +13664,28 @@ OTA_Tooltip_modifier_templar_assassin_psi_blades_custom_psi"				"Psi Blades"
 
 
 
+"font_disc_modifier_bloodseeker_rupture_1" "19"
+"upgrade_disc_modifier_bloodseeker_rupture_1" "Every *timer* sec, Rupture leaves a trail of blood that deals *!damage* pure damage per sec to enemies<br><br>Damage from multiple trails stacks"
 
-"font_disc_modifier_bloodseeker_rupture_1" "22"
-"upgrade_disc_modifier_bloodseeker_rupture_1_1" "<b><font color='#53ea48'>+10%</font></b> Rupture initial damage and damage from movement"
-"upgrade_disc_modifier_bloodseeker_rupture_1_2" "<b><font color='#53ea48'>+15%</font></b> Rupture initial damage and damage from movement"
-"upgrade_disc_modifier_bloodseeker_rupture_1_3" "<b><font color='#53ea48'>+20%</font></b> Rupture initial damage and damage from movement"
+"font_disc_modifier_bloodseeker_rupture_2" "20"
+"upgrade_disc_modifier_bloodseeker_rupture_2" "Rupture reduces all targets outgoing damage by *!damage_reduce%* and its armor by *!armor*"
 
-"talent_disc_modifier_bloodseeker_rupture_1_0" "<b><font color='#297016'>+10%</font></b>/<b><font color='#297016'>+15%</font></b>/<b><font color='#297016'>+20%</font></b> Rupture initial damage and damage from movement"
-"talent_disc_modifier_bloodseeker_rupture_1_1" "<b><font color='#53ea48'>+10%</font></b>/<b><font color='#297016'>+15%</font></b>/<b><font color='#297016'>+20%</font></b> Rupture initial damage and damage from movement"
-"talent_disc_modifier_bloodseeker_rupture_1_2" "<b><font color='#297016'>+10%</font></b>/<b><font color='#53ea48'>+15%</font></b>/<b><font color='#297016'>+20%</font></b> Rupture initial damage and damage from movement"
-"talent_disc_modifier_bloodseeker_rupture_1_3" "<b><font color='#297016'>+10%</font></b>/<b><font color='#297016'>+15%</font></b>/<b><font color='#53ea48'>+20%</font></b> Rupture initial damage and damage from movement"
-
-
-"font_disc_modifier_bloodseeker_rupture_2" "21"
-"upgrade_disc_modifier_bloodseeker_rupture_2_1" "Rupture reduces targets outgoing damage by <b><font color='#53ea48'>6%</font></b>, and healing and regeneration by <b><font color='#53ea48'>10%</font></b>"
-"upgrade_disc_modifier_bloodseeker_rupture_2_2" "Rupture reduces targets outgoing damage by <b><font color='#53ea48'>9%</font></b>, and healing and regeneration by <b><font color='#53ea48'>15%</font></b>"
-"upgrade_disc_modifier_bloodseeker_rupture_2_3" "Rupture reduces targets outgoing damage by <b><font color='#53ea48'>12%</font></b>, and healing and regeneration by <b><font color='#53ea48'>20%</font></b>"
-
-"talent_disc_modifier_bloodseeker_rupture_2_0" "Rupture reduces targets outgoing damage by <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#297016'>12%</font></b>, and healing and regeneration by <b><font color='#297016'>10%</font></b>/<b><font color='#297016'>15%</font></b>/<b><font color='#297016'>20%</font></b>"
-"talent_disc_modifier_bloodseeker_rupture_2_1" "Rupture reduces targets outgoing damage by <b><font color='#53ea48'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#297016'>12%</font></b>, and healing and regeneration by <b><font color='#53ea48'>10%</font></b>/<b><font color='#297016'>15%</font></b>/<b><font color='#297016'>20%</font></b>"
-"talent_disc_modifier_bloodseeker_rupture_2_2" "Rupture reduces targets outgoing damage by <b><font color='#297016'>6%</font></b>/<b><font color='#53ea48'>9%</font></b>/<b><font color='#297016'>12%</font></b>, and healing and regeneration by <b><font color='#297016'>10%</font></b>/<b><font color='#53ea48'>15%</font></b>/<b><font color='#297016'>20%</font></b>"
-"talent_disc_modifier_bloodseeker_rupture_2_3" "Rupture reduces targets outgoing damage by <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#53ea48'>12%</font></b>, and healing and regeneration by <b><font color='#297016'>10%</font></b>/<b><font color='#297016'>15%</font></b>/<b><font color='#53ea48'>20%</font></b>"
-
-
-"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_reduction"					"Rupture"
-"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_reduction_Description"		"Healing and regeneration reduced by <b><font color='#ff0000'>%dMODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET%%%</font></b>, outgoing damage reduced by <b><font color='#ff0000'>%dMODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE%%%</font></b>"
-
-
-
-"font_disc_modifier_bloodseeker_rupture_3" "23"
-"upgrade_disc_modifier_bloodseeker_rupture_3_1" "<b><font color='#53ea48'>-10</font></b> seconds Rupture cooldown"
-"upgrade_disc_modifier_bloodseeker_rupture_3_2" "<b><font color='#53ea48'>-20</font></b> seconds Rupture cooldown"
-"upgrade_disc_modifier_bloodseeker_rupture_3_3" "<b><font color='#53ea48'>-30</font></b> seconds Rupture cooldown"
-
-"talent_disc_modifier_bloodseeker_rupture_3_0" "<b><font color='#297016'>-10</font></b>/<b><font color='#297016'>-20</font></b>/<b><font color='#297016'>-30</font></b> seconds Rupture cooldown"
-"talent_disc_modifier_bloodseeker_rupture_3_1" "<b><font color='#53ea48'>-10</font></b>/<b><font color='#297016'>-20</font></b>/<b><font color='#297016'>-30</font></b> seconds Rupture cooldown"
-"talent_disc_modifier_bloodseeker_rupture_3_2" "<b><font color='#297016'>-10</font></b>/<b><font color='#53ea48'>-20</font></b>/<b><font color='#297016'>-30</font></b> seconds Rupture cooldown"
-"talent_disc_modifier_bloodseeker_rupture_3_3" "<b><font color='#297016'>-10</font></b>/<b><font color='#297016'>-20</font></b>/<b><font color='#53ea48'>-30</font></b> seconds Rupture cooldown"
-
-
-
-
+"font_disc_modifier_bloodseeker_rupture_3" "20"
+"upgrade_disc_modifier_bloodseeker_rupture_3" "*!+range* Rupture cast range<br><br>*!+duration* sec Rupture duration"
 
 "font_disc_modifier_bloodseeker_rupture_4" "18"
-"upgrade_disc_modifier_bloodseeker_rupture_4_1" "Every 3 sec, Rupture leaves a trail of blood under the target<br><br>While in it, enemies receive <b><font color='#53ea48'>60</font></b> magical damage per sec and you heal by 100% of that damage<br><br>The effect stacks"
-"upgrade_disc_modifier_bloodseeker_rupture_4_2" "Every 3 sec, Rupture leaves a trail of blood under the target<br><br>While in it, enemies receive <b><font color='#53ea48'>100</font></b> magical damage per sec and you heal by 100% of that damage<br><br>The effect stacks"
-
-"talent_disc_modifier_bloodseeker_rupture_4_0" "Every 3 sec, Rupture leaves a trail of blood under the target<br><br>While in it, enemies receive <b><font color='#297016'>60</font></b>/<b><font color='#297016'>100</font></b> magical damage per sec and you heal by 100% of that damage<br><br>The effect stacks"
-"talent_disc_modifier_bloodseeker_rupture_4_1" "Every 3 sec, Rupture leaves a trail of blood under the target<br><br>While in it, enemies receive <b><font color='#53ea48'>60</font></b>/<b><font color='#297016'>100</font></b> magical damage per sec and you heal by 100% of that damage<br><br>The effect stacks"
-"talent_disc_modifier_bloodseeker_rupture_4_2" "Every 3 sec, Rupture leaves a trail of blood under the target<br><br>While in it, enemies receive <b><font color='#297016'>60</font></b>/<b><font color='#53ea48'>100</font></b> magical damage per sec and you heal by 100% of that damage<br><br>The effect stacks"
-"mini_disc_modifier_bloodseeker_rupture_4" "Rupture leaves a trail of blood under the target"
-
-
-
-
-"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_blood"					"Rupture"
-"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_blood_Description"		"Receives <b><font color='#ff0000'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> magical damage per second"
-
-
-
+"upgrade_disc_modifier_bloodseeker_rupture_4" "Attacking a Rupture target reduces its healing by *heal_reduce%* and increases all Rupture damage by *damage%*<br><br>The effect stacks *!max* times and lasts until the end of the Rupture"
+"mini_disc_modifier_bloodseeker_rupture_4" "Attacks increase Rupture damage and reduce healing"
 
 "font_disc_modifier_bloodseeker_rupture_5" "18"
-"upgrade_disc_modifier_bloodseeker_rupture_5_1" "<b><font color='#53ea48'>+200</font></b> Rupture cast range<br><br>Each time an enemy casts a spell while affected by Rupture, the duration of the ability extendes by <b><font color='#53ea48'>1</font></b> second"
-"mini_disc_modifier_bloodseeker_rupture_5" "Casting abilities extends Rupture"
+"upgrade_disc_modifier_bloodseeker_rupture_5" "Your attacks reduce the cooldown of Rupture by *!cd* sec<br><br>Attacks against a Rupture target also reduce the cooldown of all your items by *!cd_items* sec"
+"mini_disc_modifier_bloodseeker_rupture_5" "Attacking the Rupture target reduces item cooldown"
 
-"font_disc_modifier_bloodseeker_rupture_6" "19"
-"upgrade_disc_modifier_bloodseeker_rupture_6_1" "If targets health falls below 40% under Rupture effect, it receives fear effect for <b><font color='#53ea48'>1.5</font></b> seconds"
-"mini_disc_modifier_bloodseeker_rupture_6" "Rupture fear enemies with low health"
+"font_disc_modifier_bloodseeker_rupture_6" "18"
+"upgrade_disc_modifier_bloodseeker_rupture_6" "*!-cast* sec Rupture cast point<br><br>Casting Rupture fears the target for *!fear* sec, causing it to flee from you"
+"mini_disc_modifier_bloodseeker_rupture_6" "Rupture fearss the target and casts faster"
+
+
 
 "font_disc_modifier_bloodseeker_rupture_7" "17"
 "upgrade_disc_modifier_bloodseeker_rupture_7" "New Ability<br>Cooldown: *cd* sec<br><br>For *!duration* sec pulls the target towards you<br><br>Under this effect the target receives *!damage%* more damage from all sources and you heal by *!heal%* of all damage dealt to the target"

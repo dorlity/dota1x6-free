@@ -1,6 +1,5 @@
 LinkLuaModifier("modifier_bloodseeker_blood_bath_custom_thinker", "abilities/bloodseeker/bloodseeker_blood_bath_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_bloodseeker_blood_bath_custom_silence", "abilities/bloodseeker/bloodseeker_blood_bath_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_bloodseeker_blood_bath_custom_bkb", "abilities/bloodseeker/bloodseeker_blood_bath_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_bloodseeker_blood_bath_custom_slow_aura", "abilities/bloodseeker/bloodseeker_blood_bath_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_bloodseeker_blood_bath_custom_slow_blood", "abilities/bloodseeker/bloodseeker_blood_bath_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_bloodseeker_blood_bath_custom_center", "abilities/bloodseeker/bloodseeker_blood_bath_custom", LUA_MODIFIER_MOTION_HORIZONTAL)
@@ -10,30 +9,6 @@ LinkLuaModifier("modifier_bloodseeker_blood_bath_custom_attack_str", "abilities/
 
 bloodseeker_blood_bath_custom = class({})
 
-bloodseeker_blood_bath_custom.dispel_bkb = 1.5
-
-bloodseeker_blood_bath_custom.damage_inc = {6, 9, 12}
-bloodseeker_blood_bath_custom.damage_duration = 5
-
-bloodseeker_blood_bath_custom.slow_stun = 1.5
-bloodseeker_blood_bath_custom.knockback_duration = 0.5
-
-bloodseeker_blood_bath_custom.slow_move = {-20, -30, -40}
-bloodseeker_blood_bath_custom.slow_attack = {-20, -30, -40}
-
-bloodseeker_blood_bath_custom.self_heal = {0.15, 0.20, 0.25}
-
-bloodseeker_blood_bath_custom.legendary_max = 5
-bloodseeker_blood_bath_custom.legendary_interval = 0.25
-bloodseeker_blood_bath_custom.legendary_damage = 1
-bloodseeker_blood_bath_custom.legendary_self = 0.04
-
-bloodseeker_blood_bath_custom.attack_root = {1, 1.5}
-bloodseeker_blood_bath_custom.attack_duration = 5
-bloodseeker_blood_bath_custom.attack_str_duration = 6
-bloodseeker_blood_bath_custom.attack_str = {0.1, 0.15}
-
-bloodseeker_blood_bath_custom.pull_cd = 1
 
 
 
@@ -46,25 +21,57 @@ PrecacheResource( "particle", 'particles/units/heroes/hero_bloodseeker/bloodseek
 PrecacheResource( "particle", 'particles/status_fx/status_effect_rupture.vpcf', context )
 PrecacheResource( "particle", 'particles/units/heroes/hero_bloodseeker/bloodseeker_rupture.vpcf', context )
 PrecacheResource( "particle", 'particles/bs_root.vpcf', context )
+PrecacheResource( "particle", 'particles/bloodseeker/rite_stun.vpcf', context )
 
 end
 
 
+function bloodseeker_blood_bath_custom:GetCastAnimation()
+if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_6") then 
+	return 0
+end 
+	return ACT_DOTA_CAST_ABILITY_2
+end
+
+
+
+function bloodseeker_blood_bath_custom:GetManaCost(level)
+
+local bonus = 0
+if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_3") then 
+	bonus = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_3", "mana")
+end 
+
+return self.BaseClass.GetManaCost(self,level) + bonus
+end
+
+
+
+function bloodseeker_blood_bath_custom:GetCastPoint()
+
+
+if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_6") then 
+  return self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_6", "cast")
+end
+
+return self:GetSpecialValueFor("AbilityCastPoint")
+end
+
 
 
 function bloodseeker_blood_bath_custom:GetAOERadius()
-	return self:GetSpecialValueFor( "radius" )
+	return self:GetSpecialValueFor( "radius" ) + self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_6", "radius")
 end
 
 
 function bloodseeker_blood_bath_custom:GetCooldown(iLevel)
 
 local up = 0
-if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_6") then 
-  up = self.pull_cd
+if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_3") then 
+  up = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_3", "cd")
 end
 
-return self.BaseClass.GetCooldown(self, iLevel) - up
+return self.BaseClass.GetCooldown(self, iLevel) + up
  
 end
 
@@ -77,7 +84,7 @@ local point = self:GetCursorPosition()
 local delay = self:GetSpecialValueFor("delay")
 
 if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_7") then 
-	delay = self.legendary_max
+	delay = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_7", "duration")
 end
 
 
@@ -89,11 +96,16 @@ local ability_end = self:GetCaster():FindAbilityByName("bloodseeker_blood_bath_c
 if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_7") and ability_end:IsHidden() then 
 	self:GetCaster():SwapAbilities(self:GetName(), "bloodseeker_blood_bath_custom_end", false, true)
 
-	ability_end:StartCooldown(0.3)
+	ability_end:StartCooldown(self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_7", "delay"))
 end
 
+if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_6") then 
+
+  self:GetCaster():StartGesture(ACT_DOTA_CAST_ABILITY_4)
+end 
+
 if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_4") then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_bloodseeker_blood_bath_custom_attack", {duration = self.attack_duration})
+	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_bloodseeker_blood_bath_custom_attack", {duration = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_4", "duration")})
 end
 
 end
@@ -136,7 +148,7 @@ function modifier_bloodseeker_blood_bath_custom_thinker:IsHidden() return true e
 function modifier_bloodseeker_blood_bath_custom_thinker:IsPurgable() return false end
 
 function modifier_bloodseeker_blood_bath_custom_thinker:IsAura() 
-if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_3") then 
+if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_1") or self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_6") then 
 	return true 
 end
 
@@ -156,49 +168,107 @@ function modifier_bloodseeker_blood_bath_custom_thinker:GetModifierAura() return
 function modifier_bloodseeker_blood_bath_custom_thinker:OnCreated( kv )
 if not IsServer() then return end
 
+self:GetAbility():EndCooldown()
+self:GetAbility():SetActivated(false)
+
+self.caster = self:GetCaster()
+
+self.damage_duration = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_1", "duration")
+
+self.legendary_damage = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_7", "damage")/100
+self.legendary_interval = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_7", "interval")
+self.legendary_damage_self = self.legendary_interval * self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_7", "self_damage")/100
+
+self.legendary_count = 0
 self.damage = self:GetAbility():GetSpecialValueFor("damage")
+self.think_interval = 0.03
+
+local sound = "Hero_Bloodseeker.BloodRite"
 
 if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_7") then 
-	self.sound_count = 0
-	self:StartIntervalThink( self:GetAbility().legendary_interval )
+	sound = "BS.Bloodrite"
+	self:StartIntervalThink(self.think_interval)
+	self.sound = 2.25
 end
 
-self.radius = self:GetAbility():GetSpecialValueFor("radius")
+self.max_timer = self:GetRemainingTime()
+
+self.radius = self:GetAbility():GetSpecialValueFor("radius") + self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_6", "radius")
 self.silence_duration = self:GetAbility():GetSpecialValueFor("silence_duration")
+
+self.knockback_duration = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_6", "duration")
 
 
 if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_6") then 
 
+
 	local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetParent():GetOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false )
 	for _,enemy in pairs(enemies) do 
-		enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_bloodseeker_blood_bath_custom_center", {duration = self:GetAbility().knockback_duration, x = self:GetParent():GetAbsOrigin().x, y = self:GetParent():GetAbsOrigin().y})
+		enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_bloodseeker_blood_bath_custom_center", {duration = self.knockback_duration, x = self:GetParent():GetAbsOrigin().x, y = self:GetParent():GetAbsOrigin().y})
 	end
 end
 
-AddFOWViewer( self:GetCaster():GetTeamNumber(), self:GetParent():GetOrigin(), 600, 6 + self:GetRemainingTime(), false)
+AddFOWViewer( self:GetCaster():GetTeamNumber(), self:GetParent():GetOrigin(), self.radius, 6 + self:GetRemainingTime(), false)
 
 self.particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_bloodseeker/bloodseeker_bloodritual_ring.vpcf", PATTACH_WORLDORIGIN, nil )
 ParticleManager:SetParticleControl( self.particle, 0, self:GetParent():GetOrigin() )
 ParticleManager:SetParticleControl( self.particle, 1, Vector( self.radius, self.radius, self.radius ) )
 self:AddParticle(self.particle, false, false, -1, false, false)
-self:GetParent():EmitSound("Hero_Bloodseeker.BloodRite")
+
+self:GetParent():EmitSound(sound)
 end
+
+
 
 function modifier_bloodseeker_blood_bath_custom_thinker:OnIntervalThink()
-if not IsServer() then return end
+if not IsServer() then return end 
 
-self.sound_count = self.sound_count + self:GetAbility().legendary_interval
-if self.sound_count >= 2.25 then 
-	self:GetParent():StopSound("Hero_Bloodseeker.BloodRite")
-	self.sound_count = -999
+self.legendary_count = self.legendary_count + self.think_interval
+
+if self.legendary_count >= self.legendary_interval then 
+
+	self.legendary_count = 0
+	if (self.caster:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Length2D() <= self.radius and self.caster:IsAlive() then 
+		ApplyDamage({attacker = self.caster, victim = self.caster, damage_type = DAMAGE_TYPE_PURE, ability = self:GetAbility(), damage = self.caster:GetMaxHealth()*self.legendary_damage_self, damage_flags =  DOTA_DAMAGE_FLAG_NO_DAMAGE_MULTIPLIERS + DOTA_DAMAGE_FLAG_NON_LETHAL + DOTA_DAMAGE_FLAG_BYPASSES_BLOCK})
+	end 
+
 end
 
-if (self:GetParent():GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D() > self.radius then return end
+CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), 'bloodseeker_rite_change',  {hide = 0, max_time = self.max_timer, time = self:GetRemainingTime(), damage = self:GetStackCount(),})				
+	
+if self:GetElapsedTime() >= self.sound then 
+	self.sound = 9999
+	self:GetParent():StopSound("BS.Bloodrite")
+end 
 
-local damage = self:GetCaster():GetMaxHealth()*self:GetAbility().legendary_self*self:GetAbility().legendary_interval
+end 
 
-ApplyDamage({attacker = self:GetCaster(), victim = self:GetCaster(), damage_type = DAMAGE_TYPE_PURE, ability = self:GetAbility(), damage = damage, damage_flags = DOTA_DAMAGE_FLAG_HPLOSS + DOTA_DAMAGE_FLAG_NO_DAMAGE_MULTIPLIERS + DOTA_DAMAGE_FLAG_NON_LETHAL})
-self:SetStackCount(self:GetStackCount() + damage*self:GetAbility().legendary_damage)
+
+
+function modifier_bloodseeker_blood_bath_custom_thinker:DeclareFunctions()
+return
+{
+	MODIFIER_EVENT_ON_TAKEDAMAGE
+}
+end
+
+
+function modifier_bloodseeker_blood_bath_custom_thinker:OnTakeDamage(params)
+if not IsServer() then return end 
+if not self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_7") then return end 
+if not params.attacker then return end 
+
+local target = params.unit
+local attacker = params.attacker
+
+if attacker:IsBuilding() then return end
+if target ~= self:GetCaster() then return end
+if (target:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Length2D() > self.radius then return end
+
+local damage = params.damage*self.legendary_damage
+
+
+self:SetStackCount(self:GetStackCount() + damage)
 
 end
 
@@ -207,6 +277,12 @@ end
 function modifier_bloodseeker_blood_bath_custom_thinker:OnDestroy( kv )
 if not IsServer() then return end
 
+
+self:GetAbility():SetActivated(true)
+self:GetAbility():UseResources(false, false, false, true)
+
+CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), 'bloodseeker_rite_change',  {hide = 1, max_time = self.max_timer, damage = self:GetStackCount(),})				
+	
 
 self:GetAbility().thinker = nil
 
@@ -218,59 +294,48 @@ if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_7") then
 
 	self:GetParent():EmitSound("hero_bloodseeker.bloodRite.silence")
 	self:GetParent():StopSound("Hero_Bloodseeker.BloodRite")
+	self:GetParent():StopSound("BS.Bloodrite")
 end
 
-
-local search_type = DOTA_UNIT_TARGET_TEAM_ENEMY
-if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_5") or self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_2") then 
-	search_type = DOTA_UNIT_TARGET_TEAM_BOTH
-end
 
 if self:GetStackCount() > 0 then 
 	self.damage = self.damage + self:GetStackCount()
 end
 
-local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetParent():GetOrigin(), nil, self.radius, search_type, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false )
+local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetParent():GetOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false )
 
 for _,enemy in pairs(enemies) do
-	if enemy:GetTeamNumber() ~= self:GetCaster():GetTeamNumber() then 
-
-
-		if enemy:IsRealHero() and self:GetCaster():GetQuest() == "Blood.Quest_6" then 
-			self:GetCaster():UpdateQuest(1)
-		end
-
-		enemy:AddNewModifier( self:GetCaster(), self:GetAbility(), "modifier_bloodseeker_blood_bath_custom_silence", { duration = self.silence_duration*(1 - enemy:GetStatusResistance()) } )
-
-		if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_1") then
-			enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_bloodseeker_blood_bath_custom_slow_blood", {duration = self:GetAbility().damage_duration})
-		end
-
-
-		ApplyDamage({ attacker = self:GetCaster(), victim = enemy, damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility() })
-
-		if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_6") and not enemy:HasModifier("modifier_bloodseeker_blood_bath_custom_center") then 
-			enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_bloodseeker_blood_bath_custom_center", {duration = self:GetAbility().knockback_duration, x = self:GetParent():GetAbsOrigin().x, y = self:GetParent():GetAbsOrigin().y})
-		end
-
-		local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_bloodseeker/bloodseeker_bloodritual_impact.vpcf", PATTACH_ABSORIGIN_FOLLOW, enemy )
-		ParticleManager:ReleaseParticleIndex( particle )
-		enemy:EmitSound("hero_bloodseeker.bloodRite.silence")
-	else 
-		if self:GetCaster() == enemy then 
-			if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_5") then 
-				self:GetCaster():EmitSound("BS.Bloodrite_purge")
-				self:GetCaster():Purge(false, true, false, true, false)
-				self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_generic_debuff_immune", {effect = 1, duration = self:GetAbility().dispel_bkb})
-			end
-
-			if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_2") then 
-				my_game:GenericHeal(self:GetCaster(), self:GetCaster():GetMaxHealth()*self:GetAbility().self_heal[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_bloodrite_2")], self:GetAbility())
-			end
-		end
+	if enemy:IsRealHero() and self:GetCaster():GetQuest() == "Blood.Quest_6" then 
+		self:GetCaster():UpdateQuest(1)
 	end
+
+	enemy:AddNewModifier( self:GetCaster(), self:GetAbility(), "modifier_bloodseeker_blood_bath_custom_silence", { duration = self.silence_duration*(1 - enemy:GetStatusResistance()) } )
+
+	ApplyDamage({ attacker = self:GetCaster(), victim = enemy, damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility() })
+
+	if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_1") then
+		enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_bloodseeker_blood_bath_custom_slow_blood", {duration = self.damage_duration})
+	end
+
+	local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_bloodseeker/bloodseeker_bloodritual_impact.vpcf", PATTACH_ABSORIGIN_FOLLOW, enemy )
+	ParticleManager:ReleaseParticleIndex( particle )
+	enemy:EmitSound("hero_bloodseeker.bloodRite.silence")
 end
 
+
+if (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Length2D() <= self.radius then
+
+	if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_5") then 
+		self:GetCaster():EmitSound("BS.Bloodrite_purge")
+		self:GetCaster():Purge(false, true, false, true, false)
+		self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_generic_debuff_immune", {effect = 1, duration = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_5", "bkb")})
+	end
+
+	if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_2") then 
+		self:GetCaster():GenericHeal(self:GetCaster():GetMaxHealth()*self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_2", "heal")/100, self:GetAbility())
+	end
+
+end
 
 UTIL_Remove(self:GetParent())
 end
@@ -307,69 +372,55 @@ function modifier_bloodseeker_blood_bath_custom_silence:DeclareFunctions()
 return
 {
 	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
 }
 end
 
 
 function modifier_bloodseeker_blood_bath_custom_silence:GetModifierMoveSpeedBonus_Percentage()
-if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_3") then 
-	return self:GetAbility().slow_move[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_bloodrite_3")]
-end
-
-end
-
-
-function modifier_bloodseeker_blood_bath_custom_silence:GetModifierAttackSpeedBonus_Constant()
-if self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_3") then 
-	return self:GetAbility().slow_attack[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_bloodrite_3")]
-end
-
+if not self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_6") then return end
+return self.slow
 end
 
 
-function modifier_bloodseeker_blood_bath_custom_silence:OnDestroy()
-if not IsServer() then return end
-
-if false and self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_6") and self:GetRemainingTime() > 0.1 then 
-	self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_stunned", {duration = (1 - self:GetParent():GetStatusResistance())*self:GetAbility().slow_stun})
-end
+function modifier_bloodseeker_blood_bath_custom_silence:OnCreated()
+self.slow = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_6", "slow")
+end 
 
 
-end
-
-
-modifier_bloodseeker_blood_bath_custom_bkb = class({})
-function modifier_bloodseeker_blood_bath_custom_bkb:IsHidden() return true end
-function modifier_bloodseeker_blood_bath_custom_bkb:IsPurgable() return false end 
-function modifier_bloodseeker_blood_bath_custom_bkb:GetEffectName() return "particles/items_fx/black_king_bar_avatar.vpcf" end
-function modifier_bloodseeker_blood_bath_custom_bkb:CheckState() return {[MODIFIER_STATE_MAGIC_IMMUNE] = true} end
 
 
 modifier_bloodseeker_blood_bath_custom_slow_aura = class({})
-function modifier_bloodseeker_blood_bath_custom_slow_aura:IsHidden() return true end
+function modifier_bloodseeker_blood_bath_custom_slow_aura:IsHidden() return false end
 function modifier_bloodseeker_blood_bath_custom_slow_aura:IsPurgable() return false end
 function modifier_bloodseeker_blood_bath_custom_slow_aura:DeclareFunctions()
 return
 {
 	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
+	MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE
 }
 end
 
 function modifier_bloodseeker_blood_bath_custom_slow_aura:GetModifierMoveSpeedBonus_Percentage()
-return self:GetAbility().slow_move[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_bloodrite_3")]
-
+if not self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_6") then return end 
+if self:GetParent():HasModifier("modifier_bloodseeker_blood_bath_custom_silence") then return end
+return self.slow
 end
 
 
-function modifier_bloodseeker_blood_bath_custom_slow_aura:GetModifierAttackSpeedBonus_Constant()
-return self:GetAbility().slow_attack[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_bloodrite_3")]
-
+function modifier_bloodseeker_blood_bath_custom_slow_aura:GetModifierIncomingDamage_Percentage()
+if not self:GetCaster():HasModifier("modifier_bloodseeker_bloodrite_1") then return end 
+if self:GetParent():HasModifier("modifier_bloodseeker_blood_bath_custom_slow_blood") then return end
+return self.damage
 end
 
 
 
+function modifier_bloodseeker_blood_bath_custom_slow_aura:OnCreated()
+
+self.damage = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_1", "damage")
+self.slow = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_6", "slow")
+
+end 
 
 
 
@@ -390,9 +441,13 @@ return
 end
 
 function modifier_bloodseeker_blood_bath_custom_slow_blood:GetModifierIncomingDamage_Percentage()
-return self:GetAbility().damage_inc[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_bloodrite_1")]
+return self.damage 
 end
 
+function modifier_bloodseeker_blood_bath_custom_slow_blood:OnCreated()
+
+self.damage = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_1", "damage")
+end 
 
 
 
@@ -420,32 +475,32 @@ end
 
 
 function modifier_bloodseeker_blood_bath_custom_center:OnCreated(params)
-  if not IsServer() then return end
-  
-  self.ability        = self:GetAbility()
-  self.caster         = self:GetCaster()
-  self.parent         = self:GetParent()
-  self:GetParent():StartGesture(ACT_DOTA_FLAIL)
-  
-  self.knockback_duration   = self.ability.knockback_duration
+if not IsServer() then return end
 
-	local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_bloodseeker/bloodseeker_rupture.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-	ParticleManager:SetParticleControlEnt(particle, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
-	self:AddParticle(particle, false, false, -1, false, false)
+self.ability        = self:GetAbility()
+self.caster         = self:GetCaster()
+self.parent         = self:GetParent()
+self:GetParent():StartGesture(ACT_DOTA_FLAIL)
 
-  --self.knockback_distance   = math.max(self.ability.knockback_distance - (self.caster:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D(), 50)
-  
-  self.position = GetGroundPosition(Vector(params.x, params.y, 0), nil)
+self.knockback_duration   = self:GetRemainingTime()
 
-  self.knockback_distance = (self:GetParent():GetAbsOrigin() -self.position):Length2D() 
+local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_bloodseeker/bloodseeker_rupture.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+ParticleManager:SetParticleControlEnt(particle, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+self:AddParticle(particle, false, false, -1, false, false)
 
-  self.knockback_speed    = self.knockback_distance / self.knockback_duration
-  
-  
-  if self:ApplyHorizontalMotionController() == false then 
-    self:Destroy()
-    return
-  end
+
+self.position = GetGroundPosition(Vector(params.x, params.y, 0), nil)
+
+self.knockback_distance = (self:GetParent():GetAbsOrigin() -self.position):Length2D() 
+
+self.knockback_speed    = self.knockback_distance / self.knockback_duration
+
+
+if self:ApplyHorizontalMotionController() == false then 
+  self:Destroy()
+  return
+end
+
 end
 
 function modifier_bloodseeker_blood_bath_custom_center:UpdateHorizontalMotion( me, dt )
@@ -479,6 +534,10 @@ end
 
 
 
+
+
+
+
 modifier_bloodseeker_blood_bath_custom_attack = class({})
 function modifier_bloodseeker_blood_bath_custom_attack:IsHidden() return false end
 function modifier_bloodseeker_blood_bath_custom_attack:IsPurgable() return false end
@@ -486,42 +545,63 @@ function modifier_bloodseeker_blood_bath_custom_attack:GetTexture() return "buff
 function modifier_bloodseeker_blood_bath_custom_attack:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_ATTACK_LANDED
+	MODIFIER_EVENT_ON_ATTACK_LANDED,
+	MODIFIER_PROPERTY_ATTACK_RANGE_BONUS
 }
 end
+
+function modifier_bloodseeker_blood_bath_custom_attack:GetModifierAttackRangeBonus()
+return self.range
+end
+
+function modifier_bloodseeker_blood_bath_custom_attack:OnCreated()
+
+self.duration = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_4", "duration")
+self.str = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_4", "str")/100
+self.taunt = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_4", "taunt")
+self.range = self:GetCaster():GetTalentValue("modifier_bloodseeker_bloodrite_4", "range")
+
+end 
+
 
 function modifier_bloodseeker_blood_bath_custom_attack:OnAttackLanded(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.attacker then return end
 if params.target:IsMagicImmune() or params.target:IsBuilding() then return end
-local root = (1 - params.target:GetStatusResistance())*(self:GetAbility().attack_root[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_bloodrite_4")])
+
+local root = (1 - params.target:GetStatusResistance())*self.taunt
 
 local str = 0
 if params.target:IsHero() then 
-	str = self:GetAbility().attack_str[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_bloodrite_4")]*params.target:GetStrength()
+	str = self.str*params.target:GetStrength()
 end
 
 if params.target:IsCreep() then 
-
-	str = self:GetAbility().attack_str[self:GetCaster():GetUpgradeStack("modifier_bloodseeker_bloodrite_4")]*self:GetParent():GetStrength()
+	str = self.str*self:GetParent():GetStrength()
 end
 
-params.target:EmitSound("BS.Bloodrite_root")
+for i = 1,3 do
+	local particle = ParticleManager:CreateParticle( "particles/bloodseeker/rite_stun.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
+	ParticleManager:SetParticleControlEnt( particle, 1, params.target, PATTACH_POINT_FOLLOW, "attach_hitloc", Vector(0,0,0), true )
+	ParticleManager:DestroyParticle(particle, false)
+	ParticleManager:ReleaseParticleIndex( particle )
+end 
 
-params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_bloodseeker_blood_bath_custom_attack_root", {duration = root})
-local mod = params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_bloodseeker_blood_bath_custom_attack_str", {duration = self:GetAbility().attack_str_duration})
-mod:SetStackCount(str)
-
-mod = self:GetCaster():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_bloodseeker_blood_bath_custom_attack_str", {duration = self:GetAbility().attack_str_duration})
-mod:SetStackCount(str)
-
-self:GetParent():CalculateStatBonus(true)
-if params.target:IsHero() then 
-	params.target:CalculateStatBonus(true)
+if not params.target:IsDebuffImmune() then 
+	params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_generic_taunt", {duration = root})
 end
+ 
+local mod = params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_bloodseeker_blood_bath_custom_attack_str", {duration = self.duration})
+mod:SetStackCount(str)
+
+mod = self:GetCaster():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_bloodseeker_blood_bath_custom_attack_str", {duration = self.duration})
+mod:SetStackCount(str)
 
 self:Destroy()
 end
+
+
+
 
 
 
