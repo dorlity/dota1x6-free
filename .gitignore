@@ -11,4 +11,7 @@ content/*/*
 
 game/*/*
 game/dota_addons/xeno_free/scripts/vscripts/old
+game/dota_addons/xeno_free/panorama/layout
+game/dota_addons/xeno_free/panorama/scripts
+game/dota_addons/xeno_free/panorama/styles
 !game/dota_addons/xeno_free
