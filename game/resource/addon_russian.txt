@@ -5,7 +5,7 @@
 {
 
 
-"addon_game_name"			"DOTA 1x6"
+"addon_game_name"			"DOTA 1x6 (FREE)"
 
 
 "show_sponsor"	"0"

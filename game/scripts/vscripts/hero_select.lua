@@ -21,11 +21,10 @@ _G.IN_STATE = false
 BAN_HEROES_VOTE = {}
 _G.BANNED_HEROES = {}
 
-NO_BANNED_HEROES = { "npc_dota_hero_sand_king" }
+NO_BANNED_HEROES = { }
 
 DONATE_HEROES = 
 {
-    "npc_dota_hero_sand_king" 
 }
 
 _G.BASE_POSITION = {

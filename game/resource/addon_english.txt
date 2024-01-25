@@ -4,7 +4,7 @@
 "Tokens"
 {	
 
-"addon_game_name"			"DOTA 1x6"
+"addon_game_name"			"DOTA 1x6 (FREE)"
 
 "lang"			"eng"
 "show_sponsor"	"0"
