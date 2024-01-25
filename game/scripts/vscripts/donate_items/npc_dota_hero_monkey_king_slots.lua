@@ -1,0 +1,49 @@
+return
+{
+    ["armor"] = 
+    {
+        "models/items/monkey_king/the_havoc_of_dragon_palacesix_ear_armor/the_havoc_of_dragon_palacesix_ear_armor.vmdl",
+        "models/items/monkey_king/mk_ti9_immortal_armor/mk_ti9_immortal_armor.vmdl",
+        "models/items/monkey_king/monkey_king_king_of_the_dark_reef_ti_2017_armor/monkey_king_king_of_the_dark_reef_ti_2017_armor.vmdl",
+        "models/heroes/monkey_king/monkey_king_armor.vmdl",
+        "models/items/monkey_king/dota_plus_monkey_king_armor/dota_plus_monkey_king_armor.vmdl",
+        "models/items/monkey_king/mk_fiery_vajrapani_armor/mk_fiery_vajrapani_armor.vmdl",
+        "models/items/monkey_king/path_of_the_jungle_armor/path_of_the_jungle_armor.vmdl",
+        "models/items/monkey_king/return_of_the_monkey_king_armor_v2/return_of_the_monkey_king_armor_v2.vmdl",
+    },	
+    ["head"] = 
+    {
+        "models/items/monkey_king/monkey_king_king_of_the_dark_reef_ti_2017_head/monkey_king_king_of_the_dark_reef_ti_2017_head.vmdl",
+        "models/items/monkey_king/mk_ti9_immortal_head/mk_ti9_immortal_head.vmdl",
+        "models/items/monkey_king/mk_fiery_vajrapani_head/mk_fiery_vajrapani_head.vmdl",
+        "models/items/monkey_king/path_of_the_jungle_head/path_of_the_jungle_head.vmdl",
+        "models/items/monkey_king/the_havoc_of_dragon_palacesix_ear_head/the_havoc_of_dragon_palacesix_ear_head.vmdl",
+        "models/items/monkey_king/return_of_the_monkey_king_head/return_of_the_monkey_king_head.vmdl",
+        "models/items/monkey_king/dota_plus_monkey_king_head/dota_plus_monkey_king_head.vmdl",
+        "models/heroes/monkey_king/monkey_king_hair.vmdl",
+        "models/items/monkey_king/monkey_king_arcana_head/mesh/monkey_king_arcana.vmdl",
+    },
+    ["shoulder"] = 
+    {
+        "models/heroes/monkey_king/monkey_king_shoulders.vmdl",
+        "models/items/monkey_king/mk_ti9_immortal_shoulder/mk_ti9_immortal_shoulder.vmdl",
+        "models/items/monkey_king/dota_plus_monkey_king_shoulders/dota_plus_monkey_king_shoulders.vmdl",
+        "models/items/monkey_king/return_of_the_monkey_king_shoulders/return_of_the_monkey_king_shoulders.vmdl",
+        "models/items/monkey_king/the_havoc_of_dragon_palacesix_ear_armor/the_havoc_of_dragon_palacesix_ear_shoulders.vmdl",
+        "models/items/monkey_king/monkey_king_king_of_the_dark_reef_ti_2017_armor/mk_king_of_the_dark_reef_t7_shoulders.vmdl",
+        "models/items/monkey_king/mk_fiery_vajrapani_shoulder/mk_fiery_vajrapani_shoulder.vmdl",
+        "models/items/monkey_king/path_of_the_jungle_shoulder/path_of_the_jungle_shoulder.vmdl",
+    },
+    ["weapon"] = 
+    {
+        "models/items/monkey_king/the_havoc_of_dragon_palacesix_ear_weapon/the_havoc_of_dragon_palacesix_ear_weapon.vmdl",
+        "models/items/monkey_king/monkey_king_king_of_the_dark_reef_ti_2017_weapon/monkey_king_king_of_the_dark_reef_ti_2017_weapon.vmdl",
+        "models/items/monkey_king/mk_ti9_immortal_weapon/mk_ti9_immortal_weapon.vmdl",
+        "models/items/monkey_king/monkey_king_immortal_weapon/monkey_king_immortal_weapon.vmdl",
+        "models/heroes/monkey_king/monkey_king_base_weapon.vmdl",
+        "models/items/monkey_king/dota_plus_monkey_king_weapon/dota_plus_monkey_king_weapon.vmdl",
+        "models/items/monkey_king/mk_fiery_vajrapani_weapon/mk_fiery_vajrapani_weapon.vmdl",
+        "models/items/monkey_king/path_of_the_jungle_weapon/path_of_the_jungle_weapon.vmdl",
+        "models/items/monkey_king/return_of_the_monkey_king_weapon/return_of_the_monkey_king_weapon.vmdl",
+    },
+}

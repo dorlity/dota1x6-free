@@ -1,0 +1,481 @@
+
+
+
+
+
+
+"Voice.Blood.1_1"   "Смех"
+"Voice.Blood.1_2"   "Было твое - стало мое." 
+"Voice.Blood.2_1"   "Что, нравится вкус крови?" 
+"Voice.Blood.2_2"   "Почему не бежишь?" 
+"Voice.Blood.3_1"   "Даже я, слепец, вижу как это прекрасно!" 
+"Voice.Blood.3_2"   "Приляг… будешь печенье?" 
+"Voice.Blood.4_1"   "Не надо расстраиваться.. Будь позитивнее!" 
+"Voice.Blood.5_1"   "Может хватит уже пряток?" 
+"Voice.Blood.6_1"   "Эх, в этом даже крови не было." 
+
+
+"Blood.Quest_1" "Займите 1 место, используя основной легендарный талант Bloodrage"
+"Blood.Quest_2" "Займите 1 место, используя основной легендарный талант Blood Rite"
+"Blood.Quest_3" "Займите 1 место, используя основной легендарный талант Thirst"
+"Blood.Quest_4" "Займите 1 место, используя основной легендарный талант Rupture"
+
+
+"Blood.Quest_5" "Совершите атаки по героям, имея меньше 50% здоровья"
+"Blood.Quest_6" "Обезмолвите героев с помощью Blood Rite"
+"Blood.Quest_7" "Убейте разных героев хотя бы 1 раз"
+"Blood.Quest_8" "Нанесите героям чистый урон с помощью Rupture"
+
+
+
+
+"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom"                                 "Bloodrage"
+"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_Description"                     "Пробуждает в существе жажду крови, из-за которой оно атакует быстрее и наносит больше урона заклинаниями, но каждую секунду теряет долю от своего здоровья. Даёт союзным героям половину от скорости атаки."
+"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_Lore"                                "Стригвир делится с другими своей животной жаждой кровопролития."
+"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_duration"                            "ДЛИТЕЛЬНОСТЬ:"
+"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_attack_speed"                        "ДОП. СКОРОСТЬ АТАКИ:"
+"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_spell_amp"                           "%ДОП. УРОН ОТ ЗАКЛИНАНИЙ:"
+"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_damage_pct"                          "%ПОТЕРЯ МАКС. ЗДОРОВЬЯ В СЕКУНДУ:"
+"DOTA_Tooltip_ability_bloodseeker_bloodrage_custom_shard_description"                   "Каждая атака под действием этой способности лечит героя на %shard_damage% здоровья и наносит жертве столько же чистого урона"
+
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_custom"                    "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_custom_Description"        "Скорость атаки увеличена на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT%</font></b>, урон от заклинаний увеличен на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE%%%</font></b><br><br>Теряет <b><font color='#ff0000'>%fMODIFIER_PROPERTY_TOOLTIP%%%</font></b> здоровья в секунду<br><br>Весь наносимый урон увеличен на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE%%%</font></b>"
+
+"hero_change_npc_dota_hero_bloodseeker_1" "Бонусы даются только за <b><font color='#ff0000'>1</font></b> героя с наименьшим уровнем здоровья"
+"hero_change_npc_dota_hero_bloodseeker_2" "Макс. скорость передвижения увеличена с 40% до <b><font color='#53ea48'>50%</font></b>"
+"hero_change_npc_dota_hero_bloodseeker_3" "Порог дистанции для нанесения урона увеличен с 1300 до <b><font color='#53ea48'>1800</font></b>"
+"hero_change_npc_dota_hero_bloodseeker_4" "Урон/Потеря здоровья снижены с 7%/7% до <b><font color='#ff0000'>4%</font></b>/<b><font color='#53ea48'>6%</font></b>"
+
+
+
+"npc_dota_hero_bloodseeker_legendary_1"     "Bloodrage значительно увеличивает ваш урон, но расходует больше здоровья"
+"npc_dota_hero_bloodseeker_legendary_2"     "Blood Rite расходует ваше здоровье и наносит больше урона"
+"npc_dota_hero_bloodseeker_legendary_3"     "Активная<br><br>Получает максимальные бонусы Thirst и обзор на героев. Убийства дают постоянный бонус к атрибутам"
+"npc_dota_hero_bloodseeker_legendary_4"     "Новая способность<br><br>Притягивает цель и значительно увеличивает наносимый ей урон"
+
+
+
+
+"font_disc_modifier_bloodseeker_bloodrage_1" "19"
+"upgrade_disc_modifier_bloodseeker_bloodrage_1_1" "Под действием Bloodrage, вы исцеляетесь на <b><font color='#53ea48'>6%</font></b> от любого наносимого урона<br><br>Эффект в 3 раза слабее против крипов"
+"upgrade_disc_modifier_bloodseeker_bloodrage_1_2" "Под действием Bloodrage, вы исцеляетесь на <b><font color='#53ea48'>9%</font></b> от любого наносимого урона<br><br>Эффект в 3 раза слабее против крипов"
+"upgrade_disc_modifier_bloodseeker_bloodrage_1_3" "Под действием Bloodrage, вы исцеляетесь на <b><font color='#53ea48'>12%</font></b> от любого наносимого урона<br><br>Эффект в 3 раза слабее против крипов"
+
+"talent_disc_modifier_bloodseeker_bloodrage_1_0" "Под действием Bloodrage, вы исцеляетесь на <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#297016'>12%</font></b> от любого наносимого урона<br><br>Эффект в 3 раза слабее против крипов"
+"talent_disc_modifier_bloodseeker_bloodrage_1_1" "Под действием Bloodrage, вы исцеляетесь на <b><font color='#53ea48'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#297016'>12%</font></b> от любого наносимого урона<br><br>Эффект в 3 раза слабее против крипов"
+"talent_disc_modifier_bloodseeker_bloodrage_1_2" "Под действием Bloodrage, вы исцеляетесь на <b><font color='#297016'>6%</font></b>/<b><font color='#53ea48'>9%</font></b>/<b><font color='#297016'>12%</font></b> от любого наносимого урона<br><br>Эффект в 3 раза слабее против крипов"
+"talent_disc_modifier_bloodseeker_bloodrage_1_3" "Под действием Bloodrage, вы исцеляетесь на <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#53ea48'>12%</font></b> от любого наносимого урона<br><br>Эффект в 3 раза слабее против крипов"
+
+
+"font_disc_modifier_bloodseeker_bloodrage_2" "21"
+"upgrade_disc_modifier_bloodseeker_bloodrage_2_1" "<b><font color='#53ea48'>+20</font></b> скорости атаки под действием Bloodrage<br><br><b><font color='#53ea48'>+4%</font></b> урона заклинаний под действием Bloodrage"
+"upgrade_disc_modifier_bloodseeker_bloodrage_2_2" "<b><font color='#53ea48'>+30</font></b> скорости атаки под действием Bloodrage<br><br><b><font color='#53ea48'>+6%</font></b> урона заклинаний под действием Bloodrage"
+"upgrade_disc_modifier_bloodseeker_bloodrage_2_3" "<b><font color='#53ea48'>+40</font></b> скорости атаки под действием Bloodrage<br><br><b><font color='#53ea48'>+8%</font></b> урона заклинаний под действием Bloodrage"
+
+"talent_disc_modifier_bloodseeker_bloodrage_2_0" "<b><font color='#297016'>+20</font></b>/<b><font color='#297016'>+30</font></b>/<b><font color='#297016'>+40</font></b> скорости атаки под действием Bloodrage<br><br><b><font color='#297016'>+4%</font></b>/<b><font color='#297016'>+6%</font></b>/<b><font color='#297016'>+8%</font></b> урона заклинаний под действием Bloodrage"
+"talent_disc_modifier_bloodseeker_bloodrage_2_1" "<b><font color='#53ea48'>+20</font></b>/<b><font color='#297016'>+30</font></b>/<b><font color='#297016'>+40</font></b> скорости атаки под действием Bloodrage<br><br><b><font color='#53ea48'>+4%</font></b>/<b><font color='#297016'>+6%</font></b>/<b><font color='#297016'>+8%</font></b> урона заклинаний под действием Bloodrage"
+"talent_disc_modifier_bloodseeker_bloodrage_2_2" "<b><font color='#297016'>+20</font></b>/<b><font color='#53ea48'>+30</font></b>/<b><font color='#297016'>+40</font></b> скорости атаки под действием Bloodrage<br><br><b><font color='#297016'>+4%</font></b>/<b><font color='#53ea48'>+6%</font></b>/<b><font color='#297016'>+8%</font></b> урона заклинаний под действием Bloodrage"
+"talent_disc_modifier_bloodseeker_bloodrage_2_3" "<b><font color='#297016'>+20</font></b>/<b><font color='#297016'>+30</font></b>/<b><font color='#53ea48'>+40</font></b> скорости атаки под действием Bloodrage<br><br><b><font color='#297016'>+4%</font></b>/<b><font color='#297016'>+6%</font></b>/<b><font color='#53ea48'>+8%</font></b> урона заклинаний под действием Bloodrage"
+
+
+
+
+"font_disc_modifier_bloodseeker_bloodrage_3" "18"
+"upgrade_disc_modifier_bloodseeker_bloodrage_3_1" "Спустя 4 секунды действия Bloodrage, входящий по вам урон снижается на <b><font color='#53ea48'>6%</font></b>, а скорость передвижения увеличивается на <b><font color='#53ea48'>20</font></b><br><br>Эффект работает до конца Bloodrage"
+"upgrade_disc_modifier_bloodseeker_bloodrage_3_2" "Спустя 4 секунды действия Bloodrage, входящий по вам урон снижается на <b><font color='#53ea48'>9%</font></b>, а скорость передвижения увеличивается на <b><font color='#53ea48'>30</font></b><br><br>Эффект работает до конца Bloodrage"
+"upgrade_disc_modifier_bloodseeker_bloodrage_3_3" "Спустя 4 секунды действия Bloodrage, входящий по вам урон снижается на <b><font color='#53ea48'>12%</font></b>, а скорость передвижения увеличивается на <b><font color='#53ea48'>40</font></b><br><br>Эффект работает до конца Bloodrage"
+
+
+"talent_disc_modifier_bloodseeker_bloodrage_3_0" "Спустя 4 секунды действия Bloodrage, входящий по вам урон снижается на <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#297016'>12%</font></b>, а скорость передвижения увеличивается на <b><font color='#297016'>20</font></b>/<b><font color='#297016'>30</font></b>/<b><font color='#297016'>40</font></b><br><br>Эффект работает до конца Bloodrage"
+"talent_disc_modifier_bloodseeker_bloodrage_3_1" "Спустя 4 секунды действия Bloodrage, входящий по вам урон снижается на <b><font color='#53ea48'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#297016'>12%</font></b>, а скорость передвижения увеличивается на <b><font color='#53ea48'>20</font></b>/<b><font color='#297016'>30</font></b>/<b><font color='#297016'>40</font></b><br><br>Эффект работает до конца Bloodrage"
+"talent_disc_modifier_bloodseeker_bloodrage_3_2" "Спустя 4 секунды действия Bloodrage, входящий по вам урон снижается на <b><font color='#297016'>6%</font></b>/<b><font color='#53ea48'>9%</font></b>/<b><font color='#297016'>12%</font></b>, а скорость передвижения увеличивается на <b><font color='#297016'>20</font></b>/<b><font color='#53ea48'>30</font></b>/<b><font color='#297016'>40</font></b><br><br>Эффект работает до конца Bloodrage"
+"talent_disc_modifier_bloodseeker_bloodrage_3_3" "Спустя 4 секунды действия Bloodrage, входящий по вам урон снижается на <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#53ea48'>12%</font></b>, а скорость передвижения увеличивается на <b><font color='#297016'>20</font></b>/<b><font color='#297016'>30</font></b>/<b><font color='#53ea48'>40</font></b><br><br>Эффект работает до конца Bloodrage"
+
+
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_incoming"                  "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_incoming_Description"      "Входящий урон снижен на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE%%%</font></b>, скорость передвижения увеличена на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT%</font></b>"
+
+
+"font_disc_modifier_bloodseeker_bloodrage_4" "18"
+"upgrade_disc_modifier_bloodseeker_bloodrage_4_1" "Атаки под действием Bloodrage оставляют цели кровотечение, которое наносит 70 магического урона в секунду за каждый свой заряд и исцеляет вас на 100% от наносимого урона<br><br>Эффект суммируется <b><font color='#53ea48'>5</font></b> раз"
+"upgrade_disc_modifier_bloodseeker_bloodrage_4_2" "Атаки под действием Bloodrage оставляют цели кровотечение, которое наносит 70 магического урона в секунду за каждый свой заряд и исцеляет вас на 100% от наносимого урона<br><br>Эффект суммируется <b><font color='#53ea48'>8</font></b> раз"
+
+"talent_disc_modifier_bloodseeker_bloodrage_4_0" "Атаки под действием Bloodrage оставляют цели кровотечение, которое наносит 70 магического урона в секунду за каждый свой заряд и исцеляет вас на 100% от наносимого урона<br><br>Эффект суммируется <b><font color='#297016'>5</font></b>/<b><font color='#297016'>8</font></b> раз"
+"talent_disc_modifier_bloodseeker_bloodrage_4_1" "Атаки под действием Bloodrage оставляют цели кровотечение, которое наносит 70 магического урона в секунду за каждый свой заряд и исцеляет вас на 100% от наносимого урона<br><br>Эффект суммируется <b><font color='#53ea48'>5</font></b>/<b><font color='#297016'>8</font></b> раз"
+"talent_disc_modifier_bloodseeker_bloodrage_4_2" "Атаки под действием Bloodrage оставляют цели кровотечение, которое наносит 70 магического урона в секунду за каждый свой заряд и исцеляет вас на 100% от наносимого урона<br><br>Эффект суммируется <b><font color='#297016'>5</font></b>/<b><font color='#53ea48'>8</font></b> раз"
+"mini_disc_modifier_bloodseeker_bloodrage_4" "Атаки под действием Bloodrage оставляют цели кровотечение"
+
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_blood"                 "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_blood_Description"     "Получает <b><font color='#ff0000'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> магического урона в секунду"
+
+
+
+"font_disc_modifier_bloodseeker_bloodrage_5" "18"
+"upgrade_disc_modifier_bloodseeker_bloodrage_5_1" "Совершив 8 атак под действием Bloodrage, вы получаете щит, который поглощает весь урон и дает <b><font color='#53ea48'>25%</font></b> сопротивления эффектам<br><br>Прочность щита: <b><font color='#53ea48'>15%</font></b> от макс. здоровья<br><br>Перезарядка: 8 сек"
+"mini_disc_modifier_bloodseeker_bloodrage_5" "Атаки под действием Bloodrage дают щит, поглощающий урон"
+
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_cd"                 "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_cd_Description"     "Перезарядка щита от Bloodrage"
+
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_count"                  "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_count_Description"      "Атаки под действием Bloodrage дают щит, поглощающий урон"
+
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield"                    "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_shield_Description"        "Щит поглощает весь урон. Сопротивление эффектам увеличено на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING%%%</font></b>"
+
+
+
+
+
+
+"font_disc_modifier_bloodseeker_bloodrage_6" "19"
+"upgrade_disc_modifier_bloodseeker_bloodrage_6_1" "Пока уровень вашего здоровья ниже 30%, Bloodrage восстанавливает вам <b><font color='#53ea48'>1.5%</font></b> здоровья в секунду вместо нанесения урона"
+"mini_disc_modifier_bloodseeker_bloodrage_6" "Bloodrage исцеляет на низком здоровье"
+
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_tracker"                   "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_tracker_Description"       "Восстанавливает <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%%%</font></b> здоровья в секунду"
+
+
+
+
+"font_disc_modifier_bloodseeker_bloodrage_7" "16"
+"upgrade_disc_modifier_bloodseeker_bloodrage_7" "Bloodrage становится переключаемой способностью<br><br>Каждую секунду, Bloodrage увеличивает наносимый вами урон на <b><font color='#fb9531'>2%</font></b>, но отнимает на 0.3% здоровья больше<br><br>После 10 суммирований, ваш урон увеличивается еще на <b><font color='#fb9531'>10%</font></b>, но вы время от времени провоцируетесь на ближайшего противника на 2 секунды"
+"mini_disc_modifier_bloodseeker_bloodrage_7" "Bloodrage становится переключаемой способностью"
+
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_taunt"                 "Bloodrage"
+"DOTA_Tooltip_modifier_bloodseeker_bloodrage_taunt_Description"     "Скорость передвижения увеличена на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE%%%</font></b>, атакует ближайшего противника"
+
+
+
+
+
+
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom"                                    "Blood Rite"
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_Description"                        "Герой окропляет выбранную область святой кровью. Через %delay_plus_castpoint_tooltip% сек. ритуал завершается, нанося противникам урон и запрещая им применять способности."
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_Lore"                               "Бескожие близнецы всегда готовы помочь тем, кто проливает кровь на поле боя."
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_silence_duration"                   "ДЛИТЕЛЬНОСТЬ БЕЗМОЛВИЯ:"
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_damage"         "УРОН:"
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_radius"         "ОБЛАСТЬ ДЕЙСТВИЯ:"
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_Note0"          "Задержка перед срабатыванием составляет %delay% сек. + %abilitycastpoint% сек. анимации героя."
+
+
+
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_end"                                    "Blood Rite"
+"DOTA_Tooltip_ability_bloodseeker_blood_bath_custom_end_Description"                        "Моментально завершает ритуал Blood Rite"
+
+
+
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_silence"                   "Blood Rite"
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_silence_Description"       "Обезмолвлен"
+
+
+
+
+
+
+"font_disc_modifier_bloodseeker_bloodrite_1" "21"
+"upgrade_disc_modifier_bloodseeker_bloodrite_1_1" "Перед нанесением урона, Blood Rite увеличивает весь входящий по целям урон на <b><font color='#53ea48'>6%</font></b> на 5 секунд"
+"upgrade_disc_modifier_bloodseeker_bloodrite_1_2" "Перед нанесением урона, Blood Rite увеличивает весь входящий по целям урон на <b><font color='#53ea48'>9%</font></b> на 5 секунд"
+"upgrade_disc_modifier_bloodseeker_bloodrite_1_3" "Перед нанесением урона, Blood Rite увеличивает весь входящий по целям урон на <b><font color='#53ea48'>12%</font></b> на 5 секунд"
+
+"talent_disc_modifier_bloodseeker_bloodrite_1_0" "Перед нанесением урона, Blood Rite увеличивает весь входящий по целям урон на <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#297016'>12%</font></b> на 5 секунд"
+"talent_disc_modifier_bloodseeker_bloodrite_1_1" "Перед нанесением урона, Blood Rite увеличивает весь входящий по целям урон на <b><font color='#53ea48'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#297016'>12%</font></b> на 5 секунд"
+"talent_disc_modifier_bloodseeker_bloodrite_1_2" "Перед нанесением урона, Blood Rite увеличивает весь входящий по целям урон на <b><font color='#297016'>6%</font></b>/<b><font color='#53ea48'>9%</font></b>/<b><font color='#297016'>12%</font></b> на 5 секунд"
+"talent_disc_modifier_bloodseeker_bloodrite_1_3" "Перед нанесением урона, Blood Rite увеличивает весь входящий по целям урон на <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#53ea48'>12%</font></b> на 5 секунд"
+
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_slow_blood"                    "Blood Rite"
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_slow_blood_Description"        "Входящий урон увеличен на %dMODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE%%%"
+
+
+
+
+
+"font_disc_modifier_bloodseeker_bloodrite_2" "19"
+"upgrade_disc_modifier_bloodseeker_bloodrite_2_1" "Если в момент завершения ритуала Blood Rite вы были в его области, вы восстанавливаете <b><font color='#53ea48'>15%</font></b> здоровья"
+"upgrade_disc_modifier_bloodseeker_bloodrite_2_2" "Если в момент завершения ритуала Blood Rite вы были в его области, вы восстанавливаете <b><font color='#53ea48'>20%</font></b> здоровья"
+"upgrade_disc_modifier_bloodseeker_bloodrite_2_3" "Если в момент завершения ритуала Blood Rite вы были в его области, вы восстанавливаете <b><font color='#53ea48'>25%</font></b> здоровья"
+
+"talent_disc_modifier_bloodseeker_bloodrite_2_0" "Если в момент завершения ритуала Blood Rite вы были в его области, вы восстанавливаете <b><font color='#297016'>15%</font></b>/<b><font color='#297016'>20%</font></b>/<b><font color='#297016'>25%</font></b> здоровья"
+"talent_disc_modifier_bloodseeker_bloodrite_2_1" "Если в момент завершения ритуала Blood Rite вы были в его области, вы восстанавливаете <b><font color='#53ea48'>15%</font></b>/<b><font color='#297016'>20%</font></b>/<b><font color='#297016'>25%</font></b> здоровья"
+"talent_disc_modifier_bloodseeker_bloodrite_2_2" "Если в момент завершения ритуала Blood Rite вы были в его области, вы восстанавливаете <b><font color='#297016'>15%</font></b>/<b><font color='#53ea48'>20%</font></b>/<b><font color='#297016'>25%</font></b> здоровья"
+"talent_disc_modifier_bloodseeker_bloodrite_2_3" "Если в момент завершения ритуала Blood Rite вы были в его области, вы восстанавливаете <b><font color='#297016'>15%</font></b>/<b><font color='#297016'>20%</font></b>/<b><font color='#53ea48'>25%</font></b> здоровья"
+
+
+
+"font_disc_modifier_bloodseeker_bloodrite_3" "19"
+"upgrade_disc_modifier_bloodseeker_bloodrite_3_1" "Под действием ритуала и безмолвия Blood Rite, противники теряют <b><font color='#53ea48'>20%</font></b> скорости передвижения и <b><font color='#53ea48'>20</font></b> скорости атаки"
+"upgrade_disc_modifier_bloodseeker_bloodrite_3_2" "Под действием ритуала и безмолвия Blood Rite, противники теряют <b><font color='#53ea48'>30%</font></b> скорости передвижения и <b><font color='#53ea48'>30</font></b> скорости атаки"
+"upgrade_disc_modifier_bloodseeker_bloodrite_3_3" "Под действием ритуала и безмолвия Blood Rite, противники теряют <b><font color='#53ea48'>40%</font></b> скорости передвижения и <b><font color='#53ea48'>40</font></b> скорости атаки"
+
+"talent_disc_modifier_bloodseeker_bloodrite_3_0" "Под действием ритуала и безмолвия Blood Rite, противники теряют <b><font color='#297016'>20%</font></b>/<b><font color='#297016'>30%</font></b>/<b><font color='#297016'>40%</font></b> скорости передвижения и <b><font color='#297016'>20</font></b>/<b><font color='#297016'>30</font></b>/<b><font color='#297016'>40</font></b> скорости атаки"
+"talent_disc_modifier_bloodseeker_bloodrite_3_1" "Под действием ритуала и безмолвия Blood Rite, противники теряют <b><font color='#53ea48'>20%</font></b>/<b><font color='#297016'>30%</font></b>/<b><font color='#297016'>40%</font></b> скорости передвижения и <b><font color='#53ea48'>20</font></b>/<b><font color='#297016'>30</font></b>/<b><font color='#297016'>40</font></b> скорости атаки"
+"talent_disc_modifier_bloodseeker_bloodrite_3_2" "Под действием ритуала и безмолвия Blood Rite, противники теряют <b><font color='#297016'>20%</font></b>/<b><font color='#53ea48'>30%</font></b>/<b><font color='#297016'>40%</font></b> скорости передвижения и <b><font color='#297016'>20</font></b>/<b><font color='#53ea48'>30</font></b>/<b><font color='#297016'>40</font></b> скорости атаки"
+"talent_disc_modifier_bloodseeker_bloodrite_3_3" "Под действием ритуала и безмолвия Blood Rite, противники теряют <b><font color='#297016'>20%</font></b>/<b><font color='#297016'>30%</font></b>/<b><font color='#53ea48'>40%</font></b> скорости передвижения и <b><font color='#297016'>20</font></b>/<b><font color='#297016'>30</font></b>/<b><font color='#53ea48'>40</font></b> скорости атаки"
+
+
+
+"font_disc_modifier_bloodseeker_bloodrite_4" "19"
+"upgrade_disc_modifier_bloodseeker_bloodrite_4_1" "После использования Blood Rite, ваша следующая атака обездвижит цель на <b><font color='#53ea48'>1</font></b> сек и сворует у нее <b><font color='#53ea48'>10%</font></b> силы на 6 секунд"
+"upgrade_disc_modifier_bloodseeker_bloodrite_4_2" "После использования Blood Rite, ваша следующая атака обездвижит цель на <b><font color='#53ea48'>1.5</font></b> сек и сворует у нее <b><font color='#53ea48'>15%</font></b> силы на 6 секунд"
+
+"talent_disc_modifier_bloodseeker_bloodrite_4_0" "После использования Blood Rite, ваша следующая атака обездвижит цель на <b><font color='#297016'>1</font></b>/<b><font color='#297016'>1.5</font></b> сек и сворует у нее <b><font color='#297016'>10%</font></b>/<b><font color='#297016'>15%</font></b> силы на 6 секунд"
+"talent_disc_modifier_bloodseeker_bloodrite_4_1" "После использования Blood Rite, ваша следующая атака обездвижит цель на <b><font color='#53ea48'>1</font></b>/<b><font color='#297016'>1.5</font></b> сек и сворует у нее <b><font color='#53ea48'>10%</font></b>/<b><font color='#297016'>15%</font></b> силы на 6 секунд"
+"talent_disc_modifier_bloodseeker_bloodrite_4_2" "После использования Blood Rite, ваша следующая атака обездвижит цель на <b><font color='#297016'>1</font></b>/<b><font color='#53ea48'>1.5</font></b> сек и сворует у нее <b><font color='#297016'>10%</font></b>/<b><font color='#53ea48'>15%</font></b> силы на 6 секунд"
+"mini_disc_modifier_bloodseeker_bloodrite_4" "Атака после Blood Rite обездвиживает и ворует силу"
+
+
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack_str"                    "Blood Rite"
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack_str_Description"        "Сила изменена на %dMODIFIER_PROPERTY_STATS_STRENGTH_BONUS%"
+
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack"                    "Blood Rite"
+"DOTA_Tooltip_modifier_bloodseeker_blood_bath_custom_attack_Description"        "Следующая атака обездвижит цель и сворует у нее силу"
+
+
+
+
+"font_disc_modifier_bloodseeker_bloodrite_5" "18"
+"upgrade_disc_modifier_bloodseeker_bloodrite_5_1" "Если в момент завершения ритуала Blood Rite вы были в его области, на вас применяется сильное развеивание и вы получаете эффект Black King Bar на <b><font color='#53ea48'>1.5</font></b> сек"
+"mini_disc_modifier_bloodseeker_bloodrite_5" "Blood Rite дает вам неуязвимость к магии и развеивает"
+
+
+
+"font_disc_modifier_bloodseeker_bloodrite_6" "19"
+"upgrade_disc_modifier_bloodseeker_bloodrite_6_1" "<b><font color='#53ea48'>-1</font></b> секунда перезарядки Blood Rite<br><br>В момент начала и завершения ритула Blood Rite, противники притягиваются в центр его действия"
+"mini_disc_modifier_bloodseeker_bloodrite_6" "Blood Rite притягивает противников в центр своего действия"
+
+
+
+"font_disc_modifier_bloodseeker_bloodrite_7" "17"
+"upgrade_disc_modifier_bloodseeker_bloodrite_7" "Ритуал Blood Rite теперь длится до <b><font color='#fb9531'>5</font></b> сек и завершается при повторном использовании способности<br><br>Пока вы находитесь в области ритуала Blood Rite, вы теряете 4% макс здоровья. Урон Blood Rite увеличивается на <b><font color='#fb9531'>100%</font></b> от полученного урона таким способом"
+"mini_disc_modifier_bloodseeker_bloodrite_7" "Blood Rite теперь длится до 5 секунд"
+
+
+
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom"                                        "Thirst"
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_Description"                            "Герой упивается ранениями противников, излечиваясь при убийстве любого существа или если противник погиб в радиусе %half_bonus_aoe%.<br><br>Способность также даёт дополнительную скорость передвижения, когда здоровье любого вражеского героя становится меньше %min_bonus_pct%%%. Чем ниже уровень здоровья, тем сильнее эффект. Если здоровье вражеского героя упадёт ниже %invis_threshold_pct%%%, его станет видно в любой точке карты, даже если он невидим.<br><br><b><font color='#ff0000'>Бонус дается только за 1 героя с наименьшим уровнем здоровья</font></b>"
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_Lore"                                   "Когда проливается кровь, Стригвира охватывает неистовство."
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_Note0"                                  "Не реагирует на иллюзии."
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_Note1"                                  "Максимальный бонус к скорости передвижения достигается, если здоровье противника равно %max_bonus_pct%%% или ниже."
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_Note2"                                  "Эффект пропадает через %linger_duration% сек. после смерти цели."
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_min_bonus_pct"                          "%МИН. ПОРОГ ЗДОРОВЬЯ:"
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_bonus_movement_speed"                   "%МАКС. СКОРОСТЬ ПЕРЕДВИЖЕНИЯ ЗА ГЕРОЯ:"
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_hero_kill_heal"                 "%ЛЕЧЕНИЕ ОТ МАКС. ЗДОРОВЬЯ ГЕРОЕВ:"            
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_creep_kill_heal"                    "%ЛЕЧЕНИЕ ОТ МАКС. ЗДОРОВЬЯ КРИПОВ:"            
+"DOTA_Tooltip_ability_bloodseeker_thirst_custom_visibility_threshold_pct"               "%ПОРОГ ЗДОРОВЬЯ ДЛЯ ВИДИМОСТИ:"
+
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_visual"                "Скорость от Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_visual_Description"    "Существо чует раненого врага. Скорость передвижения увеличена."
+
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_debuff"                "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_debuff_Description"    "Bloodseeker чувствует ваши увечья и точно знает, где вы."
+
+
+
+
+
+
+"font_disc_modifier_bloodseeker_thirst_1" "21"
+"upgrade_disc_modifier_bloodseeker_thirst_1_1" "Thirst увеличивает ваш урон от атак максимум на <b><font color='#53ea48'>15%</font></b>, в зависимости от недостающего здоровья противника"
+"upgrade_disc_modifier_bloodseeker_thirst_1_2" "Thirst увеличивает ваш урон от атак максимум на <b><font color='#53ea48'>20%</font></b>, в зависимости от недостающего здоровья противника"
+"upgrade_disc_modifier_bloodseeker_thirst_1_3" "Thirst увеличивает ваш урон от атак максимум на <b><font color='#53ea48'>25%</font></b>, в зависимости от недостающего здоровья противника"
+
+"talent_disc_modifier_bloodseeker_thirst_1_0" "Thirst увеличивает ваш урон от атак максимум на <b><font color='#297016'>15%</font></b>/<b><font color='#297016'>20%</font></b>/<b><font color='#297016'>25%</font></b>, в зависимости от недостающего здоровья противника"
+"talent_disc_modifier_bloodseeker_thirst_1_1" "Thirst увеличивает ваш урон от атак максимум на <b><font color='#53ea48'>15%</font></b>/<b><font color='#297016'>20%</font></b>/<b><font color='#297016'>25%</font></b>, в зависимости от недостающего здоровья противника"
+"talent_disc_modifier_bloodseeker_thirst_1_2" "Thirst увеличивает ваш урон от атак максимум на <b><font color='#297016'>15%</font></b>/<b><font color='#53ea48'>20%</font></b>/<b><font color='#297016'>25%</font></b>, в зависимости от недостающего здоровья противника"
+"talent_disc_modifier_bloodseeker_thirst_1_3" "Thirst увеличивает ваш урон от атак максимум на <b><font color='#297016'>15%</font></b>/<b><font color='#297016'>20%</font></b>/<b><font color='#53ea48'>25%</font></b>, в зависимости от недостающего здоровья противника"
+
+
+"font_disc_modifier_bloodseeker_thirst_2" "19"
+"upgrade_disc_modifier_bloodseeker_thirst_2_1" "Убийства крипов дают вам щит, поглощающий <b><font color='#53ea48'>30</font></b> урона и увеличивающий скорость передвижения на <b><font color='#53ea48'>30</font></b><br><br>Щит суммируется 10 раз"
+"upgrade_disc_modifier_bloodseeker_thirst_2_2" "Убийства крипов дают вам щит, поглощающий <b><font color='#53ea48'>45</font></b> урона и увеличивающий скорость передвижения на <b><font color='#53ea48'>45</font></b><br><br>Щит суммируется 10 раз"
+"upgrade_disc_modifier_bloodseeker_thirst_2_3" "Убийства крипов дают вам щит, поглощающий <b><font color='#53ea48'>60</font></b> урона и увеличивающий скорость передвижения на <b><font color='#53ea48'>60</font></b><br><br>Щит суммируется 10 раз"
+
+"talent_disc_modifier_bloodseeker_thirst_2_0" "Убийства крипов дают вам щит, поглощающий <b><font color='#297016'>30</font></b>/<b><font color='#297016'>45</font></b>/<b><font color='#297016'>60</font></b> урона и увеличивающий скорость передвижения на <b><font color='#297016'>30</font></b>/<b><font color='#297016'>45</font></b>/<b><font color='#297016'>60</font></b><br><br>Щит суммируется 10 раз"
+"talent_disc_modifier_bloodseeker_thirst_2_1" "Убийства крипов дают вам щит, поглощающий <b><font color='#53ea48'>30</font></b>/<b><font color='#297016'>45</font></b>/<b><font color='#297016'>60</font></b> урона и увеличивающий скорость передвижения на <b><font color='#53ea48'>30</font></b>/<b><font color='#297016'>45</font></b>/<b><font color='#297016'>60</font></b><br><br>Щит суммируется 10 раз"
+"talent_disc_modifier_bloodseeker_thirst_2_2" "Убийства крипов дают вам щит, поглощающий <b><font color='#297016'>30</font></b>/<b><font color='#53ea48'>45</font></b>/<b><font color='#297016'>60</font></b> урона и увеличивающий скорость передвижения на <b><font color='#297016'>30</font></b>/<b><font color='#53ea48'>45</font></b>/<b><font color='#297016'>60</font></b><br><br>Щит суммируется 10 раз"
+"talent_disc_modifier_bloodseeker_thirst_2_3" "Убийства крипов дают вам щит, поглощающий <b><font color='#297016'>30</font></b>/<b><font color='#297016'>45</font></b>/<b><font color='#53ea48'>60</font></b> урона и увеличивающий скорость передвижения на <b><font color='#297016'>30</font></b>/<b><font color='#297016'>45</font></b>/<b><font color='#53ea48'>60</font></b><br><br>Щит суммируется 10 раз"
+
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_shield"                    "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_shield_Description"        "Поглощает входящий урон и увеличивает скорость передвижения на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT%</font></b>"
+
+
+
+"font_disc_modifier_bloodseeker_thirst_3" "20"
+"upgrade_disc_modifier_bloodseeker_thirst_3_1" "Если в радиусе 500 есть противник с уровнем здоровья ниже 50%, вы восстанавливаете <b><font color='#53ea48'>1.5%</font></b> здоровья в секунду"
+"upgrade_disc_modifier_bloodseeker_thirst_3_2" "Если в радиусе 500 есть противник с уровнем здоровья ниже 50%, вы восстанавливаете <b><font color='#53ea48'>2%</font></b> здоровья в секунду"
+"upgrade_disc_modifier_bloodseeker_thirst_3_3" "Если в радиусе 500 есть противник с уровнем здоровья ниже 50%, вы восстанавливаете <b><font color='#53ea48'>2.5%</font></b> здоровья в секунду"
+
+"talent_disc_modifier_bloodseeker_thirst_3_0" "Если в радиусе 500 есть противник с уровнем здоровья ниже 50%, вы восстанавливаете <b><font color='#297016'>1.5%</font></b>/<b><font color='#297016'>2%</font></b>/<b><font color='#297016'>2.5%</font></b> здоровья в секунду"
+"talent_disc_modifier_bloodseeker_thirst_3_1" "Если в радиусе 500 есть противник с уровнем здоровья ниже 50%, вы восстанавливаете <b><font color='#53ea48'>1.5%</font></b>/<b><font color='#297016'>2%</font></b>/<b><font color='#297016'>2.5%</font></b> здоровья в секунду"
+"talent_disc_modifier_bloodseeker_thirst_3_2" "Если в радиусе 500 есть противник с уровнем здоровья ниже 50%, вы восстанавливаете <b><font color='#297016'>1.5%</font></b>/<b><font color='#53ea48'>2%</font></b>/<b><font color='#297016'>2.5%</font></b> здоровья в секунду"
+"talent_disc_modifier_bloodseeker_thirst_3_3" "Если в радиусе 500 есть противник с уровнем здоровья ниже 50%, вы восстанавливаете <b><font color='#297016'>1.5%</font></b>/<b><font color='#297016'>2%</font></b>/<b><font color='#53ea48'>2.5%</font></b> здоровья в секунду"
+
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_heal"                  "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_heal_Description"      "Восстанавливает <b><font color='#53ea48'>%fMODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE%%%</font></b> здоровья в секунду"
+
+
+
+"font_disc_modifier_bloodseeker_thirst_4" "19"
+"upgrade_disc_modifier_bloodseeker_thirst_4_1" "Ваша каждая 6 атака восстанавливает вам <b><font color='#53ea48'>4%</font></b> от макс. здоровья<br><br>Урон такой атаки также увеличивается на это значение"
+"upgrade_disc_modifier_bloodseeker_thirst_4_2" "Ваша каждая 6 атака восстанавливает вам <b><font color='#53ea48'>6%</font></b> от макс. здоровья<br><br>Урон такой атаки также увеличивается на это значение"
+
+"talent_disc_modifier_bloodseeker_thirst_4_0" "Ваша каждая 6 атака восстанавливает вам <b><font color='#297016'>4%</font></b>/<b><font color='#297016'>6%</font></b> от макс. здоровья<br><br>Урон такой атаки также увеличивается на это значение"
+"talent_disc_modifier_bloodseeker_thirst_4_1" "Ваша каждая 6 атака восстанавливает вам <b><font color='#53ea48'>4%</font></b>/<b><font color='#297016'>6%</font></b> от макс. здоровья<br><br>Урон такой атаки также увеличивается на это значение"
+"talent_disc_modifier_bloodseeker_thirst_4_2" "Ваша каждая 6 атака восстанавливает вам <b><font color='#297016'>4%</font></b>/<b><font color='#53ea48'>6%</font></b> от макс. здоровья<br><br>Урон такой атаки также увеличивается на это значение"
+"mini_disc_modifier_bloodseeker_thirst_4" "Атаки восстанавливают часть максимального здоровья"
+
+
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_attack"                    "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_attack_Description"        "Каждая <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> атака наносит дополнительно <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP2%</font></b> урона и исцеляет на это значение"
+
+
+
+"font_disc_modifier_bloodseeker_thirst_5" "19"
+"upgrade_disc_modifier_bloodseeker_thirst_5_1" "<b><font color='#53ea48'>+15%</font></b> максимальной скорости передвижения от Thirst<br><br>Пока уровень вашего здоровья выше 90%, ваше сопротивление эффектам увеличиватся на <b><font color='#53ea48'>20%</font></b>, а вас нельзя замедлить"
+"mini_disc_modifier_bloodseeker_thirst_5" "На полном здоровье не может быть замедлен"
+
+
+"font_disc_modifier_bloodseeker_thirst_6" "18"
+"upgrade_disc_modifier_bloodseeker_thirst_6_1" "<b><font color='#53ea48'>+10%</font></b> к порогу здоровья для обнаружения и максимальных бонусов Thirst<br><br>При обнаружении героя, входящий по вам урон снижается на <b><font color='#53ea48'>20%</font></b>, а базовое время атаки снижается до <b><font color='#53ea48'>1.5</font></b>"
+"mini_disc_modifier_bloodseeker_thirst_6" "Получает усиление от героев с низким здоровьем"
+
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_resist"                    "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_resist_Description"        "Сопротивление эффектам увеличено на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING%%%</font></b>, базовое время атаки снижено до <b><font color='#53ea48'>%fMODIFIER_PROPERTY_BASE_ATTACK_TIME_CONSTANT%</font></b>"
+
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision"                    "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision_Description"        "Получает обзор на героев в радиусе <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b>. Бонусы Thirst увеличены до максимума"
+
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision_count"                  "Thirst"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_vision_count_Description"      "Убив <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> крипов, вы получите обзор на героях неподалёку"
+
+
+
+
+"font_disc_modifier_bloodseeker_thirst_7" "15"
+"upgrade_disc_modifier_bloodseeker_thirst_7" "За каждых *creeps_count* убитых крипов вы получаете *!+creeps_stack* к силе и ловкости<br><br>Эффект суммируется *max* раз, после чего способность можно использовать, чтобы получить максимальные бонусы Thirst и обзор на героев в радиусе *vision_radius* на *!duration* сек<br><br>В конце действия эффекта вы теряете бонусы, но получаете *+!heroes_stack* силы и ловкости навсегда за каждого погибшего рядом героя"
+"mini_disc_modifier_bloodseeker_thirst_7" "Активная: Начинает охоту за героями, получая бонус к атрибутам"
+
+
+
+
+
+
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_legendary"                 "Blood Essence"
+"DOTA_Tooltip_modifier_bloodseeker_thirst_custom_legendary_Description"     "Ловкость и сила увеличены на <b><font color='#53ea48'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b>"
+
+
+
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom"                                       "Rupture"
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_Description"                           "Разрывает кожу врага, нанося жертве начальный урон, зависящий от её текущего здоровья. Если цель передвигается, то она получает урон, зависящий от преодолённого расстояния и проходящий сквозь невосприимчивость к магии.<br><br><b><font color='#53ea48'>Порог дистанции для нанесения урона увеличен до %no_damage_distance%</font></b>"
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_Lore"                                  "Когда за тобой охотится Стригвир, любая рана становится смертельной."
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_duration"                              "ДЛИТЕЛЬНОСТЬ:"
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_movement_damage_pct"                   "%УРОН ПРИ ПЕРЕДВИЖЕНИИ:"
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_hp_pct"                    "%УРОН ОТ ЗДОРОВЬЯ:"
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_abilitycastrange"                  "ДАЛЬНОСТЬ ПРИМЕНЕНИЯ:"
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_max_charges_scepter"                           "ЗАРЯДОВ СО СКИПЕТРОМ:"
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_charge_restore_time_scepter"                   "ВРЕМЯ ВОССТАНОВЛЕНИЯ ЗАРЯДА:"
+
+
+
+"DOTA_Tooltip_modifier_bloodseeker_rupture_custom"                      "Rupture"
+"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_Description"          "Процент от пройденного вами расстояния будет наноситься в качестве урона"      
+
+
+
+
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_legendary"                                       "Blood Link"
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_legendary_Description"                           "<b>ПРЕРЫВАЕМАЯ</b><br><br>В течение %duration% сек притягивает выбранную цель к себе<br><br>Под действием способности цель получает на %incoming_damage%%% больше урона из всех источников, а вы исцеляетесь на %damage_heal%%% от всего наносимого по ней урона" 
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_legendary_duration"                    "ДЛИТЕЛЬНОСТЬ:"
+"DOTA_Tooltip_ability_bloodseeker_rupture_custom_legendary_heal"                            "%ИСЦЕЛЕНИЕ ОТ МАКС. ЗДОРОВЬЯ ЦЕЛИ:"
+
+
+"DOTA_Tooltip_ability_bloodseeker_blood_mist_custom"                                       "Blood Mist"
+"DOTA_Tooltip_ability_bloodseeker_blood_mist_custom_Description"                           "Пока способность активна, герой разбрызгивает вокруг свою кровь, теряя здоровье, но нанося задетым врагам урон и замедляя их, а также получая увеличенное лечение от Thirst. Эту способность нельзя выключить, пока она перезаряжается.<br><br><b><font color='#ff0000'>Максимальный урон в секунду по крипам - %creeps_damage_max%</font></b>"
+"DOTA_Tooltip_ability_bloodseeker_blood_mist_custom_hp_cost_per_second"                    "%ПОТЕРЯ ЗДОРОВЬЯ В СЕКУНДУ:"
+"DOTA_Tooltip_ability_bloodseeker_blood_mist_custom_damage_per_second"                    "%УРОН В СЕКУНДУ:"
+"DOTA_Tooltip_ability_bloodseeker_blood_mist_custom_radius"                            "РАДИУС:"
+"DOTA_Tooltip_ability_bloodseeker_blood_mist_custom_movement_slow"                     "%ЗАМЕДЛЕНИЕ ПЕРЕДВИЖЕНИЯ:"
+"DOTA_Tooltip_ability_bloodseeker_blood_mist_custom_thirst_bonus_pct"                      "%ДОП. ЛЕЧЕНИЕ ОТ THIRST:"
+
+"DOTA_Tooltip_modifier_bloodseeker_blood_mist_custom"                                  "Blood Mist"
+"DOTA_Tooltip_modifier_bloodseeker_blood_mist_custom_Description"                      "Испускает кровь, нанося урон врагам неподалёку и замедляя их. Лечение от Thirst увеличено."
+
+"DOTA_Tooltip_modifier_bloodseeker_blood_mist_custom_slow"                             "Blood Mist"
+"DOTA_Tooltip_modifier_bloodseeker_blood_mist_custom_slow_Description"                 "Bloodseeker замедляет это существо своей кровью на %dMODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE%%%."
+
+
+
+
+"font_disc_modifier_bloodseeker_rupture_1" "22"
+"upgrade_disc_modifier_bloodseeker_rupture_1_1" "<b><font color='#53ea48'>+10%</font></b> к начальному урону и урону при передвижении Rupture"
+"upgrade_disc_modifier_bloodseeker_rupture_1_2" "<b><font color='#53ea48'>+15%</font></b> к начальному урону и урону при передвижении Rupture"
+"upgrade_disc_modifier_bloodseeker_rupture_1_3" "<b><font color='#53ea48'>+20%</font></b> к начальному урону и урону при передвижении Rupture"
+
+"talent_disc_modifier_bloodseeker_rupture_1_0" "<b><font color='#297016'>+10%</font></b>/<b><font color='#297016'>+15%</font></b>/<b><font color='#297016'>+20%</font></b> к начальному урону и урону при передвижении Rupture"
+"talent_disc_modifier_bloodseeker_rupture_1_1" "<b><font color='#53ea48'>+10%</font></b>/<b><font color='#297016'>+15%</font></b>/<b><font color='#297016'>+20%</font></b> к начальному урону и урону при передвижении Rupture"
+"talent_disc_modifier_bloodseeker_rupture_1_2" "<b><font color='#297016'>+10%</font></b>/<b><font color='#53ea48'>+15%</font></b>/<b><font color='#297016'>+20%</font></b> к начальному урону и урону при передвижении Rupture"
+"talent_disc_modifier_bloodseeker_rupture_1_3" "<b><font color='#297016'>+10%</font></b>/<b><font color='#297016'>+15%</font></b>/<b><font color='#53ea48'>+20%</font></b> к начальному урону и урону при передвижении Rupture"
+
+
+"font_disc_modifier_bloodseeker_rupture_2" "21"
+"upgrade_disc_modifier_bloodseeker_rupture_2_1" "Rupture снижает весь наносимый целью урон на <b><font color='#53ea48'>6%</font></b>, а исцеление и регенерацию на <b><font color='#53ea48'>10%</font></b>"
+"upgrade_disc_modifier_bloodseeker_rupture_2_2" "Rupture снижает весь наносимый целью урон на <b><font color='#53ea48'>9%</font></b>, а исцеление и регенерацию на <b><font color='#53ea48'>15%</font></b>"
+"upgrade_disc_modifier_bloodseeker_rupture_2_3" "Rupture снижает весь наносимый целью урон на <b><font color='#53ea48'>12%</font></b>, а исцеление и регенерацию на <b><font color='#53ea48'>20%</font></b>"
+
+"talent_disc_modifier_bloodseeker_rupture_2_0" "Rupture снижает весь наносимый целью урон на <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#297016'>12%</font></b>, а исцеление и регенерацию на <b><font color='#297016'>10%</font></b>/<b><font color='#297016'>15%</font></b>/<b><font color='#297016'>20%</font></b>"
+"talent_disc_modifier_bloodseeker_rupture_2_1" "Rupture снижает весь наносимый целью урон на <b><font color='#53ea48'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#297016'>12%</font></b>, а исцеление и регенерацию на <b><font color='#53ea48'>10%</font></b>/<b><font color='#297016'>15%</font></b>/<b><font color='#297016'>20%</font></b>"
+"talent_disc_modifier_bloodseeker_rupture_2_2" "Rupture снижает весь наносимый целью урон на <b><font color='#297016'>6%</font></b>/<b><font color='#53ea48'>9%</font></b>/<b><font color='#297016'>12%</font></b>, а исцеление и регенерацию на <b><font color='#297016'>10%</font></b>/<b><font color='#53ea48'>15%</font></b>/<b><font color='#297016'>20%</font></b>"
+"talent_disc_modifier_bloodseeker_rupture_2_3" "Rupture снижает весь наносимый целью урон на <b><font color='#297016'>6%</font></b>/<b><font color='#297016'>9%</font></b>/<b><font color='#53ea48'>12%</font></b>, а исцеление и регенерацию на <b><font color='#297016'>10%</font></b>/<b><font color='#297016'>15%</font></b>/<b><font color='#53ea48'>20%</font></b>"
+
+
+"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_reduction"                    "Rupture"
+"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_reduction_Description"        "Исцеление и регенерация снижены на <b><font color='#ff0000'>%dMODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET%%%</font></b>, наносимый урон снижен на <b><font color='#ff0000'>%dMODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE%%%</font></b>"
+
+
+
+"font_disc_modifier_bloodseeker_rupture_3" "23"
+"upgrade_disc_modifier_bloodseeker_rupture_3_1" "<b><font color='#53ea48'>-10</font></b> секунд к перезарядке Rupture"
+"upgrade_disc_modifier_bloodseeker_rupture_3_2" "<b><font color='#53ea48'>-20</font></b> секунд к перезарядке Rupture"
+"upgrade_disc_modifier_bloodseeker_rupture_3_3" "<b><font color='#53ea48'>-30</font></b> секунд к перезарядке Rupture"
+
+"talent_disc_modifier_bloodseeker_rupture_3_0" "<b><font color='#297016'>-10</font></b>/<b><font color='#297016'>-20</font></b>/<b><font color='#297016'>-30</font></b> секунд к перезарядке Rupture"
+"talent_disc_modifier_bloodseeker_rupture_3_1" "<b><font color='#53ea48'>-10</font></b>/<b><font color='#297016'>-20</font></b>/<b><font color='#297016'>-30</font></b> секунд к перезарядке Rupture"
+"talent_disc_modifier_bloodseeker_rupture_3_2" "<b><font color='#297016'>-10</font></b>/<b><font color='#53ea48'>-20</font></b>/<b><font color='#297016'>-30</font></b> секунд к перезарядке Rupture"
+"talent_disc_modifier_bloodseeker_rupture_3_3" "<b><font color='#297016'>-10</font></b>/<b><font color='#297016'>-20</font></b>/<b><font color='#53ea48'>-30</font></b> секунд к перезарядке Rupture"
+
+
+
+
+
+
+"font_disc_modifier_bloodseeker_rupture_4" "18"
+"upgrade_disc_modifier_bloodseeker_rupture_4_1" "Раз в 3 сек под целью Rupture остается кровавый след<br><br>Находясь в нем, противники получают <b><font color='#53ea48'>60</font></b> маг. урона в сек, а вы исцеляетесь на 100% от этого урона<br><br>Эффект суммируется"
+"upgrade_disc_modifier_bloodseeker_rupture_4_2" "Раз в 3 сек под целью Rupture остается кровавый след<br><br>Находясь в нем, противники получают <b><font color='#53ea48'>100</font></b> маг. урона в сек, а вы исцеляетесь на 100% от этого урона<br><br>Эффект суммируется"
+
+"talent_disc_modifier_bloodseeker_rupture_4_0" "Раз в 3 сек под целью Rupture остается кровавый след<br><br>Находясь в нем, противники получают <b><font color='#297016'>60</font></b>/<b><font color='#297016'>100</font></b> маг. урона в сек, а вы исцеляетесь на 100% от этого урона<br><br>Эффект суммируется"
+"talent_disc_modifier_bloodseeker_rupture_4_1" "Раз в 3 сек под целью Rupture остается кровавый след<br><br>Находясь в нем, противники получают <b><font color='#53ea48'>60</font></b>/<b><font color='#297016'>100</font></b> маг. урона в сек, а вы исцеляетесь на 100% от этого урона<br><br>Эффект суммируется"
+"talent_disc_modifier_bloodseeker_rupture_4_2" "Раз в 3 сек под целью Rupture остается кровавый след<br><br>Находясь в нем, противники получают <b><font color='#297016'>60</font></b>/<b><font color='#53ea48'>100</font></b> маг. урона в сек, а вы исцеляетесь на 100% от этого урона<br><br>Эффект суммируется"
+"mini_disc_modifier_bloodseeker_rupture_4" "Rupture оставляет кровавый след, который наносит урон"
+
+
+
+
+"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_blood"                    "Rupture"
+"DOTA_Tooltip_modifier_bloodseeker_rupture_custom_blood_Description"        "Получает <b><font color='#ff0000'>%dMODIFIER_PROPERTY_TOOLTIP%</font></b> магического урона в секунду"
+
+
+
+
+"font_disc_modifier_bloodseeker_rupture_5" "18"
+"upgrade_disc_modifier_bloodseeker_rupture_5_1" "<b><font color='#53ea48'>+200</font></b> дальности применения Rupture<br><br>Каждый раз, когда противник применяет заклинание под действием Rupture, действие способности продлевается на <b><font color='#53ea48'>1</font></b> секунду"
+"mini_disc_modifier_bloodseeker_rupture_5" "Применение способностей продлевает Rupture"
+
+"font_disc_modifier_bloodseeker_rupture_6" "19"
+"upgrade_disc_modifier_bloodseeker_rupture_6_1" "Если под действием Rupture, здоровье цели опускается ниже 40%, она получает эффект устрашения на <b><font color='#53ea48'>1.5</font></b> секунды"
+"mini_disc_modifier_bloodseeker_rupture_6" "Rupture устрашает цели с низким здоровьем"
+
+"font_disc_modifier_bloodseeker_rupture_7" "17"
+"upgrade_disc_modifier_bloodseeker_rupture_7" "Новая способность<br>Перезарядка: *cd* сек<br><br>В течение *!duration* сек вы притягиваете цель к себе<br><br>Под действием эффекта противник получает на *!damage%* больше урона из всех источников, а вы исцеляетесь на *!heal%* от всего наносимого ему урона"
+"mini_disc_modifier_bloodseeker_rupture_7" "Новая способность: Притягивает цель"
+
+

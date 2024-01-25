@@ -1,0 +1,12 @@
+<!-- xml reconstructed by Source 2 Viewer 7.0.0.0 - https://valveresourceformat.github.io -->
+<root>
+	<styles>
+		<include src="s2r://panorama/styles/custom_game/pick_skill_event.vcss_c" />
+	</styles>
+	<scripts>
+		<include src="s2r://panorama/scripts/custom_game/pick_skill_event.vjs_c" />
+	</scripts>
+	<Panel class="MainPickEvent" hittest="false">
+		<Panel id="PickEvent" class="PickEvent" hittest="false" />
+	</Panel>
+</root>

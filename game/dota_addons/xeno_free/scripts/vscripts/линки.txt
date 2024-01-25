@@ -1,6 +1,0 @@
---абилки
-#base "../vscripts/cheats/cheateabilities.txt"
---айтемы
-#base "../vscripts/cheats/cheatitem.txt"
---юниты
-#base "../vscripts/cheats/cheaterunits.txt"

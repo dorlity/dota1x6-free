@@ -1,0 +1,5 @@
+modifier_wraith_king_arcana_weapon_custom_v2 = class({})
+function modifier_wraith_king_arcana_weapon_custom_v2:IsHidden() return true end
+function modifier_wraith_king_arcana_weapon_custom_v2:IsPurgable() return false end
+function modifier_wraith_king_arcana_weapon_custom_v2:IsPurgeException() return false end
+function modifier_wraith_king_arcana_weapon_custom_v2:RemoveOnDeath() return false end

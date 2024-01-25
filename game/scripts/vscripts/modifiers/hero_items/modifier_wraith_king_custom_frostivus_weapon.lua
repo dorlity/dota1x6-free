@@ -1,0 +1,5 @@
+modifier_wraith_king_custom_frostivus_weapon = class({})
+function modifier_wraith_king_custom_frostivus_weapon:IsHidden() return true end
+function modifier_wraith_king_custom_frostivus_weapon:IsPurgable() return false end
+function modifier_wraith_king_custom_frostivus_weapon:IsPurgeException() return false end
+function modifier_wraith_king_custom_frostivus_weapon:RemoveOnDeath() return false end

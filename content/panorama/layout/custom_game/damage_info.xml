@@ -1,0 +1,40 @@
+<!-- xml reconstructed by Source 2 Viewer 7.0.0.0 - https://valveresourceformat.github.io -->
+<root>
+	<scripts>
+		<include src="s2r://panorama/scripts/custom_game/damage_info.vjs_c" />
+	</scripts>
+	<styles>
+		<include src="s2r://panorama/styles/dotastyles.css" />
+		<include src="s2r://panorama/styles/custom_game/damage_info.vcss_c" />
+	</styles>
+	<Panel hittest="false" style="width:100%;height:100%;">
+		<Panel id="DamageBlockWithButton" class="DamageBlockWithButton damage_close">
+			<Panel class="AllDamageInfo" onactivate="DamageToggle();">
+				<Panel id="AllDamagePhys" class="DamagePhys">
+					<Label class="AllDamagePercent" id="AllDamagePhysPercent" text="0%" />
+				</Panel>
+				<Panel id="AllDamageMagical" class="DamageMagical">
+					<Label class="AllDamagePercent" id="AllDamageMagicalPercent" text="0%" />
+				</Panel>
+				<Panel id="AllDamagePure" class="DamagePure">
+					<Label class="AllDamagePercent" id="AllDamagePurePercent" text="0%" />
+				</Panel>
+			</Panel>
+			<Panel id="DamageRoundHistory" class="DamageRoundHistory">
+				<Panel id="Damage_MenuButtons" class="Damage_MenuButtons">
+					<Panel class="MenuButton button_select" id="DamageAbilitiesIncomeButton" onactivate="DamageToggleButton(&apos;DamageAbilitiesIncome&apos;, &apos;DamageAbilitiesIncomeButton&apos;);">
+						<Label class="MenuButtonLabel" text="#DamageAbilitiesIncome" />
+					</Panel>
+					<Panel class="MenuButton" id="DamageAbilitiesButton" onactivate="DamageToggleButton(&apos;DamageAbilities&apos;, &apos;DamageAbilitiesButton&apos;);">
+						<Label class="MenuButtonLabel" text="#DamageAbilities" />
+					</Panel>
+				</Panel>
+				<Panel id="DamageAbilities" />
+				<Panel id="DamageAbilitiesIncome" />
+			</Panel>
+			<Panel class="ButtonCloseDamage" onactivate="DamageToggle();">
+				<Panel class="ButtonCloseDamageIcon" />
+			</Panel>
+		</Panel>
+	</Panel>
+</root>

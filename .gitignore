@@ -1,17 +1,10 @@
-.vscode/*
+.vscode
 !.vscode/settings.json
 
-EmptySteamDepot
-*.txt
+!addoninfo.txt
 *.bin
 
-content/*/*
-!content/dota_addons/xeno_free
-
-
-game/*/*
-game/dota_addons/xeno_free/scripts/vscripts/old
-game/dota_addons/xeno_free/panorama/layout
-game/dota_addons/xeno_free/panorama/scripts
-game/dota_addons/xeno_free/panorama/styles
-!game/dota_addons/xeno_free
+game/scripts/vscripts/old
+game/panorama/layout
+game/panorama/scripts
+game/panorama/styles

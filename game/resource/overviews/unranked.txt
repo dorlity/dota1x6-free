@@ -1,0 +1,8 @@
+unranked
+{
+	material materials/overviews/unranked.vmat
+	pos_x -8040
+	pos_y 8181
+	scale 16.000
+}
+

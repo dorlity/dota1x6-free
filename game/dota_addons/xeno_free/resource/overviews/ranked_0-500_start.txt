@@ -1,8 +1,0 @@
-ranked_0-500_start
-{
-	material materials/overviews/ranked_0-500_start.vmat
-	pos_x -8040
-	pos_y 8181
-	scale 16.000
-}
-
