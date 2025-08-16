@@ -16,26 +16,22 @@ function modifier_golem_craggy:IsHidden() return true end
 
 function modifier_golem_craggy:OnCreated(table)
 if not IsServer() then return end
+self.parent = self:GetParent()
+self.parent:AddAttackEvent_inc(self, true)
+
 self.duration = self:GetAbility():GetSpecialValueFor("duration")
 self.damage = self:GetAbility():GetSpecialValueFor("damage")
 self.chance = self:GetAbility():GetSpecialValueFor("chance")
 end
 
-function modifier_golem_craggy:DeclareFunctions()
-return 
-{
-  MODIFIER_EVENT_ON_ATTACK_LANDED
-}
-end
 
-function modifier_golem_craggy:OnAttackLanded( params )
+
+function modifier_golem_craggy:AttackEvent_inc(params)
 if not IsServer() then return end
-if self:GetParent() == params.target then 
-  local random = RollPseudoRandomPercentage(self.chance,12,self:GetParent())
-  if random then 
-    params.attacker:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_stunned", {duration = self.duration*(1 - params.attacker:GetStatusResistance())})
-    ApplyDamage({victim = params.attacker, damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, attacker = self:GetParent(),  ability = self:GetAbility()})
-         
-  end
-end
+if self:GetParent() ~= params.target then return end
+if not RollPseudoRandomPercentage(self.chance,1522,self:GetParent()) then return end
+
+params.attacker:EmitSound("BB.Goo_stun")
+params.attacker:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_bashed", {duration = self.duration*(1 - params.attacker:GetStatusResistance())})
+DoDamage({victim = params.attacker, damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, attacker = self:GetParent(),  ability = self:GetAbility()})
 end

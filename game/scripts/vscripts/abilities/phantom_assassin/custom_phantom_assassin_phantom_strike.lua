@@ -1,340 +1,300 @@
 LinkLuaModifier( "modifier_phantom_assassin_phantom_strike_buff", "abilities/phantom_assassin/custom_phantom_assassin_phantom_strike", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_phantom_assassin_phantom_strike_passive", "abilities/phantom_assassin/custom_phantom_assassin_phantom_strike", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_phantom_assassin_phantom_strike_vision", "abilities/phantom_assassin/custom_phantom_assassin_phantom_strike", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_phantom_assassin_phantom_strike_slow", "abilities/phantom_assassin/custom_phantom_assassin_phantom_strike", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_phantom_assassin_phantom_strike_legendary", "abilities/phantom_assassin/custom_phantom_assassin_phantom_strike", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_phantom_assassin_phantom_strike_legendary_illusion", "abilities/phantom_assassin/custom_phantom_assassin_phantom_strike", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_phantom_assassin_phantom_strike_turn_slow", "abilities/phantom_assassin/custom_phantom_assassin_phantom_strike", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_phantom_assassin_phantom_strike_agility_stack", "abilities/phantom_assassin/custom_phantom_assassin_phantom_strike", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_phantom_assassin_phantom_strike_agility", "abilities/phantom_assassin/custom_phantom_assassin_phantom_strike", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_phantom_assassin_phantom_strike_invun", "abilities/phantom_assassin/custom_phantom_assassin_phantom_strike", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_phantom_assassin_phantom_strike_legendary_agility", "abilities/phantom_assassin/custom_phantom_assassin_phantom_strike", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_phantom_assassin_phantom_strike_legendary_illusion", "abilities/phantom_assassin/custom_phantom_assassin_phantom_strike", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_phantom_assassin_phantom_strike_haste", "abilities/phantom_assassin/custom_phantom_assassin_phantom_strike", LUA_MODIFIER_MOTION_NONE )
 
- 
- 
- 
- 
+
   
 custom_phantom_assassin_phantom_strike = class({})
 
-custom_phantom_assassin_phantom_strike.illusion_duration = 4
-custom_phantom_assassin_phantom_strike.illusion_damage = -100
-custom_phantom_assassin_phantom_strike.illusion_health = 100
-custom_phantom_assassin_phantom_strike.illusion_invun = 0.15
-
-custom_phantom_assassin_phantom_strike.agility_duration = 10
-custom_phantom_assassin_phantom_strike.agility_stack = {2, 3}
-
-
-
-
-
-
-
-
-
 
 function custom_phantom_assassin_phantom_strike:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-PrecacheResource( "particle", "particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_omni_slash_tgt_bladekeeper.vpcf", context )
-PrecacheResource( "particle", "particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_attack_crit_blur.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_phantom_assassin/phantom_assassin_phantom_strike_start.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_phantom_assassin/phantom_assassin_phantom_strike_end.vpcf", context )
-PrecacheResource( "particle", "particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_phantom_strike_end.vpcf", context )
-PrecacheResource( "particle", "particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_phantom_strike_start.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_terrorblade/terrorblade_reflection_slow.vpcf", context )
-PrecacheResource( "particle", "particles/pa_blink_buff.vpcf", context )
+PrecacheResource( "particle","particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_omni_slash_tgt_bladekeeper.vpcf", context )
+PrecacheResource( "particle","particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_attack_crit_blur.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_phantom_assassin/phantom_assassin_phantom_strike_end.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_phantom_assassin/phantom_assassin_phantom_strike_start.vpcf", context )
+PrecacheResource( "particle","particles/items2_fx/manta_phase.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_terrorblade/terrorblade_reflection_slow.vpcf", context )
+PrecacheResource( "particle","particles/pa_blink_buff.vpcf", context )
+PrecacheResource( "particle","particles/phantom_assassin/blink_cleave.vpcf", context )
+PrecacheResource( "particle","particles/phantom_assassin/blink_speed.vpcf", context )
+PrecacheResource( "particle","particles/phantom_assassin/blink_resist.vpcf", context )
 
 end
+
+
+
 
 function custom_phantom_assassin_phantom_strike:GetAbilityTextureName()
-
-if self:GetCaster():HasModifier("modifier_phantom_assassin_persona_custom") then
+if self:GetCaster():HasModifier("modifier_phantom_assassin_persona_custom") or self:GetCaster():HasModifier("modifier_phantom_assassin_persona_custom_2") or self:GetCaster():HasModifier("modifier_phantom_assassin_persona_custom_3") then
   return "phantom_assassin/persona/phantom_assassin_phantom_strike_persona1"
 end
-
 if self:GetCaster():HasModifier("modifier_pa_arcana_custom") then
-    return "phantom_assassin_arcana_phantom_strike"
+  return "phantom_assassin_arcana_phantom_strike"
 end
 return "phantom_assassin_phantom_strike"
+end
+
+function custom_phantom_assassin_phantom_strike:GetIntrinsicModifierName() 
+return "modifier_phantom_assassin_phantom_strike_passive" 
+end
+
+
+function custom_phantom_assassin_phantom_strike:GetManaCost(level)
+if self:GetCaster():HasTalent("modifier_phantom_assassin_blink_5") then
+  return 0
+end
+return self.BaseClass.GetManaCost(self,level)
 end
 
 
 function custom_phantom_assassin_phantom_strike:GetCastRange(vLocation, hTarget)
 
-local upgrade = 0
-if self:GetCaster():HasModifier("modifier_phantom_assassin_blink_move") then 
-  upgrade = self:GetCaster():GetTalentValue("modifier_phantom_assassin_blink_move", "range")
-end
-return self.BaseClass.GetCastRange(self , vLocation , hTarget) + upgrade 
+if self:GetCaster():HasTalent("modifier_phantom_assassin_blink_6") and not hTarget and IsServer() then 
+  return 9999999
 end
 
-
+return self.BaseClass.GetCastRange(self , vLocation , hTarget) + self:RangeBonus() 
+end
 
 
 function custom_phantom_assassin_phantom_strike:GetCooldown(iLevel)
-
 local upgrade_cooldown = 0
-if self:GetCaster():HasModifier("modifier_phantom_assassin_blink_blink") then 
-  upgrade_cooldown = self:GetCaster():GetTalentValue("modifier_phantom_assassin_blink_blink", "cd")
+if self:GetCaster():HasTalent("modifier_phantom_assassin_blink_5") then 
+  upgrade_cooldown = self:GetCaster():GetTalentValue("modifier_phantom_assassin_blink_5", "cd")
 end
-
- return self.BaseClass.GetCooldown(self, iLevel) + upgrade_cooldown
-
+return self.BaseClass.GetCooldown(self, iLevel) + upgrade_cooldown
 end
-
-function custom_phantom_assassin_phantom_strike:GetIntrinsicModifierName() 
-if not self:GetCaster():IsRealHero() then return end
-  return "modifier_phantom_assassin_phantom_strike_passive" 
-end
-
 
 function custom_phantom_assassin_phantom_strike:GetCastPoint()
-if self:GetCaster():HasModifier("modifier_phantom_assassin_blink_blink") then 
+if self:GetCaster():HasTalent("modifier_phantom_assassin_blink_5") then 
   return 0
-else 
-  return 0.25
-end 
-
+end
+return self.BaseClass.GetCastPoint(self) 
 end
 
 
+function custom_phantom_assassin_phantom_strike:RangeBonus()
+local upgrade = 0
+if self:GetCaster():HasTalent("modifier_phantom_assassin_blink_1") then 
+  upgrade = self:GetCaster():GetTalentValue("modifier_phantom_assassin_blink_1", "range")
+end
+return upgrade
+end
 
 
+function custom_phantom_assassin_phantom_strike:GetBehavior()
+local aoe = 0
+local point = 0
+local caster = self:GetCaster()
+if caster:HasTalent("modifier_phantom_assassin_blink_4") then 
+  aoe = DOTA_ABILITY_BEHAVIOR_AOE
+end
+if caster:HasTalent("modifier_phantom_assassin_blink_6") then
+  point = DOTA_ABILITY_BEHAVIOR_POINT
+end
+return DOTA_ABILITY_BEHAVIOR_UNIT_TARGET + DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES + aoe + point
+end
 
 
---------------------------------------------------------------------------------
--- Ability Cast Filter
+function custom_phantom_assassin_phantom_strike:GetAOERadius()
+if not self:GetCaster():HasTalent("modifier_phantom_assassin_blink_4") then return end 
+return self:GetCaster():GetTalentValue("modifier_phantom_assassin_blink_4", "radius")
+end
+
+
+function custom_phantom_assassin_phantom_strike:GetCastAnimation()
+if self:GetCaster():HasTalent("modifier_phantom_assassin_blink_5") then
+  return 0
+end
+return ACT_DOTA_CAST_ABILITY_2
+end
+
+
 function custom_phantom_assassin_phantom_strike:CastFilterResultTarget( hTarget )
-  if self:GetCaster() == hTarget then
-    return UF_FAIL_CUSTOM
-  end
+if self:GetCaster() == hTarget then
+  return UF_FAIL_CUSTOM
+end
+local result = UnitFilter(hTarget, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_CREEP, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, self:GetCaster():GetTeamNumber())
 
-  local result = UnitFilter(
-    hTarget,  -- Target Filter
-    DOTA_UNIT_TARGET_TEAM_BOTH, -- Team Filter
-    DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_CREEP, -- Unit Filter
-    DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, -- Unit Flag
-    self:GetCaster():GetTeamNumber()  -- Team reference
-  )
-  
-  if result ~= UF_SUCCESS then
-    return result
-  end
-
-  return UF_SUCCESS
+if result ~= UF_SUCCESS then
+  return result
+end
+return UF_SUCCESS
 end
 
---------------------------------------------------------------------------------
--- Ability Cast Error Message
+
 function custom_phantom_assassin_phantom_strike:GetCustomCastErrorTarget( hTarget )
-  if self:GetCaster() == hTarget then
-    return "#dota_hud_error_cant_cast_on_self"
-  end
+if self:GetCaster() == hTarget then
+  return "#dota_hud_error_cant_cast_on_self"
+end
+return ""
+end
 
-  return ""
+
+function custom_phantom_assassin_phantom_strike:ProcDamage(point, unit)
+local caster = self:GetCaster()
+local targets = caster:FindTargets(caster:GetTalentValue("modifier_phantom_assassin_blink_4", "radius"), point)
+
+
+if #targets == 0 then return end
+
+EmitSoundOnLocationWithCaster(point, "PA.Blink_proc", caster)
+
+local damage = caster:GetTalentValue("modifier_phantom_assassin_blink_4", "damage")*caster:GetAgility()/100
+local heal = damage*caster:GetTalentValue("modifier_phantom_assassin_blink_4", "heal")/100
+
+if unit:IsRealHero() then 
+  unit:GenericHeal(heal, self, true, nil, "modifier_phantom_assassin_blink_4")
+else 
+  damage = 0
+end
+
+for _,target in pairs(targets) do
+
+  local particle = ParticleManager:CreateParticle( "particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_omni_slash_tgt_bladekeeper.vpcf", PATTACH_CUSTOMORIGIN_FOLLOW, target )
+  ParticleManager:SetParticleControlEnt( particle, 0, target, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true )
+  ParticleManager:SetParticleControlEnt( particle, 1, target, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true )
+  ParticleManager:ReleaseParticleIndex(particle)
+
+  local trail_pfx = ParticleManager:CreateParticle("particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_attack_crit_blur.vpcf", PATTACH_ABSORIGIN_FOLLOW, target)
+  ParticleManager:SetParticleControl(trail_pfx, 0, caster:GetAbsOrigin())
+  ParticleManager:SetParticleControl(trail_pfx, 1, target:GetAbsOrigin())
+  ParticleManager:SetParticleControlForward(trail_pfx, 1, ( target:GetAbsOrigin() - unit:GetAbsOrigin()):Normalized())
+  ParticleManager:ReleaseParticleIndex(trail_pfx)
+  DoDamage( {victim = target, attacker = caster, damage = damage, damage_type = DAMAGE_TYPE_PURE, ability = self}, "modifier_phantom_assassin_blink_4" )
+end
+
 end
 
 
 
 
 
-
-
-
-
-
-function custom_phantom_assassin_phantom_strike:UseBlink(caster, target)
+function custom_phantom_assassin_phantom_strike:UseBlink(unit, target, point)
 if not IsServer() then return end
 
+local caster = self:GetCaster()
+local duration = self:GetSpecialValueFor("duration") + caster:GetTalentValue("modifier_phantom_assassin_blink_2", "duration") 
+local blinkPosition = nil
+local new_point = nil
 
-self.duration = self:GetSpecialValueFor("duration") 
-
-if caster:HasModifier("modifier_phantom_assassin_blink_duration") then 
-  self.duration = self.duration  + self:GetCaster():GetTalentValue("modifier_phantom_assassin_blink_duration", "duration") 
-end
-
-
-
-
-if target:GetTeamNumber()~=caster:GetTeamNumber() then
-  if target:TriggerSpellAbsorb( self ) then return end
-end
-
-local blinkDistance = 50
-local blinkDirection = (caster:GetOrigin() - target:GetOrigin()):Normalized() * blinkDistance
-local blinkPosition = target:GetOrigin() + blinkDirection
-
-
-
-if self:GetCaster():HasModifier("modifier_phantom_assassin_blink_blink") then 
-  blinkPosition = target:GetAbsOrigin() - target:GetForwardVector()*75
-  target:AddNewModifier(self:GetCaster(), self, "modifier_phantom_assassin_phantom_strike_turn_slow", {duration = self:GetCaster():GetTalentValue("modifier_phantom_assassin_blink_blink", "duration")})
-end
-
-local origin = caster:GetAbsOrigin()
-
-
-caster:SetOrigin( blinkPosition )
-FindClearSpaceForUnit( caster, blinkPosition, true )
-
- 
-if self:GetCaster():HasModifier("modifier_phantom_assassin_blink_damage") then
-
-  local damage = self:GetCaster():GetTalentValue("modifier_phantom_assassin_blink_damage", "damage")
-
-  if caster:IsIllusion() then 
-    damage = damage*self:GetCaster():GetTalentValue("modifier_phantom_assassin_blink_damage", "illusions_damage")/100
-  end
-
-
-  local attack = FindUnitsInLine(caster:GetTeamNumber(), origin, target:GetAbsOrigin(), nil, 200, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NONE)
-
-  for _,i in ipairs(attack) do
-
-    local particle = ParticleManager:CreateParticle( "particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_omni_slash_tgt_bladekeeper.vpcf", PATTACH_ABSORIGIN_FOLLOW,i )
-    ParticleManager:SetParticleControlEnt( particle, 0, i, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", i:GetAbsOrigin(), true )
-    ParticleManager:SetParticleControlEnt( particle, 1, i, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", i:GetAbsOrigin(), true )
-
-    local trail_pfx = ParticleManager:CreateParticle("particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_attack_crit_blur.vpcf", PATTACH_ABSORIGIN_FOLLOW, i)
-    ParticleManager:SetParticleControl(trail_pfx, 0, caster:GetAbsOrigin())
-    ParticleManager:SetParticleControl(trail_pfx, 1, i:GetAbsOrigin())
-    ParticleManager:ReleaseParticleIndex(trail_pfx)
-
-
-  
-    local damageTable = {
-      victim = i,
-      attacker = caster,
-      damage = damage,
-      damage_type = DAMAGE_TYPE_PURE,
-      ability = self}
-    ApplyDamage( damageTable )
-  end
-
-end
-
-
-if target:GetTeamNumber()~=caster:GetTeamNumber() then
-  caster:AddNewModifier(caster, self, "modifier_phantom_assassin_phantom_strike_buff", { duration = self.duration } )
-  caster:MoveToPositionAggressive(caster:GetOrigin())
-end
-
-
-   
-
-
-
-if caster:HasModifier("modifier_phantom_assassin_blink_blind") and caster:IsRealHero() then 
-
-  local damage = 100 - (self.illusion_damage)
-  local incoming = (self.illusion_health)
- 
-  caster:AddNewModifier(caster, self, "modifier_phantom_assassin_phantom_strike_invun", {duration = self.illusion_invun})
-
-
-  local illusion = CreateIllusions( caster, caster, {Duration = self.illusion_duration ,outgoing_damage = -damage ,incoming_damage = incoming}, 1, 1, true, true )
-  for _,i in pairs(illusion) do
-
-    i.owner = caster
-
-    local effect = "particles/units/heroes/hero_phantom_assassin/phantom_assassin_phantom_strike_end.vpcf"
-    if caster:GetModelName() == "models/heroes/phantom_assassin/pa_arcana.vmdl" then 
-      effect = "particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_phantom_strike_end.vpcf"
+if target then 
+  if target:GetTeamNumber()~=unit:GetTeamNumber() then
+    if target:TriggerSpellAbsorb( self ) then 
+      return 
     end
-
-    local effect_cast_end = ParticleManager:CreateParticle( effect, PATTACH_WORLDORIGIN, i )
-    ParticleManager:SetParticleControl( effect_cast_end, 0, i:GetOrigin() )
-    ParticleManager:ReleaseParticleIndex( effect_cast_end )
-
-    for _,mod in pairs(caster:FindAllModifiers()) do
-      if mod.StackOnIllusion ~= nil and mod.StackOnIllusion == true then
-          i:UpgradeIllusion(mod:GetName(), mod:GetStackCount() )
-      end
-    end
-
-    i:MoveToPositionAggressive(i:GetAbsOrigin())
-    i:AddNewModifier(caster, self, "modifier_phantom_assassin_phantom_strike_buff", { duration = self.duration } )
-    i:AddNewModifier(caster, self, "modifier_phantom_assassin_phantom_strike_invun", {duration = self.illusion_invun})
   end
+
+
+  local blinkDistance = 50
+  local blinkDirection = (unit:GetOrigin() - target:GetOrigin()):Normalized() * blinkDistance
+  blinkPosition = target:GetOrigin() + blinkDirection
+  new_point = target:GetAbsOrigin()
+
+  if caster:HasTalent("modifier_phantom_assassin_blink_5") then 
+    blinkPosition = target:GetAbsOrigin() - target:GetForwardVector()*75
+
+    if caster == unit then 
+      target:AddNewModifier(caster, self, "modifier_phantom_assassin_phantom_strike_turn_slow", {duration = caster:GetTalentValue("modifier_phantom_assassin_blink_5", "duration")})
+    end
+  end 
+else 
+  blinkPosition = point
+  new_point = point
 end
 
----------------------------------------------------------------------------------------------------------------------------
+unit:RemoveModifierByName("modifier_phantom_assassin_phantom_strike_buff")
+unit:AddNewModifier(unit, self, "modifier_phantom_assassin_phantom_strike_buff", { duration = duration } )
 
+local origin = unit:GetAbsOrigin()
 
-  self:PlayEffects( caster, origin )
+self:PlayEffectsStart(origin)
+
+unit:SetOrigin( blinkPosition )
+FindClearSpaceForUnit( unit, blinkPosition, true )
+
+if caster:HasTalent("modifier_phantom_assassin_blink_4") then
+  self:ProcDamage(new_point, unit)
+end
+
+if unit:HasTalent("modifier_phantom_assassin_blink_6") then
+  unit:AddNewModifier(unit, self, "modifier_phantom_assassin_phantom_strike_haste", {duration = caster:GetTalentValue("modifier_phantom_assassin_blink_6", "duration")})
+end
+unit:MoveToPositionAggressive(unit:GetAbsOrigin())
+self:PlayEffectsEnd(unit)
 end
 
 
+function custom_phantom_assassin_phantom_strike:PlayEffectsStart(origin )
+local caster = self:GetCaster()
+local particle_cast_start = "particles/units/heroes/hero_phantom_assassin/phantom_assassin_phantom_strike_start.vpcf"
 
-
-modifier_phantom_assassin_phantom_strike_invun = class({})
-function modifier_phantom_assassin_phantom_strike_invun:IsHidden() return true end
-function modifier_phantom_assassin_phantom_strike_invun:IsPurgable() return false end
-
-function modifier_phantom_assassin_phantom_strike_invun:GetEffectName()
-    return "particles/items2_fx/manta_phase.vpcf"
+if caster:HasModifier("modifier_pa_arcana_custom") then 
+  particle_cast_start = "particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_phantom_strike_start.vpcf"
+end
+if caster:HasModifier("modifier_phantom_assassin_persona_custom") or caster:HasModifier("modifier_phantom_assassin_persona_custom_2") or caster:HasModifier("modifier_phantom_assassin_persona_custom_3") then
+  particle_cast_start = "particles/units/heroes/hero_phantom_assassin_persona/pa_persona_phantom_strike_start.vpcf"
 end
 
-function modifier_phantom_assassin_phantom_strike_invun:CheckState()
-    return {
-        [MODIFIER_STATE_INVULNERABLE]       = true,
-        [MODIFIER_STATE_NO_HEALTH_BAR]      = true,
-        [MODIFIER_STATE_STUNNED]            = true,
-        [MODIFIER_STATE_OUT_OF_GAME]        = true,
-        
-        [MODIFIER_STATE_NO_UNIT_COLLISION]  = true
-    }
+local effect_cast_start = ParticleManager:CreateParticle( particle_cast_start, PATTACH_WORLDORIGIN, nil )
+ParticleManager:SetParticleControl( effect_cast_start, 0, origin )
+ParticleManager:ReleaseParticleIndex( effect_cast_start )
+
+EmitSoundOnLocationWithCaster( origin, "Hero_PhantomAssassin.Strike.Start", caster )
 end
+
+
+function custom_phantom_assassin_phantom_strike:PlayEffectsEnd(unit)
+local caster = self:GetCaster()
+local particle_cast_end = "particles/units/heroes/hero_phantom_assassin/phantom_assassin_phantom_strike_end.vpcf"
+
+if caster:HasModifier("modifier_pa_arcana_custom") then 
+  particle_cast_end = "particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_phantom_strike_end.vpcf"
+end
+if caster:HasModifier("modifier_phantom_assassin_persona_custom") or caster:HasModifier("modifier_phantom_assassin_persona_custom_2") or caster:HasModifier("modifier_phantom_assassin_persona_custom_3") then
+  particle_cast_end = "particles/units/heroes/hero_phantom_assassin_persona/pa_persona_phantom_strike_end.vpcf"
+end
+
+local effect_cast_end = ParticleManager:CreateParticle( particle_cast_end, PATTACH_WORLDORIGIN, nil )
+ParticleManager:SetParticleControl( effect_cast_end, 0, unit:GetOrigin() )
+ParticleManager:ReleaseParticleIndex( effect_cast_end )
+
+EmitSoundOnLocationWithCaster( unit:GetAbsOrigin(), "Hero_PhantomAssassin.Strike.End", caster )
+end
+
 
 
 
 
 function custom_phantom_assassin_phantom_strike:OnSpellStart()
 local caster = self:GetCaster()
-local origin = caster:GetOrigin()
 local target = self:GetCursorTarget()
+local point = nil
 
-self:UseBlink(caster, target)
+if not target and caster:HasTalent("modifier_phantom_assassin_blink_6") then 
+  point = self:GetCursorPosition()
+  if point == caster:GetAbsOrigin() then 
+    point = caster:GetAbsOrigin() + caster:GetForwardVector()*10
+  end
 
+  local vec = point - caster:GetAbsOrigin()
+  local range = (caster:GetCastRangeBonus() + self:RangeBonus() + self:GetSpecialValueFor("AbilityCastRange")) * (caster:GetTalentValue("modifier_phantom_assassin_blink_6", "range")/100)
+
+  if vec:Length2D() > range then 
+    point = caster:GetAbsOrigin() + range*vec:Normalized()
+  end
+end
+
+self:UseBlink(caster, target, point)
 end
 
 
-
-
-
-
-
-
-function custom_phantom_assassin_phantom_strike:PlayEffects(caster, origin )
- 
-  local particle_cast_start = "particles/units/heroes/hero_phantom_assassin/phantom_assassin_phantom_strike_start.vpcf"
-  local particle_cast_end = "particles/units/heroes/hero_phantom_assassin/phantom_assassin_phantom_strike_end.vpcf"
-  local sound_cast_start = "Hero_PhantomAssassin.Strike.Start"
-  local sound_cast_end = "Hero_PhantomAssassin.Strike.End"
-
-  if self:GetCaster():GetModelName() == "models/heroes/phantom_assassin/pa_arcana.vmdl" then 
-    particle_cast_start = "particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_phantom_strike_start.vpcf"
-    particle_cast_end = "particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_phantom_strike_end.vpcf"
-  end
-
-
-  if self:GetCaster():HasModifier("modifier_phantom_assassin_persona_custom") then
-    particle_cast_start = "particles/units/heroes/hero_phantom_assassin_persona/pa_persona_phantom_strike_start.vpcf"
-    particle_cast_end = "particles/units/heroes/hero_phantom_assassin_persona/pa_persona_phantom_strike_end.vpcf"
-  end
-
-  local effect_cast_start = ParticleManager:CreateParticle( particle_cast_start, PATTACH_WORLDORIGIN, nil )
-  ParticleManager:SetParticleControl( effect_cast_start, 0, origin )
-  ParticleManager:ReleaseParticleIndex( effect_cast_start )
-
-  local effect_cast_end = ParticleManager:CreateParticle( particle_cast_end, PATTACH_WORLDORIGIN, nil )
-  ParticleManager:SetParticleControl( effect_cast_end, 0, caster:GetOrigin() )
-  ParticleManager:ReleaseParticleIndex( effect_cast_end )
-
-
-  EmitSoundOnLocationWithCaster( origin, sound_cast_start, caster )
-  EmitSoundOnLocationWithCaster( caster:GetOrigin(), sound_cast_end, caster )
-end
 
 
 
@@ -342,237 +302,150 @@ end
 
 
 modifier_phantom_assassin_phantom_strike_passive = class({})
-
 function modifier_phantom_assassin_phantom_strike_passive:IsHidden() return true end
 function modifier_phantom_assassin_phantom_strike_passive:IsPurgable() return false end
 
 
 function modifier_phantom_assassin_phantom_strike_passive:OnCreated()
-self.slow_duration = self:GetCaster():GetTalentValue("modifier_phantom_assassin_blink_duration", "duration_slow", true)
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.cleave = self.ability:GetSpecialValueFor("cleave_damage")/100
+
+self.slow_duration = self:GetCaster():GetTalentValue("modifier_phantom_assassin_blink_1", "duration", true)
+
+self.legendary_radius = self.parent:GetTalentValue("modifier_phantom_assassin_blink_7", "radius", true)
+self.legendary_damage = self.parent:GetTalentValue("modifier_phantom_assassin_blink_7", "damage", true)
+self.legendary_incoming = self.parent:GetTalentValue("modifier_phantom_assassin_blink_7", "incoming", true)
+self.legendary_duration = self.parent:GetTalentValue("modifier_phantom_assassin_blink_7", "duration", true)
+self.legendary_duration_creeps = self.parent:GetTalentValue("modifier_phantom_assassin_blink_7", "agi_duration_creeps", true)
+self.legendary_duration_heroes = self.parent:GetTalentValue("modifier_phantom_assassin_blink_7", "agi_duration_heroes", true)
+
+self.proc_max = self.parent:GetTalentValue("modifier_phantom_assassin_blink_4", "max", true)
+
+self.parent:AddAttackEvent_out(self)
+self.parent:AddSpellEvent(self)
 
 end 
+
+
 
 function modifier_phantom_assassin_phantom_strike_passive:DeclareFunctions()
 return
 {
-  MODIFIER_EVENT_ON_ATTACK_LANDED,
-  --MODIFIER_EVENT_ON_TAKEDAMAGE
+  MODIFIER_PROPERTY_HEALTH_BONUS
 }
 end
 
-function modifier_phantom_assassin_phantom_strike_passive:OnTakeDamage(params)
+
+function modifier_phantom_assassin_phantom_strike_passive:GetModifierHealthBonus()
+if not self.parent:HasTalent("modifier_phantom_assassin_blink_3") then return end 
+return self.parent:GetAgility()*self.parent:GetTalentValue("modifier_phantom_assassin_blink_3", "health")
+end
+
+
+function modifier_phantom_assassin_phantom_strike_passive:AttackEvent_out(params)
 if not IsServer() then return end
+if not params.target:IsUnit() then return end
 local attacker = params.attacker
 
-if not attacker then return end
-if not attacker:HasModifier('modifier_phantom_assassin_phantom_strike_buff') then return end
-if params.inflictor ~= nil then return end
-if not params.unit:IsHero() and not params.unit:IsCreep() then return end 
-
-
-self.lifesteal = self:GetAbility():GetSpecialValueFor("lifesteal")/100
-self.lifesteal_creeps = 1 - self:GetAbility():GetSpecialValueFor("lifesteal_creeps")/100
-
-local heal = params.damage*self.lifesteal
-
-if params.unit:IsCreep() then 
-  heal = heal*self.lifesteal_creeps
-end
-
-if self:GetParent():GetQuest() == "Phantom.Quest_6" and params.unit:IsRealHero() and self:GetParent():GetHealthPercent() < 100
-  and attacker == self:GetParent() then 
-  self:GetParent():UpdateQuest( math.floor( math.min( (self:GetParent():GetMaxHealth() - self:GetParent():GetHealth()), heal )))
-end
-
-attacker:GenericHeal(heal, self:GetAbility(), true)
-
-
+if attacker:HasModifier("modifier_phantom_assassin_phantom_strike_legendary_illusion") then 
+  local duration = self.legendary_duration_heroes
+  if params.target:IsCreep() then 
+    duration = self.legendary_duration_creeps
+  end
+  self.parent:AddNewModifier(self.parent, self.ability, "modifier_phantom_assassin_phantom_strike_legendary_agility", {duration = duration})
 end
 
 
+local mod = attacker:FindModifierByName("modifier_phantom_assassin_phantom_strike_buff")
 
-function modifier_phantom_assassin_phantom_strike_passive:OnAttackLanded(params)
-if not IsServer() then return end
-local attacker = params.attacker
+if mod and self.parent:HasTalent("modifier_phantom_assassin_blink_1") then 
+  params.target:AddNewModifier(self.parent, self.ability, "modifier_phantom_assassin_phantom_strike_slow", {duration = self.slow_duration})
+end
 
-if not attacker:HasModifier('modifier_phantom_assassin_phantom_strike_buff') then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end 
+if self.parent ~= attacker then return end
+if not mod then return end 
 
-if self:GetCaster():HasModifier("modifier_phantom_assassin_blink_duration") then 
-  params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_phantom_assassin_phantom_strike_slow", {duration = self.slow_duration})
-end 
+if self.parent:HasTalent("modifier_phantom_assassin_blink_4") and mod.proc_count < self.proc_max then 
+  mod.proc_count = mod.proc_count + 1
+  if mod.proc_count >= self.proc_max then 
+    self.ability:ProcDamage(params.target:GetAbsOrigin(), self.parent)
+  end
+end
 
-if attacker ~= self:GetParent() then return end
-if not self:GetParent():HasModifier("modifier_phantom_assassin_blink_illusion") then return end
-
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_phantom_assassin_phantom_strike_agility_stack", {duration = self:GetAbility().agility_duration})
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_phantom_assassin_phantom_strike_agility", {duration = self:GetAbility().agility_duration})
-
+params.target:EmitSound("Hero_Sven.GreatCleave")
+DoCleaveAttack( self.parent, params.target, self.ability, self.cleave*params.damage, 150, 360, 500, "particles/phantom_assassin/blink_cleave.vpcf" )
 end
 
 
 
+function modifier_phantom_assassin_phantom_strike_passive:SpellEvent(params)
+if not IsServer() then return end 
+if not self.parent:HasTalent("modifier_phantom_assassin_blink_7") then return end
+if params.unit ~= self.parent then return end
+if params.ability:IsItem() then return end
 
-modifier_phantom_assassin_phantom_strike_buff = class({})
+local is_dagger = params.ability:GetName() == "custom_phantom_assassin_stifling_dagger"
 
+local target = nil
+local cursor_target = params.target
 
-function modifier_phantom_assassin_phantom_strike_buff:IsHidden()
-  return false
+if is_dagger or (params.ability == self.ability and cursor_target and cursor_target:GetTeamNumber() ~= self.parent:GetTeamNumber() ) then 
+  target = cursor_target
+else 
+  target = self.parent:RandomTarget(self.legendary_radius + self.ability:RangeBonus()) 
 end
 
-function modifier_phantom_assassin_phantom_strike_buff:IsDebuff()
-  return false
+if not target then return end
+
+if is_dagger then 
+  self.delay_target = target
+  self:StartIntervalThink(0.4)
+else 
+  self:LegendaryProc(target)
 end
 
-function modifier_phantom_assassin_phantom_strike_buff:IsPurgable()
-  return true
-end
-
-
-
-function modifier_phantom_assassin_phantom_strike_buff:DeclareFunctions()
-return {
-  MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-  MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-  MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS
-}
-end
-
-function modifier_phantom_assassin_phantom_strike_buff:GetActivityTranslationModifiers()
-return "phantom_attack"
-end
-
-function modifier_phantom_assassin_phantom_strike_buff:GetModifierAttackSpeedBonus_Constant()
- return self:GetAbility():GetSpecialValueFor( "speed" )
-end
-
-
-function modifier_phantom_assassin_phantom_strike_buff:GetModifierMoveSpeedBonus_Percentage()
-return self.speed
-end
-
-function modifier_phantom_assassin_phantom_strike_buff:OnCreated(table)
-self.speed = self:GetCaster():GetTalentValue("modifier_phantom_assassin_blink_move", "speed")
 end
 
 
 
 
+function modifier_phantom_assassin_phantom_strike_passive:LegendaryProc(target)
+if not IsServer() then return end 
 
+local illusions = CreateIllusions( self.parent, self.parent, {Duration = self.legendary_duration, outgoing_damage = self.legendary_damage - 100 ,incoming_damage = self.legendary_incoming - 100}, 1, 1, false, true )
+for _,illusion in pairs(illusions) do
 
----------------------------------------ТАЛАНТ АРМОР--------------------------------------------------------
+  illusion:AddNewModifier(self.parent, self.ability, "modifier_phantom_assassin_phantom_strike_legendary_illusion", {target = target:entindex()})
 
+  illusion.owner = self.parent
+  self.ability:UseBlink(illusion, target)
 
-
-modifier_phantom_assassin_phantom_strike_slow = class({})
-function modifier_phantom_assassin_phantom_strike_slow:IsHidden() return true end
-function modifier_phantom_assassin_phantom_strike_slow:IsPurgable() return true end
-
-function modifier_phantom_assassin_phantom_strike_slow:GetEffectName()
-return "particles/units/heroes/hero_terrorblade/terrorblade_reflection_slow.vpcf"
-
+  for _,mod in pairs(self.parent:FindAllModifiers()) do
+    if mod.StackOnIllusion ~= nil and mod.StackOnIllusion == true then
+        illusion:UpgradeIllusion(mod:GetName(), mod:GetStackCount() )
+    end
+  end
 end
 
-
-function modifier_phantom_assassin_phantom_strike_slow:DeclareFunctions()
-return
-{
-  MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
-}
-end
-
-function modifier_phantom_assassin_phantom_strike_slow:OnCreated(table)
-self.move = self:GetCaster():GetTalentValue("modifier_phantom_assassin_blink_duration", "slow")
-
-end
-
-
-function modifier_phantom_assassin_phantom_strike_slow:GetModifierMoveSpeedBonus_Percentage()
-return self.move
 end
 
 
 
 
-custom_phantom_assassin_phantom_strike_legendary = class({})
+function modifier_phantom_assassin_phantom_strike_passive:OnIntervalThink()
+if not IsServer() then return end 
 
-function custom_phantom_assassin_phantom_strike_legendary:OnSpellStart()
-if not IsServer() then return end
-
-self:GetCaster():EmitSound("Phantom_Assassin.Blink_start")
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_phantom_assassin_phantom_strike_legendary", {duration = self:GetSpecialValueFor("duration"), target = self:GetCursorTarget():entindex()})
-
+if self.delay_target and not self.delay_target:IsNull() then
+  self:LegendaryProc(self.delay_target)
 end
 
-
-modifier_phantom_assassin_phantom_strike_legendary = class({})
-function modifier_phantom_assassin_phantom_strike_legendary:IsHidden() return false end
-function modifier_phantom_assassin_phantom_strike_legendary:GetAttributes()
-return  MODIFIER_ATTRIBUTE_MULTIPLE
-end
-function modifier_phantom_assassin_phantom_strike_legendary:IsPurgable() return false end
-
-
-function modifier_phantom_assassin_phantom_strike_legendary:OnCreated(table)
-if not IsServer() then return end
-
-self.ground_particle = ParticleManager:CreateParticleForTeam("particles/pa_blink_buff.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent(), self:GetParent():GetTeamNumber())
-ParticleManager:SetParticleControlEnt(self.ground_particle, 0, self:GetParent(), PATTACH_OVERHEAD_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
-ParticleManager:SetParticleControlEnt(self.ground_particle, 1, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
-
-self:AddParticle(self.ground_particle, false, false, -1, false, false)
-
-self.illusion_duration = self:GetAbility():GetSpecialValueFor("illusion_duration")
-self.illusion_damage = self:GetAbility():GetSpecialValueFor("illusion_damage")
-self.illusion_health = self:GetAbility():GetSpecialValueFor("illusion_health")
-self.max_range = self:GetAbility():GetSpecialValueFor("max_range")*1.1
-
-self.blink_ability = self:GetCaster():FindAbilityByName("custom_phantom_assassin_phantom_strike")
-
-if not self.blink_ability or self.blink_ability:GetLevel() < 1 then 
-  self:Destroy()
-  return
-end
-
-self.target = EntIndexToHScript(table.target)
-
-self:OnIntervalThink()
-self:StartIntervalThink(self:GetAbility():GetSpecialValueFor("interval"))
-
+self:StartIntervalThink(-1)
 end
 
 
 
-function modifier_phantom_assassin_phantom_strike_legendary:OnIntervalThink()
-if not IsServer() then return end
-if (self.target:GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D() >= self.max_range then return end
-if not self.target:IsAlive() then return end
-
-local damage = 100 - self.illusion_damage 
-local incoming = self.illusion_health
- 
-
-local illusion = CreateIllusions( self:GetCaster(), self:GetCaster(), {Duration = self.illusion_duration ,outgoing_damage = -damage ,incoming_damage = incoming}, 1, 1, true, true )
-for _,i in pairs(illusion) do
-
-      i.owner = self:GetCaster()
-
-
-
-      for _,mod in pairs(self:GetCaster():FindAllModifiers()) do
-        if mod.StackOnIllusion ~= nil and mod.StackOnIllusion == true then
-            i:UpgradeIllusion(mod:GetName(), mod:GetStackCount() )
-        end
-      end
-
-      self.blink_ability:UseBlink(i, self.target)
-      i:SetForceAttackTarget(self.target)
-      i:AddNewModifier(i, self, "modifier_phantom_assassin_phantom_strike_legendary_illusion", {})
-end
-
-
-
-end
 
 
 
@@ -585,6 +458,128 @@ return
   [MODIFIER_STATE_COMMAND_RESTRICTED] = true,
 }
 end
+
+function modifier_phantom_assassin_phantom_strike_legendary_illusion:OnCreated(table)
+if not IsServer() then return end 
+self.parent = self:GetParent()
+
+self.target = EntIndexToHScript(table.target)
+self.parent:SetForceAttackTarget(self.target)
+
+self:StartIntervalThink(FrameTime())
+end
+
+
+function modifier_phantom_assassin_phantom_strike_legendary_illusion:OnIntervalThink()
+if not IsServer() then return end 
+
+if not self.target or self.target:IsNull() or not self.target:IsAlive() then 
+  self.parent:SetForceAttackTarget(nil)
+  self:StartIntervalThink(-1)
+end
+
+end
+
+
+
+
+modifier_phantom_assassin_phantom_strike_buff = class({})
+function modifier_phantom_assassin_phantom_strike_buff:IsHidden() return false end
+function modifier_phantom_assassin_phantom_strike_buff:IsPurgable() return true end
+function modifier_phantom_assassin_phantom_strike_buff:DeclareFunctions()
+return 
+{
+  MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+  MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
+  MODIFIER_PROPERTY_INCOMING_SPELL_DAMAGE_CONSTANT,
+  MODIFIER_PROPERTY_STATS_AGILITY_BONUS
+}
+end
+
+
+function modifier_phantom_assassin_phantom_strike_buff:GetModifierIncomingSpellDamageConstant(params)
+if not self.parent:HasTalent("modifier_phantom_assassin_blink_3") then return end
+
+if IsClient() then 
+  if params.report_max then 
+    return self.max_shield 
+  else 
+    return self:GetStackCount()
+  end 
+end
+
+if not IsServer() then return end
+if self:GetStackCount() == 0 then return end
+local incoming = params.damage
+if self.parent:HasModifier("modifier_phantom_assassin_phantom_strike_legendary_illusion") and self.parent.owner then 
+  incoming = incoming * self.parent.owner:GetTalentValue("modifier_phantom_assassin_blink_7", "incoming")/100
+end
+
+local damage = math.min(incoming, self:GetStackCount())
+self.parent:AddShieldInfo({shield_mod = self, healing = damage, healing_type = "shield"})
+
+self:SetStackCount(self:GetStackCount() - damage)
+if self:GetStackCount() <= 0 then
+  self:Destroy()
+end
+
+return -damage
+end
+
+
+function modifier_phantom_assassin_phantom_strike_buff:GetActivityTranslationModifiers()
+return "phantom_attack"
+end
+
+function modifier_phantom_assassin_phantom_strike_buff:GetModifierAttackSpeedBonus_Constant()
+return self.speed
+end
+
+function modifier_phantom_assassin_phantom_strike_buff:GetModifierBonusStats_Agility()
+return self.agi
+end
+
+function modifier_phantom_assassin_phantom_strike_buff:OnCreated(table)
+self.proc_count = 0
+self.parent = self:GetParent()
+
+self.shield_talent = "modifier_phantom_assassin_blink_3"
+self.speed = self:GetAbility():GetSpecialValueFor( "speed" )
+self.max_shield = self.parent:GetTalentValue("modifier_phantom_assassin_blink_3", "shield")
+self.agi = self.parent:GetTalentValue("modifier_phantom_assassin_blink_2", "agi")
+
+if not IsServer() then return end 
+
+self.parent:CalculateStatBonus(true)
+self:SetStackCount(self.max_shield)
+end
+
+
+
+
+modifier_phantom_assassin_phantom_strike_slow = class({})
+function modifier_phantom_assassin_phantom_strike_slow:IsHidden() return true end
+function modifier_phantom_assassin_phantom_strike_slow:IsPurgable() return true end
+function modifier_phantom_assassin_phantom_strike_slow:GetEffectName()
+return "particles/units/heroes/hero_terrorblade/terrorblade_reflection_slow.vpcf"
+end
+
+function modifier_phantom_assassin_phantom_strike_slow:DeclareFunctions()
+return
+{
+  MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
+}
+end
+
+function modifier_phantom_assassin_phantom_strike_slow:OnCreated(table)
+self.move = self:GetCaster():GetTalentValue("modifier_phantom_assassin_blink_1", "slow")
+end
+
+function modifier_phantom_assassin_phantom_strike_slow:GetModifierMoveSpeedBonus_Percentage()
+return self.move
+end
+
+
 
 
 
@@ -600,7 +595,7 @@ end
 
 
 function modifier_phantom_assassin_phantom_strike_turn_slow:OnCreated()
-self.slow = self:GetCaster():GetTalentValue("modifier_phantom_assassin_blink_blink", "slow")
+self.slow = self:GetCaster():GetTalentValue("modifier_phantom_assassin_blink_5", "slow")
 end
 
 function modifier_phantom_assassin_phantom_strike_turn_slow:GetModifierTurnRate_Percentage()
@@ -609,61 +604,87 @@ end
 
 
 
-modifier_phantom_assassin_phantom_strike_agility_stack = class({})
-function modifier_phantom_assassin_phantom_strike_agility_stack:IsHidden() return true end
-function modifier_phantom_assassin_phantom_strike_agility_stack:IsPurgable() return false end
-function modifier_phantom_assassin_phantom_strike_agility_stack:GetAttributes()
-  return MODIFIER_ATTRIBUTE_MULTIPLE
-end
 
+modifier_phantom_assassin_phantom_strike_legendary_agility = class({})
+function modifier_phantom_assassin_phantom_strike_legendary_agility:IsHidden() return false end
+function modifier_phantom_assassin_phantom_strike_legendary_agility:IsPurgable() return false end
+function modifier_phantom_assassin_phantom_strike_legendary_agility:GetTexture() return "buffs/Blade_dance_speed" end
+function modifier_phantom_assassin_phantom_strike_legendary_agility:OnCreated(table)
 
-function modifier_phantom_assassin_phantom_strike_agility_stack:OnDestroy()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+
+self.max = self.caster:GetTalentValue("modifier_phantom_assassin_blink_7", "max")
+self.agi = (self.caster:GetTalentValue("modifier_phantom_assassin_blink_7", "agi")/self.max)/100
+
 if not IsServer() then return end
-
-local mod = self:GetParent():FindModifierByName("modifier_phantom_assassin_phantom_strike_agility")
-if mod then 
-  mod:DecrementStackCount()
-  if mod:GetStackCount() == 0 then 
-    mod:Destroy()
-  end
-end
-
+self:SetStackCount(1)
+self.RemoveForDuel = true
+self.PercentAgi = self.agi*self:GetStackCount()
 end
 
 
-modifier_phantom_assassin_phantom_strike_agility = class({})
-function modifier_phantom_assassin_phantom_strike_agility:IsHidden() return false end
-function modifier_phantom_assassin_phantom_strike_agility:IsPurgable() return false end
-function modifier_phantom_assassin_phantom_strike_agility:GetTexture() return "buffs/Blade_dance_speed" end
-
-function modifier_phantom_assassin_phantom_strike_agility:OnCreated(table)
+function modifier_phantom_assassin_phantom_strike_legendary_agility:OnRefresh(table)
 if not IsServer() then return end
-
-self.StackOnIllusion = true
-
+if self:GetStackCount() >= self.max then return end 
 
 self:IncrementStackCount()
+self.PercentAgi = self.agi*self:GetStackCount()
 end
 
 
-function modifier_phantom_assassin_phantom_strike_agility:OnRefresh(table)
-if not IsServer() then return end
-self:OnCreated(table)
-end
-
-
-function modifier_phantom_assassin_phantom_strike_agility:DeclareFunctions()
+function modifier_phantom_assassin_phantom_strike_legendary_agility:DeclareFunctions()
 return
 {
-  MODIFIER_PROPERTY_STATS_AGILITY_BONUS
+  MODIFIER_PROPERTY_TOOLTIP
 }
 end
 
-function modifier_phantom_assassin_phantom_strike_agility:GetModifierBonusStats_Agility()
-local parent = self:GetParent()
-if self:GetParent():IsIllusion() and self:GetParent().owner then 
-  parent = self:GetParent().owner
+function modifier_phantom_assassin_phantom_strike_legendary_agility:OnTooltip()
+return self.agi*self:GetStackCount()*100
 end
 
-return parent:FindAbilityByName("custom_phantom_assassin_phantom_strike").agility_stack[parent:GetUpgradeStack("modifier_phantom_assassin_blink_illusion")]*self:GetStackCount()
+function modifier_phantom_assassin_phantom_strike_legendary_agility:OnDestroy()
+if not IsServer() then return end 
+self.caster:CalculateStatBonus(true)
+end
+
+
+modifier_phantom_assassin_phantom_strike_haste = class({})
+function modifier_phantom_assassin_phantom_strike_haste:IsHidden() return true end
+function modifier_phantom_assassin_phantom_strike_haste:IsPurgable() return false end
+function modifier_phantom_assassin_phantom_strike_haste:OnCreated()
+self.parent = self:GetParent()
+self.move = self.parent:GetTalentValue("modifier_phantom_assassin_blink_6", "move")
+if not IsServer() then return end 
+
+self:StartIntervalThink(0.1)
+end
+
+
+function modifier_phantom_assassin_phantom_strike_haste:OnIntervalThink()
+if not IsServer() then return end
+self.parent:EmitSound("PA.Blink_haste")
+self.parent:GenericParticle("particles/phantom_assassin/blink_speed.vpcf", self)
+self.parent:GenericParticle("particles/phantom_assassin/blink_resist.vpcf", self)
+self:StartIntervalThink(-1)
+end
+
+function modifier_phantom_assassin_phantom_strike_haste:CheckState()
+return
+{
+  [MODIFIER_STATE_UNSLOWABLE] = true,
+  [MODIFIER_STATE_NO_UNIT_COLLISION] = true
+}
+end
+
+function modifier_phantom_assassin_phantom_strike_haste:DeclareFunctions()
+return
+{
+  MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
+}
+end
+
+function modifier_phantom_assassin_phantom_strike_haste:GetModifierMoveSpeedBonus_Percentage()
+return self.move
 end

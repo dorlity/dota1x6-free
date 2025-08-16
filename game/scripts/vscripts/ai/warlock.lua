@@ -20,53 +20,43 @@ end
 
 
 function bevavior()
-	if not IsValidEntity(thisEntity) then return -1 end
+if not IsValidEntity(thisEntity) then return end
+if thisEntity.ally == nil and not thisEntity.summoned then return 0.5 end
+if GameRules:IsGamePaused() == true then return 0.5 end
+if thisEntity:IsChanneling() then return 0.5 end
 
-	if (not thisEntity:IsAlive()) then
-        return -1
-    end
-	if GameRules:IsGamePaused() == true then
-        return 0.5
-    end
 
 if not thisEntity.init then
     thisEntity.init = true
 
-    local tower = FindUnitsInRadius(thisEntity:GetTeamNumber(), thisEntity:GetAbsOrigin(), nil, FIND_UNITS_EVERYWHERE, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_BUILDING, 0, FIND_CLOSEST, false)
-    for _,t in ipairs(tower) do
-        if IsValidEntity(t) and t:GetUnitName() == "npc_towerradiant" or t:GetUnitName() == "npc_towerdire" then
-            thisEntity.tower_location = t:GetAbsOrigin()
-            thisEntity.tower = t
+    thisEntity.start_abs = thisEntity:GetAbsOrigin()
+
+    local towers = FindUnitsInRadius(thisEntity:GetTeamNumber(), thisEntity:GetAbsOrigin(), nil, FIND_UNITS_EVERYWHERE, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_BUILDING, 0, FIND_CLOSEST, false)
+    for _, tower in pairs(towers) do
+        if IsValidEntity(tower) and (tower:GetUnitName() == "npc_towerradiant" or tower:GetUnitName() == "npc_towerdire") then
+            thisEntity.tower_location = tower:GetAbsOrigin()
+            thisEntity.tower = tower
             break
         end
     end
-
-
 end
-	if not IsValidEntity(thisEntity.tower) then return -1 end
-    if not thisEntity.tower:IsAlive() then thisEntity:ForceKill(false)
-    return -1 end
 
+if thisEntity:HasModifier("modifier_return_to_path") then return 0.3 end
+local path_dist = thisEntity:GetPathPoint(true)
+if path_dist >= 700 then
+    thisEntity:AddNewModifier(thisEntity, nil, "modifier_return_to_path", {duration = 6})
+    return 1
+end
 
-    if thisEntity:IsChanneling() then
-    	return 0.4
-    end
-
-
-
-
-
+if (not thisEntity:IsAlive()) then return -1 end
+if not IsValidEntity(thisEntity.tower) then return -1 end
+if not thisEntity.tower:IsAlive() then thisEntity:ForceKill(false) return -1 end
 
 ---------------------------------------------------------------------------------------------------
 
 local enemy_for_ability = nil
-
-
 local enemy_for_ability = FindUnitsInRadius(thisEntity:GetTeamNumber(), thisEntity:GetAbsOrigin(), nil, 1000, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE , FIND_CLOSEST, false)
-
 local enemy_for_attack = FindUnitsInRadius(thisEntity:GetTeamNumber(), thisEntity:GetAbsOrigin(), nil, 1000, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD, FIND_CLOSEST, false)
-
-
 
 local control = false
 if thisEntity:IsSilenced() or thisEntity:IsHexed() then

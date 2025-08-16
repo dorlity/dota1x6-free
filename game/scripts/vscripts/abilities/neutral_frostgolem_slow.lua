@@ -10,35 +10,28 @@ neutral_frostgolem_slow = class({})
 function neutral_frostgolem_slow:GetIntrinsicModifierName() return "modifier_neutral_frostgolem_slow_passive" end 
 
 
-
-
-
 modifier_neutral_frostgolem_slow_passive = class({})
 
 function modifier_neutral_frostgolem_slow_passive:IsPurgable() return false end
-
 function modifier_neutral_frostgolem_slow_passive:IsHidden() return true end
 
 function modifier_neutral_frostgolem_slow_passive:OnCreated(table)
 if not IsServer() then return end
+self.parent = self:GetParent()
+self.parent:AddAttackEvent_out(self, true)
+
 self.duration = self:GetAbility():GetSpecialValueFor("duration")
 end
 
-function modifier_neutral_frostgolem_slow_passive:DeclareFunctions()
-return 
-{
-  MODIFIER_EVENT_ON_ATTACK_LANDED
-}
-end
 
-function modifier_neutral_frostgolem_slow_passive:OnAttackLanded(params)
+function modifier_neutral_frostgolem_slow_passive:AttackEvent_out(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.attacker then return end
-if params.target:IsMagicImmune() then return end
+if not params.target:IsUnit() then return end
 
 params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_neutral_frostgolem_slow_buff", {duration = self.duration})
-
 end
+
 
 
 modifier_neutral_frostgolem_slow_buff = class({})
@@ -53,21 +46,22 @@ end
 function modifier_neutral_frostgolem_slow_buff:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
- 	MODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET,
-    MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE,
-    MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE
-    }
- end
+  MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+  MODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET,
+  MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE,
+  MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE
+}
+end
 
 function modifier_neutral_frostgolem_slow_buff:GetModifierLifestealRegenAmplify_Percentage() return self.heal end
 function modifier_neutral_frostgolem_slow_buff:GetModifierHealAmplify_PercentageTarget() return self.heal end
 function modifier_neutral_frostgolem_slow_buff:GetModifierHPRegenAmplify_Percentage() return self.heal end
 function modifier_neutral_frostgolem_slow_buff:GetModifierMoveSpeedBonus_Percentage() return self.slow end
+
 function modifier_neutral_frostgolem_slow_buff:GetStatusEffectName()
 	return "particles/status_fx/status_effect_frost_lich.vpcf"
 end
 
 function modifier_neutral_frostgolem_slow_buff:StatusEffectPriority()
-	return 10
+	return MODIFIER_PRIORITY_NORMAL 
 end

@@ -49,7 +49,7 @@ self.live = self:GetAbility():GetSpecialValueFor("live")
     local new_skelet = CreateUnitByName("npc_golem_zombie", self:GetAbility().point+RandomVector(RandomInt(-150, 150)), true, nil, nil, DOTA_TEAM_CUSTOM_5)
               
     new_skelet.mkb = self:GetCaster().mkb
-    new_skelet.owner = self:GetCaster().owner
+    new_skelet.host_team = self:GetCaster().host_team
     new_skelet:AddNewModifier(new_skelet, nil, "modifier_waveupgrade", {})
     new_skelet:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_kill", {duration = self.live})
   end
@@ -83,7 +83,7 @@ function modifier_decay_debuff:OnCreated(table)
         if not IsServer() then return end
         self.damage = self:GetParent():GetMaxHealth()*self:GetAbility():GetSpecialValueFor("damage")/100
 
-        ApplyDamage({ victim = self:GetParent(), attacker = self:GetAbility():GetCaster(), ability = self:GetAbility(), damage = self.damage, damage_type = DAMAGE_TYPE_PURE, damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION})
+        DoDamage({ victim = self:GetParent(), attacker = self:GetAbility():GetCaster(), ability = self:GetAbility(), damage = self.damage, damage_type = DAMAGE_TYPE_PURE, damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION})
        
         self:GetAbility():GetCaster():Heal(self.damage, self:GetAbility():GetCaster())
 

@@ -7,15 +7,13 @@ LinkLuaModifier("modifier_custom_bristleback_quill_spray_proc_slow", "abilities/
 
 
 
-bristleback_quill_spray_custom              = class({})
-
-
-
+bristleback_quill_spray_custom = class({})
 
 
 
 function bristleback_quill_spray_custom:Precache(context)
-
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_quill_spray_conical.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_quill_spray.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_quill_spray_impact.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_quill_spray_hit.vpcf", context )
@@ -29,10 +27,8 @@ end
 function bristleback_quill_spray_custom:GetIntrinsicModifierName()  return "modifier_custom_bristleback_quill_spray_tracker" end
 
 
-
-
 function bristleback_quill_spray_custom:GetBehavior()
-if self:GetCaster():HasModifier("modifier_bristle_spray_legendary") then
+if self:GetCaster():HasTalent("modifier_bristle_spray_7") then
   return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IMMEDIATE + DOTA_ABILITY_BEHAVIOR_AUTOCAST
 end
 
@@ -43,57 +39,42 @@ end
 
 
 function bristleback_quill_spray_custom:GetManaCost(level)
-
 local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_bristle_spray_damage") then 
-  bonus = self:GetCaster():GetTalentValue("modifier_bristle_spray_damage", "mana")
+if self:GetCaster():HasTalent("modifier_bristle_spray_1") then 
+  bonus = self:GetCaster():GetTalentValue("modifier_bristle_spray_1", "mana")
 end 
-
 return self.BaseClass.GetManaCost(self,level) + bonus
 end
 
 
-
-
 function bristleback_quill_spray_custom:GetCastRange(vLocation, hTarget)
-
 local bonus = 0
-if self:GetCaster():HasModifier("modifier_bristle_spray_reduce") then 
-  bonus = self:GetCaster():GetTalentValue("modifier_bristle_spray_reduce", "radius")
+if self:GetCaster():HasTalent("modifier_bristle_spray_6") then 
+  bonus = self:GetCaster():GetTalentValue("modifier_bristle_spray_6", "radius")
 end
-
 return self:GetSpecialValueFor("radius") + bonus
 end
 
 
 function bristleback_quill_spray_custom:GetCooldown(iLevel)
 local cd = self.BaseClass.GetCooldown(self, iLevel)
-
 if self:GetCaster():HasModifier("modifier_custom_bristleback_quill_spray_legendary") then 
- cd = cd  + self:GetCaster():GetUpgradeStack("modifier_custom_bristleback_quill_spray_legendary")*self:GetCaster():GetTalentValue("modifier_bristle_spray_legendary", "cd")
+ cd = cd  + self:GetCaster():GetUpgradeStack("modifier_custom_bristleback_quill_spray_legendary")*self:GetCaster():GetTalentValue("modifier_bristle_spray_7", "cd")
 end 
-
-if self:GetCaster():HasModifier("modifier_bristle_spray_lowhp") and self:GetCaster():GetHealthPercent() <= self:GetCaster():GetTalentValue("modifier_bristle_spray_lowhp", "health") then 
-  cd = cd * (1 + self:GetCaster():GetTalentValue("modifier_bristle_spray_lowhp", "cd")/100)
+if self:GetCaster():HasTalent("modifier_bristle_spray_5") and self:GetCaster():GetHealthPercent() <= self:GetCaster():GetTalentValue("modifier_bristle_spray_5", "health") then 
+  cd = cd * (1 + self:GetCaster():GetTalentValue("modifier_bristle_spray_5", "cd")/100)
 end
-
 return cd
-
 end
-
-
-
-
 
 
 function bristleback_quill_spray_custom:OnSpellStart()
 self:MakeSpray(nil)
 
-if not self:GetCaster():HasModifier("modifier_bristle_spray_legendary") then return end
+if not self:GetCaster():HasTalent("modifier_bristle_spray_7") then return end
 
 if self:GetAutoCastState() == true then 
-  self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_custom_bristleback_quill_spray_legendary", {duration = self:GetCaster():GetTalentValue("modifier_bristle_spray_legendary", "duration")})
+  self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_custom_bristleback_quill_spray_legendary", {duration = self:GetCaster():GetTalentValue("modifier_bristle_spray_7", "duration")})
 else 
   self:GetCaster():RemoveModifierByName("modifier_custom_bristleback_quill_spray_legendary")
 end
@@ -102,11 +83,10 @@ end
 end 
 
 
-
 function bristleback_quill_spray_custom:GetHealthCost(level)
 
-if self:GetCaster():HasModifier("modifier_bristle_spray_legendary") and self:GetCaster():HasModifier("modifier_custom_bristleback_quill_spray_legendary") then 
-  return self:GetCaster():GetUpgradeStack("modifier_custom_bristleback_quill_spray_legendary")*self:GetCaster():GetMaxHealth()*self:GetCaster():GetTalentValue("modifier_bristle_spray_legendary", "cost")/100
+if self:GetCaster():HasTalent("modifier_bristle_spray_7") and self:GetCaster():HasModifier("modifier_custom_bristleback_quill_spray_legendary") then 
+  return self:GetCaster():GetUpgradeStack("modifier_custom_bristleback_quill_spray_legendary")*self:GetCaster():GetMaxHealth()*self:GetCaster():GetTalentValue("modifier_bristle_spray_7", "cost")/100
 end
 
 end
@@ -117,15 +97,11 @@ end
 function bristleback_quill_spray_custom:MakeSpray(location, is_passive, is_scepter)
 
 self.caster = self:GetCaster()
-self.radius         = self:GetSpecialValueFor("radius") + self:GetCaster():GetTalentValue("modifier_bristle_spray_reduce", "radius")
+self.radius         = self:GetSpecialValueFor("radius") + self:GetCaster():GetTalentValue("modifier_bristle_spray_6", "radius")
 self.projectile_speed   = self:GetSpecialValueFor("projectile_speed")
 
 self.duration       = self.radius / self.projectile_speed
-self.location = self:GetCaster():GetAbsOrigin()
 
-if location ~= nil then  
-  self.location = location
-end
 
 if not IsServer() then return end
 
@@ -136,6 +112,14 @@ end
 
 
 local cone = 0
+local x = nil
+local y = nil
+
+if location then 
+  x = location.x
+  y = location.y
+end 
+
 
 if is_scepter and is_scepter == true then 
   cone = 1
@@ -146,7 +130,7 @@ if is_passive and is_passive == true then
   passive = 1
 end 
 
-self.caster:AddNewModifier(self.caster, self, "modifier_custom_bristleback_quillspray_thinker", {duration = self.duration, passive = passive,  cone = cone})
+self.caster:AddNewModifier(self.caster, self, "modifier_custom_bristleback_quillspray_thinker", {x = x, y = y, duration = self.duration, passive = passive,  cone = cone})
 
 self.caster:EmitSound("Hero_Bristleback.QuillSpray.Cast")
 
@@ -165,69 +149,74 @@ function modifier_custom_bristleback_quillspray_thinker:OnCreated(table)
 self.ability  = self:GetAbility()
 self.caster   = self:GetCaster()
 self.parent   = self:GetParent()
-self.back = self:GetCaster():FindAbilityByName("bristleback_bristleback_custom")
+self.back = self.caster:FindAbilityByName("bristleback_bristleback_custom")
 
-self.radius         = self.ability:GetSpecialValueFor("radius") + self:GetCaster():GetTalentValue("modifier_bristle_spray_reduce", "radius")
+self.radius         = self.ability:GetSpecialValueFor("radius") + self.caster:GetTalentValue("modifier_bristle_spray_6", "radius")
 self.quill_base_damage    = self.ability:GetSpecialValueFor("quill_base_damage")
-self.quill_stack_damage   = self.ability:GetSpecialValueFor("quill_stack_damage") + self:GetCaster():GetTalentValue("modifier_bristle_spray_damage", "damage")
+self.quill_stack_damage   = self.ability:GetSpecialValueFor("quill_stack_damage") + self.caster:GetTalentValue("modifier_bristle_spray_1", "damage")
 
 if self.back then 
   self.angle = self.back:GetSpecialValueFor("activation_angle")
 end 
 
-self.proc_chance = self:GetCaster():GetTalentValue("modifier_bristle_spray_max", "chance")
-self.slow_duration = self:GetCaster():GetTalentValue("modifier_bristle_spray_max", "duration")
+self.proc_chance = self.caster:GetTalentValue("modifier_bristle_spray_2", "chance")
+self.slow_duration = self.caster:GetTalentValue("modifier_bristle_spray_2", "duration")
 
-self.quill_stack_duration = self.ability:GetSpecialValueFor("quill_stack_duration") + self:GetCaster():GetTalentValue("modifier_bristle_spray_reduce", "duration")
-self.max_damage       = self.ability:GetSpecialValueFor("max_damage") + self:GetCaster():GetTalentValue("modifier_bristle_spray_double", "damage")
+self.quill_stack_duration = self.ability:GetSpecialValueFor("quill_stack_duration") + self.caster:GetTalentValue("modifier_bristle_spray_6", "duration")
+self.max_damage       = self.ability:GetSpecialValueFor("max_damage") + self.caster:GetTalentValue("modifier_bristle_spray_4", "damage")
 
-self.armor_duration = self:GetCaster():GetTalentValue("modifier_bristle_back_return", "duration")
+self.armor_duration = self.caster:GetTalentValue("modifier_bristle_back_2", "duration")
 
 if not IsServer() then return end
 
 self.cast_point = self.parent:GetAbsOrigin()
+
+if table.x and table.y then 
+  self.cast_point = GetGroundPosition(Vector(table.x, table.y, 0), nil)
+end
 
 self.should_heal = false
 
 self.passive = table.passive
 self.cone = table.cone
 
-if self:GetCaster():HasModifier("modifier_bristle_spray_heal") then 
+if self.caster:HasTalent("modifier_bristle_spray_3") then 
   self.should_heal = true
-  self.heal = self:GetCaster():GetTalentValue("modifier_bristle_spray_heal", "heal")*(self:GetCaster():GetMaxHealth() - self:GetCaster():GetHealth())/100
+  self.heal = self.caster:GetTalentValue("modifier_bristle_spray_3", "heal")*(self.caster:GetMaxHealth() - self.caster:GetHealth())/100
 
   if self.passive == 1 then 
-    self.heal = self.heal/self:GetCaster():GetTalentValue("modifier_bristle_spray_heal", "passive")
+    self.heal = self.heal/self.caster:GetTalentValue("modifier_bristle_spray_3", "passive")
   end 
 
 end
 
 self.proc = false
-if self:GetCaster():HasModifier("modifier_bristle_spray_max") and RollPseudoRandomPercentage(self.proc_chance,7001,self:GetCaster()) then 
+if self.caster:HasTalent("modifier_bristle_spray_2") and RollPseudoRandomPercentage(self.proc_chance,7001,self.caster) then 
   self.proc = true
 end
 
 
-self.direction = self:GetCaster():GetForwardVector()
+self.direction = self.caster:GetForwardVector()
 
 if self.cone == 1 then 
   self.direction = self.direction*-1
 
-  local particle = "particles/units/heroes/hero_bristleback/bristleback_quill_spray_conical.vpcf"
-
-  self.particle = ParticleManager:CreateParticle(particle, PATTACH_ABSORIGIN_FOLLOW, self.caster)
+  self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_bristleback/bristleback_quill_spray_conical.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.caster)
   self:AddParticle(self.particle, false, false, -1, false, false)
 else 
 
-  local particle = "particles/units/heroes/hero_bristleback/bristleback_quill_spray.vpcf"
-  self.particle = ParticleManager:CreateParticle(particle, PATTACH_ABSORIGIN_FOLLOW, self.parent)
+  self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_bristleback/bristleback_quill_spray.vpcf", PATTACH_WORLDORIGIN, nil)
+  ParticleManager:SetParticleControl(self.particle, 0, self.cast_point)
   self:AddParticle(self.particle, false, false, -1, false, false)
+
 end
 
 self.hit_enemies = {}
 
 self:StartIntervalThink(FrameTime())
 end
+
+
 
 function modifier_custom_bristleback_quillspray_thinker:OnIntervalThink()
 if not IsServer() then return end
@@ -248,7 +237,7 @@ for _, enemy in pairs(enemies) do
   local angle_diff = math.abs( AngleDiff( cast_angle, enemy_angle ) )
 
 
-  if angle_diff <= self.angle or self.cone == 0 then
+  if (angle_diff <= self.angle or self.cone == 0) and enemy:GetUnitName() ~= "npc_teleport" then
 
     if not self.hit_enemies[enemy] then 
 
@@ -256,7 +245,7 @@ for _, enemy in pairs(enemies) do
 
       if self.should_heal == true then 
         self.should_heal = false
-        self:GetCaster():GenericHeal(self.heal , self:GetAbility())
+        self.caster:GenericHeal(self.heal , self:GetAbility(), nil, nil, "modifier_bristle_spray_3")
       end 
 
       local quill_spray_stacks  = 0
@@ -265,10 +254,13 @@ for _, enemy in pairs(enemies) do
       if quill_spray_modifier then
         quill_spray_stacks   = quill_spray_modifier:GetStackCount() 
       end
+      local damage_flags = DOTA_DAMAGE_FLAG_BYPASSES_PHYSICAL_BLOCK
+      if self.passive == 1 or self.cone == 1 then
+        damage_flags = damage_flags + DOTA_DAMAGE_FLAG_REFLECTION
+      end
 
-
-      local damageTable = {victim = enemy, damage = math.min(self.quill_base_damage + (self.quill_stack_damage * quill_spray_stacks), self.max_damage), damage_type = DAMAGE_TYPE_PHYSICAL, damage_flags  = DOTA_DAMAGE_FLAG_BYPASSES_BLOCK, attacker = self.caster, ability = self.ability}        
-      ApplyDamage(damageTable)
+      local damageTable = {victim = enemy, damage = math.min(self.quill_base_damage + (self.quill_stack_damage * quill_spray_stacks), self.max_damage), damage_type = DAMAGE_TYPE_PHYSICAL, damage_flags  = damage_flags, attacker = self.caster, ability = self.ability}        
+      DoDamage(damageTable)
       
       if self.proc then 
         enemy:AddNewModifier(self.caster, self:GetAbility(), "modifier_custom_bristleback_quill_spray_proc_slow", {duration = self.slow_duration*(1 - enemy:GetStatusResistance())})
@@ -287,8 +279,6 @@ for _, enemy in pairs(enemies) do
   end
 end
 
-
-
 end
 
 
@@ -306,7 +296,7 @@ self.parent   = self:GetParent()
 
 self.RemoveForDuel = true
 
-self.heal_reduce = self:GetCaster():GetTalentValue("modifier_bristle_spray_reduce", "heal_reduce")
+self.heal_reduce = self:GetCaster():GetTalentValue("modifier_bristle_spray_6", "heal_reduce")
 
 if not IsServer() then return end
 
@@ -343,20 +333,20 @@ end
 
 
 function modifier_custom_bristleback_quill_spray:GetModifierLifestealRegenAmplify_Percentage() 
-if self:GetCaster():HasModifier("modifier_bristle_spray_reduce") then 
+if self:GetCaster():HasTalent("modifier_bristle_spray_6") then 
     return self:GetStackCount()*self.heal_reduce
 end
 end
 
 function modifier_custom_bristleback_quill_spray:GetModifierHealAmplify_PercentageTarget() 
-if self:GetCaster():HasModifier("modifier_bristle_spray_reduce") then 
+if self:GetCaster():HasTalent("modifier_bristle_spray_6") then 
     return self:GetStackCount()*self.heal_reduce
 end
 end
 
 
 function modifier_custom_bristleback_quill_spray:GetModifierHPRegenAmplify_Percentage() 
-if self:GetCaster():HasModifier("modifier_bristle_spray_reduce") then 
+if self:GetCaster():HasTalent("modifier_bristle_spray_6") then 
     return self:GetStackCount()*self.heal_reduce
 end
 end
@@ -390,7 +380,7 @@ modifier_custom_bristleback_quill_spray_tracker = class({})
 function modifier_custom_bristleback_quill_spray_tracker:IsHidden() return true end
 function modifier_custom_bristleback_quill_spray_tracker:IsPurgable() return false end
 function modifier_custom_bristleback_quill_spray_tracker:IsHidden()
-if self:GetCaster():HasModifier("modifier_bristle_spray_lowhp") and self:GetParent():GetHealthPercent() <= self:GetCaster():GetTalentValue("modifier_bristle_spray_lowhp", "health") then 
+if self:GetCaster():HasTalent("modifier_bristle_spray_5") and self:GetParent():GetHealthPercent() <= self:GetCaster():GetTalentValue("modifier_bristle_spray_5", "health") then 
   return false 
 else 
   return true
@@ -405,20 +395,22 @@ function modifier_custom_bristleback_quill_spray_tracker:RemoveOnDeath() return 
 
 function modifier_custom_bristleback_quill_spray_tracker:OnCreated(table)
 
-self.health = self:GetCaster():GetTalentValue("modifier_bristle_spray_lowhp", "health", true)
-self.heal = self:GetCaster():GetTalentValue("modifier_bristle_spray_lowhp", "heal", true)
-self.heal_creeps = self:GetCaster():GetTalentValue("modifier_bristle_spray_lowhp", "heal_creeps", true)
+self.health = self:GetCaster():GetTalentValue("modifier_bristle_spray_5", "health", true)
+self.heal = self:GetCaster():GetTalentValue("modifier_bristle_spray_5", "heal", true)
+self.heal_creeps = self:GetCaster():GetTalentValue("modifier_bristle_spray_5", "heal_creeps", true)
 
 self.parent = self:GetParent()
+self.parent:AddSpellEvent(self)
 
 if not IsServer() then return end
-self:StartIntervalThink(1)
- 
+self.parent:AddDamageEvent_out(self)
+
+self:StartIntervalThink(1) 
 end
 
 function modifier_custom_bristleback_quill_spray_tracker:OnIntervalThink()
 if not IsServer() then return end
-if not self.parent:HasModifier("modifier_bristle_spray_lowhp") then return end
+if not self.parent:HasTalent("modifier_bristle_spray_5") then return end
 
 
 if not self.particle and self:GetParent():GetHealthPercent() <= self.health then 
@@ -444,35 +436,25 @@ end
 
 
 
-
-function modifier_custom_bristleback_quill_spray_tracker:DeclareFunctions()
-return
-{
-  MODIFIER_EVENT_ON_TAKEDAMAGE,
-  MODIFIER_EVENT_ON_ABILITY_EXECUTED,
-}
-end
-
-function modifier_custom_bristleback_quill_spray_tracker:OnAbilityExecuted( params )
+function modifier_custom_bristleback_quill_spray_tracker:SpellEvent( params )
 if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_bristle_spray_double") then return end
+if not self:GetParent():HasTalent("modifier_bristle_spray_4") then return end
 if params.unit~=self:GetParent() then return end
 if not params.ability then return end
-if params.ability:IsItem() or params.ability:IsToggle() then return end
-if UnvalidAbilities[params.ability:GetName()] then return end
-if not RollPseudoRandomPercentage(self.parent:GetTalentValue("modifier_bristle_spray_double", "chance") ,7031, self.parent) then return end
+if params.ability:IsItem() then return end
+if not RollPseudoRandomPercentage(self.parent:GetTalentValue("modifier_bristle_spray_4", "chance") ,7031, self.parent) then return end
 
 
 Timers:CreateTimer(0.15, function()
-  self:GetAbility():MakeSpray(self.parent:GetAbsOrigin())
+  self:GetAbility():MakeSpray()
 end)
 
 end
 
 
-function modifier_custom_bristleback_quill_spray_tracker:OnTakeDamage(params)
+function modifier_custom_bristleback_quill_spray_tracker:DamageEvent_out(params)
 if not IsServer() then return end
-if not self.parent:HasModifier("modifier_bristle_spray_lowhp") then return end
+if not self.parent:HasTalent("modifier_bristle_spray_5") then return end
 if self:GetParent():GetHealthPercent() > self.health then return end
 if self:GetParent() ~= params.attacker then return end
 if not params.unit:IsCreep() and not params.unit:IsHero() then return end
@@ -486,7 +468,7 @@ end
 
 heal = heal*params.damage
 
-self:GetParent():GenericHeal(heal, self:GetAbility(), true)
+self:GetParent():GenericHeal(heal, self:GetAbility(), true, nil, "modifier_bristle_spray_5")
 
 end 
 
@@ -508,7 +490,9 @@ function modifier_custom_bristleback_quill_spray_legendary:IsPurgable() return f
 function modifier_custom_bristleback_quill_spray_legendary:GetTexture() return "buffs/quill_cdr" end
 function modifier_custom_bristleback_quill_spray_legendary:OnCreated()
 if not IsServer() then return end 
-self.max = self:GetCaster():GetTalentValue("modifier_bristle_spray_legendary", "max")
+self.parent = self:GetParent()
+
+self.max = self:GetCaster():GetTalentValue("modifier_bristle_spray_7", "max")
 self:SetStackCount(1)
 
 self.time = self:GetRemainingTime()
@@ -528,13 +512,13 @@ end
 function modifier_custom_bristleback_quill_spray_legendary:OnIntervalThink()
 if not IsServer() then return end
 
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'bristle_spray_change',  {hide = 0, max_time = self.time, time = self:GetRemainingTime(), damage = self:GetStackCount()})
+self.parent:UpdateUIshort({time = self:GetRemainingTime(), max_time = self.time, stack = self:GetStackCount(), style = "BristSpray"})
 end
 
 function modifier_custom_bristleback_quill_spray_legendary:OnDestroy()
 if not IsServer() then return end
 
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'bristle_spray_change',  {hide = 1, max_time = self.time, time = self:GetRemainingTime(), damage = self:GetStackCount()})
+self.parent:UpdateUIshort({hide = 1, hide_full = 1, style = "BristSpray"})
 end
 
 
@@ -547,10 +531,10 @@ function modifier_custom_bristleback_quill_spray_proc_slow:IsPurgable() return t
 function modifier_custom_bristleback_quill_spray_proc_slow:GetTexture() return "buffs/spray_slow" end
 function modifier_custom_bristleback_quill_spray_proc_slow:OnCreated(table)
 
-self.slow = self:GetCaster():GetTalentValue("modifier_bristle_spray_max", "slow")
+self.slow = self:GetCaster():GetTalentValue("modifier_bristle_spray_2", "slow")
 if not IsServer() then return end
 
-local damage = self:GetCaster():GetTalentValue("modifier_bristle_spray_max", "damage")
+local damage = self:GetCaster():GetTalentValue("modifier_bristle_spray_2", "damage")
 
 self:GetParent():EmitSound("BB.Quill_proc")
 
@@ -567,7 +551,7 @@ local damageTable =
     ability     = self:GetAbility()
 }
                   
-ApplyDamage(damageTable)
+DoDamage(damageTable, "modifier_bristle_spray_2")
       
 end
 

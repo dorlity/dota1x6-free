@@ -16,25 +16,30 @@ bristleback_warpath_custom              = class({})
 
 
 function bristleback_warpath_custom:Precache(context)
-
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 PrecacheResource( "particle", "particles/units/heroes/hero_dawnbreaker/dawnbreaker_fire_wreath_smash.vpcf", context )
+PrecacheResource( "particle", "particles/brist_lowhp_.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_warpath_dust.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_warpath_dust.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_warpath.vpcf", context )
 PrecacheResource( "particle", "particles/status_fx/status_effect_legion_commander_duel.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_ogre_magi/ogre_magi_bloodlust_buff.vpcf", context )
-PrecacheResource( "particle", "particles/brist_lowhp_.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_sniper/sniper_headshot_slow.vpcf", context )
+PrecacheResource( "particle", "particles/items2_fx/vindicators_axe_armor.vpcf", context )
 PrecacheResource( "particle", "particles/back_stack_brist.vpcf", context )
-PrecacheResource( "particle", "particles/bristleback/armor_buff.vpcf", context )
+
 end
 
 
 
-function bristleback_warpath_custom:GetIntrinsicModifierName() return "modifier_custom_bristleback_warpath" end
+function bristleback_warpath_custom:GetIntrinsicModifierName() 
+return "modifier_custom_bristleback_warpath" 
+end
 
 
 function bristleback_warpath_custom:GetCooldown(iLevel)
-if self:GetCaster():HasModifier("modifier_bristle_warpath_legendary") then
-  return self:GetCaster():GetTalentValue("modifier_bristle_warpath_legendary", "cd")
+if self:GetCaster():HasTalent("modifier_bristle_warpath_7") then
+  return self:GetCaster():GetTalentValue("modifier_bristle_warpath_7", "cd")
 end
 
 return 0
@@ -42,12 +47,12 @@ end
 
 
 function bristleback_warpath_custom:GetCastPoint(iLevel)
-if self:GetCaster():HasModifier("modifier_bristle_warpath_legendary") then 
+if self:GetCaster():HasTalent("modifier_bristle_warpath_7") then 
 
-  local cast = self:GetCaster():GetTalentValue("modifier_bristle_warpath_legendary", "cast")
+  local cast = self:GetCaster():GetTalentValue("modifier_bristle_warpath_7", "cast")
 
   if self:GetCaster():HasModifier("modifier_custom_bristleback_warpath_legendary_cast") then 
-    cast = cast + self:GetCaster():GetUpgradeStack("modifier_custom_bristleback_warpath_legendary_cast") *self:GetCaster():GetTalentValue("modifier_bristle_warpath_legendary", "cast_inc")
+    cast = cast + self:GetCaster():GetUpgradeStack("modifier_custom_bristleback_warpath_legendary_cast") *self:GetCaster():GetTalentValue("modifier_bristle_warpath_7", "cast_inc")
   end 
 
   return cast
@@ -60,7 +65,7 @@ end
 
 
 function bristleback_warpath_custom:GetBehavior()
-if self:GetCaster():HasModifier("modifier_bristle_warpath_legendary") then
+if self:GetCaster():HasTalent("modifier_bristle_warpath_7") then
   return DOTA_ABILITY_BEHAVIOR_NO_TARGET 
 end
 return DOTA_ABILITY_BEHAVIOR_PASSIVE
@@ -73,10 +78,10 @@ if not IsServer() then return end
 self:GetCaster():EmitSound("BB.Warpath_legendary_swing")
 
 
-local cast = self:GetCaster():GetTalentValue("modifier_bristle_warpath_legendary", "cast")
+local cast = self:GetCaster():GetTalentValue("modifier_bristle_warpath_7", "cast")
 
 if self:GetCaster():HasModifier("modifier_custom_bristleback_warpath_legendary_cast") then 
-  cast = cast + self:GetCaster():GetUpgradeStack("modifier_custom_bristleback_warpath_legendary_cast") *self:GetCaster():GetTalentValue("modifier_bristle_warpath_legendary", "cast_inc")
+  cast = cast + self:GetCaster():GetUpgradeStack("modifier_custom_bristleback_warpath_legendary_cast") *self:GetCaster():GetTalentValue("modifier_bristle_warpath_7", "cast_inc")
 end 
 
 local full_duration = 1.8
@@ -120,7 +125,7 @@ end
 
 
 function bristleback_warpath_custom:GetMaxStacks()
-return self:GetSpecialValueFor("max_stacks") + self:GetCaster():GetTalentValue("modifier_bristle_warpath_max", "max")
+return self:GetSpecialValueFor("max_stacks") + self:GetCaster():GetTalentValue("modifier_bristle_warpath_5", "max")
 end
 
 
@@ -138,7 +143,7 @@ if self.timer_2 ~= nil then
   Timers:RemoveTimer(self.timer_2)
 end
 
-self:GetCaster():RemoveModifierByName('modifier_custom_bristleback_warpath_legendary_cast')
+self:GetCaster():RemoveModifierByName("modifier_custom_bristleback_warpath_legendary_cast")
 
 local origin = self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector()*150
 
@@ -148,14 +153,14 @@ ParticleManager:ReleaseParticleIndex(particle)
 
 self:GetCaster():EmitSound("BB.Warpath_legendary")
 
-local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), origin, nil, self:GetCaster():GetTalentValue("modifier_bristle_warpath_legendary", "radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,  DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
+local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), origin, nil, self:GetCaster():GetTalentValue("modifier_bristle_warpath_7", "radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,  DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
 
-local stun = self:GetCaster():GetTalentValue("modifier_bristle_warpath_legendary", "stun")
+local stun = self:GetCaster():GetTalentValue("modifier_bristle_warpath_7", "stun")
 
 local crit = self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_custom_bristleback_warpath_legendary_crit", {})
 local cleave = self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_tidehunter_anchor_smash_caster", {})
 
-for _,enemy in ipairs(enemies) do 
+for _,enemy in pairs(enemies) do 
 
   self:GetCaster():PerformAttack(enemy, false, true, true, true, false, false, true)
 
@@ -185,7 +190,7 @@ function modifier_custom_bristleback_warpath_legendary_crit:GetModifierPreAttack
 
 
 function modifier_custom_bristleback_warpath_legendary_crit:OnCreated()
-self.damage = self:GetCaster():GetTalentValue("modifier_bristle_warpath_legendary", "damage")
+self.damage = self:GetCaster():GetTalentValue("modifier_bristle_warpath_7", "damage")
 end
 
 
@@ -202,10 +207,8 @@ function modifier_custom_bristleback_warpath:IsPurgable() return false end
 function modifier_custom_bristleback_warpath:DeclareFunctions()
 return 
 {
-  MODIFIER_EVENT_ON_ABILITY_FULLY_CAST,
   MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
-  MODIFIER_EVENT_ON_TAKEDAMAGE,
-  MODIFIER_EVENT_ON_ATTACK_LANDED
+  MODIFIER_PROPERTY_PROCATTACK_FEEDBACK
 }
 end
 
@@ -214,40 +217,40 @@ end
 
 
 function modifier_custom_bristleback_warpath:GetModifierAttackRangeBonus()
-if not self.parent:HasModifier("modifier_bristle_warpath_pierce") then return end 
+if not self.parent:HasTalent("modifier_bristle_warpath_3") then return end 
 
-return self.parent:GetTalentValue("modifier_bristle_warpath_pierce", "range")
+return self.parent:GetTalentValue("modifier_bristle_warpath_3", "range")
 end
 
 
-function modifier_custom_bristleback_warpath:OnAttackLanded(params)
+function modifier_custom_bristleback_warpath:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end
 if params.attacker ~= self:GetParent() then return end
 if self:GetParent():PassivesDisabled() then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end
+if not params.target:IsUnit() then return end
 if params.no_attack_cooldown then return end
 
-if self:GetParent():HasModifier("modifier_bristle_warpath_resist") then 
+if self:GetParent():HasTalent("modifier_bristle_warpath_2") then 
   self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_bristleback_warpath_resist", {duration = self.resist_duration})
 end
 
-if self.parent:HasModifier("modifier_bristle_warpath_pierce") then 
+if self.parent:HasTalent("modifier_bristle_warpath_3") then 
 
-  if  RollPseudoRandomPercentage(self.parent:GetTalentValue("modifier_bristle_warpath_pierce", "chance"),1437,self.parent) then 
+  if  RollPseudoRandomPercentage(self.parent:GetTalentValue("modifier_bristle_warpath_3", "chance"),1437,self.parent) then 
     params.target:EmitSound("BB.Warpath_proc")
     params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_bristleback_warpath_slow", {duration = self.slow_duration*(1 - params.target:GetStatusResistance())})
   end
 
 end
 
-if self.parent:HasModifier("modifier_bristle_warpath_max")  then 
+if self.parent:HasTalent("modifier_bristle_warpath_5")  then 
   if RollPseudoRandomPercentage(self.stack_chance,4837,self.parent) then 
     self:IncStacks()
   end
 end
 
 
-if self:GetParent():HasModifier("modifier_bristle_warpath_legendary") and self:GetAbility():GetCooldownTimeRemaining() == 0 then 
+if self:GetParent():HasTalent("modifier_bristle_warpath_7") and self:GetAbility():GetCooldownTimeRemaining() == 0 then 
   self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_bristleback_warpath_legendary_cast", {duration = self.legendary_duration})
 end
 
@@ -259,35 +262,36 @@ end
 function modifier_custom_bristleback_warpath:OnCreated()
 self.parent = self:GetParent()
 
-self.damage_chance = self:GetCaster():GetTalentValue("modifier_bristle_warpath_bash", "chance", true)
-self.damage_duration = self:GetCaster():GetTalentValue("modifier_bristle_warpath_bash", "duration", true)
+if self.parent:IsRealHero() then
+  self.parent:AddDamageEvent_inc(self)
+  self.parent:AddSpellEvent(self)
+end
 
-self.resist_duration = self:GetCaster():GetTalentValue("modifier_bristle_warpath_resist", "duration", true)
+self.damage_chance = self:GetCaster():GetTalentValue("modifier_bristle_warpath_4", "chance", true)
+self.damage_duration = self:GetCaster():GetTalentValue("modifier_bristle_warpath_4", "duration", true)
 
-self.lowhp_duration = self:GetCaster():GetTalentValue("modifier_bristle_warpath_lowhp", "bkb", true)
-self.lowhp_health = self:GetCaster():GetTalentValue("modifier_bristle_warpath_lowhp", "health", true)
-self.lowhp_cd = self:GetCaster():GetTalentValue("modifier_bristle_warpath_lowhp", "cd", true)
+self.resist_duration = self:GetCaster():GetTalentValue("modifier_bristle_warpath_2", "duration", true)
 
-self.slow_duration = self:GetCaster():GetTalentValue("modifier_bristle_warpath_pierce", "duration", true)
+self.lowhp_duration = self:GetCaster():GetTalentValue("modifier_bristle_warpath_6", "bkb", true)
+self.lowhp_health = self:GetCaster():GetTalentValue("modifier_bristle_warpath_6", "health", true)
+self.lowhp_cd = self:GetCaster():GetTalentValue("modifier_bristle_warpath_6", "cd", true)
 
-self.stack_chance = self:GetCaster():GetTalentValue("modifier_bristle_warpath_max", "chance", true)
+self.slow_duration = self:GetCaster():GetTalentValue("modifier_bristle_warpath_3", "duration", true)
 
-self.legendary_duration = self:GetCaster():GetTalentValue("modifier_bristle_warpath_legendary", "duration", true)
+self.stack_chance = self:GetCaster():GetTalentValue("modifier_bristle_warpath_5", "chance", true)
+
+self.legendary_duration = self:GetCaster():GetTalentValue("modifier_bristle_warpath_7", "duration", true)
 end
 
 
 
 
 
-
-
-
-
-function modifier_custom_bristleback_warpath:OnTakeDamage(params)
+function modifier_custom_bristleback_warpath:DamageEvent_inc(params)
 if not IsServer() then return end
 if self:GetParent():PassivesDisabled() then return end
 if self:GetParent() ~= params.unit then return end
-if not self:GetParent():HasModifier("modifier_bristle_warpath_lowhp") then return end
+if not self:GetParent():HasTalent("modifier_bristle_warpath_6") then return end
 if not self:GetParent():IsAlive() then return end
 if self:GetParent():GetHealthPercent() > self.lowhp_health then return end
 if self:GetParent():HasModifier("modifier_custom_bristleback_warpath_lowhp_cd") then return end
@@ -311,7 +315,7 @@ end
 end
 
 
-function modifier_custom_bristleback_warpath:OnAbilityFullyCast(params)
+function modifier_custom_bristleback_warpath:SpellEvent(params)
 if not params.ability then return end 
 if params.unit ~= self.parent then return end
 if self.parent:PassivesDisabled() then return end
@@ -319,7 +323,7 @@ if params.ability:GetName() == "bristleback_bristleback_custom" then return end
 if params.ability:IsItem() or UnvalidAbilities[params.ability:GetName()] then return end
 
 
-if self.parent:HasModifier("modifier_bristle_warpath_bash")  then 
+if self.parent:HasTalent("modifier_bristle_warpath_4")  then 
 
   if RollPseudoRandomPercentage(self.damage_chance,1837,self.parent) then 
     self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_custom_bristleback_warpath_rampage", {duration = self.damage_duration})
@@ -358,7 +362,7 @@ if  mod:GetStackCount() < self.max_stacks then
   mod:IncrementStackCount() 
   self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_bristleback_warpath_buff_count", {duration = duration})
 else 
-  for _,all_counts in ipairs(self:GetParent():FindAllModifiersByName("modifier_custom_bristleback_warpath_buff_count")) do 
+  for _,all_counts in pairs(self:GetParent():FindAllModifiersByName("modifier_custom_bristleback_warpath_buff_count")) do 
     all_counts:Destroy()
     mod:IncrementStackCount() 
     self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_bristleback_warpath_buff_count", {duration = duration})
@@ -388,9 +392,9 @@ self.RemoveForDuel = true
 self.damage_per_stack   = self.ability:GetSpecialValueFor("damage_per_stack")
 self.move_speed_per_stack = self.ability:GetSpecialValueFor("move_speed_per_stack")
 
-self.cdr = self:GetCaster():GetTalentValue("modifier_bristle_warpath_max", "cdr", true)
+self.cdr = self:GetCaster():GetTalentValue("modifier_bristle_warpath_5", "cdr", true)
 
-self.max_stacks = self:GetCaster():GetTalentValue("modifier_bristle_warpath_max", "max", true)
+self.max_stacks = self:GetCaster():GetTalentValue("modifier_bristle_warpath_5", "max", true)
 end
 
 
@@ -406,7 +410,7 @@ return
 end
 
 function modifier_custom_bristleback_warpath_buff:GetModifierPercentageCooldown()
-if not self:GetParent():HasModifier("modifier_bristle_warpath_max") then return 0 end 
+if not self:GetParent():HasTalent("modifier_bristle_warpath_5") then return 0 end 
 
 local max = self.ability:GetSpecialValueFor("max_stacks") + self.max_stacks
 
@@ -421,16 +425,16 @@ end
 
 function modifier_custom_bristleback_warpath_buff:GetModifierPreAttack_BonusDamage()
 if self.parent:IsIllusion() then return end
-self.damage_per_stack   = self.ability:GetSpecialValueFor("damage_per_stack")  + self:GetCaster():GetTalentValue("modifier_bristle_warpath_damage", "damage")
+self.damage_per_stack   = self.ability:GetSpecialValueFor("damage_per_stack")  + self:GetCaster():GetTalentValue("modifier_bristle_warpath_1", "damage")
 
 return self.damage_per_stack * self:GetStackCount()
 end
 
 function modifier_custom_bristleback_warpath_buff:GetModifierAttackSpeedBonus_Constant()
 if self.parent:IsIllusion() then return end
-if not self.parent:HasModifier("modifier_bristle_warpath_damage") then return end
+if not self.parent:HasTalent("modifier_bristle_warpath_1") then return end
 
-return self.parent:GetTalentValue("modifier_bristle_warpath_damage", "speed") * self:GetStackCount()
+return self.parent:GetTalentValue("modifier_bristle_warpath_1", "speed") * self:GetStackCount()
 end
 
 
@@ -484,18 +488,20 @@ function modifier_custom_bristleback_warpath_rampage:IsHidden() return false end
 function modifier_custom_bristleback_warpath_rampage:IsPurgable() return false end
 function modifier_custom_bristleback_warpath_rampage:GetTexture() return "buffs/warpath_rampage" end
 function modifier_custom_bristleback_warpath_rampage:GetStatusEffectName()
-  return "particles/status_fx/status_effect_legion_commander_duel.vpcf"
+return "particles/status_fx/status_effect_legion_commander_duel.vpcf"
 end
 function modifier_custom_bristleback_warpath_rampage:StatusEffectPriority()
-    return 12
+return MODIFIER_PRIORITY_HIGH 
 end
 
 
 function modifier_custom_bristleback_warpath_rampage:OnCreated(table)
 
-self.damage = self:GetCaster():GetTalentValue("modifier_bristle_warpath_bash", "damage")
-self.heal = self:GetCaster():GetTalentValue("modifier_bristle_warpath_bash", "heal")/100
-self.heal_creeps = self:GetCaster():GetTalentValue("modifier_bristle_warpath_bash", "heal_creeps")
+self.parent = self:GetParent()
+
+self.damage = self:GetCaster():GetTalentValue("modifier_bristle_warpath_4", "damage")
+self.heal = self:GetCaster():GetTalentValue("modifier_bristle_warpath_4", "heal")/100
+self.heal_creeps = self:GetCaster():GetTalentValue("modifier_bristle_warpath_4", "heal_creeps")
 
 if not IsServer() then return end
 self:GetParent():EmitSound("BB.Warpath_rampage")
@@ -503,6 +509,7 @@ self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_ogre
 ParticleManager:SetParticleControl(self.particle, 0, self:GetParent():GetAbsOrigin())
 self:AddParticle(self.particle, false, false, -1, false, false)
 
+self.parent:AddDamageEvent_out(self)
 end
 
 
@@ -516,7 +523,6 @@ function modifier_custom_bristleback_warpath_rampage:DeclareFunctions()
 return
 {
   MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
-  MODIFIER_EVENT_ON_TAKEDAMAGE,
   MODIFIER_PROPERTY_MODEL_SCALE,
   MODIFIER_PROPERTY_TOOLTIP
 }
@@ -529,7 +535,7 @@ function modifier_custom_bristleback_warpath_rampage:GetModifierModelScale()
 end
 
 
-function modifier_custom_bristleback_warpath_rampage:OnTakeDamage(params)
+function modifier_custom_bristleback_warpath_rampage:DamageEvent_out(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.attacker then return end
 if params.inflictor ~= nil then return end
@@ -542,7 +548,7 @@ if params.unit:IsCreep() then
   heal = heal / self.heal_creeps
 end 
 
-self:GetParent():GenericHeal(heal, self:GetAbility())
+self:GetParent():GenericHeal(heal, self:GetAbility(), nil, nil, "modifier_bristle_warpath_4")
 end
 
 
@@ -597,7 +603,7 @@ end
 
 function modifier_custom_bristleback_warpath_slow:OnCreated()
 
-self.slow = self:GetCaster():GetTalentValue("modifier_bristle_warpath_pierce", "slow")
+self.slow = self:GetCaster():GetTalentValue("modifier_bristle_warpath_3", "slow")
 end 
 
 
@@ -620,9 +626,9 @@ function modifier_custom_bristleback_warpath_resist:GetTexture() return "buffs/W
 
 function modifier_custom_bristleback_warpath_resist:OnCreated(table)
 
-self.status = self:GetCaster():GetTalentValue("modifier_bristle_warpath_resist", "status")
-self.armor = self:GetCaster():GetTalentValue("modifier_bristle_warpath_resist", "armor")
-self.max = self:GetCaster():GetTalentValue("modifier_bristle_warpath_resist", "max")
+self.status = self:GetCaster():GetTalentValue("modifier_bristle_warpath_2", "status")
+self.armor = self:GetCaster():GetTalentValue("modifier_bristle_warpath_2", "armor")
+self.max = self:GetCaster():GetTalentValue("modifier_bristle_warpath_2", "max")
 
 self.RemoveForDuel = true
 if not IsServer() then return end
@@ -672,7 +678,7 @@ function modifier_custom_bristleback_warpath_legendary_cast:IsHidden() return tr
 function modifier_custom_bristleback_warpath_legendary_cast:IsPurgable() return false end
 function modifier_custom_bristleback_warpath_legendary_cast:GetTexture() return "buffs/warpath_legendary" end
 function modifier_custom_bristleback_warpath_legendary_cast:OnCreated()
-self.max = self:GetCaster():GetTalentValue("modifier_bristle_warpath_legendary", "max")
+self.max = self:GetCaster():GetTalentValue("modifier_bristle_warpath_7", "max")
 
 if not IsServer() then return end
 

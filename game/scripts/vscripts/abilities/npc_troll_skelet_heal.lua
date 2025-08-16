@@ -15,18 +15,22 @@ function modifier_troll_heal:IsPurgable() return false end
 
 
 function modifier_troll_heal:OnCreated(table)
-    self.vampiric = self:GetAbility():GetSpecialValueFor("vampiric")
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.parent:AddAttackEvent_out(self, true)
+
+self.vampiric = self:GetAbility():GetSpecialValueFor("vampiric")
 end
 
-function modifier_troll_heal:DoScript()
+function modifier_troll_heal:AttackEvent_out(params)
+if not IsServer() then return end
+if params.attacker ~= self.parent then return end
 
-if self:GetParent():GetOwner() ~= nil then
-    self:GetParent():GetOwner():Heal(self:GetParent():GetOwner():GetMaxHealth()*(self.vampiric / 100), self:GetParent())
-    local particle = ParticleManager:CreateParticle( "particles/generic_gameplay/generic_lifesteal.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent():GetOwner() )
-    ParticleManager:ReleaseParticleIndex( particle )
-end
-  
+local owner = self.parent:GetOwner()
+if not owner or owner:IsNull() or not owner:IsAlive() then return end
 
+owner:GenericHeal(owner:GetMaxHealth()*self.vampiric/100, self.ability)
 end
 
 

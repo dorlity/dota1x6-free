@@ -14,6 +14,7 @@ end
 
 
 function custom_ability_smoke:GetIntrinsicModifierName()
+if not self:GetCaster():IsRealHero() then return end
     return "modifier_item_custom_smoke_charges"
 end
 
@@ -95,27 +96,46 @@ function modifier_item_custom_smoke_charges:DestroyOnExpire() return false end
 function modifier_item_custom_smoke_charges:IsPurgable() return false end
 
 function modifier_item_custom_smoke_charges:OnCreated()
-    self:SetStackCount(0)
-    self.cooldown = 150
-    self.duration = self.cooldown
-    self:SetDuration(self.duration, true)
-    self:StartIntervalThink(0.1)
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self:SetStackCount(1)
+self.cooldown = self.ability:GetSpecialValueFor("cd")
+self.max = self.ability:GetSpecialValueFor("max")
+if not IsSoloMode() then
+    self.cooldown = self.ability:GetSpecialValueFor("cd_duo")
+    self.max = self.ability:GetSpecialValueFor("max_duo")
+end
+
+self.duration = self.cooldown
+self:SetDuration(self.duration, true)
+
+self.max_stack = false
+
+self.interval = 0.5
+self:StartIntervalThink(self.interval)
 end
 
 function modifier_item_custom_smoke_charges:OnIntervalThink()
-    if not IsServer() then return end
-    if self:GetStackCount() >= 4 then
-        self:SetDuration(self.cooldown + 0.5, true)
-        return
-    end
-    if self.duration <= 0 then
-        self:IncrementStackCount()
-        self:SetDuration(self.cooldown, true)
-        self.duration = self:GetRemainingTime()
-        return
-    end
-    self.duration = self:GetRemainingTime()
+if not IsServer() then return end
+if self:GetStackCount() >= self.max then
+    self.max_stack = true
+    return
+elseif self.max_stack == true then
+    self:SetDuration(self.cooldown, true)
+    self.max_stack = false
 end
+
+if self.duration <= 0 then
+    self:IncrementStackCount()
+    self:SetDuration(self.cooldown, true)
+    self.duration = self:GetRemainingTime()
+    return
+end
+self.duration = self:GetRemainingTime()
+end
+
+
 
 modifier_item_custom_smoke_cd = class({})
 function modifier_item_custom_smoke_cd:IsHidden() return true end

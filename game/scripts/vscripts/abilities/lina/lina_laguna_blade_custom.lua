@@ -2,68 +2,59 @@ LinkLuaModifier( "modifier_lina_laguna_blade_custom", "abilities/lina/lina_lagun
 LinkLuaModifier( "modifier_lina_laguna_blade_custom_legendary", "abilities/lina/lina_laguna_blade_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_lina_laguna_blade_custom_legendary_thinker", "abilities/lina/lina_laguna_blade_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_lina_laguna_blade_custom_shield", "abilities/lina/lina_laguna_blade_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_lina_laguna_blade_custom_shield_knockback", "abilities/lina/lina_laguna_blade_custom", LUA_MODIFIER_MOTION_HORIZONTAL )
 LinkLuaModifier( "modifier_lina_laguna_blade_custom_shield_slow", "abilities/lina/lina_laguna_blade_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_lina_laguna_blade_custom_shield_rooted", "abilities/lina/lina_laguna_blade_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_lina_laguna_blade_custom_rooted", "abilities/lina/lina_laguna_blade_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_lina_laguna_blade_custom_tracker", "abilities/lina/lina_laguna_blade_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_lina_laguna_blade_custom_no_count", "abilities/lina/lina_laguna_blade_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_lina_laguna_blade_custom_spell_steal", "abilities/lina/lina_laguna_blade_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_lina_laguna_blade_custom_spell_steal_count", "abilities/lina/lina_laguna_blade_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_lina_laguna_blade_custom_passive_max", "abilities/lina/lina_laguna_blade_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_lina_laguna_blade_custom_heal", "abilities/lina/lina_laguna_blade_custom", LUA_MODIFIER_MOTION_NONE )
-
+LinkLuaModifier( "modifier_lina_laguna_blade_custom_attacks", "abilities/lina/lina_laguna_blade_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_lina_laguna_blade_custom_heal_reduce", "abilities/lina/lina_laguna_blade_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_lina_laguna_blade_custom_unslow", "abilities/lina/lina_laguna_blade_custom", LUA_MODIFIER_MOTION_NONE )
 
 lina_laguna_blade_custom = class({})
 
-lina_laguna_blade_custom.shard_damage = 20
-
-lina_laguna_blade_custom.cd_init = -5
-lina_laguna_blade_custom.cd_inc = -5
-
-lina_laguna_blade_custom.shard_manacost_reduced = 100
-lina_laguna_blade_custom.bonus_cast_range = 250
-
-
-
-
-lina_laguna_blade_custom.shield_damage = -25
-lina_laguna_blade_custom.shield_range = 300
-lina_laguna_blade_custom.shield_slow = -80
-lina_laguna_blade_custom.shield_slow_duration = 0.7
-lina_laguna_blade_custom.shield_duration = 5
-lina_laguna_blade_custom.shield_knock_duration = 0.25
-lina_laguna_blade_custom.shield_knock_range = 350
-
-lina_laguna_blade_custom.root_root = 2
-lina_laguna_blade_custom.root_health = 40
-
+function lina_laguna_blade_custom:GetAbilityTextureName()
+if self:GetCaster():HasModifier("modifier_lina_immortal_ii_custom") then
+    return "lina/lina_ti6_immortal/lina_laguna_blade"
+end
+return "lina_laguna_blade"
+end
 
 
 
 function lina_laguna_blade_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-    
+
 PrecacheResource( "particle", "particles/units/heroes/hero_lina/lina_spell_laguna_blade.vpcf", context )
+
 PrecacheResource( "particle", "particles/units/heroes/hero_lina/lina_spell_laguna_blade_shard_scorch.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_lina/lina_spell_laguna_blade_shard_units_hit.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_snapfire/hero_snapfire_ultimate_calldown.vpcf", context )
+PrecacheResource( "particle", "particles/generic_gameplay/rune_doubledamage_owner.vpcf", context )
 PrecacheResource( "particle", "particles/status_fx/status_effect_mjollnir_shield.vpcf", context )
 PrecacheResource( "particle", "particles/items_fx/chain_lightning.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_zuus/zuus_shard_slow.vpcf", context )
 PrecacheResource( "particle", "particles/items3_fx/gleipnir_root.vpcf", context )
+PrecacheResource( "particle", "particles/lina/soul_attack_end.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_lina/lina_supercharge_buff.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf", context )
+PrecacheResource( "particle", "particles/lina/soul_attack.vpcf", context )
 
 end
 
 
 
-function lina_laguna_blade_custom:GetAbilityTargetFlags()
-if self:GetCaster():HasModifier("modifier_lina_laguna_6") then 
-  return DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES
-else 
-  return DOTA_UNIT_TARGET_FLAG_NONE
+
+function lina_laguna_blade_custom:GetCastPoint()
+local bonus = 0
+if self:GetCaster():HasTalent("modifier_lina_laguna_5") then 
+  bonus = self:GetCaster():GetTalentValue("modifier_lina_laguna_5", "cast")
+end 
+
+return self:GetSpecialValueFor("AbilityCastPoint") + bonus
 end
-
-end
-
-
 
 
 function lina_laguna_blade_custom:GetIntrinsicModifierName()
@@ -79,58 +70,41 @@ function lina_laguna_blade_custom:GetCooldown(iLevel)
 
 local upgrade_cooldown = 0
 
-if self:GetCaster():HasModifier("modifier_lina_laguna_1") then 
-  upgrade_cooldown = self.cd_init + self.cd_inc*self:GetCaster():GetUpgradeStack("modifier_lina_laguna_1")
+if self:GetCaster():HasTalent("modifier_lina_laguna_1") then 
+  upgrade_cooldown = self:GetCaster():GetTalentValue("modifier_lina_laguna_1", "cd")
 end
 
- return self.BaseClass.GetCooldown(self, iLevel) + upgrade_cooldown
-
+return self.BaseClass.GetCooldown(self, iLevel) + upgrade_cooldown
 end
-
-
-
-
-function lina_laguna_blade_custom:CastFilterResultTarget(target)
-
-
-
-if self:GetCaster():HasModifier("modifier_lina_laguna_6") then 
-  return UnitFilter(target, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, self:GetCaster():GetTeamNumber())
-else 
-  return UnitFilter(target, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, self:GetCaster():GetTeamNumber())
-end
-
-end
-
-
-
-
-
-
 
 
 function lina_laguna_blade_custom:GetBehavior()
-  if self:GetCaster():HasModifier("modifier_lina_laguna_legendary") then
-    return DOTA_ABILITY_BEHAVIOR_UNIT_TARGET + DOTA_ABILITY_BEHAVIOR_POINT
-  else
-    return self.BaseClass.GetBehavior(self)
-  end
+if self:GetCaster():HasTalent("modifier_lina_laguna_legendary") then
+  return DOTA_ABILITY_BEHAVIOR_UNIT_TARGET + DOTA_ABILITY_BEHAVIOR_POINT
+end
+return self.BaseClass.GetBehavior(self)
 end
 
+
+
 function lina_laguna_blade_custom:GetCastRange(location, target)
-    if self:GetCaster():HasModifier("modifier_lina_laguna_legendary") then
-      return self.BaseClass.GetCastRange(self, location, target) + self.bonus_cast_range
-    end
-    return self.BaseClass.GetCastRange(self, location, target)
+local bonus = 0
+
+if self:GetCaster():HasTalent("modifier_lina_laguna_1") then
+  bonus = self:GetCaster():GetTalentValue("modifier_lina_laguna_1", "range")
 end
+return self.BaseClass.GetCastRange(self, location, target) + bonus
+end
+
 
 
 function lina_laguna_blade_custom:GetLagunaDamage(k)
 
-local damage =  self:GetSpecialValueFor( "damage" )
+local caster = self:GetCaster()
+local damage = self:GetSpecialValueFor( "damage" )
 
-if self:GetCaster():HasModifier("modifier_lina_laguna_2") then 
-  damage = damage + self:GetCaster():GetIntellect()*self:GetCaster():GetTalentValue("modifier_lina_laguna_2", "damage")/100
+if caster:HasTalent("modifier_lina_laguna_2") then 
+  damage = damage + caster:GetIntellect(false)*caster:GetTalentValue("modifier_lina_laguna_2", "damage")/100
 end 
 
 if k then 
@@ -143,148 +117,165 @@ end
 
 
 function lina_laguna_blade_custom:OnSpellStart(new_target)
- if not IsServer() then return end
+if not IsServer() then return end
 
-  local target = self:GetCursorTarget()
-  local delay = self:GetSpecialValueFor( "damage_delay" )
+local caster = self:GetCaster()
+local target = self:GetCursorTarget()
+local delay = self:GetSpecialValueFor( "damage_delay" )
+local width = 125
 
-  self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_lina_laguna_blade_custom_passive_max", {duration = self:GetSpecialValueFor("supercharge_duration")})
+caster:AddNewModifier(caster, self, "modifier_lina_laguna_blade_custom_passive_max", {duration = self:GetSpecialValueFor("supercharge_duration")})
+
+if new_target ~= nil then 
+  target = new_target
+end
+
+if caster:HasTalent("modifier_lina_laguna_5") then 
+  caster:AddNewModifier(caster, self, "modifier_lina_laguna_blade_custom_shield", {duration = caster:GetTalentValue("modifier_lina_laguna_5", "duration")})
+end
+
+if caster:HasTalent("modifier_lina_soul_5") then
+  caster:AddNewModifier(caster, self, "modifier_lina_laguna_blade_custom_unslow", {duration = caster:GetTalentValue("modifier_lina_soul_5", "duration")})
+end
+
+if caster:HasTalent("modifier_lina_laguna_3") then 
+  caster:AddNewModifier(caster, self, "modifier_lina_laguna_blade_custom_heal", {duration = caster:GetTalentValue("modifier_lina_laguna_3", "duration")})
+end 
+
+local laguna_sound = "Ability.LagunaBlade"
+local laguna_particle = "particles/units/heroes/hero_lina/lina_spell_laguna_blade.vpcf"
+
+if caster:HasModifier("modifier_lina_immortal_ii_custom") then
+  laguna_sound = "Hero_Lina.LagunaBlade.Immortal"
+  laguna_particle = "particles/econ/items/lina/lina_ti6/lina_ti6_laguna_blade.vpcf"
+end
+
+caster:EmitSound(laguna_sound)
+
+if caster:HasTalent("modifier_lina_laguna_legendary") then
+  local point = self:GetCursorPosition()
 
   if new_target ~= nil then 
-    target = new_target
+    point = new_target:GetAbsOrigin()
+  end
+
+  local direction = point-caster:GetAbsOrigin()
+  direction.z = 0
+  local projectile_normalized = direction:Normalized()
+
+  local range = self:GetCastRange(caster:GetAbsOrigin(), nil) + caster:GetCastRangeBonus()
+
+  local end_point = caster:GetAbsOrigin() + projectile_normalized * range
+  end_point = GetGroundPosition(end_point, nil)
+
+  local particle = ParticleManager:CreateParticle( laguna_particle, PATTACH_CUSTOMORIGIN, nil )
+  ParticleManager:SetParticleControlEnt( particle, 0, caster, PATTACH_POINT_FOLLOW, "attach_attack1", Vector(0,0,0), true )
+  ParticleManager:SetParticleControl(particle, 1, end_point)
+  ParticleManager:ReleaseParticleIndex( particle )
+
+  local particle_smoke = ParticleManager:CreateParticle( "particles/units/heroes/hero_lina/lina_spell_laguna_blade_shard_scorch.vpcf", PATTACH_CUSTOMORIGIN, caster )
+  ParticleManager:SetParticleControlEnt( particle_smoke, 0, caster, PATTACH_POINT_FOLLOW, "attach_attack1", Vector(0,0,0), true )
+  ParticleManager:SetParticleControl(particle_smoke, 1, end_point)
+  ParticleManager:ReleaseParticleIndex( particle_smoke )
+
+  local units = FindUnitsInLine(caster:GetTeamNumber(), caster:GetAbsOrigin(),end_point, nil, width, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO, 0)
+  for _, unit in pairs(units) do
+    unit:AddNewModifier( caster, self, "modifier_lina_laguna_blade_custom", { duration = delay } )
   end
 
 
-  if self:GetCaster():HasModifier("modifier_lina_laguna_5") then 
-    self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_lina_laguna_blade_custom_shield", {duration = self.shield_duration})
-  end
-
-  if self:GetCaster():HasModifier("modifier_lina_laguna_3") then 
-    self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_lina_laguna_blade_custom_heal", {duration = self:GetCaster():GetTalentValue("modifier_lina_laguna_3", "duration")})
+  if caster:HasTalent("modifier_lina_soul_4") and #units > 0 then 
+    caster:AddNewModifier(caster, self, "modifier_lina_fiery_soul_custom_stack", {duration = caster:GetTalentValue("modifier_lina_soul_4", "duration", true)})
   end 
 
-  if self:GetCaster():HasModifier("modifier_lina_laguna_legendary") then
-    local point = self:GetCursorPosition()
-
-    if new_target ~= nil then 
-      point = new_target:GetAbsOrigin()
-    end
-
-    local direction = point-self:GetCaster():GetAbsOrigin()
-    direction.z = 0
-    local projectile_normalized = direction:Normalized()
-
-    local range = 600 + self.bonus_cast_range + self:GetCaster():GetCastRangeBonus()
-
-    local end_point = self:GetCaster():GetAbsOrigin() + projectile_normalized * range
-    end_point = GetGroundPosition(end_point, nil)
-
-    local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_lina/lina_spell_laguna_blade.vpcf", PATTACH_CUSTOMORIGIN, nil )
-    ParticleManager:SetParticleControlEnt( particle, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_attack1", Vector(0,0,0), true )
-    ParticleManager:SetParticleControl(particle, 1, end_point)
-    ParticleManager:ReleaseParticleIndex( particle )
-
-    local particle_smoke = ParticleManager:CreateParticle( "particles/units/heroes/hero_lina/lina_spell_laguna_blade_shard_scorch.vpcf", PATTACH_CUSTOMORIGIN, self:GetCaster() )
-    ParticleManager:SetParticleControlEnt( particle_smoke, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_attack1", Vector(0,0,0), true )
-    ParticleManager:SetParticleControl(particle_smoke, 1, end_point)
-    ParticleManager:ReleaseParticleIndex( particle_smoke )
-
-
-    self:GetCaster():EmitSound("Ability.LagunaBlade")
-
-    local flag_type = 0
-    local damage_type = DAMAGE_TYPE_MAGICAL
-    local damage = self:GetSpecialValueFor( "damage" )
-
-    if self:GetCaster():HasModifier("modifier_lina_laguna_6") then 
-      flag_type = DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES
-    end
-
-
-    local units = FindUnitsInLine(self:GetCaster():GetTeamNumber(), self:GetCaster():GetAbsOrigin(),end_point, nil, 125, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO, flag_type)
-    for _, unit in pairs(units) do
-      unit:AddNewModifier( self:GetCaster(), self, "modifier_lina_laguna_blade_custom", { duration = delay } )
-      unit:EmitSound("Ability.LagunaBladeImpact")
-      local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_lina/lina_spell_laguna_blade_shard_units_hit.vpcf", PATTACH_ABSORIGIN_FOLLOW, unit )
-      ParticleManager:SetParticleControlEnt( particle, 0, unit, PATTACH_POINT_FOLLOW, "attach_hitloc", unit:GetAbsOrigin(), true)
-    end
-  
-    return
-  end
-
-
-
-  local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_lina/lina_spell_laguna_blade.vpcf", PATTACH_CUSTOMORIGIN, nil )
-  ParticleManager:SetParticleControlEnt( particle, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_attack1", self:GetCaster():GetAbsOrigin(), true )
-  ParticleManager:SetParticleControlEnt( particle, 1, target, PATTACH_POINT_FOLLOW, "attach_hitloc", Vector(0,0,0), true)
-  ParticleManager:ReleaseParticleIndex( particle )
-  self:GetCaster():EmitSound("Ability.LagunaBlade")
-
-  if target:TriggerSpellAbsorb( self ) then return end
-  target:AddNewModifier( self:GetCaster(), self, "modifier_lina_laguna_blade_custom", { duration = delay } )
+  return
 end
+
+local particle = ParticleManager:CreateParticle( laguna_particle, PATTACH_CUSTOMORIGIN, nil )
+ParticleManager:SetParticleControlEnt( particle, 0, caster, PATTACH_POINT_FOLLOW, "attach_attack1", caster:GetAbsOrigin(), true )
+ParticleManager:SetParticleControlEnt( particle, 1, target, PATTACH_POINT_FOLLOW, "attach_hitloc", Vector(0,0,0), true)
+ParticleManager:ReleaseParticleIndex( particle )
+
+if target:TriggerSpellAbsorb( self ) then return end
+
+if caster:HasTalent("modifier_lina_soul_4") then 
+  caster:AddNewModifier(caster, self, "modifier_lina_fiery_soul_custom_stack", {duration = caster:GetTalentValue("modifier_lina_soul_4", "duration", true)})
+end 
+
+target:AddNewModifier( caster, self, "modifier_lina_laguna_blade_custom", { duration = delay } )
+end
+
+
+
+
 
 modifier_lina_laguna_blade_custom = class({})
 
-function modifier_lina_laguna_blade_custom:IsHidden()
-  return true
-end
-
-function modifier_lina_laguna_blade_custom:IsPurgable()
-  return false
-end
-
-function modifier_lina_laguna_blade_custom:GetAttributes()
-  return MODIFIER_ATTRIBUTE_MULTIPLE
-end
-
+function modifier_lina_laguna_blade_custom:IsHidden() return true end
+function modifier_lina_laguna_blade_custom:IsPurgable() return false end
+function modifier_lina_laguna_blade_custom:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_lina_laguna_blade_custom:OnCreated( kv )
-  if not IsServer() then return end
-  self:GetParent():EmitSound("Ability.LagunaBladeImpact")
-  self.damage = self:GetAbility():GetLagunaDamage(1)
 
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+self.caster = self:GetCaster()
+self.soul = self.caster:FindAbilityByName("lina_fiery_soul_custom")
 
-  self.RemoveForDuel = true
+self.resist_duration = self.caster:GetTalentValue("modifier_lina_dragon_1", "duration")
 
-  self.type = DAMAGE_TYPE_MAGICAL
+self.root = self.caster:GetTalentValue("modifier_lina_laguna_6", "root")
+self.break_duration = self.caster:GetTalentValue("modifier_lina_laguna_6", "break_duration")
+
+if not IsServer() then return end
+
+local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_lina/lina_spell_laguna_blade_shard_units_hit.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent )
+ParticleManager:SetParticleControlEnt( particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true)
+ParticleManager:ReleaseParticleIndex(particle)
+
+local impact_sound = "Ability.LagunaBladeImpact"
+
+if self.caster:HasModifier("modifier_lina_immortal_ii_custom") then
+  impact_sound = "Hero_Lina.LagunaBladeImpact.Immortal"
+end
+
+self.parent:EmitSound(impact_sound)
+
+self.damage = self.ability:GetLagunaDamage()
+self.RemoveForDuel = true
 
 end
+
+
 
 function modifier_lina_laguna_blade_custom:OnDestroy()
-  if not IsServer() then return end
-  if self:GetParent():IsInvulnerable() then return end
-  if self:GetParent():IsMagicImmune() and not self:GetCaster():HasModifier("modifier_lina_laguna_6") then return end
+if not IsServer() then return end
 
-  if self:GetCaster():HasShard() then 
-    local mod = self:GetCaster():FindModifierByName("modifier_lina_fiery_soul_custom")
-    if mod then 
-      self.damage = self.damage + mod:GetStackCount()*self:GetAbility().shard_damage
-    end
-  end
+local damage = self.damage
+if self.soul and self.soul:GetLevel() > 0 then 
+  self.damage = self.damage + self.soul:GetShardDamage()
+end 
 
-    
-  if self:GetCaster():GetQuest() == "Lina.Quest_7" and self:GetParent():IsRealHero() and not self:GetCaster():QuestCompleted() then 
-    self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_lina_fiery_soul_custom_quest", {duration = self:GetCaster().quest.number})
-  end
-
-
-  if self:GetCaster():HasModifier("modifier_lina_dragon_1") then 
-    self:GetParent():AddNewModifier(self:GetCaster(), self, "modifier_lina_dragon_slave_custom_magic", {duration = self:GetCaster():GetTalentValue("modifier_lina_dragon_1", "duration")})
-  end 
-    
-
-
-  ApplyDamage({ victim = self:GetParent(), attacker = self:GetCaster(), damage = self.damage, damage_type = self.type, ability = self:GetAbility()})
-
-  if not self:GetParent():IsAlive() then return end
-
-
-
-  if self:GetCaster():HasModifier("modifier_lina_laguna_6") then 
-    self:GetParent():AddNewModifier(self:GetCaster(), self:GetCaster():BkbAbility(self:GetAbility(), self:GetCaster():HasModifier("modifier_lina_laguna_6")), "modifier_lina_laguna_blade_custom_shield_rooted", {duration = self:GetAbility().root_root*(1 - self:GetParent():GetStatusResistance())})
-  end
-
+if self.caster:GetQuest() == "Lina.Quest_7" and self.parent:IsRealHero() and not self.caster:QuestCompleted() then 
+  self.parent:AddNewModifier(self.caster, self.ability, "modifier_lina_laguna_blade_custom_tracker_quest", {duration = self.caster.quest.number})
 end
+
+if self.caster:HasTalent("modifier_lina_dragon_1") then 
+  self.parent:AddNewModifier(self.caster, self.ability, "modifier_lina_dragon_slave_custom_magic", {duration = self.caster:GetTalentValue("modifier_lina_dragon_1", "duration")})
+end 
+
+if self.caster:HasTalent("modifier_lina_laguna_6") then 
+  self.parent:AddNewModifier(self.caster, self.ability, "modifier_lina_laguna_blade_custom_rooted", {duration = self.root*(1 - self.parent:GetStatusResistance())})
+  self.parent:AddNewModifier(self.caster, self.ability, "modifier_generic_break", {duration = self.break_duration*(1 - self.parent:GetStatusResistance())})
+end
+
+if self.caster:HasTalent("modifier_lina_laguna_2") then 
+  self.parent:AddNewModifier(self.caster, self.ability, "modifier_lina_laguna_blade_custom_heal_reduce", {duration = self.caster:GetTalentValue("modifier_lina_laguna_2", "duration")})
+end 
+
+DoDamage({ victim = self.parent, attacker = self.caster, damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self.ability})
+end
+
+
 
 
 
@@ -292,13 +283,19 @@ end
 
 
 modifier_lina_laguna_blade_custom_legendary = class({})
-function modifier_lina_laguna_blade_custom_legendary:IsHidden() return false end
+function modifier_lina_laguna_blade_custom_legendary:IsHidden() return true end
 function modifier_lina_laguna_blade_custom_legendary:IsPurgable() return false end
 function modifier_lina_laguna_blade_custom_legendary:OnCreated(table)
 if not IsServer() then return end
+
+self.ability = self:GetAbility()
+self.caster = self:GetCaster()
+
+self.radius = self.caster:GetTalentValue("modifier_lina_laguna_legendary", "radius", true)
+self.delay = self.caster:GetTalentValue("modifier_lina_laguna_legendary", "delay", true)
+
 self.RemoveForDuel = true 
 self:SetStackCount(1)
-
 
 self:StartIntervalThink(self:GetCaster():GetTalentValue("modifier_lina_laguna_legendary", "interval"))  
 
@@ -311,20 +308,12 @@ self:IncrementStackCount()
 
 end
 
+
 function modifier_lina_laguna_blade_custom_legendary:OnIntervalThink()
 if not IsServer() then return end
 
-
-local radius = self:GetCaster():GetTalentValue("modifier_lina_laguna_legendary", "radius")
-
-local flag = 0
-
-if self:GetCaster():HasModifier("modifier_lina_laguna_6") then 
-  flag = DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES
-end
-
-local enemy_for_ability = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + flag , FIND_CLOSEST, false)
-local creeps_for_ability = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + flag , FIND_CLOSEST, false)
+local enemy_for_ability = FindUnitsInRadius(self.caster:GetTeamNumber(), self.caster:GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_CLOSEST, false)
+local creeps_for_ability = FindUnitsInRadius(self.caster:GetTeamNumber(), self.caster:GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_CLOSEST, false)
   
 
 local point 
@@ -342,11 +331,11 @@ else
 
    point = creeps_for_ability[1]:GetAbsOrigin() + vector_random
   else 
-    point = self:GetParent():GetAbsOrigin() + RandomVector(RandomInt(100, radius))
+    point = self:GetParent():GetAbsOrigin() + RandomVector(RandomInt(100,  self.radius))
   end
 end
-  CreateModifierThinker( self:GetCaster(), self:GetAbility(), "modifier_lina_laguna_blade_custom_legendary_thinker", { duration = self:GetCaster():GetTalentValue("modifier_lina_laguna_legendary", "delay") }, point, self:GetCaster():GetTeamNumber(), false )
 
+CreateModifierThinker(self.caster, self.ability, "modifier_lina_laguna_blade_custom_legendary_thinker", { duration = self.delay }, point, self.caster:GetTeamNumber(), false )
 
 self:DecrementStackCount()
 if self:GetStackCount() == 0 then 
@@ -355,6 +344,11 @@ end
 
 end
 
+
+
+
+
+
 modifier_lina_laguna_blade_custom_legendary_thinker = class({})
 function modifier_lina_laguna_blade_custom_legendary_thinker:IsHidden() return true end
 function modifier_lina_laguna_blade_custom_legendary_thinker:IsPurgable() return false end
@@ -362,49 +356,36 @@ function modifier_lina_laguna_blade_custom_legendary_thinker:IsPurgable() return
 function modifier_lina_laguna_blade_custom_legendary_thinker:OnCreated(table)
 if not IsServer() then return end
 
-self.radius = self:GetCaster():GetTalentValue("modifier_lina_laguna_legendary", "aoe")
-local particle_cast = "particles/units/heroes/hero_snapfire/hero_snapfire_ultimate_calldown.vpcf"
-self.effect_cast = ParticleManager:CreateParticle(particle_cast, PATTACH_CUSTOMORIGIN, self:GetParent())
-ParticleManager:SetParticleControl( self.effect_cast, 0, self:GetParent():GetOrigin() )
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+self.parent = self:GetParent()
+self.point = self.parent:GetAbsOrigin()
+
+self.radius = self.caster:GetTalentValue("modifier_lina_laguna_legendary", "aoe")
+
+self.effect_cast = ParticleManager:CreateParticle("particles/units/heroes/hero_snapfire/hero_snapfire_ultimate_calldown.vpcf", PATTACH_CUSTOMORIGIN, self.parent)
+ParticleManager:SetParticleControl( self.effect_cast, 0, self.point )
 ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( self.radius, 0, -self.radius) )
 ParticleManager:SetParticleControl( self.effect_cast, 2, Vector( self:GetRemainingTime(), 0, 0 ) )
+self:AddParticle( self.effect_cast, false, false, -1, false, false  )
 
-
-self.damage = self:GetAbility():GetLagunaDamage(self:GetCaster():GetTalentValue("modifier_lina_laguna_legendary", "damage")/100)
-
-self.type = DAMAGE_TYPE_MAGICAL
-
-
+self.damage = self.ability:GetLagunaDamage(self.caster:GetTalentValue("modifier_lina_laguna_legendary", "damage")/100)
 end
-
-
 
 function modifier_lina_laguna_blade_custom_legendary_thinker:OnDestroy(table)
 if not IsServer() then return end
     
-ParticleManager:DestroyParticle( self.effect_cast, true )
-ParticleManager:ReleaseParticleIndex( self.effect_cast )
-
-
 local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_lina/lina_spell_laguna_blade.vpcf", PATTACH_CUSTOMORIGIN, nil )
-ParticleManager:SetParticleControlEnt( particle, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_attack1", self:GetCaster():GetAbsOrigin(), true )
-ParticleManager:SetParticleControl(particle, 1, self:GetParent():GetAbsOrigin())
+ParticleManager:SetParticleControlEnt( particle, 0, self.caster, PATTACH_POINT_FOLLOW, "attach_attack1", self.caster:GetAbsOrigin(), true )
+ParticleManager:SetParticleControl(particle, 1, self.point)
 ParticleManager:ReleaseParticleIndex( particle )
 
-self:GetParent():EmitSound("Lina.Laguna_legendary")
+self.parent:EmitSound("Lina.Laguna_legendary")
 
-local flag = 0
-if self:GetCaster():HasModifier("modifier_lina_laguna_6") then 
-  flag = DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES
-end
+local mod = self.caster:AddNewModifier(self.caster, self.ability, "modifier_lina_laguna_blade_custom_no_count", {})
 
-
-local enemy_for_ability = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, flag, FIND_CLOSEST, false)
-    
-local mod = self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_lina_laguna_blade_custom_no_count", {})
-
-for _,i in ipairs(enemy_for_ability) do
-  ApplyDamage({ victim = i, attacker = self:GetCaster(), ability = self:GetAbility(), damage = self.damage, damage_type = self.type})
+for _,enemy in pairs(self.caster:FindTargets(self.radius, self.point)) do
+  DoDamage({ victim = enemy, attacker = self.caster, ability = self.ability, damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL}, "modifier_lina_laguna_legendary")
 end
    
 if mod then 
@@ -416,116 +397,98 @@ end
 
 
 
+
+
+
+
+
 modifier_lina_laguna_blade_custom_shield = class({})
-function modifier_lina_laguna_blade_custom_shield:IsHidden() return false end
+function modifier_lina_laguna_blade_custom_shield:IsHidden() return true end
 function modifier_lina_laguna_blade_custom_shield:IsPurgable() return false end
 function modifier_lina_laguna_blade_custom_shield:GetTexture() return "buffs/laguna_shield" end
-function modifier_lina_laguna_blade_custom_shield:GetEffectName()
-return "particles/generic_gameplay/rune_doubledamage_owner.vpcf"
-end
-function modifier_lina_laguna_blade_custom_shield:GetStatusEffectName()
-return "particles/status_fx/status_effect_mjollnir_shield.vpcf"
-end
-
-function modifier_lina_laguna_blade_custom_shield:StatusEffectPriority()
-return 1111
-end
+function modifier_lina_laguna_blade_custom_shield:GetEffectName() return "particles/generic_gameplay/rune_doubledamage_owner.vpcf" end
+function modifier_lina_laguna_blade_custom_shield:GetStatusEffectName() return "particles/status_fx/status_effect_mjollnir_shield.vpcf" end
+function modifier_lina_laguna_blade_custom_shield:StatusEffectPriority() return MODIFIER_PRIORITY_ULTRA  end
 
 function modifier_lina_laguna_blade_custom_shield:DeclareFunctions()
 return
 {
   MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
-  MODIFIER_EVENT_ON_ATTACK_LANDED
 }
 end
 
-function modifier_lina_laguna_blade_custom_shield:OnAttackLanded(params)
+function modifier_lina_laguna_blade_custom_shield:AttackEvent_inc(params)
 if not IsServer() then return end
-if params.target ~= self:GetParent() then return end
-if params.attacker:IsMagicImmune() or params.attacker:IsInvulnerable() or params.attacker:IsBuilding() then return end
-if ((params.attacker:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Length2D() >= self:GetAbility().shield_range) and params.attacker:IsRangedAttacker() then return end
+local attacker = params.attacker
+
+if params.target ~= self.caster then return end
+if not attacker:IsHero() and not attacker:IsCreep() then return end
+if attacker:IsRangedAttacker() and (attacker:GetAbsOrigin() - self.caster:GetAbsOrigin()):Length2D() >= self.range then return end
 
 
+local enemyAbs = attacker:GetAbsOrigin()
+local center = self.caster:GetAbsOrigin()
+local direction = enemyAbs - center
+direction.z = 0
+direction = direction:Normalized()
 
-local particle = ParticleManager:CreateParticle( "particles/items_fx/chain_lightning.vpcf", PATTACH_POINT_FOLLOW, self:GetParent() )
-ParticleManager:SetParticleControlEnt( particle, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true )
-ParticleManager:SetParticleControlEnt( particle, 1, params.attacker, PATTACH_POINT_FOLLOW, "attach_hitloc", params.attacker:GetAbsOrigin(), true )
+if self.caster == enemyAbs then
+  direction = attacker:GetForwardVector()
+end 
+
+local point = center + self.range*direction
+local length = (point - enemyAbs):Length2D() 
+
+local knockbackProperties =
+{
+  center_x = center.x,
+  center_y = center.y,
+  center_z = center.z,
+  duration = self.knock_duration,
+  knockback_duration = self.knock_duration,
+  knockback_distance = math.min(self.max_distance, math.max(length, self.min_distance)),
+  knockback_height = 0,
+  should_stun = 0
+}
+attacker:AddNewModifier( self:GetCaster(), self, "modifier_knockback", knockbackProperties )
+attacker:EmitSound("Lina.Laguna_knock")
+
+local particle = ParticleManager:CreateParticle( "particles/items_fx/chain_lightning.vpcf", PATTACH_POINT_FOLLOW, self.caster )
+ParticleManager:SetParticleControlEnt( particle, 0, self.caster, PATTACH_POINT_FOLLOW, "attach_hitloc", self.caster:GetAbsOrigin(), true )
+ParticleManager:SetParticleControlEnt( particle, 1, attacker, PATTACH_POINT_FOLLOW, "attach_hitloc", attacker:GetAbsOrigin(), true )
 ParticleManager:ReleaseParticleIndex( particle )
 
-params.attacker:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_lina_laguna_blade_custom_shield_knockback", {duration = self:GetAbility().shield_knock_duration * (1 - params.attacker:GetStatusResistance()), x = self:GetCaster():GetAbsOrigin().x, y = self:GetCaster():GetAbsOrigin().y})
-
+attacker:AddNewModifier(self.caster, self.ability, "modifier_lina_laguna_blade_custom_shield_slow", {duration = self.slow_duration})
 end
+
 
 function modifier_lina_laguna_blade_custom_shield:GetModifierIncomingDamage_Percentage()
-return self:GetAbility().shield_damage
+return self.damage_reduce
 end
 
+function modifier_lina_laguna_blade_custom_shield:OnCreated()
+
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+
+self.caster:AddAttackEvent_inc(self)
+
+self.min_distance = self.caster:GetTalentValue("modifier_lina_laguna_5", "range_min")
+self.max_distance = self.caster:GetTalentValue("modifier_lina_laguna_5", "range_max")
+self.knock_duration = self.caster:GetTalentValue("modifier_lina_laguna_5", "knock_duration")
+self.slow_duration = self.caster:GetTalentValue("modifier_lina_laguna_5", "slow_duration")
+self.range = self.caster:GetTalentValue("modifier_lina_laguna_5", "range")
+self.damage_reduce = self.caster:GetTalentValue("modifier_lina_laguna_5", "damage_reduce")
+end 
 
 
-modifier_lina_laguna_blade_custom_shield_knockback = class({})
-
-function modifier_lina_laguna_blade_custom_shield_knockback:IsHidden() return true end
-
-function modifier_lina_laguna_blade_custom_shield_knockback:OnCreated(params)
-  if not IsServer() then return end
-  
-  self.ability        = self:GetAbility()
-  self.caster         = self:GetCaster()
-  self.parent         = self:GetParent()
-  self:GetParent():StartGesture(ACT_DOTA_FLAIL)
-  
-  self.knockback_duration   = self.ability.shield_knock_duration
-
-  self.knockback_distance   = math.max(self.ability.shield_knock_range -  (self.caster:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D(), 60)
-  
-  self.knockback_speed    = self.knockback_distance / self.knockback_duration
-  
-  self.position = GetGroundPosition(Vector(params.x, params.y, 0), nil)
-  
-  if self:ApplyHorizontalMotionController() == false then 
-    self:Destroy()
-    return
-  end
-end
-
-function modifier_lina_laguna_blade_custom_shield_knockback:UpdateHorizontalMotion( me, dt )
-  if not IsServer() then return end
-
-  local distance = (me:GetOrigin() - self.position):Normalized()
-  
-  me:SetOrigin( me:GetOrigin() + distance * self.knockback_speed * dt )
-
-  GridNav:DestroyTreesAroundPoint( self.parent:GetOrigin(), self.parent:GetHullRadius(), true )
-end
-
-function modifier_lina_laguna_blade_custom_shield_knockback:DeclareFunctions()
-  local decFuncs = {
-    MODIFIER_PROPERTY_OVERRIDE_ANIMATION
-    }
-
-    return decFuncs
-end
-
-function modifier_lina_laguna_blade_custom_shield_knockback:GetOverrideAnimation()
-   return ACT_DOTA_FLAIL
-end
-
-
-function modifier_lina_laguna_blade_custom_shield_knockback:OnDestroy()
-  if not IsServer() then return end
-  self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_lina_laguna_blade_custom_shield_slow", {duration = (1 - self:GetParent():GetStatusResistance())*self:GetAbility().shield_slow_duration})
- self.parent:RemoveHorizontalMotionController( self )
-  self:GetParent():FadeGesture(ACT_DOTA_FLAIL)
-end
 
 
 
 
 modifier_lina_laguna_blade_custom_shield_slow = class({})
-function modifier_lina_laguna_blade_custom_shield_slow:IsHidden() return false end
+function modifier_lina_laguna_blade_custom_shield_slow:IsHidden() return true end
 function modifier_lina_laguna_blade_custom_shield_slow:IsPurgable() return true end
-function modifier_lina_laguna_blade_custom_shield_slow:GetTexture() return "buffs/laguna_shield" end
-
 function modifier_lina_laguna_blade_custom_shield_slow:DeclareFunctions()
 return
 {
@@ -533,38 +496,56 @@ return
 }
 end
 function modifier_lina_laguna_blade_custom_shield_slow:GetModifierMoveSpeedBonus_Percentage()
-return self:GetAbility().shield_slow
+return self.slow
 end
 
-modifier_lina_laguna_blade_custom_shield_rooted = class({})
-function modifier_lina_laguna_blade_custom_shield_rooted:IsHidden() return true end
-function modifier_lina_laguna_blade_custom_shield_rooted:IsPurgable() return true end
-function modifier_lina_laguna_blade_custom_shield_rooted:OnCreated(table)
+function modifier_lina_laguna_blade_custom_shield_slow:OnCreated()
+self.slow = self:GetCaster():GetTalentValue("modifier_lina_laguna_5", "slow")
+end
+
+function modifier_lina_laguna_blade_custom_shield_slow:GetEffectName()
+return "particles/units/heroes/hero_zuus/zuus_shard_slow.vpcf"
+end
+
+
+
+
+
+modifier_lina_laguna_blade_custom_rooted = class({})
+function modifier_lina_laguna_blade_custom_rooted:IsHidden() return true end
+function modifier_lina_laguna_blade_custom_rooted:IsPurgable() return true end
+function modifier_lina_laguna_blade_custom_rooted:OnCreated(table)
 self.stun = false
-if not IsServer() then return end
 
-local ability = self:GetCaster():FindAbilityByName("lina_laguna_blade_custom")
+local caster = self:GetCaster()
+local parent = self:GetParent()
 
-if not ability then return end
-
-if self:GetCaster():GetHealthPercent() <= ability.root_health then 
+if caster:GetHealthPercent() <= caster:GetTalentValue("modifier_lina_laguna_6", "health") then 
   self.stun = true 
-  self:GetParent():AddNewModifier(self:GetCaster(), self:GetCaster():BkbAbility(ability, self:GetCaster():HasModifier("modifier_lina_laguna_6")), "modifier_stunned", {duration = self:GetRemainingTime()})
+
+  if IsServer() then 
+    parent:AddNewModifier(caster, self:GetAbility(), "modifier_stunned", {duration = self:GetRemainingTime()})
+  end
 end
 
 end
 
-function modifier_lina_laguna_blade_custom_shield_rooted:CheckState()
+
+function modifier_lina_laguna_blade_custom_rooted:CheckState()
 if self.stun == false then 
-return
-{
-  [MODIFIER_STATE_ROOTED] = true
-}
-
+  return
+  {
+    [MODIFIER_STATE_ROOTED] = true
+  }
+  end
 end
 
-end
-function modifier_lina_laguna_blade_custom_shield_rooted:GetEffectName() return "particles/items3_fx/gleipnir_root.vpcf" end
+function modifier_lina_laguna_blade_custom_rooted:GetEffectName() return "particles/items3_fx/gleipnir_root.vpcf" end
+
+
+
+
+
 
 
 
@@ -573,96 +554,190 @@ function modifier_lina_laguna_blade_custom_tracker:IsHidden() return true end
 function modifier_lina_laguna_blade_custom_tracker:IsPurgable() return false end
 
 
-
 function modifier_lina_laguna_blade_custom_tracker:OnCreated(table)
-if not IsServer() then return end
 
+self.parent = self:GetParent()
+
+self.ability = self:GetAbility()
+
+if self.parent:IsRealHero() then 
+  self.parent:AddSpellEvent(self)
+  self.parent:AddDamageEvent_out(self)
+  self.parent:AddAttackStartEvent_out(self)
+  self.parent:AddRecordDestroyEvent(self)
+end
+
+self.heal_active = self.parent:GetTalentValue("modifier_lina_laguna_3", "active", true)
+self.heal_creeps = self.parent:GetTalentValue("modifier_lina_laguna_3", "creeps", true)
+
+self.legendary_creeps = self.parent:GetTalentValue("modifier_lina_laguna_legendary", "creeps", true)
+self.legendary_count = self.parent:GetTalentValue("modifier_lina_laguna_legendary", "count", true)
+self.legendary_cd = self.parent:GetTalentValue("modifier_lina_laguna_legendary", "cd", true)
+
+self.attack_duration = self.parent:GetTalentValue("modifier_lina_laguna_4", "duration", true)
+
+self.attack_records = {}
 self.damage_count = 0
 end
 
 function modifier_lina_laguna_blade_custom_tracker:DeclareFunctions()
 return
 {
-  MODIFIER_EVENT_ON_TAKEDAMAGE
+  MODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE,
+  MODIFIER_PROPERTY_OVERRIDE_ATTACK_MAGICAL,
 }
 end
-function modifier_lina_laguna_blade_custom_tracker:OnTakeDamage(params)
+
+
+
+function modifier_lina_laguna_blade_custom_tracker:SpellEvent( params )
 if not IsServer() then return end
-if not params.attacker then return end
+if params.unit~=self.parent then return end
+if params.ability:IsItem() then return end
+
+if self.parent:HasTalent("modifier_lina_laguna_4") then 
+  self.parent:AddNewModifier(self.parent, self.ability, "modifier_lina_laguna_blade_custom_attacks", {duration = self.attack_duration})
+end 
+
+end
 
 
 
-if self:GetParent() == params.attacker  and (self:GetParent():HasModifier("modifier_lina_laguna_legendary") or self:GetParent():HasModifier("modifier_lina_laguna_4")) 
-  and not params.unit:IsIllusion()
-  and params.inflictor and not self:GetParent():HasModifier("modifier_lina_laguna_blade_custom_no_count") then 
 
-  local count = self:GetCaster():GetTalentValue("modifier_lina_laguna_legendary", "count")
-  local creeps = self:GetCaster():GetTalentValue("modifier_lina_laguna_legendary", "creeps")
 
-  if self:GetCaster():HasModifier("modifier_lina_laguna_4") then 
-    count = self:GetCaster():GetTalentValue("modifier_lina_laguna_4", "count")
-    creeps = self:GetCaster():GetTalentValue("modifier_lina_laguna_4", "creeps")
+function modifier_lina_laguna_blade_custom_tracker:AttackStartEvent_out(params)
+if not IsServer() then return end 
+if self.parent ~= params.attacker then return end 
+if not params.target:IsUnit() then return end
+if params.no_attack_cooldown then return end
+
+local mod = self.parent:FindModifierByName("modifier_lina_laguna_blade_custom_attacks")
+if not mod then return end 
+
+self.parent:EmitSound("Lina.Soul_attack_start")
+self.attack_records[params.record] = true
+
+mod:DecrementStackCount()
+if mod:GetStackCount() <= 0 then 
+  mod:Destroy()
+end 
+
+end 
+
+
+function modifier_lina_laguna_blade_custom_tracker:GetOverrideAttackMagical()
+if self.parent:HasModifier("modifier_lina_laguna_blade_custom_attacks") then return 1 end
+
+local magical = 0
+
+for _,record in pairs(self.attack_records) do 
+  if record then 
+    magical = 1
+    break
   end 
+end
+
+return magical
+end
+
+
+
+function modifier_lina_laguna_blade_custom_tracker:GetModifierTotalDamageOutgoing_Percentage(params)
+if not IsServer() then return end
+if not params.record then return end 
+if not self.attack_records[params.record] then return end
+if params.inflictor then return 0 end
+if params.damage_category ~= DOTA_DAMAGE_CATEGORY_ATTACK then return 0 end
+if params.damage_type == DAMAGE_TYPE_MAGICAL then return 0 end
+
+if self.parent:HasModifier("modifier_revenants_brooch_custom_counter") then return end 
+
+local damageTable = {
+  attacker = self.parent,
+  damage = params.original_damage,
+  damage_type = DAMAGE_TYPE_MAGICAL,
+  victim = params.target,
+  ability = self.ability,
+  damage_flags = DOTA_DAMAGE_FLAG_MAGIC_AUTO_ATTACK
+}
+DoDamage(damageTable, "modifier_lina_laguna_4")
+
+params.target:EmitSound("Lina.Soul_attack_end")
+
+local hit_effect = ParticleManager:CreateParticle("particles/lina/soul_attack_end.vpcf", PATTACH_CUSTOMORIGIN, params.target)
+ParticleManager:SetParticleControlEnt(hit_effect, 0, params.target, PATTACH_POINT_FOLLOW, "attach_hitloc", params.target:GetAbsOrigin(), false) 
+ParticleManager:SetParticleControlEnt(hit_effect, 1, params.target, PATTACH_POINT_FOLLOW, "attach_hitloc", params.target:GetAbsOrigin(), false) 
+ParticleManager:ReleaseParticleIndex(hit_effect)
+
+return -200
+end
+
+
+
+function modifier_lina_laguna_blade_custom_tracker:RecordDestroyEvent(params)
+if not IsServer() then return end
+if self.parent ~= params.attacker then return end
+if not params.record then return end 
+if not self.attack_records[params.record] then return end
+
+self.attack_records[params.record] = nil
+end
+
+
+
+
+function modifier_lina_laguna_blade_custom_tracker:DamageEvent_out(params)
+if not IsServer() then return end
+
+local attacker = params.attacker
+
+if not attacker then return end
+if params.unit:IsIllusion() then return end 
+if not params.inflictor then return end
+
+if self.parent == attacker and self.parent:HasTalent("modifier_lina_laguna_legendary") and not self.parent:HasModifier("modifier_lina_laguna_blade_custom_no_count") then 
 
   local damage = params.damage
 
-
   if params.unit:IsCreep() then 
-    damage = damage/creeps
+    damage = damage/self.legendary_creeps
   end
 
+  local final = damage + self.damage_count
 
-  while damage > 0 do 
-    self.damage_count = damage + self.damage_count
+  if final >= self.legendary_count then 
 
-    if self.damage_count < count then 
-      damage = 0
-    else 
-      damage =  self.damage_count - count
-      self.damage_count = 0
+    local delta = math.floor(final/self.legendary_count)
 
-      if self:GetParent():HasModifier("modifier_lina_laguna_legendary") then 
-        self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_lina_laguna_blade_custom_legendary", {})
-      end
+    for i = 1, delta do 
+      self.parent:AddNewModifier(self.parent, self.ability, "modifier_lina_laguna_blade_custom_legendary", {})
+      self.parent:CdAbility(self.ability, self.legendary_cd)
+    end 
 
-      if self:GetParent():HasModifier("modifier_lina_laguna_4") then 
-
-        local duration = self:GetCaster():GetTalentValue("modifier_lina_laguna_4", "duration")
-
-        self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_lina_laguna_blade_custom_spell_steal_count", {duration = duration})
-        self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_lina_laguna_blade_custom_spell_steal", {duration = duration})
-
-        self:GetCaster():CdAbility(self:GetAbility(), self:GetCaster():GetTalentValue("modifier_lina_laguna_4", "cd"))
-      
-      end 
-    end
-  end
-end
-
-
-
-if params.attacker ~= self:GetParent() then return end
-
-
-if self:GetParent():HasModifier("modifier_lina_laguna_3") and params.inflictor then 
-
-  local heal = params.damage*self:GetCaster():GetTalentValue("modifier_lina_laguna_3", "heal")/100
-
-  if self:GetCaster():HasModifier("modifier_lina_laguna_blade_custom_heal") then 
-    heal = heal*self:GetCaster():GetTalentValue("modifier_lina_laguna_3", "active")
+    self.damage_count = final - delta*self.legendary_count
+  else 
+    self.damage_count = final
   end 
 
-  if params.unit:IsCreep() then 
-    heal = heal/self:GetCaster():GetTalentValue("modifier_lina_laguna_3", "creeps")
-  end
-
-  self:GetCaster():GenericHeal(heal, self:GetAbility(), true, "particles/items3_fx/octarine_core_lifesteal.vpcf")
 end
 
 
+if not self.parent:HasTalent("modifier_lina_laguna_3") then return end
+if params.attacker ~= self.parent then return end
+if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end
 
 
+local heal = params.damage*self.parent:GetTalentValue("modifier_lina_laguna_3", "heal")/100
 
+if self.parent:HasModifier("modifier_lina_laguna_blade_custom_heal") then 
+  heal = heal*self.heal_active
+end 
+
+if params.unit:IsCreep() then 
+  heal = heal/self.heal_creeps
+end
+
+self.parent:GenericHeal(heal, self.ability, true, "particles/items3_fx/octarine_core_lifesteal.vpcf", "modifier_lina_laguna_3")
 
 end
 
@@ -676,71 +751,8 @@ function modifier_lina_laguna_blade_custom_no_count:IsPurgable() return false en
 
 
 
-modifier_lina_laguna_blade_custom_spell_steal = class({})
-function modifier_lina_laguna_blade_custom_spell_steal:IsHidden() return false end
-function modifier_lina_laguna_blade_custom_spell_steal:IsPurgable() return false end
-function modifier_lina_laguna_blade_custom_spell_steal:GetTexture() return "buffs/laguna_heal" end
-
-function modifier_lina_laguna_blade_custom_spell_steal:OnCreated(table)
-
-self.damage = self:GetCaster():GetTalentValue("modifier_lina_laguna_4", "damage")
-
-if not IsServer() then return end
-
-self.RemoveForDuel = true
-self:SetStackCount(1)
-end
 
 
-function modifier_lina_laguna_blade_custom_spell_steal:OnRefresh(table)
-if not IsServer() then return end
-
-self:IncrementStackCount()
-end
-
-
-function modifier_lina_laguna_blade_custom_spell_steal:DeclareFunctions()
-return
-{
-  MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
-}
-
-end
-
-
-
-function modifier_lina_laguna_blade_custom_spell_steal:GetModifierSpellAmplify_Percentage()
-return self.damage*self:GetStackCount()
-end
-
-
-
-
-
-modifier_lina_laguna_blade_custom_spell_steal_count = class({})
-function modifier_lina_laguna_blade_custom_spell_steal_count:IsHidden() return true end
-function modifier_lina_laguna_blade_custom_spell_steal_count:IsPurgable() return false end
-function modifier_lina_laguna_blade_custom_spell_steal_count:OnCreated(table)
-if not IsServer() then return end
-self.RemoveForDuel = true 
-
-end
-
-function modifier_lina_laguna_blade_custom_spell_steal_count:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-
-function modifier_lina_laguna_blade_custom_spell_steal_count:OnDestroy()
-if not IsServer() then return end
-
-local mod = self:GetParent():FindModifierByName("modifier_lina_laguna_blade_custom_spell_steal")
-if not mod then return end
-
-mod:DecrementStackCount()
-
-if mod:GetStackCount() <= 0 then 
-  mod:Destroy()
-end
-
-end
 
 
 modifier_lina_laguna_blade_custom_passive_max = class({})
@@ -748,23 +760,32 @@ function modifier_lina_laguna_blade_custom_passive_max:IsHidden() return false e
 function modifier_lina_laguna_blade_custom_passive_max:IsPurgable() return false end
 function modifier_lina_laguna_blade_custom_passive_max:OnCreated()
 if not IsServer() then return end 
+self.parent = self:GetParent()
 
-self.ability = self:GetParent():FindAbilityByName("lina_fiery_soul_custom")
-self.mod = self:GetParent():FindModifierByName("modifier_lina_fiery_soul_custom")
+self.ability = self.parent:FindAbilityByName("lina_fiery_soul_custom")
+self.mod = self.parent:FindModifierByName("modifier_lina_fiery_soul_custom")
 
 if not self.mod then return end 
 if not self.ability then return end 
 
-self.mod:SetStacks(self:GetAbility():GetSpecialValueFor("supercharge_stacks"))
+local stacks = self:GetAbility():GetSpecialValueFor("supercharge_stacks")
+if self.parent:HasShard() then
+  stacks = stacks + self.ability:GetSpecialValueFor("shard_stacks")
+end
 
+self.mod:SetStacks(stacks)
 end 
 
+
+
+function modifier_lina_laguna_blade_custom_passive_max:GetEffectName()
+return "particles/units/heroes/hero_lina/lina_supercharge_buff.vpcf"
+end
 
 function modifier_lina_laguna_blade_custom_passive_max:OnDestroy()
 if not IsServer() then return end
 if not self.mod then return end 
 if not self.ability then return end 
-
 
 self.mod:SetStacks(0, true)
 end 
@@ -774,3 +795,89 @@ end
 modifier_lina_laguna_blade_custom_heal = class({})
 function modifier_lina_laguna_blade_custom_heal:IsHidden() return true end
 function modifier_lina_laguna_blade_custom_heal:IsPurgable() return false end
+function modifier_lina_laguna_blade_custom_heal:GetEffectName()
+return "particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf"
+end
+
+
+
+
+
+
+
+
+
+
+modifier_lina_laguna_blade_custom_attacks = class({})
+function modifier_lina_laguna_blade_custom_attacks:IsHidden() return true end
+function modifier_lina_laguna_blade_custom_attacks:IsPurgable() return false end
+function modifier_lina_laguna_blade_custom_attacks:OnCreated(table)
+self.RemoveForDuel = true
+self:SetStackCount(self:GetCaster():GetTalentValue("modifier_lina_laguna_4", "max"))
+end
+
+function modifier_lina_laguna_blade_custom_attacks:OnRefresh()
+self:OnCreated()
+end
+
+function modifier_lina_laguna_blade_custom_attacks:DeclareFunctions()
+return 
+{
+  MODIFIER_PROPERTY_PROJECTILE_NAME,
+}
+end
+
+function modifier_lina_laguna_blade_custom_attacks:GetModifierProjectileName()
+return "particles/lina/soul_attack.vpcf"
+end
+
+
+function modifier_lina_laguna_blade_custom_attacks:CheckState()
+return
+{
+  [MODIFIER_STATE_CANNOT_MISS] = true
+}
+end
+
+
+
+
+modifier_lina_laguna_blade_custom_heal_reduce = class({})
+function modifier_lina_laguna_blade_custom_heal_reduce:IsHidden() return true end
+function modifier_lina_laguna_blade_custom_heal_reduce:IsPurgable() return false end
+function modifier_lina_laguna_blade_custom_heal_reduce:OnCreated()
+self.heal_reduce = self:GetCaster():GetTalentValue("modifier_lina_laguna_2", "heal_reduce")
+end
+
+function modifier_lina_laguna_blade_custom_heal_reduce:DeclareFunctions()
+return 
+{
+  MODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET,
+  MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE,
+  MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE,
+}
+end
+
+
+function modifier_lina_laguna_blade_custom_heal_reduce:GetModifierLifestealRegenAmplify_Percentage() 
+return self.heal_reduce
+end
+
+function modifier_lina_laguna_blade_custom_heal_reduce:GetModifierHealAmplify_PercentageTarget() 
+return self.heal_reduce
+end
+
+function modifier_lina_laguna_blade_custom_heal_reduce:GetModifierHPRegenAmplify_Percentage() 
+return self.heal_reduce
+end
+
+
+modifier_lina_laguna_blade_custom_unslow = class({})
+function modifier_lina_laguna_blade_custom_unslow:IsHidden() return true end
+function modifier_lina_laguna_blade_custom_unslow:IsPurgable() return false end
+function modifier_lina_laguna_blade_custom_unslow:CheckState()
+return
+{
+  [MODIFIER_STATE_UNSLOWABLE] = true
+}
+end

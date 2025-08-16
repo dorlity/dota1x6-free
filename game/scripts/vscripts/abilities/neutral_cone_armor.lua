@@ -1,7 +1,5 @@
 LinkLuaModifier("modifier_neutral_cone_buff", "abilities/neutral_cone_armor", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_neutral_cone_armor", "abilities/neutral_cone_armor", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_neutral_cone_armor_cd", "abilities/neutral_cone_armor", LUA_MODIFIER_MOTION_NONE)
-
 
 
 
@@ -19,45 +17,38 @@ function modifier_neutral_cone_armor:IsHidden() return true end
 
 function modifier_neutral_cone_armor:OnCreated(table)
 if not IsServer() then return end
-self.cd = self:GetAbility():GetSpecialValueFor("cd")
+
 self.health = self:GetAbility():GetSpecialValueFor("health")
 self.duration = self:GetAbility():GetSpecialValueFor("duration")
 self.damage = self:GetAbility():GetSpecialValueFor("damage")/100
-self:StartIntervalThink(FrameTime())
+self.cd = self:GetAbility():GetSpecialValueFor("AbilityCooldown")
+
+self.parent = self:GetParent()
+self.parent:AddDamageEvent_inc(self, true)
 end
 
 
-function modifier_neutral_cone_armor:DeclareFunctions()
-return
-{
-  MODIFIER_EVENT_ON_TAKEDAMAGE
-}
 
-end
-
-function modifier_neutral_cone_armor:OnTakeDamage(params)
+function modifier_neutral_cone_armor:DamageEvent_inc(params)
 if not IsServer() then return end
-if self:GetParent() ~= params.unit then return end
+if params.attacker == nil then return end
+if self.parent ~= params.unit then return end
 
-if self:GetParent():HasModifier("modifier_neutral_cone_buff") and params.attacker ~= nil then 
+if self.parent:HasModifier("modifier_neutral_cone_buff") and bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) ~= DOTA_DAMAGE_FLAG_REFLECTION then 
 
   local attacker = params.attacker
-
-  if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end
- 
   damage = params.original_damage * self.damage
-  ApplyDamage({ victim = attacker, attacker = self:GetParent(), ability = self:GetAbility(), damage = damage, damage_type = params.damage_type, damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION + DOTA_DAMAGE_FLAG_REFLECTION})
+  DoDamage({ victim = attacker, attacker = self.parent, ability = self:GetAbility(), damage = damage, damage_type = params.damage_type, damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION + DOTA_DAMAGE_FLAG_REFLECTION})
      
   EmitSoundOnEntityForPlayer("DOTA_Item.BladeMail.Damage", attacker, attacker:GetPlayerOwnerID())
 end
 
 
-if self:GetParent():GetHealthPercent() > self.health then return end
-if self:GetParent():HasModifier("modifier_neutral_cone_armor_cd") then return end
+if self.parent:GetHealthPercent() > self.health then return end
+if self.parent:HasModifier("modifier_neutral_cast_cd") then return end
 
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_neutral_cone_armor_cd", {duration = self.cd})
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_neutral_cone_buff", {duration = self.duration})
-
+self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_neutral_cast_cd", {duration = self.cd})
+self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_neutral_cone_buff", {duration = self.duration})
 end
 
 
@@ -76,7 +67,7 @@ if not IsServer() then return end
   self.particle_1 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff.vpcf"
   self.particle_2 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_egg.vpcf"
   self.particle_3 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_streaks.vpcf"
-  self.sound = "Hero_Pangolier.TailThump.Shield"
+  self.sound = "UI.Generic_shield"
   self.buff_particles = {}
 
   self:GetCaster():EmitSound( self.sound)
@@ -114,14 +105,6 @@ return self.reduce
 end
 
 
-
-
-
-modifier_neutral_cone_armor_cd = class({})
-
-function modifier_neutral_cone_armor_cd:IsPurgable() return false end
-
-function modifier_neutral_cone_armor_cd:IsHidden() return false end
 
 
 

@@ -1,491 +1,533 @@
 LinkLuaModifier( "modifier_templar_assassin_meld_custom_buff", "abilities/templar_assasssin/templar_assassin_meld_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_templar_assassin_meld_custom_debuff", "abilities/templar_assasssin/templar_assassin_meld_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_templar_assassin_meld_custom_speed", "abilities/templar_assasssin/templar_assassin_meld_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_templar_assassin_meld_custom_slow", "abilities/templar_assasssin/templar_assassin_meld_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_templar_assassin_meld_custom_debuff_count", "abilities/templar_assasssin/templar_assassin_meld_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_templar_assassin_meld_custom_quest", "abilities/templar_assasssin/templar_assassin_meld_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_templar_assassin_meld_custom_kills", "abilities/templar_assasssin/templar_assassin_meld_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_templar_assassin_meld_custom_tracker", "abilities/templar_assasssin/templar_assassin_meld_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_templar_assassin_meld_custom_armor", "abilities/templar_assasssin/templar_assassin_meld_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_templar_assassin_meld_custom_toggle", "abilities/templar_assasssin/templar_assassin_meld_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_templar_assassin_meld_custom_heal", "abilities/templar_assasssin/templar_assassin_meld_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_templar_assassin_meld_custom_damage_reduce", "abilities/templar_assasssin/templar_assassin_meld_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_templar_assassin_meld_custom_agility", "abilities/templar_assasssin/templar_assassin_meld_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_templar_assassin_meld_custom_agility_cd", "abilities/templar_assasssin/templar_assassin_meld_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_templar_assassin_meld_custom_range", "abilities/templar_assasssin/templar_assassin_meld_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_templar_assassin_meld_custom_break", "abilities/templar_assasssin/templar_assassin_meld_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_templar_assassin_meld_custom_legendary", "abilities/templar_assasssin/templar_assassin_meld_custom", LUA_MODIFIER_MOTION_NONE )
 
 templar_assassin_meld_custom = class({})
 
+function templar_assassin_meld_custom:CreateTalent(name)
+local caster = self:GetCaster()
 
+if name == "modifier_templar_assassin_meld_4" then
+    caster:RemoveModifierByName("modifier_templar_assassin_meld_custom_agility")
+end
 
+if name == "modifier_templar_assassin_meld_5" then
+    self:ToggleAutoCast()
+    caster:AddNewModifier(caster, self, "modifier_templar_assassin_meld_custom_toggle", {})
+end
 
-
-
-templar_assassin_meld_custom.legendary_damage = 20
-templar_assassin_meld_custom.legendary_incoming = 100
-templar_assassin_meld_custom.legendary_duration = 6
-templar_assassin_meld_custom.legendary_speed = 20
-templar_assassin_meld_custom.legendary_duration_move = 3
-
-templar_assassin_meld_custom.attacks_max = {4, 8}
-templar_assassin_meld_custom.attacks_chance = {30, 50}
-templar_assassin_meld_custom.attacks_cd = 0.5
-templar_assassin_meld_custom.attacks_armor = -1
-templar_assassin_meld_custom.attacks_armor_duration = 6
-
-
+end
 
 
 function templar_assassin_meld_custom:Precache(context)
-
-PrecacheResource( "particle", 'particles/units/heroes/hero_templar_assassin/templar_assassin_meld_attack.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_templar_assassin/templar_assassin_meld.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_templar_assassin/templar_assassin_meld_armor.vpcf', context ) 
-PrecacheResource( "particle", 'particles/units/heroes/hero_terrorblade/terrorblade_reflection_slow.vpcf', context )
-PrecacheResource( "particle", 'particles/beast_ult_count.vpcf', context )
-PrecacheResource( "particle", 'particles/econ/items/oracle/oracle_ti10_immortal/ta_meld_heal.vpcf', context )
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/items3_fx/blink_arcane_start.vpcf", context )
+PrecacheResource( "particle","particles/items3_fx/blink_arcane_end.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_templar_assassin/templar_assassin_meld_attack.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_templar_assassin/templar_assassin_meld.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_templar_assassin/templar_assassin_meld_armor.vpcf", context )
+PrecacheResource( "particle","particles/lc_odd_proc_.vpcf", context )
+PrecacheResource( "particle","particles/general/generic_armor_reduction.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_juggernaut/jugg_agility_boost.vpcf", context )
+PrecacheResource( "particle","particles/templar_assassin/meld_buff.vpcf", context )
 
 end
 
 
 function templar_assassin_meld_custom:GetCastRange(vLocation, hTarget)
-
-if self:GetCaster():HasModifier("modifier_templar_assassin_meld_5") and self:GetCaster():HasModifier("modifier_templar_assassin_meld_custom_toggle") then 
-
+local caster = self:GetCaster()
+if caster:HasTalent("modifier_templar_assassin_meld_5") and caster:HasModifier("modifier_templar_assassin_meld_custom_toggle") then 
     if IsClient() then 
-        return self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_5", "distance")
+        return caster:GetTalentValue("modifier_templar_assassin_meld_5", "distance")
     else
         return 999999 
     end
 end
-
 return 0
 end
 
-
 function templar_assassin_meld_custom:GetIntrinsicModifierName()
+if not self:GetCaster():IsRealHero() then return end
 return "modifier_templar_assassin_meld_custom_tracker"
 end
 
 function templar_assassin_meld_custom:GetBehavior()
-if  self:GetCaster():HasModifier("modifier_templar_assassin_meld_5")  then 
-
+if self:GetCaster():HasTalent("modifier_templar_assassin_meld_5")  then 
     if not self:GetCaster():HasModifier("modifier_templar_assassin_meld_custom_toggle") then 
-        return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_MOVEMENT + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK + DOTA_ABILITY_BEHAVIOR_AUTOCAST
-   
+        return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_MOVEMENT + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK + DOTA_ABILITY_BEHAVIOR_AUTOCAST + DOTA_ABILITY_BEHAVIOR_IMMEDIATE
     else 
-        return DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_MOVEMENT + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK + DOTA_ABILITY_BEHAVIOR_AUTOCAST
+        return DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_MOVEMENT + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK + DOTA_ABILITY_BEHAVIOR_AUTOCAST + DOTA_ABILITY_BEHAVIOR_IMMEDIATE
     end
 end
-
-return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_MOVEMENT + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK
+return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_MOVEMENT + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK + DOTA_ABILITY_BEHAVIOR_IMMEDIATE
 end
 
 
 function templar_assassin_meld_custom:OnSpellStart()
-if not IsServer() then return end
 
+local caster = self:GetCaster()
+caster:RemoveModifierByName("modifier_templar_assassin_meld_custom_legendary")
 
-self:GiveMeld(self:GetCaster())
+if caster:HasTalent("modifier_templar_assassin_meld_5") then
 
+    caster:Purge(false, true, false, false, false)
 
-if self:GetCaster():HasModifier("modifier_templar_assassin_meld_5") and self:GetCaster():HasModifier("modifier_templar_assassin_meld_custom_toggle") then 
+    if caster:HasModifier("modifier_templar_assassin_meld_custom_toggle") and not caster:IsRooted() and not caster:IsLeashed() then 
 
-        ProjectileManager:ProjectileDodge(self:GetCaster())
-
+        ProjectileManager:ProjectileDodge(caster)
 
         local point = self:GetCursorPosition()
-        local start_point = self:GetCaster():GetAbsOrigin()
+        local start_point = caster:GetAbsOrigin()
 
         local vec = (point - start_point)
 
-        EmitSoundOnLocationWithCaster( start_point, "Hero_Antimage.Blink_out", self:GetCaster() )
+        EmitSoundOnLocationWithCaster( start_point, "Hero_Antimage.Blink_out", caster )
 
         if point == start_point then 
-            point = start_point + self:GetCaster():GetForwardVector()*5
+            point = start_point + caster:GetForwardVector()*5
         end
 
-        local distance = self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_5", "distance")
+        local distance = caster:GetTalentValue("modifier_templar_assassin_meld_5", "distance")
 
         if vec:Length2D() > distance then 
-            point = vec:Normalized()*distance + self:GetCaster():GetAbsOrigin()
+            point = vec:Normalized()*distance + caster:GetAbsOrigin()
         end
 
-
-        local effect = ParticleManager:CreateParticleForTeam("particles/items3_fx/blink_arcane_start.vpcf", PATTACH_WORLDORIGIN, nil, self:GetCaster():GetTeamNumber())
+        local effect = ParticleManager:CreateParticle("particles/items3_fx/blink_arcane_start.vpcf", PATTACH_WORLDORIGIN, nil)
         ParticleManager:SetParticleControl(effect, 0, start_point)
+        ParticleManager:ReleaseParticleIndex(effect)
 
+        caster:GenericParticle("particles/items3_fx/blink_arcane_end.vpcf")
 
-        effect = ParticleManager:CreateParticleForTeam("particles/items3_fx/blink_arcane_end.vpcf", PATTACH_WORLDORIGIN, nil, self:GetCaster():GetTeamNumber())
-        ParticleManager:SetParticleControl(effect, 0, point)
-
-
-        self:GetCaster():SetAbsOrigin(point)
-        FindClearSpaceForUnit(self:GetCaster(), point, true)
-
-end
-
-
-if self:GetCaster():HasModifier("modifier_templar_assassin_meld_7") then 
-
-    local illusion = CreateIllusions( self:GetCaster(), self:GetCaster(), {duration=self.legendary_duration, outgoing_damage= -100 + self.legendary_damage,incoming_damage=self.legendary_incoming}, 1, 0, false, false )  
-    for k, v in pairs(illusion) do
-
-        for _,mod in pairs(self:GetCaster():FindAllModifiers()) do
-            if mod.StackOnIllusion ~= nil and mod.StackOnIllusion == true then
-                v:UpgradeIllusion(mod:GetName(), mod:GetStackCount() )
-            end
-
-            if mod:GetName() == "modifier_templar_assassin_refraction_custom_absorb" then 
-                local shield = v:AddNewModifier(v, v:FindAbilityByName("templar_assassin_refraction_custom"), mod:GetName(), {})
-                shield:SetStackCount(mod:GetStackCount())
-            end
-
-        end
-
-        v.owner = self:GetCaster()
-        FindClearSpaceForUnit(v, self:GetCaster():GetAbsOrigin(), true)
-        self:GiveMeld(v)
+        caster:SetAbsOrigin(point)
+        FindClearSpaceForUnit(caster, point, true)
     end
-
 end
 
+local duration = nil
+if caster:HasTalent("modifier_templar_assassin_meld_7") then
+    duration = caster:GetTalentValue("modifier_templar_assassin_meld_7", "duration")
+else
+    caster:Stop()
 end
 
-
-function templar_assassin_meld_custom:OnProjectileHit_ExtraData(hTarget, vLocation, table)
-if not IsServer() then return end
-
-self.damage = self:GetSpecialValueFor("bonus_damage")
-self.duration = self:GetSpecialValueFor("duration")
-
-if self:GetCaster():HasModifier("modifier_templar_assassin_meld_1") then 
-    self.damage = self.damage + self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_1", "damage")
-end
-
-
-local unit = EntIndexToHScript(table.caster)
-
-unit:RemoveModifierByName("modifier_templar_assassin_meld_custom_buff")
-local target = hTarget
-
-if not target then return end
-
-
-hTarget:EmitSound("Hero_TemplarAssassin.Meld.Attack")
-if not hTarget:IsBuilding() then 
-
-    local mod = self:GetCaster():FindModifierByName("modifier_templar_assassin_meld_custom_kills")
-
-    if self:GetCaster():HasModifier("modifier_templar_assassin_meld_6") and mod and mod:GetStackCount() >= self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_6", "max") then
-        target:AddNewModifier(self:GetCaster(), self, "modifier_stunned", {duration = self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_6", "stun")*(1 - target:GetStatusResistance())})
-    end
-
-    hTarget:AddNewModifier(unit, self, "modifier_templar_assassin_meld_custom_debuff", { duration = self.duration})
-    SendOverheadEventMessage(nil, OVERHEAD_ALERT_CRITICAL, hTarget, self.damage, nil)
-
-
-    ApplyDamage({victim = hTarget, attacker = unit, damage = self.damage, damage_type = DAMAGE_TYPE_PHYSICAL, ability = self})
-end
-
-
-
-
-end
-
-
-
-
-function templar_assassin_meld_custom:GiveMeld(target)
-if not IsServer() then return end
-
-target:AddNewModifier(target, self, "modifier_templar_assassin_meld_custom_buff", {})
-target:EmitSound("Hero_TemplarAssassin.Meld")
-
-
-
-
-target:Stop()
+caster:AddNewModifier(caster, self, "modifier_templar_assassin_meld_custom_buff", {duration = duration})
+caster:EmitSound("Hero_TemplarAssassin.Meld")
 end
 
 
 
 
 modifier_templar_assassin_meld_custom_buff = class({})
-
 function modifier_templar_assassin_meld_custom_buff:IsPurgable() return false end
 
 function modifier_templar_assassin_meld_custom_buff:OnCreated()
 
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-self.range = self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_5", "range")
+self.legendary_move = self.parent:GetTalentValue("modifier_templar_assassin_meld_7", "move", true)
+self.max_time = self.parent:GetTalentValue("modifier_templar_assassin_meld_7", "duration", true)
+self.legendary_max = self.parent:GetTalentValue("modifier_templar_assassin_meld_7", "duration_max", true)
+self.legendary_min = self.parent:GetTalentValue("modifier_templar_assassin_meld_7", "duration_min", true)
 
 if not IsServer() then return end
 
+self.ability:EndCd()
 
+self.cancel_commands = 
+{
+    [DOTA_UNIT_ORDER_CAST_POSITION]    = true,
+    [DOTA_UNIT_ORDER_CAST_TARGET]       = true,
+    [DOTA_UNIT_ORDER_CAST_NO_TARGET]     = true,
+    [DOTA_UNIT_ORDER_CAST_TOGGLE]     = true,
+    [DOTA_UNIT_ORDER_MOVE_ITEM]       = true,
+}
 
-self.abs = self:GetParent():GetAbsOrigin()
+self.abs = self.parent:GetAbsOrigin()
 self.record = nil
-self.attack = true
-self.time = 0
-self.moved = false
-self.can_break = false
-self:StartIntervalThink(FrameTime())
+self.attacked = false
+
+self.interval = FrameTime()
+if self.parent:HasTalent("modifier_templar_assassin_meld_7") then
+    self.interval = 0.1
 end
+
+self.parent:AddRecordDestroyEvent(self)
+self.parent:AddOrderEvent(self)
+
+self:OnIntervalThink()
+self:StartIntervalThink(self.interval)
+end
+
 
 function modifier_templar_assassin_meld_custom_buff:OnRefresh()
 self:OnCreated()
 end
 
+
 function modifier_templar_assassin_meld_custom_buff:OnDestroy()
 if not IsServer() then return end
 
-if self:GetCaster():GetQuest() == "Templar.Quest_6" then 
-    self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_templar_assassin_meld_custom_quest", {duration = self:GetCaster().quest.number})
+self.ability:StartCd()
+
+if self.parent:GetQuest() == "Templar.Quest_6" then 
+    self.parent:AddNewModifier(self.parent, self.ability, "modifier_templar_assassin_meld_custom_quest", {duration = self.parent.quest.number})
+end
+
+if self.parent:HasTalent("modifier_templar_assassin_meld_5") then
+    self.parent:AddNewModifier(self.parent, self.ability, "modifier_templar_assassin_meld_custom_range", {duration = self.parent:GetTalentValue("modifier_templar_assassin_meld_5", "duration")})
 end
 
 
-self:GetParent():EmitSound("Hero_TemplarAssassin.Meld.Move")
+if self.parent:HasTalent("modifier_templar_assassin_meld_7") then
+    local duration = self.legendary_min + (self.legendary_max - self.legendary_min)*(self:GetElapsedTime()/self.max_time)
+    local mod = self.parent:AddNewModifier(self.parent, self.ability, "modifier_templar_assassin_meld_custom_legendary", {duration = duration})
+
+    if not mod then
+        self.parent:UpdateUIshort({hide = 1, style = "TemplarMeld"})
+    end
 end
+
+if self.attacked == true then return end
+self.parent:EmitSound("Hero_TemplarAssassin.Meld.Move")
+end
+
 
 function modifier_templar_assassin_meld_custom_buff:DeclareFunctions()
-    local funcs = {
-        MODIFIER_EVENT_ON_ATTACK,
-        MODIFIER_EVENT_ON_ATTACK_LANDED,
-        MODIFIER_EVENT_ON_ATTACK_FAIL,
-        MODIFIER_PROPERTY_INVISIBILITY_LEVEL,
-        MODIFIER_EVENT_ON_ORDER,
-        MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
-		MODIFIER_PROPERTY_PROJECTILE_NAME,
-        MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-        MODIFIER_EVENT_ON_ATTACK_CANCELLED,
-        MODIFIER_PROPERTY_ATTACK_RANGE_BONUS
-    }
-    return funcs
+return
+{
+    MODIFIER_PROPERTY_INVISIBILITY_LEVEL,
+    MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
+    MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+}
 end
 
 
 function modifier_templar_assassin_meld_custom_buff:GetModifierMoveSpeedBonus_Percentage()
-if self:GetParent():HasModifier("modifier_templar_assassin_meld_7") then 
-    return self:GetAbility().legendary_speed
+if not self.parent:HasTalent("modifier_templar_assassin_meld_7") then return end
+return self.legendary_move
 end
-
-end
-
-function modifier_templar_assassin_meld_custom_buff:GetModifierAttackRangeBonus()
-if self:GetParent():HasModifier("modifier_templar_assassin_meld_5") then 
-    return self.range
-end
-
-end
-
-
-
 
 function modifier_templar_assassin_meld_custom_buff:GetActivityTranslationModifiers()
-	return "meld"
-end
-
-function modifier_templar_assassin_meld_custom_buff:OnAttack(params)
-    if self:GetParent() ~= params.attacker then return end
-    if self.attack then
-        self.record = params.record
-
-
-        local projectile =
-        {
-            Target = params.target,
-            Source = self:GetParent(),
-            Ability = self:GetAbility(),
-            EffectName = "particles/units/heroes/hero_templar_assassin/templar_assassin_meld_attack.vpcf",
-            iMoveSpeed = self:GetParent():GetProjectileSpeed()*1.2,
-            vSourceLoc = self:GetParent():GetAbsOrigin(),
-            bDodgeable = true,
-            bProvidesVision = false,
-            ExtraData = {caster = self:GetParent():entindex(),}
-        }
-
-        local hProjectile = ProjectileManager:CreateTrackingProjectile( projectile )
-        self.attack = false
-
-        if self:GetCaster():HasModifier("modifier_templar_assassin_meld_3") then 
-          self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_templar_assassin_meld_custom_speed", {duration = self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_3",  "duration")})
-        end
-
-        if self:GetCaster():HasModifier("modifier_templar_assassin_meld_2") then 
-            self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_templar_assassin_meld_custom_heal", {duration = self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_2", "duration")})
-        end 
-
-       self:Destroy()
-
-    end
+if self.attacked then return end
+return "meld"
 end
 
 
+function modifier_templar_assassin_meld_custom_buff:ProcAttack(params)
+if self.attacked then return end
 
-function modifier_templar_assassin_meld_custom_buff:OnOrder(params)
+self.attacked = true
+self.record = params.record
+
+if self.parent:HasTalent("modifier_templar_assassin_meld_2") then 
+    self.parent:AddNewModifier(self.parent, self.ability, "modifier_templar_assassin_meld_custom_heal", {duration = self.parent:GetTalentValue("modifier_templar_assassin_meld_2", "duration")})
+end 
+
+self:Destroy()
+end
+
+
+function modifier_templar_assassin_meld_custom_buff:OrderEvent(params)
 if not IsServer() then return end
-if self.can_break == false then return end
-    if params.unit == self:GetParent() then
-        local cancel_commands = 
-        {
-            [DOTA_UNIT_ORDER_MOVE_TO_POSITION]  = true,
-            [DOTA_UNIT_ORDER_CAST_POSITION]    = true,
-            [DOTA_UNIT_ORDER_CAST_TARGET]       = true,
-            [DOTA_UNIT_ORDER_CAST_NO_TARGET]     = true,
-            [DOTA_UNIT_ORDER_CAST_TOGGLE]     = true,
-            [DOTA_UNIT_ORDER_MOVE_ITEM]       = true,
-            [DOTA_UNIT_ORDER_MOVE_TO_DIRECTION]  = true,
-            [DOTA_UNIT_ORDER_MOVE_RELATIVE]     = true,
-        }
-
-        if params.ability then
-            if params.ability:GetAbilityName() == "templar_assassin_trap_teleport_custom" then
-                return
-            end
-        end
-        
-        if cancel_commands[params.order_type] then
-            if self.attack then
-
-                if self:GetParent():HasModifier("modifier_templar_assassin_meld_7") then 
-                       if self.moved == false then  
-                	       self:SetDuration(self:GetAbility().legendary_duration_move, true)
-                           self.moved = true
-                       end
-                else 
-                    self:Destroy()
-                end
-            end
-        end
-    end
+if params.ability and params.ability:GetAbilityName() == "templar_assassin_trap_teleport_custom" then return end
+if not self.cancel_commands[params.order_type] then return end
+ 
+self:Destroy()
 end
-
 
 
 function modifier_templar_assassin_meld_custom_buff:OnIntervalThink()
+if not IsServer() then return end
 
-if self.can_break == false then 
-    self.can_break = true
-    self.abs = self:GetParent():GetAbsOrigin()
-    self:StartIntervalThink(0.1)
+if self.parent:HasTalent("modifier_templar_assassin_meld_7") then 
+    self.parent:UpdateUIshort({max_time = self.max_time, time = self:GetElapsedTime(), stack = self:GetElapsedTime(), priority = 1, use_zero = 1, style = "TemplarMeld"})
+    return 
 end
+if self.parent:GetAbsOrigin() == self.abs then return end
+if self.attacked then return end   
 
-self.time = self.time + 0.1
-
-if self:GetParent():GetAbsOrigin() == self.abs then return end
-if not self.attack then return end
-        
-if self:GetParent():HasModifier("modifier_templar_assassin_meld_7") then 
-
-    if self.moved == false then  
-        self:SetDuration(self:GetAbility().legendary_duration_move, true)
-        self.moved = true
-    end
-else 
-  self:Destroy()
-end
-
+self:Destroy()
 end
 
 
+function modifier_templar_assassin_meld_custom_buff:RecordDestroyEvent(params)
+if not IsServer() then return end
+if not self.record then return end
+if params.record ~= self.record then return end
 
-function modifier_templar_assassin_meld_custom_buff:OnAttackFail(params)
-	if not IsServer() then return end
-	if params.attacker ~= self:GetParent() then return end
-    if params.record == self.record then
-	   self:Destroy()
-    end
+self:Destroy()
 end
+
 
 function modifier_templar_assassin_meld_custom_buff:GetEffectName()
-	return "particles/units/heroes/hero_templar_assassin/templar_assassin_meld.vpcf"
+return "particles/units/heroes/hero_templar_assassin/templar_assassin_meld.vpcf"
 end
 
 function modifier_templar_assassin_meld_custom_buff:GetModifierInvisibilityLevel()
-    return 1
+return 1
 end
 
 function modifier_templar_assassin_meld_custom_buff:CheckState()
-    return {
-        [MODIFIER_STATE_INVISIBLE] = true,
-        [MODIFIER_STATE_NO_UNIT_COLLISION] = true
-    }
+return 
+{
+    [MODIFIER_STATE_INVISIBLE] = true,
+    [MODIFIER_STATE_NO_UNIT_COLLISION] = true
+}
 end
 
 
 
 
 
+modifier_templar_assassin_meld_custom_tracker = class({})
+function modifier_templar_assassin_meld_custom_tracker:IsHidden() return true end
+function modifier_templar_assassin_meld_custom_tracker:IsPurgable() return false end
+function modifier_templar_assassin_meld_custom_tracker:DeclareFunctions()
+return
+{
+    MODIFIER_PROPERTY_STATS_AGILITY_BONUS,
+    MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
+    MODIFIER_PROPERTY_HEALTH_BONUS,
+}
+end
+
+function modifier_templar_assassin_meld_custom_tracker:GetModifierBonusStats_Agility()
+if not self.parent:HasTalent("modifier_templar_assassin_meld_1") then return end
+return self.parent:GetTalentValue("modifier_templar_assassin_meld_1", "agility")
+end
+
+function modifier_templar_assassin_meld_custom_tracker:GetModifierHealthBonus()
+if not self.parent:HasTalent("modifier_templar_assassin_meld_2") then return end
+return self.parent:GetTalentValue("modifier_templar_assassin_meld_2", "health")*self.parent:GetAgility()
+end
+
+function modifier_templar_assassin_meld_custom_tracker:GetModifierAttackRangeBonus()
+if not self.parent:HasTalent("modifier_templar_assassin_meld_5") then return end
+if not self.parent:HasModifier("modifier_templar_assassin_meld_custom_range") and not self.parent:HasModifier("modifier_templar_assassin_meld_custom_buff") then return end
+return self.range_bonus
+end
+
+function modifier_templar_assassin_meld_custom_tracker:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.duration = self.ability:GetSpecialValueFor("duration")
+
+self.damage_reduce_duration = self.parent:GetTalentValue("modifier_templar_assassin_meld_3", "duration", true)
+
+self.agility_timer = self.parent:GetTalentValue("modifier_templar_assassin_meld_4", "timer", true)
+self.agility_duration = self.parent:GetTalentValue("modifier_templar_assassin_meld_4", "duration", true)
+
+self.range_bonus = self.parent:GetTalentValue("modifier_templar_assassin_meld_5", "range", true)
+
+self.attack_cd = self.parent:GetTalentValue("modifier_templar_assassin_meld_6", "cd", true)
+self.attack_stun = self.parent:GetTalentValue("modifier_templar_assassin_meld_6", "stun", true)
+self.attack_health = self.parent:GetTalentValue("modifier_templar_assassin_meld_6", "health", true)
+self.attack_break = self.parent:GetTalentValue("modifier_templar_assassin_meld_6", "break_duration", true)
+
+self.legendary_chance = self.parent:GetTalentValue("modifier_templar_assassin_meld_7", "chance", true)
+self.legendary_attacks = self.parent:GetTalentValue("modifier_templar_assassin_meld_7", "attacks", true)
+
+self.parent:AddRecordDestroyEvent(self)
+self.parent:AddAttackStartEvent_out(self)
+self.parent:AddAttackEvent_out(self)
+self.records = {}
+
+if not IsServer() then return end
+self:StartIntervalThink(1)
+end
 
 
+function modifier_templar_assassin_meld_custom_tracker:OnIntervalThink()
+if not IsServer() then return end
+
+if not self.ability:IsActivated() and not self.parent:HasModifier("modifier_templar_assassin_meld_custom_buff") then
+    self.ability:StartCd()
+end
+
+if not self.parent:IsAlive() then return end
+if not self.parent:HasTalent("modifier_templar_assassin_meld_4") then return end
+if self.parent:HasModifier("modifier_templar_assassin_meld_custom_agility_cd") then return end
+if self.parent:HasModifier("modifier_templar_assassin_meld_custom_agility") then return end
+
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_templar_assassin_meld_custom_agility", {})
+self:StartIntervalThink(0.2)
+end
 
 
+function modifier_templar_assassin_meld_custom_tracker:AttackStartEvent_out(params)
+if not IsServer() then return end
+if self.parent ~= params.attacker then return end
 
+local mod = self.parent:FindModifierByName("modifier_templar_assassin_meld_custom_buff")
+local proc = false
+local type = 0
+
+if mod and mod.attacked == false and not params.no_attack_cooldown then
+    proc = true
+    mod:ProcAttack(params)
+end
+
+local legendary_mod = self.parent:FindModifierByName("modifier_templar_assassin_meld_custom_legendary")
+
+if legendary_mod and legendary_mod.count and not proc then
+    legendary_mod.count = legendary_mod.count + 1
+    if legendary_mod.count >= self.legendary_attacks then
+        legendary_mod.count = 0
+        type = 1
+        proc = true
+    end
+end
+
+if not proc then return end
+
+local projectile =
+{
+    Target = params.target,
+    Source = self.parent,
+    Ability = self.ability,
+    EffectName = "particles/units/heroes/hero_templar_assassin/templar_assassin_meld_attack.vpcf",
+    iMoveSpeed = self.parent:GetProjectileSpeed()*1.1,
+    vSourceLoc = self.parent:GetAbsOrigin(),
+    bDodgeable = true,
+    bProvidesVision = false,
+}
+
+self.records[params.record] = type
+ProjectileManager:CreateTrackingProjectile( projectile )
+end
+
+
+function modifier_templar_assassin_meld_custom_tracker:AttackEvent_out(params)
+if not IsServer() then return end
+if self.parent ~= params.attacker then return end
+
+if self.parent:HasTalent("modifier_templar_assassin_meld_4") then
+    self.parent:AddNewModifier(self.parent, self.ability, "modifier_templar_assassin_meld_custom_agility_cd", {duration = self.agility_timer})
+
+    local mod = self.parent:FindModifierByName("modifier_templar_assassin_meld_custom_agility")
+    if mod and mod.activated == false then
+        mod.activated = true
+        mod:SetDuration(self.agility_duration, true)
+    end
+end
+
+if self.parent:HasTalent("modifier_templar_assassin_meld_6") then
+    self.parent:CdAbility(self.ability, self.attack_cd)
+end
+
+if not self.records[params.record] then return end
+
+local type = self.records[params.record]
+
+self.records[params.record] = nil
+
+local target = params.target
+if not target:IsUnit() then return end
+
+local damage = self.ability:GetSpecialValueFor("bonus_damage") + self.parent:GetTalentValue("modifier_templar_assassin_meld_4", "damage")*self.parent:GetAgility()/100
+
+target:EmitSound("Hero_TemplarAssassin.Meld.Attack")
+
+if self.parent:HasTalent("modifier_templar_assassin_meld_3") then
+    target:AddNewModifier(self.parent, self.ability, "modifier_templar_assassin_meld_custom_damage_reduce", {duration = self.damage_reduce_duration})
+end
+
+if self.parent:HasTalent("modifier_templar_assassin_meld_6") and type == 0 then
+    target:EmitSound("TA.Meld_stun")
+    target:AddNewModifier(self.parent, self.ability, "modifier_stunned", {duration = (1 - target:GetStatusResistance())*self.attack_stun})
+
+    if target:GetHealthPercent() <= self.attack_health then
+        target:AddNewModifier(self.parent, self.ability, "modifier_templar_assassin_meld_custom_break", {duration = (1 - target:GetStatusResistance())*self.attack_break})
+    end
+end
+
+target:AddNewModifier(self.parent, self.ability, "modifier_templar_assassin_meld_custom_debuff", { duration = self.duration})
+target:AddNewModifier(self.parent, self.ability, "modifier_templar_assassin_meld_custom_debuff_count", { duration = self.duration})
+SendOverheadEventMessage(nil, OVERHEAD_ALERT_CRITICAL, target, damage, nil)
+DoDamage({victim = target, attacker = self.parent, damage = damage, damage_type = DAMAGE_TYPE_PHYSICAL, ability = self.ability})
+end
+
+
+function modifier_templar_assassin_meld_custom_tracker:RecordDestroyEvent(params)
+if not IsServer() then return end
+if not self.records[params.record] then return end
+
+self.records[params.record] = nil
+end
 
 
 
 
 modifier_templar_assassin_meld_custom_debuff = class({})
-
+function modifier_templar_assassin_meld_custom_debuff:IsPurgable() return false end
 function modifier_templar_assassin_meld_custom_debuff:OnCreated(table)
 
-self.armor = self:GetAbility():GetSpecialValueFor("bonus_armor")
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
 
-if self:GetCaster():HasModifier("modifier_templar_assassin_meld_1") then 
-    self.armor = self.armor + self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_1", "armor")
-end 
-
-if self:GetCaster():HasModifier("modifier_templar_assassin_meld_custom_kills") and self:GetCaster():HasModifier("modifier_templar_assassin_meld_6") then 
-    self.armor = self.armor + self:GetCaster():GetUpgradeStack("modifier_templar_assassin_meld_custom_kills")*self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_6", "armor")
-end
+self.armor = self.ability:GetSpecialValueFor("bonus_armor") + self.caster:GetTalentValue("modifier_templar_assassin_meld_1", "armor")
 
 if not IsServer() then return end
 
-self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_templar_assassin/templar_assassin_meld_armor.vpcf", PATTACH_POINT_FOLLOW, self:GetCaster())
-ParticleManager:SetParticleControlEnt(self.particle, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
-self:AddParticle(self.particle, false, false, -1, false, false)
+self:SetStackCount(1)
 
+self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_templar_assassin/templar_assassin_meld_armor.vpcf", PATTACH_POINT_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt(self.particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true)
+self:AddParticle(self.particle, false, false, -1, false, false)
+end
+
+
+function modifier_templar_assassin_meld_custom_debuff:OnRefresh()
+if not IsServer() then return end
+self:IncrementStackCount()
 end
 
 
 function modifier_templar_assassin_meld_custom_debuff:DeclareFunctions()
-    local funcs = {
-        MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS
-    }
-    return funcs
-end
-
-function modifier_templar_assassin_meld_custom_debuff:GetModifierPhysicalArmorBonus()
-if self:GetCaster() and not self:GetCaster():IsNull() and not self:GetCaster():IsIllusion() then 
-    return self.armor
-else 
-    return 0
-end
-
-end
-
-function modifier_templar_assassin_meld_custom_debuff:GetAttributes()
-return MODIFIER_ATTRIBUTE_MULTIPLE
-end
-
-
-modifier_templar_assassin_meld_custom_speed = class({})
-function modifier_templar_assassin_meld_custom_speed:IsHidden() return false end
-function modifier_templar_assassin_meld_custom_speed:IsPurgable() return false end
-function modifier_templar_assassin_meld_custom_speed:GetTexture() return "buffs/meld_speed" end
-function modifier_templar_assassin_meld_custom_speed:DeclareFunctions()
-return
+return 
 {
-    MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
+    MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS
 }
 end
 
-function modifier_templar_assassin_meld_custom_speed:GetModifierAttackSpeedBonus_Constant()
-return self.speed
+function modifier_templar_assassin_meld_custom_debuff:GetModifierPhysicalArmorBonus()
+return self.armor*self:GetStackCount()
 end
 
 
-function modifier_templar_assassin_meld_custom_speed:OnCreated()
 
-self.speed = self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_3", "speed")
+
+modifier_templar_assassin_meld_custom_debuff_count = class({})
+function modifier_templar_assassin_meld_custom_debuff_count:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
+function modifier_templar_assassin_meld_custom_debuff_count:IsPurgable() return false end
+function modifier_templar_assassin_meld_custom_debuff_count:IsHidden() return true end
+function modifier_templar_assassin_meld_custom_debuff_count:OnDestroy()
+if not IsServer() then return end
+
+local mod = self:GetParent():FindModifierByName("modifier_templar_assassin_meld_custom_debuff")
+
+if mod then
+    mod:DecrementStackCount()
+    if mod:GetStackCount() <= 0 then
+        mod:Destroy()
+    end
 end
 
+end
 
 
 
@@ -498,196 +540,187 @@ function modifier_templar_assassin_meld_custom_quest:IsHidden() return true end
 function modifier_templar_assassin_meld_custom_quest:IsPurgable() return false end
 
 
-
-
-
-modifier_templar_assassin_meld_custom_kills = class({})
-function modifier_templar_assassin_meld_custom_kills:IsHidden() return not self:GetCaster():HasModifier("modifier_templar_assassin_meld_6") end
-function modifier_templar_assassin_meld_custom_kills:IsPurgable() return false end
-function modifier_templar_assassin_meld_custom_kills:RemoveOnDeath() return false end
-function modifier_templar_assassin_meld_custom_kills:GetTexture() return "buffs/meld_kills" end
-function modifier_templar_assassin_meld_custom_kills:OnCreated(table)
-
-self.max = self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_6", "max", true)
-self.armor = self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_6", "armor", true)
-
-if not IsServer() then return end
-self:SetStackCount(1)
-end
-
-function modifier_templar_assassin_meld_custom_kills:OnRefresh(table)
-if not IsServer() then return end
-if self:GetStackCount() >= self.max then return end
-
-self:IncrementStackCount()
-
-if self:GetCaster():HasModifier("modifier_templar_assassin_meld_6") and self:GetStackCount() >= self.max then 
-
-    local particle_peffect = ParticleManager:CreateParticle("particles/lc_odd_proc_.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-    ParticleManager:SetParticleControl(particle_peffect, 0, self:GetParent():GetAbsOrigin())
-    ParticleManager:SetParticleControl(particle_peffect, 2, self:GetParent():GetAbsOrigin())
-    ParticleManager:ReleaseParticleIndex(particle_peffect)
-    self:GetCaster():EmitSound("BS.Thirst_legendary_active")
-
-    self:GetAbility():ToggleAutoCast()
-end
-
-end
-
-
-function modifier_templar_assassin_meld_custom_kills:OnTooltip()
-if not self:GetCaster():HasModifier("modifier_templar_assassin_meld_6") then return 0 end
-return self:GetStackCount()*self.armor
-end
-
-function modifier_templar_assassin_meld_custom_kills:OnTooltip2()
-return self:GetStackCount()
-end
-
-
-function modifier_templar_assassin_meld_custom_kills:DeclareFunctions()
-return
-{
-    MODIFIER_PROPERTY_TOOLTIP,
-    MODIFIER_PROPERTY_TOOLTIP2
-}
-end
-
-
-modifier_templar_assassin_meld_custom_tracker = class({})
-function modifier_templar_assassin_meld_custom_tracker:IsHidden() return true end
-function modifier_templar_assassin_meld_custom_tracker:IsPurgable() return false end
-function modifier_templar_assassin_meld_custom_tracker:DeclareFunctions()
-return
-{
-    MODIFIER_EVENT_ON_DEATH,
-    MODIFIER_EVENT_ON_ATTACK_LANDED
-}
-end
-
-function modifier_templar_assassin_meld_custom_tracker:OnDeath(params)
-if not IsServer() then return end
-if not params.unit:IsValidKill(self:GetParent()) then return end
- 
-local attacker = params.attacker
-if attacker.owner then 
-    attacker = attacker.owner
-end
-
-if attacker ~= self:GetParent() then return end
-
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_templar_assassin_meld_custom_kills", {})
-end
-
-
-
-
-function modifier_templar_assassin_meld_custom_tracker:OnAttackLanded(params)
-if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_templar_assassin_meld_4") then return end
-if self:GetParent() ~= params.attacker then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end
-
-
-
-params.target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_templar_assassin_meld_custom_armor", {duration = self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_4", "duration")})
-
-self:GetCaster():CdAbility(self:GetAbility(), self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_4", "cd"))
-
-end
-
-
-
-
-
-modifier_templar_assassin_meld_custom_armor = class({})
-function modifier_templar_assassin_meld_custom_armor:IsHidden() return false end
-function modifier_templar_assassin_meld_custom_armor:IsPurgable() return false end
-function modifier_templar_assassin_meld_custom_armor:GetTexture() return "buffs/meld_armor" end
-function modifier_templar_assassin_meld_custom_armor:OnCreated(table)
-
-self.armor = self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_4", "armor")
-if not IsServer() then return end
-self.max = self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_4", "max")
-
-self:GetParent():EmitSound("TA.Meld_attack")
-self:SetStackCount(1)
-end
-
-function modifier_templar_assassin_meld_custom_armor:OnRefresh(table)
-if not IsServer() then return end
-if self:GetStackCount() >= self.max then return end
-self:IncrementStackCount()
-
-
-self:GetParent():EmitSound("TA.Meld_attack")
-
-if self:GetStackCount() >= self.max then
-
-    self.particle_peffect = ParticleManager:CreateParticle("particles/items3_fx/star_emblem.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())   
-    ParticleManager:SetParticleControl(self.particle_peffect, 0, self:GetParent():GetAbsOrigin())
-    self:AddParticle(self.particle_peffect, false, false, -1, false, true)
-end
-
-end
-
-function modifier_templar_assassin_meld_custom_armor:DeclareFunctions()
-return
-{
-    MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS
-}
-end
-
-function modifier_templar_assassin_meld_custom_armor:GetModifierPhysicalArmorBonus()
-return self:GetStackCount()*self.armor
-end
-
-
-
-
-
 modifier_templar_assassin_meld_custom_toggle = class({})
 function modifier_templar_assassin_meld_custom_toggle:IsHidden() return true end
 function modifier_templar_assassin_meld_custom_toggle:IsPurgable() return false end
 function modifier_templar_assassin_meld_custom_toggle:RemoveOnDeath() return false end
 
 
-
-
 modifier_templar_assassin_meld_custom_heal = class({})
 
 function modifier_templar_assassin_meld_custom_heal:IsPurgable() return false end
 function modifier_templar_assassin_meld_custom_heal:GetTexture() return "buffs/Crit_blood" end
-
-
 function modifier_templar_assassin_meld_custom_heal:OnCreated()
-self.heal = self:GetCaster():GetTalentValue("modifier_templar_assassin_meld_2", "heal")
-self.creeps = self:GetCaster():GetTalentValue("modifier_hoodwink_sharp_1", "creeps")
+
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.parent:AddDamageEvent_out(self)
+self.heal = self.parent:GetTalentValue("modifier_templar_assassin_meld_2", "heal")
+self.creeps = self.parent:GetTalentValue("modifier_templar_assassin_meld_2", "creeps")
 end 
 
-function modifier_templar_assassin_meld_custom_heal:DeclareFunctions()
-return
-{
-  MODIFIER_EVENT_ON_TAKEDAMAGE,
-}
-end
-
-
-
-function modifier_templar_assassin_meld_custom_heal:OnTakeDamage(params)
+function modifier_templar_assassin_meld_custom_heal:DamageEvent_out(params)
 if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end
-if not params.unit:IsCreep() and not params.unit:IsHero() then return end
-if self:GetParent() == params.unit then return end
-if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end
+if not self.parent:CheckLifesteal(params) then return end
 
 local heal = self.heal/100
 if params.unit:IsCreep() then 
- -- heal = heal / self.creeps
+  heal = heal / self.creeps
 end
 
 heal = heal*params.damage
+self.parent:GenericHeal(heal, self.ability, true, nil, "modifier_templar_assassin_meld_2")
+end
 
-self:GetParent():GenericHeal(heal, self:GetAbility(), true)
 
+
+modifier_templar_assassin_meld_custom_damage_reduce = class({})
+function modifier_templar_assassin_meld_custom_damage_reduce:IsHidden() return true end
+function modifier_templar_assassin_meld_custom_damage_reduce:IsPurgable() return false end
+function modifier_templar_assassin_meld_custom_damage_reduce:OnCreated()
+
+self.caster = self:GetCaster()
+
+self.heal_reduce = self.caster:GetTalentValue("modifier_templar_assassin_meld_3", "heal_reduce")
+self.damage_reduce = self.caster:GetTalentValue("modifier_templar_assassin_meld_3", "damage_reduce")
+end 
+
+function modifier_templar_assassin_meld_custom_damage_reduce:DeclareFunctions()
+return
+{
+    MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
+    MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
+    MODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET,
+    MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE,
+    MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE,
+}
+end
+
+function modifier_templar_assassin_meld_custom_damage_reduce:GetModifierLifestealRegenAmplify_Percentage() 
+return self.heal_reduce
+end
+
+function modifier_templar_assassin_meld_custom_damage_reduce:GetModifierHealAmplify_PercentageTarget() 
+return self.heal_reduce
+end
+
+function modifier_templar_assassin_meld_custom_damage_reduce:GetModifierHPRegenAmplify_Percentage()
+return self.heal_reduce
+end
+
+function modifier_templar_assassin_meld_custom_damage_reduce:GetModifierSpellAmplify_Percentage()
+return self.damage_reduce
+end
+
+function modifier_templar_assassin_meld_custom_damage_reduce:GetModifierDamageOutgoing_Percentage()
+return self.damage_reduce
+end
+
+
+modifier_templar_assassin_meld_custom_agility = class({})
+function modifier_templar_assassin_meld_custom_agility:IsHidden() return false end
+function modifier_templar_assassin_meld_custom_agility:IsPurgable() return false end
+function modifier_templar_assassin_meld_custom_agility:GetTexture() return "buffs/Blade_dance_speed" end
+function modifier_templar_assassin_meld_custom_agility:OnCreated()
+self.parent = self:GetParent()
+self.max = self.parent:GetTalentValue("modifier_templar_assassin_meld_4", "max")
+self.agility = self.parent:GetTalentValue("modifier_templar_assassin_meld_4", "agility")/100
+self.activated = false
+
+if not IsServer() then return end
+
+self.parent:GenericParticle("particles/units/heroes/hero_juggernaut/jugg_agility_boost.vpcf", self)
+self:SetStackCount(1)
+self:StartIntervalThink(1)
+end
+
+
+function modifier_templar_assassin_meld_custom_agility:OnIntervalThink()
+if not IsServer() then return end
+if self:GetStackCount() >= self.max then return end
+if self.parent:HasModifier("modifier_templar_assassin_meld_custom_agility_cd") then return end
+if self.activated == true then return end
+
+self:IncrementStackCount()
+end
+
+
+function modifier_templar_assassin_meld_custom_agility:OnStackCountChanged(iStackCount)
+if not IsServer() then return end
+self.PercentAgi = self:GetStackCount()*self.agility
+end
+
+function modifier_templar_assassin_meld_custom_agility:OnDestroy()
+if not IsServer() then return end
+self.parent:PercentRefresh()
+end
+
+function modifier_templar_assassin_meld_custom_agility:DeclareFunctions()
+return
+{
+    MODIFIER_PROPERTY_TOOLTIP
+}
+end
+
+function modifier_templar_assassin_meld_custom_agility:OnTooltip()
+return self:GetStackCount()*self.agility*100
+end
+
+
+modifier_templar_assassin_meld_custom_agility_cd = class({})
+function modifier_templar_assassin_meld_custom_agility_cd:IsHidden() return true end
+function modifier_templar_assassin_meld_custom_agility_cd:IsPurgable() return false end
+
+
+modifier_templar_assassin_meld_custom_range = class({})
+function modifier_templar_assassin_meld_custom_range:IsHidden() return true end
+function modifier_templar_assassin_meld_custom_range:IsPurgable() return false end
+
+
+
+
+
+modifier_templar_assassin_meld_custom_break = class({})
+function modifier_templar_assassin_meld_custom_break:IsHidden() return true end
+function modifier_templar_assassin_meld_custom_break:IsPurgable() return false end
+function modifier_templar_assassin_meld_custom_break:CheckState() return {[MODIFIER_STATE_PASSIVES_DISABLED] = true} end
+function modifier_templar_assassin_meld_custom_break:GetEffectName() return "particles/items3_fx/silver_edge.vpcf" end
+
+
+function modifier_templar_assassin_meld_custom_break:OnCreated(table)
+self.parent = self:GetParent()
+if not IsServer() then return end
+self.parent:EmitSound("DOTA_Item.SilverEdge.Target")
+self.parent:GenericParticle("particles/generic_gameplay/generic_break.vpcf", self, true)
+end
+
+
+
+modifier_templar_assassin_meld_custom_legendary = class({})
+function modifier_templar_assassin_meld_custom_legendary:IsHidden() return true end
+function modifier_templar_assassin_meld_custom_legendary:IsPurgable() return false end
+function modifier_templar_assassin_meld_custom_legendary:GetEffectName() return "particles/templar_assassin/meld_buff.vpcf" end
+function modifier_templar_assassin_meld_custom_legendary:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.count = 0
+self.max_time = self.parent:GetTalentValue("modifier_templar_assassin_meld_7", "duration_max", true)
+
+if not IsServer() then return end
+self:OnIntervalThink()
+self:StartIntervalThink(0.1)
+end
+
+
+function modifier_templar_assassin_meld_custom_legendary:OnIntervalThink()
+if not IsServer() then return end
+self.parent:UpdateUIshort({max_time = self.max_time, time = self:GetRemainingTime(), stack = self:GetRemainingTime(), active = 1, priority = 1, use_zero = 1, style = "TemplarMeld"})
+end
+
+function modifier_templar_assassin_meld_custom_legendary:OnDestroy()
+if not IsServer() then return end
+
+self.parent:UpdateUIshort({hide = 1, style = "TemplarMeld"})
 end

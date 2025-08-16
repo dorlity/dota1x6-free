@@ -6,7 +6,7 @@ npc_cone_armor = class({})
 function npc_cone_armor:OnSpellStart()
 if not IsServer() then return end
 
-self:GetCaster():EmitSound("Hero_Pangolier.TailThump.Shield")
+self:GetCaster():EmitSound("UI.Generic_shield")
 self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_cone_armor", {duration = self:GetSpecialValueFor("duration")})
 self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_cone_cd", {duration = self:GetCooldownTimeRemaining()})
 end

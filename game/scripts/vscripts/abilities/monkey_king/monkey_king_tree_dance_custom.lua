@@ -9,46 +9,39 @@ monkey_king_tree_dance_custom = class({})
 
 
 
-
-
 function monkey_king_tree_dance_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-PrecacheResource( "particle", 'particles/units/heroes/hero_monkey_king/monkey_king_jump_trail.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf', context )
+PrecacheResource( "particle", "particles/units/heroes/hero_monkey_king/monkey_king_jump_trail.vpcf", context )
+PrecacheResource( "particle", "particles/status_fx/status_effect_shredder_whirl.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_egg.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_streaks.vpcf", context )
 
 end
 
 function monkey_king_tree_dance_custom:GetAbilityTextureName()
-    if self:GetCaster():HasModifier("modifier_monkey_king_arcana_custom_v1") then
-        return "monkey_king/great_sages_reckoning/monkey_king_tree_jump"
-    end
-    if self:GetCaster():HasModifier("modifier_monkey_king_arcana_custom_v2") then
-        return "monkey_king/great_sages_reckoning/monkey_king_tree_jump"
-    end
-    if self:GetCaster():HasModifier("modifier_monkey_king_arcana_custom_v3") then
-        return "monkey_king/great_sages_reckoning/monkey_king_tree_jump"
-    end
-    if self:GetCaster():HasModifier("modifier_monkey_king_arcana_custom_v4") then
-        return "monkey_king/great_sages_reckoning/monkey_king_tree_jump"
-    end
-    return "monkey_king_tree_dance"
+if self:GetCaster():HasModifier("modifier_monkey_king_arcana_custom_v1") then
+    return "monkey_king/great_sages_reckoning/monkey_king_tree_jump"
+end
+if self:GetCaster():HasModifier("modifier_monkey_king_arcana_custom_v2") then
+    return "monkey_king/great_sages_reckoning/monkey_king_tree_jump"
+end
+if self:GetCaster():HasModifier("modifier_monkey_king_arcana_custom_v3") then
+    return "monkey_king/great_sages_reckoning/monkey_king_tree_jump"
+end
+if self:GetCaster():HasModifier("modifier_monkey_king_arcana_custom_v4") then
+    return "monkey_king/great_sages_reckoning/monkey_king_tree_jump"
+end
+return "monkey_king_tree_dance"
+
 end
 
-
-function monkey_king_tree_dance_custom:GetCastRange(location, target)
-
-local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_monkey_king_tree_3") then
-  bonus = self:GetCaster():GetTalentValue("modifier_monkey_king_tree_3", "range")
-end
-return (self:GetSpecialValueFor( "perched_jump_distance" ) + bonus)
-end
 
 
 
 function monkey_king_tree_dance_custom:GetIntrinsicModifierName()
-	return "modifier_monkey_king_tree_dance_custom_cooldown"
+return "modifier_monkey_king_tree_dance_custom_cooldown"
 end
 
 
@@ -57,56 +50,57 @@ end
 function monkey_king_tree_dance_custom:GetCooldown(iLevel)
 
 local bonus = 0
-if self:GetCaster():HasModifier("modifier_monkey_king_tree_3") then 
-  bonus = self:GetCaster():GetTalentValue("modifier_monkey_king_tree_3", "cd")
+if self:GetCaster():HasTalent("modifier_monkey_king_tree_1") then 
+  bonus = self:GetCaster():GetTalentValue("modifier_monkey_king_tree_1", "cd")
 end
-
- return self.BaseClass.GetCooldown(self, iLevel) + bonus
- 
+return self.BaseClass.GetCooldown(self, iLevel) + bonus
 end
-
 
 
 
 function monkey_king_tree_dance_custom:OnSpellStart()
 if not IsServer() then return end
 
+local caster = self:GetCaster()
+
 local tree = self:GetCursorTarget()
-if not self:GetCaster():HasModifier("modifier_monkey_king_tree_dance_custom") then 
-	self.ability = self:GetCaster():FindAbilityByName("monkey_king_primal_spring_custom")
+if not caster:HasModifier("modifier_monkey_king_tree_dance_custom") then 
+	self.ability = caster:FindAbilityByName("monkey_king_primal_spring_custom")
 	self.ability:SetActivated(true)
 end
 
 local speed = self:GetSpecialValueFor( "leap_speed" ) + 200
 local perched_spot_height = 256
-local distance = (tree:GetOrigin()-self:GetCaster():GetOrigin()):Length2D()
+local distance = (tree:GetOrigin()-caster:GetOrigin()):Length2D()
 local duration = distance / speed
 
 local perch = 0
 
-if self:GetCaster():HasModifier("modifier_monkey_king_tree_dance_custom") then
+if caster:HasModifier("modifier_monkey_king_tree_dance_custom") then
 	perch = 1
 end
 
-local modifier = self:GetCaster():AddNewModifier( self:GetCaster(), self, "modifier_monkey_king_tree_dance_custom_jump", { target_x = tree:GetOrigin().x, target_y = tree:GetOrigin().y, distance = distance, speed = speed, height = perched_spot_height, fix_end = false, fix_height = false, isStun = true, activity = ACT_DOTA_MK_TREE_SOAR, start_offset = perched_spot_height*perch, end_offset = perched_spot_height } )
+local modifier = caster:AddNewModifier( caster, self, "modifier_monkey_king_tree_dance_custom_jump", { target_x = tree:GetOrigin().x, target_y = tree:GetOrigin().y, distance = distance, speed = speed, height = perched_spot_height, fix_end = false, fix_height = false, isStun = true, activity = ACT_DOTA_MK_TREE_SOAR, start_offset = perched_spot_height*perch, end_offset = perched_spot_height } )
 
 if modifier then
 	modifier:SetEndCallback(function()
 		if tree and not tree:IsNull() then 
-			self:GetCaster():AddNewModifier( self:GetCaster(), self, "modifier_monkey_king_tree_dance_custom", { tree = tree:entindex() } )
+			caster:AddNewModifier( caster, self, "modifier_monkey_king_tree_dance_custom", { tree = tree:entindex() } )
 		else 
-			FindClearSpaceForUnit(self:GetCaster(), self:GetCaster():GetAbsOrigin(), false)
+			FindClearSpaceForUnit(caster, caster:GetAbsOrigin(), false)
 		end
 	end)
 
-	local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_monkey_king/monkey_king_jump_trail.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
+	local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_monkey_king/monkey_king_jump_trail.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster )
 	modifier:AddParticle( particle, false, false, -1, false, false )
-	self:GetCaster():EmitSound("Hero_MonkeyKing.TreeJump.Cast")
+	caster:EmitSound("Hero_MonkeyKing.TreeJump.Cast")
 end
 
 self:StartCooldown(duration + self:GetCooldown(self:GetLevel()))
 
 end
+
+
 
 modifier_monkey_king_tree_dance_custom_cooldown = class({})
 
@@ -114,105 +108,110 @@ function modifier_monkey_king_tree_dance_custom_cooldown:IsHidden() return true 
 function modifier_monkey_king_tree_dance_custom_cooldown:IsPurgable() return false end
 function modifier_monkey_king_tree_dance_custom_cooldown:RemoveOnDeath() return false end
 
-function modifier_monkey_king_tree_dance_custom_cooldown:DeclareFunctions()
-	local funcs = {
-		MODIFIER_EVENT_ON_TAKEDAMAGE,
-	}
-	return funcs
-end
-
-function modifier_monkey_king_tree_dance_custom_cooldown:OnTakeDamage( params )
+function modifier_monkey_king_tree_dance_custom_cooldown:OnCreated()
 if not IsServer() then return end
-if params.unit~=self:GetParent() then return end
+self.parent = self:GetParent()
+
+if not self.parent:IsRealHero() or self.parent:IsTempestDouble() then return end
+
+self.ability = self:GetAbility()
+
+self.cd = self.ability:GetSpecialValueFor("jump_damage_cooldown")
+self.cd_reduce = self.parent:GetTalentValue("modifier_monkey_king_tree_5", "cd", true)
+
+self.parent:AddDamageEvent_inc(self)
+end 
+
+function modifier_monkey_king_tree_dance_custom_cooldown:DamageEvent_inc( params )
+if not IsServer() then return end
+if params.unit~=self.parent then return end
 if params.unit:HasModifier( "modifier_monkey_king_tree_dance_custom" ) then return end
 if not params.attacker then return end
 if not params.attacker:IsHero() and not params.attacker:IsBuilding() then return end
 if params.damage < 3 then return end
 
-local cooldown = self:GetAbility():GetSpecialValueFor("jump_damage_cooldown")
-if self:GetParent():HasModifier("modifier_monkey_king_tree_5") then 
-	cooldown = cooldown + self:GetCaster():GetTalentValue("modifier_monkey_king_tree_5", "cd")
+local cooldown = self.cd
+if self:GetParent():HasTalent("modifier_monkey_king_tree_5") then 
+	cooldown = cooldown + self.cd_reduce
 end
 
-self:GetAbility():StartCooldown( cooldown )
+self.ability:StartCooldown( cooldown )
 end
+
+
+
+
+
 
 modifier_monkey_king_tree_dance_custom = class({})
 
-function modifier_monkey_king_tree_dance_custom:IsHidden()
-	return true
-end
-
-function modifier_monkey_king_tree_dance_custom:IsPurgable()
-	return false
-end
+function modifier_monkey_king_tree_dance_custom:IsHidden() return true end
+function modifier_monkey_king_tree_dance_custom:IsPurgable() return false end
 
 function modifier_monkey_king_tree_dance_custom:OnCreated( kv )
-	self.perched_spot_height = 256
-	self.perched_day_vision = self:GetAbility():GetSpecialValueFor( "perched_day_vision" )
-	self.perched_night_vision = self:GetAbility():GetSpecialValueFor( "perched_night_vision" )
-	self.unperched_stunned_duration = self:GetAbility():GetSpecialValueFor( "unperched_stunned_duration" )
+self.parent = self:GetParent()
 
-	if self:GetCaster():HasModifier("modifier_monkey_king_tree_5") then 
-		self.perched_night_vision = self.perched_night_vision + self:GetCaster():GetTalentValue("modifier_monkey_king_tree_5", "vision")
-		self.perched_day_vision = self.perched_day_vision + self:GetCaster():GetTalentValue("modifier_monkey_king_tree_5", "vision")
-	end 
+self.perched_spot_height = 256
+self.perched_day_vision = self:GetAbility():GetSpecialValueFor( "perched_day_vision" )
+self.perched_night_vision = self:GetAbility():GetSpecialValueFor( "perched_night_vision" )
+self.unperched_stunned_duration = self:GetAbility():GetSpecialValueFor( "unperched_stunned_duration" )
 
-	if not IsServer() then return end
+if not IsServer() then return end
 
-	if self:GetParent():HasModifier("modifier_monkey_king_tree_5") then 
-		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_monkey_king_tree_dance_shield", {})
-	end
+self.parent:AddOrderEvent(self)
 
-	self.ability = self:GetParent():FindAbilityByName("monkey_king_primal_spring_custom")
-	self.ability:SetActivated(true)
+self.ability = self.parent:FindAbilityByName("monkey_king_primal_spring_custom")
+self.ability:SetActivated(true)
 
-	self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_monkey_king_tree_dance_hidden", {})
+self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_monkey_king_tree_dance_hidden", {})
 
-	self.tree = EntIndexToHScript( kv.tree )
-	self.origin = self.tree:GetOrigin()
+self.tree = EntIndexToHScript( kv.tree )
+self.origin = self.tree:GetOrigin()
 
-	if not self:ApplyHorizontalMotionController() then
-		self.interrupted = true
-		self:Destroy()
-	end
-
-	if not self:ApplyVerticalMotionController() then
-		self.interrupted = true
-		self:Destroy()
-	end
-
-	self:StartIntervalThink( 0.1 )
-	self:OnIntervalThink()
-
-	self:GetParent():EmitSound("Hero_MonkeyKing.TreeJump.Tree")
+if not self:ApplyHorizontalMotionController() then
+	self.interrupted = true
+	self:Destroy()
 end
+
+if not self:ApplyVerticalMotionController() then
+	self.interrupted = true
+	self:Destroy()
+end
+
+self:StartIntervalThink( 0.1 )
+self:OnIntervalThink()
+
+self.parent:EmitSound("Hero_MonkeyKing.TreeJump.Tree")
+end
+
+
 
 function modifier_monkey_king_tree_dance_custom:OnDestroy()
 if not IsServer() then return end
 
-local pos = self:GetParent():GetOrigin()
-self.ability:SetActivated(self.ability:CanBeCast())
+local pos = self.parent:GetOrigin()
 
-self:GetParent():RemoveModifierByName("modifier_monkey_king_tree_dance_hidden")
-self:GetParent():RemoveHorizontalMotionController( self )
-self:GetParent():RemoveVerticalMotionController( self )
+if self.ability and not self.ability:IsNull() then
+	self.ability:SetActivated(self.ability:CanBeCast())
+end	
+
+self.parent:RemoveModifierByName("modifier_monkey_king_tree_dance_hidden")
+self.parent:RemoveHorizontalMotionController( self )
+self.parent:RemoveVerticalMotionController( self )
 
 if not self.unperched then
-	self:GetParent():SetOrigin( pos )
+	self.parent:SetOrigin( pos )
 end
 
 end
 
 function modifier_monkey_king_tree_dance_custom:DeclareFunctions()
-	local funcs = {
-		MODIFIER_EVENT_ON_ORDER,
-		MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
-		MODIFIER_PROPERTY_FIXED_DAY_VISION,
-		MODIFIER_PROPERTY_FIXED_NIGHT_VISION,
-	}
-
-	return funcs
+return 
+{
+	MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
+	MODIFIER_PROPERTY_FIXED_DAY_VISION,
+	MODIFIER_PROPERTY_FIXED_NIGHT_VISION,
+}
 end
 
 
@@ -222,47 +221,46 @@ function modifier_monkey_king_tree_dance_custom:GetActivityTranslationModifiers(
     return "perch"
 end
 
-function modifier_monkey_king_tree_dance_custom:OnOrder( params )
-	if params.unit ~= self:GetParent() then return end
+function modifier_monkey_king_tree_dance_custom:OrderEvent( params )
 
-	if params.order_type==DOTA_UNIT_ORDER_MOVE_TO_POSITION or params.order_type==DOTA_UNIT_ORDER_MOVE_TO_TARGET or params.order_type==DOTA_UNIT_ORDER_ATTACK_TARGET then
-		
-		if not self:GetAbility():IsCooldownReady() then
-			local order = {
-				UnitIndex = self:GetParent():entindex(),
-				OrderType = DOTA_UNIT_ORDER_STOP,
-			}
-			ExecuteOrderFromTable( order )
-			return
-		end
-
-		local pos = params.new_pos
-
-		if params.target then pos = params.target:GetOrigin() end
-
-		local direction = (pos-self:GetParent():GetOrigin())
-		direction.z = 0
-		direction = direction:Normalized()
-
-		self:GetParent():SetForwardVector( direction )
-
-		local modifier = self:GetParent():AddNewModifier( self:GetParent(), self:GetAbility(), "modifier_monkey_king_tree_dance_custom_jump", { dir_x = direction.x, activity = ACT_DOTA_MK_STRIKE_END, dir_y = direction.y, distance = 150, speed = 550, height = 1, start_offset = self.perched_spot_height, fix_end = false, isForward = true } )
-		
-		local parent = self:GetParent()
-
-		if modifier then
-			modifier:SetEndCallback(function()
-				FindClearSpaceForUnit( parent, parent:GetOrigin(), true )
-			end)
-
-			local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_monkey_king/monkey_king_jump_trail.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-			modifier:AddParticle( particle, false, false, -1, false, false )
-		end
-
-		self:GetAbility():UseResources(false, false, false, true)
-
-		self:Destroy()
+if params.order_type==DOTA_UNIT_ORDER_MOVE_TO_POSITION or params.order_type==DOTA_UNIT_ORDER_MOVE_TO_TARGET or params.order_type==DOTA_UNIT_ORDER_ATTACK_TARGET then
+	
+	if not self:GetAbility():IsCooldownReady() then
+		local order = {
+			UnitIndex = self.parent:entindex(),
+			OrderType = DOTA_UNIT_ORDER_STOP,
+		}
+		ExecuteOrderFromTable( order )
+		return
 	end
+
+	local pos = params.pos
+
+	if params.target then pos = params.target:GetOrigin() end
+
+	local direction = (pos-self.parent:GetOrigin())
+	direction.z = 0
+	direction = direction:Normalized()
+
+	self.parent:SetForwardVector( direction )
+
+	local modifier = self.parent:AddNewModifier( self.parent, self:GetAbility(), "modifier_monkey_king_tree_dance_custom_jump", { dir_x = direction.x, activity = ACT_DOTA_MK_STRIKE_END, dir_y = direction.y, distance = 150, speed = 550, height = 1, start_offset = self.perched_spot_height, fix_end = false, isForward = true } )
+	
+	local parent = self.parent
+
+	if modifier then
+		modifier:SetEndCallback(function()
+			FindClearSpaceForUnit( parent, parent:GetOrigin(), true )
+		end)
+
+		local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_monkey_king/monkey_king_jump_trail.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
+		modifier:AddParticle( particle, false, false, -1, false, false )
+	end
+
+	self:GetAbility():UseResources(false, false, false, true)
+	self:Destroy()
+end
+
 end
 
 function modifier_monkey_king_tree_dance_custom:GetFixedDayVision()
@@ -278,62 +276,66 @@ function modifier_monkey_king_tree_dance_custom:CheckState()
 	{
 		[MODIFIER_STATE_DISARMED] = true,
 		[MODIFIER_STATE_FORCED_FLYING_VISION] = true,
-		--[MODIFIER_STATE_FLYING] = true,
 	}
 	return state
 end
 
 function modifier_monkey_king_tree_dance_custom:OnIntervalThink()
-	if not IsServer() then return end
-	if not self.tree.IsStanding then
-		if self.tree:IsNull() then
-			self:Destroy()
-		end
-		return
+if not IsServer() then return end
+
+if self.parent:HasTalent("modifier_monkey_king_tree_5") and not self.parent:HasModifier("modifier_monkey_king_tree_dance_shield") then 
+	self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_monkey_king_tree_dance_shield", {})
+end
+
+if not self.tree.IsStanding then
+	if self.tree:IsNull() then
+		self:Destroy()
 	end
-	if self.tree:IsStanding() then return end
-	local mod = self:GetParent():AddNewModifier( self:GetParent(), self:GetAbility(), "modifier_stunned", { duration = self.unperched_stunned_duration } )
-	self.unperched = true
-	self:Destroy()
+	return
+end
+if self.tree:IsStanding() then return end
+local mod = self.parent:AddNewModifier( self.parent, self:GetAbility(), "modifier_stunned", { duration = self.unperched_stunned_duration } )
+self.unperched = true
+self:Destroy()
 end
 
 function modifier_monkey_king_tree_dance_custom:UpdateHorizontalMotion( me, dt )
-	me:SetOrigin( self.origin )
+me:SetOrigin( self.origin )
 end
 
 function modifier_monkey_king_tree_dance_custom:UpdateVerticalMotion( me, dt )
-	if not self.tree.IsStanding then
-		if self.tree:IsNull() then
-			self:Destroy()
-		end
-		return
+if not self.tree.IsStanding then
+	if self.tree:IsNull() then
+		self:Destroy()
 	end
-	local pos = self.tree:GetOrigin()
-	pos.z = pos.z + self.perched_spot_height
-	me:SetOrigin( pos )
+	return
 end
 
+local pos = self.tree:GetOrigin()
+pos.z = pos.z + self.perched_spot_height
+me:SetOrigin( pos )
+end
+
+
 function modifier_monkey_king_tree_dance_custom:OnVerticalMotionInterrupted()
-	self:Destroy()
+self:Destroy()
 end
 
 function modifier_monkey_king_tree_dance_custom:OnHorizontalMotionInterrupted()
-	self:Destroy()
+self:Destroy()
 end
-
-
 
 
 function modifier_monkey_king_tree_dance_custom:GetAuraRadius()
-  return 250
+return 250
 end
 
 function modifier_monkey_king_tree_dance_custom:GetAuraSearchTeam()
-  return DOTA_UNIT_TARGET_TEAM_ENEMY
+return DOTA_UNIT_TARGET_TEAM_ENEMY
 end
 
 function modifier_monkey_king_tree_dance_custom:GetAuraSearchType() 
-  return DOTA_UNIT_TARGET_HERO
+return DOTA_UNIT_TARGET_HERO
 end
 
 
@@ -343,11 +345,11 @@ end
 
 
 function modifier_monkey_king_tree_dance_custom:GetModifierAura()
-  return "modifier_monkey_king_tree_dance_vision"
+return "modifier_monkey_king_tree_dance_vision"
 end
 
 function modifier_monkey_king_tree_dance_custom:IsAura()
-  return self:GetParent():IsOnDuel()
+return self.parent:IsOnDuel()
 end
 
 
@@ -379,10 +381,10 @@ function modifier_monkey_king_tree_dance_custom_jump:GetAttributes()
 end
 
 function modifier_monkey_king_tree_dance_custom_jump:OnCreated( kv )
-	if not IsServer() then return end
-	self.interrupted = false
-	self:SetJumpParameters( kv )
-	self:Jump()
+if not IsServer() then return end
+self.interrupted = false
+self:SetJumpParameters( kv )
+self:Jump()
 end
 
 function modifier_monkey_king_tree_dance_custom_jump:OnRefresh( kv )
@@ -390,20 +392,20 @@ function modifier_monkey_king_tree_dance_custom_jump:OnRefresh( kv )
 end
 
 function modifier_monkey_king_tree_dance_custom_jump:OnDestroy()
-	if not IsServer() then return end
+if not IsServer() then return end
 
-	local pos = self:GetParent():GetOrigin()
+local pos = self:GetParent():GetOrigin()
 
-	self:GetParent():RemoveHorizontalMotionController( self )
-	self:GetParent():RemoveVerticalMotionController( self )
+self:GetParent():RemoveHorizontalMotionController( self )
+self:GetParent():RemoveVerticalMotionController( self )
 
-	if self.end_offset~=0 then
-		self:GetParent():SetOrigin( pos )
-	end
+if self.end_offset~=0 then
+	self:GetParent():SetOrigin( pos )
+end
 
-	if self.endCallback then
-		self.endCallback( self.interrupted )
-	end
+if self.endCallback then
+	self.endCallback( self.interrupted )
+end
 end
 
 function modifier_monkey_king_tree_dance_custom_jump:DeclareFunctions()
@@ -417,10 +419,6 @@ function modifier_monkey_king_tree_dance_custom_jump:DeclareFunctions()
 
 	return funcs
 end
-
-
-
-
 
 
 function modifier_monkey_king_tree_dance_custom_jump:GetModifierDisableTurning()
@@ -622,17 +620,17 @@ modifier_monkey_king_tree_dance_shield = class({})
 function modifier_monkey_king_tree_dance_shield:IsHidden() return false end
 function modifier_monkey_king_tree_dance_shield:IsPurgable() return false end
 function modifier_monkey_king_tree_dance_shield:GetStatusEffectName() return "particles/status_fx/status_effect_shredder_whirl.vpcf" end
-function modifier_monkey_king_tree_dance_shield:StatusEffectPriority() return 111111 end
+function modifier_monkey_king_tree_dance_shield:StatusEffectPriority() return MODIFIER_PRIORITY_HIGH  end
 function modifier_monkey_king_tree_dance_shield:GetTexture() return "buffs/leap_shield" end
 function modifier_monkey_king_tree_dance_shield:OnCreated(table)
+self.parent = self:GetParent()
+self.shield_talent = "modifier_monkey_king_tree_5"
 
 self.shield_max = self:GetCaster():GetTalentValue("modifier_monkey_king_tree_5", "shield")/100
 self.shield_duration = self:GetCaster():GetTalentValue("modifier_monkey_king_tree_5", "shield_duration")
+self.status = self:GetCaster():GetTalentValue("modifier_monkey_king_tree_5", "status")
 
 self.max_shield = self:GetParent():GetMaxHealth()*self.shield_max
-
-
-self.regen = self:GetCaster():GetTalentValue("modifier_monkey_king_tree_5", "regen")
 if not IsServer() then return end
 
 self.RemoveForDuel = true
@@ -640,11 +638,10 @@ self.RemoveForDuel = true
 self.particle_1 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff.vpcf"
 self.particle_2 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_egg.vpcf"
 self.particle_3 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_streaks.vpcf"
-self.sound = "Hero_Pangolier.TailThump.Shield"
+self.sound = "UI.Generic_shield"
 self.buff_particles = {}
 self.part = true
 self:GetCaster():EmitSound( self.sound)
-
 
 self.buff_particles[1] = ParticleManager:CreateParticle(self.particle_1, PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
 ParticleManager:SetParticleControlEnt(self.buff_particles[1], 1, self:GetCaster(), PATTACH_ABSORIGIN_FOLLOW, nil, Vector(0,0,0), false) 
@@ -659,19 +656,11 @@ self.buff_particles[3] = ParticleManager:CreateParticle(self.particle_3, PATTACH
 ParticleManager:SetParticleControlEnt(self.buff_particles[3], 1, self:GetCaster(), PATTACH_ABSORIGIN_FOLLOW, nil, Vector(0,0,0), false) 
 self:AddParticle(self.buff_particles[3], false, false, -1, true, false)
 
-
 self.sound = true
-
 self.interval = 0.1
-
-
 self:OnIntervalThink()
 self:StartIntervalThink(self.interval)
-
 end
-
-
-
 
 
 function modifier_monkey_king_tree_dance_shield:OnIntervalThink()
@@ -679,9 +668,7 @@ if not IsServer() then return end
 if not self:GetParent():HasModifier("modifier_monkey_king_tree_dance_custom") and not self:GetParent():HasModifier("modifier_monkey_king_tree_dance_custom_jump") then return end
 
 local shield_interval = (self.max_shield/self.shield_duration)*self.interval
-
 self:SetStackCount(math.min(self.max_shield, self:GetStackCount() + shield_interval))
-
 end 
 
 
@@ -699,32 +686,30 @@ end
 if not params then return end
 if not IsServer() then return end
 
-if self:GetStackCount() > params.damage then
-    self:SetStackCount(self:GetStackCount() - params.damage)
-    local i = params.damage
-    return -i
-else
-    
-    local i = self:GetStackCount()
-    self:SetStackCount(0)
-    self:Destroy()
-    return -i
+local damage = math.min(params.damage, self:GetStackCount())
+self.parent:AddShieldInfo({shield_mod = self, healing = damage, healing_type = "shield"})
+
+self:SetStackCount(self:GetStackCount() - damage)
+if self:GetStackCount() <= 0 then
+  self:Destroy()
 end
 
+return -damage
 end
+
 
 
 function modifier_monkey_king_tree_dance_shield:DeclareFunctions()
 return
 {
-    MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
-		MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE
+  MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
+  MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
 }
 end
 
 
-function modifier_monkey_king_tree_dance_shield:GetModifierHealthRegenPercentage()
---return self.regen
+function modifier_monkey_king_tree_dance_shield:GetModifierStatusResistanceStacking()
+return self.status
 end
 
 

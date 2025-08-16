@@ -11,15 +11,13 @@ modifier_abbadon_attack = class ({})
 function modifier_abbadon_attack:IsHidden() return true end
 
 
-function modifier_abbadon_attack:DeclareFunctions()
-return
-{
-	MODIFIER_EVENT_ON_DEATH
-}
+function modifier_abbadon_attack:OnCreated()
+self.parent = self:GetParent()
+self.parent:AddDeathEvent(self)
 end
 
 
-function modifier_abbadon_attack:OnDeath(params)
+function modifier_abbadon_attack:DeathEvent(params)
 if not IsServer() then end 
 if params.unit ~= self:GetParent() then return end
 if not params.attacker then return end
@@ -41,7 +39,7 @@ self.damage = self:GetAbility():GetSpecialValueFor("damage")
 
 if not IsServer() then return end
 self:SetStackCount(1)
-self.particle_peffect = ParticleManager:CreateParticle("particles/items3_fx/star_emblem.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())	
+self.particle_peffect = ParticleManager:CreateParticle("particles/general/generic_armor_reduction.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())	
 ParticleManager:SetParticleControl(self.particle_peffect, 0, self:GetParent():GetAbsOrigin())
 self:AddParticle(self.particle_peffect, false, false, -1, false, true)
 

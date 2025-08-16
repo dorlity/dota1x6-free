@@ -2,50 +2,50 @@ LinkLuaModifier( "modifier_leshrac_diabolic_edict_custom", "abilities/leshrac/le
 LinkLuaModifier( "modifier_leshrac_diabolic_edict_custom_speed", "abilities/leshrac/leshrac_diabolic_edict_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_leshrac_diabolic_edict_custom_legendary", "abilities/leshrac/leshrac_diabolic_edict_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_leshrac_diabolic_edict_custom_legendary_damage", "abilities/leshrac/leshrac_diabolic_edict_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_leshrac_diabolic_edict_custom_proc", "abilities/leshrac/leshrac_diabolic_edict_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_leshrac_diabolic_edict_custom_tracker", "abilities/leshrac/leshrac_diabolic_edict_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_leshrac_diabolic_edict_custom_shield", "abilities/leshrac/leshrac_diabolic_edict_custom", LUA_MODIFIER_MOTION_NONE )
 
 leshrac_diabolic_edict_custom = class({})
 
 
-leshrac_diabolic_edict_custom.cd_inc = {-2, -4, -6}
-
-leshrac_diabolic_edict_custom.mana_steal = {0.15, 0.2, 0.25}
-
-leshrac_diabolic_edict_custom.count_inc = {8, 12, 16}
-
-leshrac_diabolic_edict_custom.heal_amount = 0.3
-leshrac_diabolic_edict_custom.heal_amount_creeps = 0.33
-leshrac_diabolic_edict_custom.heal_health = 30
-
-
-
-leshrac_diabolic_edict_custom.distance_max = 500
-leshrac_diabolic_edict_custom.distance_duration = 3
-leshrac_diabolic_edict_custom.distance_count = 5
-leshrac_diabolic_edict_custom.distance_damage = {4, 6}
-leshrac_diabolic_edict_custom.distance_incoming = {-4, -6}
-
 
 function leshrac_diabolic_edict_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
+PrecacheResource( "particle", "particles/units/heroes/hero_leshrac/leshrac_diabolic_edict.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_leshrac/leshrac_diabolic_edict.vpcf", context )
 PrecacheResource( "particle", "particles/leshrac_diabolic_legendary_damage.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_monkey_king/monkey_king_quad_tap_hit.vpcf", context )
-PrecacheResource( "particle", "particles/lesh_charges.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf", context )
-PrecacheResource( "particle", "particles/ogre_dd.vpcf", context )
-PrecacheResource( "particle", "particles/lc_odd_proc_.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf", context )
-PrecacheResource( "particle", "particles/leshrac_speed.vpcf", context )
+PrecacheResource( "particle", "particles/leshrac/edict_proc.vpcf", context )
+PrecacheResource( "particle", "particles/items3_fx/star_emblem_friend.vpcf", context )
+PrecacheResource( "particle", "particles/leshrac/edict_speed.vpcf", context )
 PrecacheResource( "particle", "particles/leshrac_edict_legendary.vpcf", context )
 PrecacheResource( "particle", "particles/lesh_edict_stun.vpcf", context )
 PrecacheResource( "particle", "particles/leshrac_edict_mark.vpcf", context )
 PrecacheResource( "particle", "particles/cleance_blade.vpcf", context )
+PrecacheResource( "particle", "particles/leshrac/edict_shield.vpcf", context )
+
+end
+
+
+function leshrac_diabolic_edict_custom:GetIntrinsicModifierName()
+if self:GetCaster():IsRealHero() then 
+  return "modifier_leshrac_diabolic_edict_custom_tracker"
+end 
 
 end
 
 
 
+function leshrac_diabolic_edict_custom:GetRadius()
+return self:GetSpecialValueFor("radius") + self:GetCaster():GetLeshracRadius()
+end
+
+
+function leshrac_diabolic_edict_custom:GetCastRange(vLocation, hTarget)
+return self:GetRadius()
+end
 
 
 
@@ -53,16 +53,16 @@ function leshrac_diabolic_edict_custom:GetCooldown(iLevel)
 
 local upgrade_cooldown = 0
 
-if self:GetCaster():HasModifier("modifier_leshrac_edict_2") then  
-  upgrade_cooldown = self.cd_inc[self:GetCaster():GetUpgradeStack("modifier_leshrac_edict_2")]
+if self:GetCaster():HasTalent("modifier_leshrac_edict_2") then  
+  upgrade_cooldown = self:GetCaster():GetTalentValue("modifier_leshrac_edict_2", "cd")
 end 
-
- return self.BaseClass.GetCooldown(self, iLevel) + upgrade_cooldown
-
+return self.BaseClass.GetCooldown(self, iLevel) + upgrade_cooldown
 end
 
+
+
 function leshrac_diabolic_edict_custom:GetBehavior()
-if self:GetCaster():HasModifier("modifier_leshrac_edict_7") then 
+if self:GetCaster():HasTalent("modifier_leshrac_edict_7") then 
   return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IMMEDIATE
 end
 
@@ -72,48 +72,41 @@ end
 
 
 function leshrac_diabolic_edict_custom:GetManaCost(iLevel)
-
-if self:GetCaster():HasModifier("modifier_leshrac_nova_5") then 
-  return self:GetCaster():FindAbilityByName("leshrac_pulse_nova_custom").spells_cost
+if self:GetCaster():HasModifier("modifier_leshrac_pulse_nova_custom_low_mana") then
+  return self:GetCaster():GetUpgradeStack("modifier_leshrac_pulse_nova_custom_low_mana")
 end
-
-
 return self.BaseClass.GetManaCost(self, iLevel)
 end
 
 
-
-function leshrac_diabolic_edict_custom:GetIntrinsicModifierName()
-return "modifier_leshrac_diabolic_edict_custom_tracker"
-end
-
-
-
 function leshrac_diabolic_edict_custom:OnSpellStart()
 local caster = self:GetCaster()
-local duration = self:GetDuration()
+local duration = self:GetDuration() * (1 + caster:GetTalentValue("modifier_leshrac_edict_2", "duration")/100)
 
-
-if self:GetCaster():HasModifier("modifier_leshrac_edict_6") and self:GetCaster():FindAbilityByName("leshrac_diabolic_edict_custom_surge"):IsHidden() then 
-  self:GetCaster():SwapAbilities("leshrac_diabolic_edict_custom", "leshrac_diabolic_edict_custom_surge", false, true)
+if caster:HasTalent("modifier_leshrac_edict_6") and caster:FindAbilityByName("leshrac_diabolic_edict_custom_surge"):IsHidden() then 
+  caster:SwapAbilities("leshrac_diabolic_edict_custom", "leshrac_diabolic_edict_custom_surge", false, true)
 end
 
 
-if self:GetCaster():HasModifier("modifier_leshrac_edict_7") then 
-  local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetCaster():GetOrigin(), nil, self:GetCaster():GetTalentValue("modifier_leshrac_edict_7", "radius") , DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false )
+if self:GetCaster():HasTalent("modifier_leshrac_edict_7") then 
+  caster:StartGesture(ACT_DOTA_CAST_ABILITY_4)
+
+  local enemies = caster:FindTargets(self:GetRadius())
+  local leash = caster:GetTalentValue("modifier_leshrac_edict_7", "duration")
 
   for _,enemy in pairs(enemies) do 
-    enemy:AddNewModifier(self:GetCaster(), self, "modifier_leshrac_diabolic_edict_custom_legendary", {duration = self:GetCaster():GetTalentValue("modifier_leshrac_edict_7", "duration")})
+    enemy:AddNewModifier(caster, self, "modifier_leshrac_diabolic_edict_custom_legendary", {duration = leash})
   end
 
   if #enemies > 0 then 
-    self:GetCaster():EmitSound("Leshrac.Edict_legendary_link")
+    caster:EmitSound("Leshrac.Edict_legendary_link")
   end
 end
 
-
-caster:AddNewModifier(caster, self, "modifier_leshrac_diabolic_edict_custom", { duration = duration })
+caster:RemoveModifierByName("modifier_leshrac_diabolic_edict_custom")
+caster:AddNewModifier(caster, self, "modifier_leshrac_diabolic_edict_custom", { duration = duration + FrameTime() })
 end
+
 
 
 
@@ -138,15 +131,13 @@ if unit then
     ParticleManager:ReleaseParticleIndex(hit_effect)
   end
 
-
-
   effect_cast  = ParticleManager:CreateParticle( particle_cast, PATTACH_ABSORIGIN, unit )
   ParticleManager:SetParticleControlEnt( effect_cast, 1, unit, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", Vector(0,0,0), true)
 else
 
   effect_cast  = ParticleManager:CreateParticle( particle_cast, PATTACH_WORLDORIGIN, nil )
 
-  point = self:GetCaster():GetOrigin() + RandomVector( RandomInt(0,self:GetSpecialValueFor( "radius" )) )
+  point = self:GetCaster():GetOrigin() + RandomVector( RandomInt(0,self:GetRadius()) )
   ParticleManager:SetParticleControl( effect_cast, 1, point )
 end
 
@@ -162,24 +153,81 @@ end
 
 
 
-function leshrac_diabolic_edict_custom:DealDamage(unit)
+
+function leshrac_diabolic_edict_custom:ProcExtra()
+if not IsServer() then return end 
+local caster = self:GetCaster()
+
+if not caster:HasTalent("modifier_leshrac_edict_4") then return end
+
+if ulti then 
+  if RollPseudoRandomPercentage(caster:GetTalentValue("modifier_leshrac_edict_4", "chance"), 1998, caster) then 
+
+    local particle_peffect = ParticleManager:CreateParticle("particles/leshrac/edict_proc.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster)
+    ParticleManager:SetParticleControl(particle_peffect, 0, caster:GetAbsOrigin())
+    ParticleManager:SetParticleControl(particle_peffect, 2, caster:GetAbsOrigin())
+    ParticleManager:ReleaseParticleIndex(particle_peffect)
+
+    caster:EmitSound("Leshrac.Edict_proc")
+  else 
+    return
+  end 
+end 
+
+caster:AddNewModifier(caster, self, "modifier_leshrac_diabolic_edict_custom_proc", {})
+end 
+
+
+
+function leshrac_diabolic_edict_custom:DealDamage(proc)
 if not IsServer() then return end
+local caster = self:GetCaster()
+local radius = self:GetRadius()
+local enemies = caster:FindTargets(radius, nil, FIND_ANY_ORDER)
 local damage = self:GetAbilityDamage()
+local enemy = nil
+local max = 1
+local damage_ability = nil
+local mana = caster:GetTalentValue("modifier_leshrac_edict_4", "mana")
 
-if self:GetCaster():HasModifier("modifier_leshrac_edict_3") then 
-  --damage = damage + self.damage_inc[self:GetCaster():GetUpgradeStack("modifier_leshrac_edict_3")]
+if proc then 
+  damage_ability = "modifier_leshrac_edict_4"
+end 
+
+if caster:HasTalent("modifier_leshrac_edict_3") then 
+  damage = damage + caster:GetTalentValue("modifier_leshrac_edict_3", "damage")
+  max = caster:GetTalentValue("modifier_leshrac_edict_3", "targets")
 end
 
-local mod = unit:FindModifierByName("modifier_leshrac_diabolic_edict_custom_legendary_damage")
+local count = 0
 
-if unit:HasModifier("modifier_leshrac_diabolic_edict_custom_legendary_damage") then 
+for _,enemy in pairs(enemies) do 
+  if count < max then
 
-  mod:IncrementStackCount()
-  damage = damage + mod:GetStackCount()*self:GetCaster():GetTalentValue("modifier_leshrac_edict_7", "damage")
+    local mod = enemy:FindModifierByName("modifier_leshrac_diabolic_edict_custom_legendary_damage")
+    if mod then 
+      mod:IncrementStackCount()
+    end
 
+    if caster:HasTalent("modifier_leshrac_edict_4") then 
+      caster:GiveMana(mana)
+      if not enemy:IsDebuffImmune() then 
+        enemy:Script_ReduceMana(mana, self)
+      end
+    end 
+
+    DoDamage( {attacker = caster, victim = enemy, damage = damage, damage_type = DAMAGE_TYPE_PURE, ability = self,}, damage_ability)
+    self:PlayEffects( enemy )
+  else 
+    break
+  end
+  count = count + 1
 end
 
- ApplyDamage( {attacker = self:GetCaster(), victim = unit, damage = damage, damage_type = self:GetAbilityDamageType(), ability = self,})
+if count == 0 then 
+  self:PlayEffects( nil )
+end
+
 end
 
 
@@ -189,244 +237,167 @@ end
 modifier_leshrac_diabolic_edict_custom = class({})
 
 
-function modifier_leshrac_diabolic_edict_custom:IsHidden()
-  return false
-end
-
-function modifier_leshrac_diabolic_edict_custom:IsDebuff()
-  return false
-end
-
-function modifier_leshrac_diabolic_edict_custom:IsPurgable()
-  return false
-end
-
-function modifier_leshrac_diabolic_edict_custom:GetAttributes()
-  return MODIFIER_ATTRIBUTE_MULTIPLE
-end
-
-function modifier_leshrac_diabolic_edict_custom:RemoveOnDeath()
-  return false
-end
-
+function modifier_leshrac_diabolic_edict_custom:IsHidden() return false end
+function modifier_leshrac_diabolic_edict_custom:IsPurgable()return false end
+function modifier_leshrac_diabolic_edict_custom:RemoveOnDeath() return false end
 
 function modifier_leshrac_diabolic_edict_custom:OnCreated( kv )
-if not IsServer() then return end
-self.RemoveForDuel = true
-local explosion = self:GetAbility():GetSpecialValueFor( "num_explosions" )
-local duration = self:GetAbility():GetSpecialValueFor( "duration" )
-self.radius = self:GetAbility():GetSpecialValueFor( "radius" )
 
-self.heal = self:GetCaster():GetTalentValue("modifier_leshrac_edict_5", "heal")/100
-self.heal_creeps = self:GetCaster():GetTalentValue("modifier_leshrac_edict_5", "heal_creeps")
-self.health_heal = self:GetCaster():GetTalentValue("modifier_leshrac_edict_5", "health")
-
-if self:GetParent():HasModifier("modifier_leshrac_edict_3") then 
-  explosion = explosion + self:GetAbility().count_inc[self:GetCaster():GetUpgradeStack("modifier_leshrac_edict_3")]
-end
-
-local interval = duration/explosion --self:GetAbility():GetSpecialValueFor( "interval" )
 self.parent = self:GetParent()
-  
+self.ability = self:GetAbility()
 
+self.armor = self:GetCaster():GetTalentValue("modifier_leshrac_edict_1", "armor")
+self.status = self:GetCaster():GetTalentValue("modifier_leshrac_edict_1", "status")
 
-self.pos = self:GetParent():GetAbsOrigin()
-self.distance = 0
+local duration_k = (1 + self.parent:GetTalentValue("modifier_leshrac_edict_2", "duration")/100)
 
-if self:GetParent():HasModifier("modifier_leshrac_edict_4") then 
+self.shield = self:GetCaster():GetTalentValue("modifier_leshrac_edict_5", "shield", true)/100
+self.shield_max = self:GetCaster():GetTalentValue("modifier_leshrac_edict_5", "max", true)/100
+self.creeps = self:GetCaster():GetTalentValue("modifier_leshrac_edict_5", "creeps", true)
 
-  self.particle_stack = ParticleManager:CreateParticle("particles/lesh_charges.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())
+self.proced = false
+self.count = 0
 
-  for i = 1,self:GetAbility().distance_count do 
-    if i <= self:GetStackCount() then 
-      ParticleManager:SetParticleControl(self.particle_stack, i, Vector(1, 0, 0)) 
-    else 
-      ParticleManager:SetParticleControl(self.particle_stack, i, Vector(0, 0, 0)) 
-    end
-  end
+if not IsServer() then return end
 
-  self:AddParticle(self.particle_stack, false, false, -1, false, false)
-end
+self.parent:AddDamageEvent_out(self)
+self.parent:AddDamageEvent_inc(self)
 
-local sound_loop = "Hero_Leshrac.Diabolic_Edict_lp"
-self.parent:EmitSound(sound_loop)
+if self.parent:HasTalent("modifier_leshrac_edict_1") then 
+  self.particle_peffect = ParticleManager:CreateParticle("particles/items3_fx/star_emblem_friend.vpcf", PATTACH_OVERHEAD_FOLLOW, self.parent) 
+  ParticleManager:SetParticleControl(self.particle_peffect, 0, self.parent:GetAbsOrigin())
+  self:AddParticle(self.particle_peffect, false, false, -1, false, true)
+end 
 
+self.ability:EndCooldown()
+self.ability:SetActivated(false)
 
+self.RemoveForDuel = true
+self.explosion = self:GetAbility():GetSpecialValueFor( "num_explosions" )*duration_k
+local duration = self:GetAbility():GetSpecialValueFor( "duration" )*duration_k
+local interval = duration/self.explosion 
+
+self.parent:EmitSound("Hero_Leshrac.Diabolic_Edict_lp")
 self:StartIntervalThink( interval )
 end
 
 
 
 function modifier_leshrac_diabolic_edict_custom:OnDestroy()
-  if not IsServer() then return end
-  local sound_loop = "Hero_Leshrac.Diabolic_Edict_lp"
-  
-  if not self:GetParent():HasModifier(self:GetName()) then 
-    self.parent:StopSound(sound_loop)
-  end
+if not IsServer() then return end
 
-if not self:GetParent():HasModifier(self:GetName()) and self:GetCaster():HasModifier("modifier_leshrac_edict_6") and not self:GetCaster():FindAbilityByName("leshrac_diabolic_edict_custom_surge"):IsHidden()  then 
+self.ability:UseResources(false, false, false, true)
+self.ability:SetActivated(true)
+
+self:GiveShield()
+
+self.parent:StopSound("Hero_Leshrac.Diabolic_Edict_lp")
+
+if self:GetCaster():HasTalent("modifier_leshrac_edict_6") and not self:GetCaster():FindAbilityByName("leshrac_diabolic_edict_custom_surge"):IsHidden() then 
   self:GetCaster():SwapAbilities("leshrac_diabolic_edict_custom", "leshrac_diabolic_edict_custom_surge", true, false)
 end
 
 end
 
 
+function modifier_leshrac_diabolic_edict_custom:GiveShield()
+if not IsServer() then return end 
+if self:GetStackCount() <= 0 then return end 
+if self.proced == true then return end 
+
+self.parent:RemoveModifierByName("modifier_leshrac_diabolic_edict_custom_shield")
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_leshrac_diabolic_edict_custom_shield", {shield = self:GetStackCount(), duration = self.parent:GetTalentValue("modifier_leshrac_edict_5", "duration", true)})
+
+self.proced = true
+self:SetStackCount(0)
+end 
+
 
 
 function modifier_leshrac_diabolic_edict_custom:OnIntervalThink()
 if not IsServer() then return end
+if self.count >= self.explosion then return end
 
-
-if self:GetParent():GetHealthPercent() <= self:GetAbility().heal_health and self:GetParent():HasModifier("modifier_leshrac_edict_5") 
-  and self.particle == nil then 
-  self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-  self:AddParticle(self.particle, false, false, -1, false, false)
-end
-
-
-if self:GetParent():GetHealthPercent() > self:GetAbility().heal_health and self:GetParent():HasModifier("modifier_leshrac_edict_5") 
-  and self.particle ~= nil then 
-
-  ParticleManager:DestroyParticle(self.particle, false)
-  ParticleManager:ReleaseParticleIndex(self.particle)
-
-end
-
-
-
-if self:GetParent():HasModifier("modifier_leshrac_edict_4") and self.particle_stack then 
-
-
-  self.distance = self.distance + (self.pos - self:GetParent():GetAbsOrigin()):Length2D()
-  self.pos = self:GetParent():GetAbsOrigin()
-
-
-  if self.distance >= self:GetAbility().distance_max and self:GetStackCount() < self:GetAbility().distance_count then 
-    self.distance = 0
-    self:IncrementStackCount()
-
-    if self:GetStackCount() >= self:GetAbility().distance_count then 
-
-      self:GetCaster():EmitSound("Leshrac.Edict_damage")
-
-      local effect_cast = ParticleManager:CreateParticle( "particles/ogre_dd.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-      self:AddParticle( effect_cast, false, false, -1, false, false )
-
-      local particle_peffect = ParticleManager:CreateParticle("particles/lc_odd_proc_.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-      ParticleManager:SetParticleControl(particle_peffect, 0, self:GetCaster():GetAbsOrigin())
-      ParticleManager:SetParticleControl(particle_peffect, 2, self:GetCaster():GetAbsOrigin())
-      ParticleManager:ReleaseParticleIndex(particle_peffect)
-    end
-
-  end
-
-  for i = 1,self:GetAbility().distance_count do 
-    if i <= self:GetStackCount() then 
-      ParticleManager:SetParticleControl(self.particle_stack, i, Vector(1, 0, 0)) 
-    else 
-      ParticleManager:SetParticleControl(self.particle_stack, i, Vector(0, 0, 0)) 
-    end
-  end
-
-end
-
-
-
-
-
-local enemies = FindUnitsInRadius(self.parent:GetTeamNumber(), self.parent:GetOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, 0, false )
-
-local enemy = nil
-local max = 1
-
-if self:GetCaster():HasShard() then 
-  max = self:GetAbility():GetSpecialValueFor("shard_targets")
-end
-
-local count = 0
-
-
-for _,enemy in pairs(enemies) do 
-
-  if count < max then 
-
-    self:GetAbility():DealDamage(enemy)
-    self:GetAbility():PlayEffects( enemy )
-
-  else 
-    break
-  end
-
-  count = count + 1
-
-end
-
-
-if count == 0 then 
-  self:GetAbility():PlayEffects( nil )
-end
-
+self.count = self.count + 1
+self.ability:DealDamage()
 end
 
  
-
-
-
-
 function modifier_leshrac_diabolic_edict_custom:DeclareFunctions()
 return
 {
-  MODIFIER_EVENT_ON_TAKEDAMAGE,
-  MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
-  MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE
+  MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
+  MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
+  MODIFIER_PROPERTY_MIN_HEALTH
 }
 end
 
 
-function modifier_leshrac_diabolic_edict_custom:GetModifierIncomingDamage_Percentage()
-if not self:GetParent():HasModifier("modifier_leshrac_edict_4") then return end
-return self:GetStackCount()*self:GetAbility().distance_incoming[self:GetCaster():GetUpgradeStack("modifier_leshrac_edict_4")]
+function modifier_leshrac_diabolic_edict_custom:GetModifierPhysicalArmorBonus()
+if not self.parent:HasTalent("modifier_leshrac_edict_1") then return end
+return self.armor
 end
 
 
-function modifier_leshrac_diabolic_edict_custom:GetModifierSpellAmplify_Percentage()
-if not self:GetParent():HasModifier("modifier_leshrac_edict_4") then return end
-return self:GetStackCount()*self:GetAbility().distance_damage[self:GetCaster():GetUpgradeStack("modifier_leshrac_edict_4")]
+function modifier_leshrac_diabolic_edict_custom:GetModifierStatusResistanceStacking() 
+if not self.parent:HasTalent("modifier_leshrac_edict_1") then return end
+return self.status
 end
 
 
-function modifier_leshrac_diabolic_edict_custom:OnTakeDamage(params)
+
+function modifier_leshrac_diabolic_edict_custom:GetMinHealth()
+if not self.parent:HasTalent("modifier_leshrac_edict_5") then return end
+if self:GetCaster():HasModifier("modifier_death") then return end
+if self.proced == true then return end
+if self:GetStackCount() == 0 then return end
+
+return 1 
+end 
+
+
+function modifier_leshrac_diabolic_edict_custom:DamageEvent_inc(params)
 if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_leshrac_edict_5") then return end
-if params.attacker ~= self:GetParent() then return end
-if not params.unit then return end
-if self:GetParent():GetHealthPercent() > self.health_heal then return end
-if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end
-if params.unit:IsIllusion() then return end
+if not self.parent:HasTalent("modifier_leshrac_edict_5") then return end
+if self.proced == true then return end
+if not params.attacker then return end
 
-local heal = params.damage*self.heal
+local unit = params.unit
+local attacker = params.attacker
+
+if unit == self.parent and self.parent:GetHealth() <= 1 and not self.parent:HasModifier("modifier_death") then
+  self:GiveShield()
+end 
+
+end
+
+
+function modifier_leshrac_diabolic_edict_custom:DamageEvent_out(params)
+if not IsServer() then return end
+if not self.parent:HasTalent("modifier_leshrac_edict_5") then return end
+if self.proced == true then return end
+
+local unit = params.unit
+local attacker = params.attacker
+
+if attacker ~= self.parent then return end
+if not unit:IsUnit() then return end
+if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end
+if unit:IsIllusion() then return end
+
+local heal = params.damage*self.shield
 
 if params.unit:IsCreep() then 
-  heal = heal/self.heal_creeps
+  heal = heal/self.creeps
 end
 
-self:GetCaster():GenericHeal(heal, self:GetAbility(), true, "particles/items3_fx/octarine_core_lifesteal.vpcf")
+local max = self.parent:GetMaxHealth()*self.shield_max
+
+self:SetStackCount(math.min(max, self:GetStackCount() + heal))
+end 
 
 
 
-end
-
-
-
-function modifier_leshrac_diabolic_edict_custom:CheckState()
-if not self:GetParent():HasModifier("modifier_leshrac_edict_5") then return end
-if self:GetParent():GetHealthPercent() > self.health_heal then return end
-return
-{
-  [MODIFIER_STATE_UNSLOWABLE] = true
-}
-end
 
 
 
@@ -436,38 +407,39 @@ function modifier_leshrac_diabolic_edict_custom_speed:IsHidden() return false en
 function modifier_leshrac_diabolic_edict_custom_speed:IsPurgable() return false end
 function modifier_leshrac_diabolic_edict_custom_speed:GetTexture() return "buffs/edict_speed" end
 function modifier_leshrac_diabolic_edict_custom_speed:OnCreated(table)
-self.speed = self:GetAbility():GetSpecialValueFor("speed")
-self.resist = self:GetAbility():GetSpecialValueFor("resist")
+self.speed = self:GetCaster():GetTalentValue("modifier_leshrac_edict_6", "speed")
 
 if not IsServer() then return end
-  local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-  self:AddParticle( effect_cast, false, false, -1, false, false )
+
+local effect_cast = ParticleManager:CreateParticle( "particles/leshrac/edict_speed.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+ParticleManager:SetParticleControl( effect_cast, 0, self:GetParent():GetAbsOrigin()) 
+self:AddParticle( effect_cast, false, false, -1, false, false )
+
 end
 
 function modifier_leshrac_diabolic_edict_custom_speed:DeclareFunctions()
 return
 {
   MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-  MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING
 }
 end
 
-function modifier_leshrac_diabolic_edict_custom_speed:GetModifierStatusResistanceStacking() 
-  return self.resist
-end
 
 function modifier_leshrac_diabolic_edict_custom_speed:GetModifierMoveSpeedBonus_Percentage()
-  return self.speed
+return self.speed
+end
+
+function modifier_leshrac_diabolic_edict_custom_speed:CheckState()
+return
+{
+  [MODIFIER_STATE_UNSLOWABLE] = true,
+  [MODIFIER_STATE_NO_UNIT_COLLISION] = true
+}
 end
 
 
-function modifier_leshrac_diabolic_edict_custom_speed:GetEffectName() 
-return "particles/leshrac_speed.vpcf"
-end
 
-function modifier_leshrac_diabolic_edict_custom_speed:GetEffectAttachType()
-return PATTACH_ABSORIGIN_FOLLOW
-end
+
 
 
 
@@ -478,12 +450,15 @@ function modifier_leshrac_diabolic_edict_custom_legendary:IsPurgable() return fa
 function modifier_leshrac_diabolic_edict_custom_legendary:OnCreated(table)
 if not IsServer() then return end
 
-self.radius = self:GetCaster():GetTalentValue("modifier_leshrac_edict_7", "radius")
-self.stun = self:GetCaster():GetTalentValue("modifier_leshrac_edict_7", "stun")
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
 
-local effect_cast = ParticleManager:CreateParticle( "particles/leshrac_edict_legendary.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-ParticleManager:SetParticleControlEnt(effect_cast,0,self:GetCaster(),PATTACH_POINT_FOLLOW,"attach_hitloc",self:GetCaster():GetOrigin(),true)
-ParticleManager:SetParticleControlEnt(effect_cast,1,self:GetParent(),PATTACH_POINT_FOLLOW,"attach_hitloc",self:GetParent():GetOrigin(),true)
+self.radius = self:GetAbility():GetRadius() + 50
+self.stun = self.caster:GetTalentValue("modifier_leshrac_edict_7", "stun")
+
+local effect_cast = ParticleManager:CreateParticle( "particles/leshrac_edict_legendary.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent )
+ParticleManager:SetParticleControlEnt(effect_cast,0,self.caster,PATTACH_POINT_FOLLOW,"attach_hitloc",self.caster:GetOrigin(),true)
+ParticleManager:SetParticleControlEnt(effect_cast,1,self.parent,PATTACH_POINT_FOLLOW,"attach_hitloc",self.parent:GetOrigin(),true)
 self:AddParticle(effect_cast,false,false,-1,false,false)
 
 self:StartIntervalThink(FrameTime())
@@ -500,10 +475,10 @@ end
 function modifier_leshrac_diabolic_edict_custom_legendary:OnIntervalThink()
 if not IsServer() then return end
 
-AddFOWViewer(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), 10, FrameTime()*2, false)
+AddFOWViewer(self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), 10, FrameTime()*2, false)
 
-if (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Length2D() > self.radius
-  or not self:GetCaster():IsAlive() then
+if (self.caster:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D() > self.radius
+  or not self.caster:IsAlive() then
     self:Destroy()
 end
 
@@ -513,21 +488,23 @@ end
 
 function modifier_leshrac_diabolic_edict_custom_legendary:OnDestroy()
 if not IsServer() then return end
+
 if self:GetRemainingTime() > 0.1 then
-  self:GetParent():EmitSound("Leshrac.Edict_legendary_break")
-return
+  self.parent:EmitSound("Leshrac.Edict_legendary_break")
+  return
 end
 
+self.parent:EmitSound("Leshrac.Edict_legendary_stun")
 
-  self:GetParent():EmitSound("Leshrac.Edict_legendary_stun")
-
-local particle_peffect = ParticleManager:CreateParticle("particles/lesh_edict_stun.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-
+local particle_peffect = ParticleManager:CreateParticle("particles/lesh_edict_stun.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
 ParticleManager:ReleaseParticleIndex(particle_peffect)
 
+local mod = self.caster:FindModifierByName("modifier_leshrac_diabolic_edict_custom")
+if mod then 
+  self.parent:AddNewModifier(self.caster, self:GetAbility(), "modifier_leshrac_diabolic_edict_custom_legendary_damage", {duration = mod:GetRemainingTime()})
+end
 
-self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_leshrac_diabolic_edict_custom_legendary_damage", {duration = self:GetCaster():GetTalentValue("modifier_leshrac_edict_7", "effect_duration")})
-self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_stunned", {duration = self.stun*(1 - self:GetParent():GetStatusResistance())})
+self.parent:AddNewModifier(self.caster, self:GetAbility(), "modifier_stunned", {duration = self.stun*(1 - self.parent:GetStatusResistance())})
 end
 
 
@@ -546,7 +523,7 @@ function modifier_leshrac_diabolic_edict_custom_legendary_damage:GetEffectAttach
 function modifier_leshrac_diabolic_edict_custom_legendary_damage:DeclareFunctions()
 return
 {
-  MODIFIER_PROPERTY_TOOLTIP
+  MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE
 }
 end
 
@@ -556,9 +533,18 @@ self.damage = self:GetCaster():GetTalentValue("modifier_leshrac_edict_7", "damag
 end
 
 
-function modifier_leshrac_diabolic_edict_custom_legendary_damage:OnTooltip()
+function modifier_leshrac_diabolic_edict_custom_legendary_damage:GetModifierIncomingDamage_Percentage()
 return self.damage*self:GetStackCount()
 end
+
+
+
+
+
+
+
+
+
 
 
 leshrac_diabolic_edict_custom_surge = class({})
@@ -568,45 +554,144 @@ function leshrac_diabolic_edict_custom_surge:OnSpellStart()
 if not IsServer() then return end
 local caster = self:GetCaster()
 
+caster:StartGesture(ACT_DOTA_CAST_ABILITY_4)
+
 local effect_cast = ParticleManager:CreateParticle( "particles/cleance_blade.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster)
 ParticleManager:SetParticleControl( effect_cast, 0, self:GetCaster():GetAbsOrigin())
 ParticleManager:SetParticleControl( effect_cast, 1, Vector(300,0,0) )
 ParticleManager:ReleaseParticleIndex( effect_cast )
 
 caster:EmitSound("Leshrac.Edict_purge")
-
 caster:Purge(false, true, false, false, false)
-
-caster:AddNewModifier(caster, self, "modifier_leshrac_diabolic_edict_custom_speed", {duration = self:GetSpecialValueFor("duration")})
+caster:AddNewModifier(caster, self, "modifier_leshrac_diabolic_edict_custom_speed", {duration = self:GetCaster():GetTalentValue("modifier_leshrac_edict_6", "duration")})
 
 self:GetCaster():SwapAbilities("leshrac_diabolic_edict_custom", "leshrac_diabolic_edict_custom_surge", true, false)
 end
 
 
 
+
+
+
+
+
+
+
+
+
+
+modifier_leshrac_diabolic_edict_custom_proc = class({})
+function modifier_leshrac_diabolic_edict_custom_proc:IsHidden() return true end
+function modifier_leshrac_diabolic_edict_custom_proc:IsPurgable() return false end
+function modifier_leshrac_diabolic_edict_custom_proc:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
+function modifier_leshrac_diabolic_edict_custom_proc:OnCreated()
+self:SetStackCount(self:GetCaster():GetTalentValue("modifier_leshrac_edict_4", "max"))
+self.ability = self:GetAbility()
+if not IsServer() then return end 
+
+self:StartIntervalThink(0.25)
+end 
+
+
+
+function modifier_leshrac_diabolic_edict_custom_proc:OnIntervalThink()
+if not IsServer() then return end 
+self.ability:DealDamage(true)
+
+self:DecrementStackCount()
+if self:GetStackCount() == 0 then
+  self:Destroy()
+end
+
+end 
+
+
+
+
+
+
+
+
 modifier_leshrac_diabolic_edict_custom_tracker = class({})
 function modifier_leshrac_diabolic_edict_custom_tracker:IsHidden() return true end
 function modifier_leshrac_diabolic_edict_custom_tracker:IsPurgable() return false end
-function modifier_leshrac_diabolic_edict_custom_tracker:DeclareFunctions()
+function modifier_leshrac_diabolic_edict_custom_tracker:OnCreated()
+self.ability = self:GetAbility()
+self.parent = self:GetParent()
+self.parent:AddSpellEvent(self)
+end 
+
+
+
+
+function modifier_leshrac_diabolic_edict_custom_tracker:SpellEvent( params )
+if not IsServer() then return end
+if not self.parent:HasTalent("modifier_leshrac_edict_4") then return end
+if params.unit~=self.parent then return end
+
+self.ability:ProcExtra()
+end 
+
+
+
+
+
+
+
+
+
+
+modifier_leshrac_diabolic_edict_custom_shield = class({})
+function modifier_leshrac_diabolic_edict_custom_shield:IsHidden() return false end
+function modifier_leshrac_diabolic_edict_custom_shield:IsPurgable() return false end
+function modifier_leshrac_diabolic_edict_custom_shield:GetTexture() return "buffs/orb_slow" end
+function modifier_leshrac_diabolic_edict_custom_shield:OnCreated(table)
+
+self.parent = self:GetParent()
+self.shield_talent = "modifier_leshrac_edict_5"
+self.max_shield = self:GetCaster():GetTalentValue("modifier_leshrac_edict_5", "max")*self:GetCaster():GetMaxHealth()/100
+
+if not IsServer() then return end
+
+self.RemoveForDuel = true
+self.parent = self:GetParent()
+self.parent:EmitSound("Leshrac.Edict_shield")
+
+local effect_cast = ParticleManager:CreateParticle( "particles/leshrac/edict_shield.vpcf", PATTACH_CUSTOMORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControl(effect_cast, 0, self.parent:GetAbsOrigin())
+ParticleManager:SetParticleControlEnt(effect_cast, 1, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true)
+self:AddParticle( effect_cast, false, false, -1, false, false )
+
+self:SetStackCount(math.min(table.shield, self.max_shield))
+end
+
+function modifier_leshrac_diabolic_edict_custom_shield:DeclareFunctions()
 return
 {
-  MODIFIER_EVENT_ON_TAKEDAMAGE
+  MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
 }
 end
 
-function modifier_leshrac_diabolic_edict_custom_tracker:OnTakeDamage(params)
+
+
+function modifier_leshrac_diabolic_edict_custom_shield:GetModifierIncomingDamageConstant( params )
+
+if IsClient() then 
+  if params.report_max then 
+    return self.max_shield
+  else 
+      return self:GetStackCount()
+    end 
+end
+
 if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_leshrac_edict_1") then return end
-if self:GetParent() ~= params.attacker then return end
-if not params.inflictor then return end
-if params.inflictor ~= self:GetAbility() then return end
-if not params.unit:IsCreep() and not params.unit:IsHero() then return end
-if params.unit:IsMagicImmune() then return end
+local damage = math.min(params.damage, self:GetStackCount())
+self.parent:AddShieldInfo({shield_mod = self, healing = damage, healing_type = "shield"})
 
-local mana = self:GetAbility().mana_steal[self:GetCaster():GetUpgradeStack("modifier_leshrac_edict_1")]*params.damage
+self:SetStackCount(self:GetStackCount() - damage)
+if self:GetStackCount() <= 0 then
+  self:Destroy()
+end
 
-params.unit:Script_ReduceMana(mana, self:GetAbility())
-
-self:GetParent():GiveMana(mana)
-
+return -damage
 end

@@ -5,6 +5,7 @@ LinkLuaModifier("modifier_press_the_attack_custom_legendary", "abilities/legion_
 LinkLuaModifier("modifier_press_the_attack_custom_unslow", "abilities/legion_commander/custom_legion_commander_press_the_attack", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_press_the_attack_custom_burn_effect", "abilities/legion_commander/custom_legion_commander_press_the_attack", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_press_the_attack_custom_burn_aura", "abilities/legion_commander/custom_legion_commander_press_the_attack", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_press_the_attack_custom_tracker", "abilities/legion_commander/custom_legion_commander_press_the_attack", LUA_MODIFIER_MOTION_NONE)
 
 
 
@@ -13,131 +14,141 @@ custom_legion_commander_press_the_attack = class({})
 
 
 function custom_legion_commander_press_the_attack:GetAbilityTextureName()
-    if self:GetCaster():HasModifier("modifier_legion_commander_wings_fallen_custom") then
-        return "legion_commander/legacy_of_the_fallen_legion/legion_commander_press_the_attack"
-    end
-    if self:GetCaster():HasModifier("modifier_legion_commander_wings_fallen_custom_2") then
-        return "legion_commander/legacy_of_the_fallen_legion/legion_commander_press_the_attack"
-    end
-    return "legion_commander_press_the_attack"
+if self:GetCaster():HasModifier("modifier_legion_commander_wings_fallen_custom") then
+    return "legion_commander/legacy_of_the_fallen_legion/legion_commander_press_the_attack"
 end
+if self:GetCaster():HasModifier("modifier_legion_commander_wings_fallen_custom_2") then
+    return "legion_commander/legacy_of_the_fallen_legion/legion_commander_press_the_attack"
+end
+return "legion_commander_press_the_attack"
+end
+
+function custom_legion_commander_press_the_attack:GetIntrinsicModifierName()
+if not self:GetCaster():IsRealHero() then return end
+return "modifier_press_the_attack_custom_tracker"
+end
+
+function custom_legion_commander_press_the_attack:CreateTalent()
+local caster = self:GetCaster()
+local mod = caster:FindModifierByName("modifier_press_the_attack_custom_tracker")
+
+if mod then
+	mod.PercentStr = caster:GetTalentValue("modifier_legion_press_1", "str")/100
+end
+
+end
+
+
 
 function custom_legion_commander_press_the_attack:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-PrecacheResource( "particle", "particles/units/heroes/hero_legion_commander/legion_commander_press.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_legion_commander/legion_commander_press_hands.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_legion_commander/legion_commander_press_halo.vpcf", context )
 PrecacheResource( "particle", "particles/lc_wave.vpcf", context )
-PrecacheResource( "particle", "particles/lc_press_legendary.vpcf", context )
-PrecacheResource( "particle", "particles/lc_press_burn.vpcf", context )
+PrecacheResource( "particle", "particles/econ/events/fall_2022/radiance/radiance_owner_fall2022.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_legion_commander/legion_commander_press.vpcf", context )
 PrecacheResource( "particle", "particles/lc_root.vpcf", context )
+PrecacheResource( "particle", "particles/legion_commander/press_legendary_buff.vpcf", context )
 PrecacheResource( "particle", "particles/lc_press_heal.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_marci/marci_unleash_stack.vpcf", context )
-
+PrecacheResource( "particle", "particles/units/heroes/hero_brewmaster/brewmaster_dispel_magic.vpcf", context )
+PrecacheResource( "particle", "particles/econ/events/fall_2022/radiance_target_fall2022.vpcf", context )
 end
+
 
 
 function custom_legion_commander_press_the_attack:GetBehavior()
 local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_legion_press_lowhp") then 
+local base = DOTA_ABILITY_BEHAVIOR_NO_TARGET
+if not IsSoloMode() then 
+  base = DOTA_ABILITY_BEHAVIOR_UNIT_TARGET
+end 
+if self:GetCaster():HasTalent("modifier_legion_press_6") then 
 	bonus = DOTA_ABILITY_BEHAVIOR_IMMEDIATE
 end
-
-return DOTA_ABILITY_BEHAVIOR_NO_TARGET + bonus
+return base + bonus
 end
 
-
-
-
 function custom_legion_commander_press_the_attack:GetCastRange(vLocation, hTarget)
-if self:GetCaster():HasModifier("modifier_legion_press_after") then 
-	return self:GetCaster():GetTalentValue("modifier_legion_press_after", "radius")
+if self:GetCaster():HasTalent("modifier_legion_press_5") then 
+	return self:GetCaster():GetTalentValue("modifier_legion_press_5", "radius")
 end 
 
 end 
-
 
 
 function custom_legion_commander_press_the_attack:GetCooldown(iLevel)
-
 local upgrade_cooldown = 0
-
-if self:GetCaster():HasModifier("modifier_legion_press_speed") then  
-  upgrade_cooldown = self:GetCaster():GetTalentValue("modifier_legion_press_speed", "cd")
+if self:GetCaster():HasTalent("modifier_legion_press_3") then  
+  upgrade_cooldown = self:GetCaster():GetTalentValue("modifier_legion_press_3", "cd")
 end 
-
- return self.BaseClass.GetCooldown(self, iLevel) + upgrade_cooldown
-
+return self.BaseClass.GetCooldown(self, iLevel) + upgrade_cooldown
 end
-
-
-
 
 
 
 function custom_legion_commander_press_the_attack:OnSpellStart()
-if not IsServer() then return end
-self.target = self:GetCaster()
-
-self.target:SetPoseParameter( "capture_progress_0_to_1", 1 )
-self.target:SetPoseParameter( "run_haste_turns", 1 )
-
-local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_legion_commander/legion_commander_press_halo.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-ParticleManager:ReleaseParticleIndex(particle)
-
-local before = #self.target:FindAllModifiers()
-self.target:Purge(false , true, false , true, false)
-local after = #self.target:FindAllModifiers()
-
-if self:GetCaster():GetQuest() == "Legion.Quest_6" and after < before then 
-	self:GetCaster():UpdateQuest(1)
+local caster = self:GetCaster()
+local target = caster
+if self:GetCursorTarget() then
+	target = self:GetCursorTarget()
 end
 
-if self:GetCaster():HasModifier("modifier_legion_press_regen") then 
-	self.target:GenericHeal(self.target:GetMaxHealth()*self:GetCaster():GetTalentValue("modifier_legion_press_regen", "regen")/100, self)
+if caster == target then
+	caster:SetPoseParameter( "capture_progress_0_to_1", 1 )
+	caster:SetPoseParameter( "run_haste_turns", 1 )
+end
+
+caster:GenericParticle("particles/units/heroes/hero_legion_commander/legion_commander_press_halo.vpcf")
+
+local before = #target:FindAllModifiers()
+target:Purge(false , true, false , true, false)
+local after = #target:FindAllModifiers()
+
+if caster:GetQuest() == "Legion.Quest_6" and after < before then 
+	caster:UpdateQuest(1)
+end
+
+if caster:HasTalent("modifier_legion_press_1") then 
+	target:GenericHeal(target:GetMaxHealth()*caster:GetTalentValue("modifier_legion_press_1", "heal")/100, self, nil, nil, "modifier_legion_press_1")
 end 
 
 
-self.duration = self:GetSpecialValueFor("duration") + self:GetCaster():GetTalentValue("modifier_legion_press_speed", "duration")
+self.duration = self:GetSpecialValueFor("duration") + caster:GetTalentValue("modifier_legion_press_3", "duration")
 
-self:GetCaster():EmitSound("Hero_LegionCommander.PressTheAttack")
+target:EmitSound("Hero_LegionCommander.PressTheAttack")
 
-
-if self:GetCaster():HasModifier("modifier_legion_press_legendary") then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_press_the_attack_custom_legendary", {duration = self:GetCaster():GetTalentValue("modifier_legion_press_legendary", "duration")})
+if caster:HasTalent("modifier_legion_press_7") then 
+	caster:AddNewModifier(caster, self, "modifier_press_the_attack_custom_legendary", {duration = caster:GetTalentValue("modifier_legion_press_7", "duration")})
 end 
 
-self.target:AddNewModifier(self:GetCaster(), self, "modifier_press_the_attack_custom_buff", {duration = self.duration})
+target:AddNewModifier(caster, self, "modifier_press_the_attack_custom_buff", {duration = self.duration})
 
---self.target:AddNewModifier(self:GetCaster(), self, "modifier_legion_commander_press_the_attack", {duration = self.duration})
-
-if self:GetCaster():HasModifier("modifier_legion_press_lowhp") then 
-	self.target:AddNewModifier(self:GetCaster(), self, "modifier_press_the_attack_custom_unslow", {duration = self:GetCaster():GetTalentValue("modifier_legion_press_lowhp", "duration")})
+if caster:HasTalent("modifier_legion_press_6") then 
+	target:AddNewModifier(caster, self, "modifier_press_the_attack_custom_unslow", {duration = caster:GetTalentValue("modifier_legion_press_6", "duration")})
 end 
 
 
-if not self:GetCaster():HasModifier("modifier_legion_press_after") then return end
+if not caster:HasTalent("modifier_legion_press_5") then return end
 
+local duration = caster:GetTalentValue("modifier_legion_press_5", "root")
+local pull_duration =caster:GetTalentValue("modifier_legion_press_5", "pull_duration")
+local pull_distance =caster:GetTalentValue("modifier_legion_press_5", "pull_distance")
 
-local duration = self:GetCaster():GetTalentValue("modifier_legion_press_after", "root")
-local pull_duration =self:GetCaster():GetTalentValue("modifier_legion_press_after", "pull_duration")
-local pull_distance =self:GetCaster():GetTalentValue("modifier_legion_press_after", "pull_distance")
-
-local wave_particle = ParticleManager:CreateParticle( "particles/lc_wave.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-ParticleManager:SetParticleControl( wave_particle, 1, self:GetCaster():GetAbsOrigin() )
+local wave_particle = ParticleManager:CreateParticle( "particles/lc_wave.vpcf", PATTACH_ABSORIGIN_FOLLOW, target )
+ParticleManager:SetParticleControl( wave_particle, 1, target:GetAbsOrigin() )
 ParticleManager:ReleaseParticleIndex(wave_particle)
 
-local enemies = self:GetCaster():FindTargets(self:GetCaster():GetTalentValue("modifier_legion_press_after", "radius"))
+local enemies = caster:FindTargets(caster:GetTalentValue("modifier_legion_press_5", "radius"), target:GetAbsOrigin())
 
-for _,target in ipairs(enemies) do 
+for _,enemy in pairs(enemies) do 
 
-	local dir = target:GetAbsOrigin() - self:GetCaster():GetAbsOrigin()
+	local dir = enemy:GetAbsOrigin() - target:GetAbsOrigin()
 
-	local point = self:GetCaster():GetAbsOrigin() + dir:Normalized()*pull_distance
-	local distance = (point - target:GetAbsOrigin()):Length2D()
+	local point = target:GetAbsOrigin() + dir:Normalized()*pull_distance
+	local distance = (point - enemy:GetAbsOrigin()):Length2D()
 
 
-	local arc = target:AddNewModifier( self:GetCaster(),  self,  "modifier_generic_arc",  
+	local arc = enemy:AddNewModifier( caster,  self,  "modifier_generic_arc",  
 	{
 	  target_x = point.x,
 	  target_y = point.y,
@@ -151,9 +162,9 @@ for _,target in ipairs(enemies) do
 
 	if arc then 
   	arc:SetEndCallback(function()
-  		if target and not target:IsNull() then
-				target:AddNewModifier(self:GetCaster(), self, "modifier_press_the_attack_custom_root", {duration = (1 - target:GetStatusResistance())*duration})
-				target:EmitSound("Lc.Press_Root")
+  		if enemy and not enemy:IsNull() then
+				enemy:AddNewModifier(caster, self, "modifier_press_the_attack_custom_root", {duration = (1 - enemy:GetStatusResistance())*duration})
+				enemy:EmitSound("Lc.Press_Root")
 			end
 		end)
 	end  
@@ -175,58 +186,55 @@ function modifier_press_the_attack_custom_buff:OnCreated(table)
 
 self.parent = self:GetParent()
 self.caster = self:GetCaster()
+self.ability = self:GetAbility()
 
-self.speed = self:GetAbility():GetSpecialValueFor("movespeed") + self:GetCaster():GetTalentValue("modifier_legion_press_cd", "move")
-self.attack_speed = self.caster:GetTalentValue("modifier_legion_press_cd", "speed")
-self.regen = self:GetAbility():GetSpecialValueFor("hp_regen")
+self.speed = self.ability:GetSpecialValueFor("movespeed") + self.caster:GetTalentValue("modifier_legion_press_2", "move")
+self.regen = self.ability:GetSpecialValueFor("hp_regen")
 
+self.lifesteal = self.caster:GetTalentValue("modifier_legion_press_2", "heal")/100
+self.lifesteal_creeps = self.caster:GetTalentValue("modifier_legion_press_2", "heal_creeps", true)
 
-self.heal = self:GetCaster():GetTalentValue("modifier_legion_press_regen", "heal")/100
-self.creeps = self:GetCaster():GetTalentValue("modifier_legion_press_regen", "heal_creeps")
-
---self.magic_damage = self:GetCaster():GetTalentValue("modifier_legion_press_cd", "damage")
---self.damage_radius = self:GetCaster():GetTalentValue("modifier_legion_press_cd", "radius")
-
-self.damage_min = self.caster:GetTalentValue("modifier_legion_press_duration", "damage_min")/100
-self.damage_max = self.caster:GetTalentValue("modifier_legion_press_duration", "damage_max")/100
-self.burn_heal = self.caster:GetTalentValue("modifier_legion_press_duration", "burn_heal")/100
-self.burn_interval = self.caster:GetTalentValue("modifier_legion_press_duration", "interval")
-self.aura_radius = self:GetCaster():GetTalentValue("modifier_legion_press_duration", "radius")
+self.damage_burn = self.caster:GetTalentValue("modifier_legion_press_4", "damage")/100
+self.damage_heal = self.caster:GetTalentValue("modifier_legion_press_4", "heal")/100
+self.bonus = self.caster:GetTalentValue("modifier_legion_press_4", "bonus", true)
+self.burn_health = self.caster:GetTalentValue("modifier_legion_press_4", "health", true)
+self.burn_interval = self.caster:GetTalentValue("modifier_legion_press_4", "interval", true)
+self.aura_radius = self.caster:GetTalentValue("modifier_legion_press_4", "radius", true)
 
 if not IsServer() then return end
 
 self.RemoveForDuel = true
+self.ability:EndCd()
 
 self:PlayEffect()
+self.parent:AddDamageEvent_out(self)
 
-if not self:GetParent():HasModifier("modifier_legion_press_duration") then return end
+if not self.parent:HasTalent("modifier_legion_press_4") then return end
 
-self.aura_mod = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_press_the_attack_custom_burn_aura", {duration = self:GetRemainingTime()})
+self.aura_mod = self.parent:AddNewModifier(self.parent, self.ability, "modifier_press_the_attack_custom_burn_aura", {duration = self:GetRemainingTime()})
 
-self:GetParent():EmitSound("Lc.Press_burn")
-
-self.burn_particle = ParticleManager:CreateParticle( "particles/econ/events/fall_2022/radiance/radiance_owner_fall2022.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-self:AddParticle(self.burn_particle,false, false, -1, false, false)
+self.parent:EmitSound("Lc.Press_burn")
+self.parent:GenericParticle("particles/econ/events/fall_2022/radiance/radiance_owner_fall2022.vpcf", self)
 
 self:OnIntervalThink()
 self:StartIntervalThink(self.burn_interval - FrameTime())
 end
 
 
+
 function modifier_press_the_attack_custom_buff:OnDestroy()
 if not IsServer() then return end 
 
-if self:GetCaster():HasModifier("modifier_legion_commander_wings_fallen_custom") then
-	self:GetCaster():RemoveGesture(ACT_SCRIPT_CUSTOM_0)
+self.ability:StartCd()
+
+if self.parent:HasModifier("modifier_legion_commander_wings_fallen_custom") then
+	self.parent:RemoveGesture(ACT_SCRIPT_CUSTOM_0)
 end
-if self:GetCaster():HasModifier("modifier_legion_commander_wings_fallen_custom_2") then
-	self:GetCaster():RemoveGesture(ACT_SCRIPT_CUSTOM_0)
+if self.parent:HasModifier("modifier_legion_commander_wings_fallen_custom_2") then
+	self.parent:RemoveGesture(ACT_SCRIPT_CUSTOM_0)
 end
 
-
-
-
-self:GetParent():StopSound("Lc.Press_burn")
+self.parent:StopSound("Lc.Press_burn")
 
 if self.aura_mod and not self.aura_mod:IsNull() then 
 	self.aura_mod:Destroy()
@@ -234,37 +242,37 @@ end
 
 end
 
+
+
 function modifier_press_the_attack_custom_buff:OnRefresh(table)
 if not IsServer() then return end 
-
 self:PlayEffect()
 end 
 
 function modifier_press_the_attack_custom_buff:PlayEffect()
-    if not IsServer() then return end
-    if self.cast then 
-        ParticleManager:DestroyParticle(self.cast, true)
-        ParticleManager:ReleaseParticleIndex(self.cast)
-    end 
+if not IsServer() then return end
+if self.cast then 
+    ParticleManager:DestroyParticle(self.cast, true)
+    ParticleManager:ReleaseParticleIndex(self.cast)
+end 
 
-    local particle_name = "particles/units/heroes/hero_legion_commander/legion_commander_press.vpcf"
-    if self:GetCaster():HasModifier("modifier_legion_commander_wings_fallen_custom") then
-        particle_name = "particles/econ/items/legion/legion_fallen/legion_fallen_press_owner.vpcf"
-        self:GetCaster():AddActivityModifier("self")
-        self:GetCaster():StartGesture(ACT_SCRIPT_CUSTOM_0)
-    end
-    if self:GetCaster():HasModifier("modifier_legion_commander_wings_fallen_custom_2") then
-        particle_name = "particles/econ/items/legion/legion_fallen/legion_fallen_press_owner_alt.vpcf"
-        self:GetCaster():AddActivityModifier("self")
-        self:GetCaster():StartGesture(ACT_SCRIPT_CUSTOM_0)
-    end
+local particle_name = "particles/units/heroes/hero_legion_commander/legion_commander_press.vpcf"
+if self.caster:HasModifier("modifier_legion_commander_wings_fallen_custom") then
+    particle_name = "particles/econ/items/legion/legion_fallen/legion_fallen_press_owner.vpcf"
+    self.caster:AddActivityModifier("self")
+    self.caster:StartGesture(ACT_SCRIPT_CUSTOM_0)
+end
+if self.caster:HasModifier("modifier_legion_commander_wings_fallen_custom_2") then
+    particle_name = "particles/econ/items/legion/legion_fallen/legion_fallen_press_owner_alt.vpcf"
+    self.caster:AddActivityModifier("self")
+    self.caster:StartGesture(ACT_SCRIPT_CUSTOM_0)
+end
 
-    self.cast = ParticleManager:CreateParticle( particle_name, PATTACH_CUSTOMORIGIN, self:GetParent() )
-    ParticleManager:SetParticleControlEnt( self.cast, 0, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), true )
-    ParticleManager:SetParticleControlEnt( self.cast, 1, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true )
-    ParticleManager:SetParticleControlEnt( self.cast, 2, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_attack1", self:GetParent():GetAbsOrigin(), true )
-    self:AddParticle(self.cast,false, false, -1, false, false)
-
+self.cast = ParticleManager:CreateParticle( particle_name, PATTACH_CUSTOMORIGIN, self.parent )
+ParticleManager:SetParticleControlEnt( self.cast, 0, self.parent, PATTACH_ABSORIGIN_FOLLOW, nil, self.parent:GetAbsOrigin(), true )
+ParticleManager:SetParticleControlEnt( self.cast, 1, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true )
+ParticleManager:SetParticleControlEnt( self.cast, 2, self.parent, PATTACH_POINT_FOLLOW, "attach_attack1", self.parent:GetAbsOrigin(), true )
+self:AddParticle(self.cast,false, false, -1, false, false)
 end 
 
 
@@ -272,40 +280,22 @@ end
 
 function modifier_press_the_attack_custom_buff:OnIntervalThink()
 if not IsServer() then return end
-if not self:GetCaster():IsAlive() then return end
+if not self.caster:IsAlive() then return end
 
 local enemies = self.parent:FindTargets(self.aura_radius)
 
-local damage = (self.damage_min + (self.damage_max - self.damage_min)*(1 - self.parent:GetHealth()/self.parent:GetMaxHealth()))*self.parent:GetAverageTrueAttackDamage(nil)
+local damage = self.damage_burn*self.parent:GetAverageTrueAttackDamage(nil)
+if self.parent:GetHealthPercent() <= self.burn_health then
+	damage = damage*self.bonus
+end
+
 self:SetStackCount(damage)
 
 for _,enemy in pairs(enemies) do 
-	local real_damage = ApplyDamage({victim = enemy,  damage = damage*self.burn_interval, damage_type = DAMAGE_TYPE_MAGICAL, attacker = self.caster, ability = self:GetAbility()})
+	local real_damage = DoDamage({victim = enemy,  damage = damage*self.burn_interval, damage_type = DAMAGE_TYPE_MAGICAL, attacker = self.caster, ability = self.ability}, "modifier_legion_press_4")
 end
 
 end
-
-
-
-function modifier_press_the_attack_custom_buff:OnAttackLanded(params)
-if not IsServer() then return end 
-if not self.parent:HasModifier("modifier_legion_press_cd") then  return end
-if self.parent ~= params.attacker then return end 
-if not params.target:IsCreep() and not params.target:IsHero() then return end
-
-
-local targets = self.parent:FindTargets(self.damage_radius, params.target:GetAbsOrigin())
-
-local particle = ParticleManager:CreateParticle("particles/lc_press_burn.vpcf", PATTACH_ABSORIGIN_FOLLOW, params.target)	
-ParticleManager:ReleaseParticleIndex(particle)
-
-for _,target in pairs(targets) do 
-	ApplyDamage({victim = target,  damage = self.magic_damage, damage_type = DAMAGE_TYPE_MAGICAL, attacker = self.caster, ability = self:GetAbility()})
-end 
-
-
-end 
-
 
 
 
@@ -315,56 +305,39 @@ return
 	MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT,
  	MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
 	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-	--MODIFIER_EVENT_ON_ATTACK_LANDED,
-	MODIFIER_EVENT_ON_TAKEDAMAGE
 }
-
 end
 
 
-function modifier_press_the_attack_custom_buff:OnTakeDamage(params)
+function modifier_press_the_attack_custom_buff:DamageEvent_out(params)
 if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_legion_press_regen") then return end
-if self:GetParent() ~= params.attacker then return end
-if not params.unit:IsCreep() and not params.unit:IsHero() then return end
-if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end
+if not self.caster:HasTalent("modifier_legion_press_2") then return end
+if not self.parent:CheckLifesteal(params) then return end
 
-local heal = self.heal*params.damage
+local heal = self.lifesteal*params.damage
 
 if params.unit:IsCreep() then 
-	heal = heal/self.creeps
+	heal = heal/self.lifesteal_creeps
 end
 
-
-self:GetParent():GenericHeal(heal, self:GetAbility(), true)
-
+self.parent:GenericHeal(heal, self.ability, true, "", "modifier_legion_press_2")
 end
-
 
 
 function modifier_press_the_attack_custom_buff:GetActivityTranslationModifiers() 
-if self:GetCaster() == self:GetParent() then 
+if self.caster == self.parent then 
 	return "press_the_attack" 
 end
 
 end
 
-
 function modifier_press_the_attack_custom_buff:GetModifierMoveSpeedBonus_Percentage()
 return self.speed
 end
 
-
 function modifier_press_the_attack_custom_buff:GetModifierConstantHealthRegen()
-return self.regen + self:GetStackCount()*self.burn_heal
+return self.regen + self:GetStackCount()*self.damage_heal
 end
-
-function modifier_press_the_attack_custom_buff:GetModifierAttackSpeedBonus_Constant() 
-return self.attack_speed 
-end
-
-
 
 
 
@@ -389,9 +362,9 @@ function modifier_press_the_attack_custom_legendary:IsHidden() return true end
 function modifier_press_the_attack_custom_legendary:IsPurgable() return false end
 function modifier_press_the_attack_custom_legendary:GetEffectName() return "particles/legion_commander/press_legendary_buff.vpcf" end
 function modifier_press_the_attack_custom_legendary:OnCreated()
-
-self.damage_duration = self:GetCaster():GetTalentValue("modifier_legion_press_legendary", "damage_duration")
-self.damage_reduce = self:GetCaster():GetTalentValue("modifier_legion_press_legendary", "damage_reduce")/100
+self.parent = self:GetParent()
+self.damage_duration = self.parent:GetTalentValue("modifier_legion_press_7", "damage_duration")
+self.damage_reduce = self.parent:GetTalentValue("modifier_legion_press_7", "damage_reduce")/100
 
 self.time = self:GetRemainingTime()
 
@@ -404,8 +377,7 @@ end
 function modifier_press_the_attack_custom_legendary:OnIntervalThink()
 if not IsServer() then return end
 
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'legion_press_change',  {hide = 0, max_time = self.time, time = self:GetRemainingTime(), damage = self:GetStackCount()})
-
+self.parent:UpdateUIshort({time = self:GetRemainingTime(), max_time = self.time, stack = self:GetStackCount(), style = "LegionPress", priority = 1})
 end 
 
 
@@ -434,8 +406,7 @@ end
 function modifier_press_the_attack_custom_legendary:OnDestroy()
 if not IsServer() then return end
 
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'legion_press_change',  {hide = 1, max_time = self.time, time = self:GetRemainingTime(), damage = self:GetStackCount()})
-
+self.parent:UpdateUIshort({hide = 1, hide_full = 1, style = "LegionPress", priority = 1})
 
 if self:GetStackCount() <= 0 then return end
 
@@ -456,10 +427,10 @@ function modifier_press_the_attack_custom_legendary_damage:OnCreated(table)
 if not IsServer() then return end
 
 self.caster = self:GetCaster()
-self.damage_duration = self:GetCaster():GetTalentValue("modifier_legion_press_legendary", "damage_duration")
-self.damage_interval = self:GetCaster():GetTalentValue("modifier_legion_press_legendary", "damage_interval")
-self.damage_radius = self:GetCaster():GetTalentValue("modifier_legion_press_legendary", "damage_radius")
-self.damage_creeps = 1 - self:GetCaster():GetTalentValue("modifier_legion_press_legendary", "damage_creeps")/100
+self.damage_duration = self:GetCaster():GetTalentValue("modifier_legion_press_7", "damage_duration")
+self.damage_interval = self:GetCaster():GetTalentValue("modifier_legion_press_7", "damage_interval")
+self.damage_radius = self:GetCaster():GetTalentValue("modifier_legion_press_7", "damage_radius")
+self.damage_creeps = 1 - self:GetCaster():GetTalentValue("modifier_legion_press_7", "damage_creeps")/100
 
 
 self.RemoveForDuel = true
@@ -486,7 +457,7 @@ ParticleManager:ReleaseParticleIndex( effect_target )
 
 local enemies = self.caster:FindTargets(self.damage_radius)
 
-for _,target in ipairs(enemies) do 
+for _,target in pairs(enemies) do 
 
 	local damage = self.tick 
 	if target:IsCreep() then 
@@ -494,7 +465,7 @@ for _,target in ipairs(enemies) do
 	end
 
 	local damageTable = {victim = target,  damage = damage, damage_type = DAMAGE_TYPE_PURE, attacker = self.caster, ability = self:GetAbility()}
-	 ApplyDamage(damageTable)
+	 DoDamage(damageTable, "modifier_legion_press_7")
 end
 
 end
@@ -512,13 +483,11 @@ return
 end
 function modifier_press_the_attack_custom_unslow:OnDestroy()
 if not IsServer() then return end 
+self.parent = self:GetParent()
 
-local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_brewmaster/brewmaster_dispel_magic.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-
-ParticleManager:ReleaseParticleIndex(particle)
-
-self:GetParent():EmitSound("Lc.Press_Purge")
-self:GetCaster():Purge(false, true, false, true, false)
+self.parent:GenericParticle("particles/units/heroes/hero_brewmaster/brewmaster_dispel_magic.vpcf")
+self.parent:EmitSound("Lc.Press_Purge")
+self.parent:Purge(false, true, false, true, false)
 end 
 
 
@@ -553,10 +522,10 @@ end
 
 modifier_press_the_attack_custom_burn_aura = class({})
 function modifier_press_the_attack_custom_burn_aura:IsPurgable() return true end
-function modifier_press_the_attack_custom_burn_aura:IsHidden() return false end
+function modifier_press_the_attack_custom_burn_aura:IsHidden() return true end
 function modifier_press_the_attack_custom_burn_aura:OnCreated()
 
-self.aura_radius = self:GetCaster():GetTalentValue("modifier_legion_press_duration", "radius")
+self.aura_radius = self:GetCaster():GetTalentValue("modifier_legion_press_4", "radius")
 end
 
 
@@ -581,3 +550,8 @@ end
 function modifier_press_the_attack_custom_burn_aura:GetAuraDuration()
 return 0
 end
+
+
+modifier_press_the_attack_custom_tracker = class({})
+function modifier_press_the_attack_custom_tracker:IsHidden() return true end
+function modifier_press_the_attack_custom_tracker:IsPurgable() return false end

@@ -9,6 +9,7 @@ function init()
 	//GameEvents.Subscribe_custom('PreGameEnd', ShowTimer)
 
 	GameEvents.Subscribe_custom('duel_timer_progress', OnDuelTimer)
+	GameEvents.Subscribe_custom('hide_all_timers', hide_all_timers)
 
 	var HeaderText = $.GetContextPanel().FindChildTraverse("DuelHeaderText");
 	HeaderText.text = "РАУНД 1"
@@ -22,7 +23,9 @@ function init()
 	var MkbIcon = $.GetContextPanel().FindChildTraverse("MkbIcon");
 	var Necro = $.GetContextPanel().FindChildTraverse("NecroWave");
 
-	 var text = $.Localize('#talent_disc_gold_info')
+
+
+    var text = $.Localize('#talent_disc_gold_info')
 
 		GoldIcon.SetPanelEvent('onmouseover', function() {
 	    $.DispatchEvent('DOTAShowTextTooltip', GoldIcon, text) });
@@ -81,7 +84,12 @@ function MouseOver( panel , skill)
 
 }
 
-
+function hide_all_timers()
+{
+	HideTimer()
+	HideDuelTimer()
+	Game.EmitSound("Game.End")
+}
 
 
 
@@ -220,7 +228,7 @@ function OnTimer( kv )
 	}
 
 
-	if (gold == true)
+	if (gold == 1)
 	{
 		GoldIcon.style.visibility = "visible"
 	} else 
@@ -386,13 +394,11 @@ function OnDuelTimer( kv )
 	let show = kv.show 
 	let stage = kv.stage
 	let round = kv.round
-	let hero1 = kv.hero1
-	let hero2 = kv.hero2 
+	let heroes1 = kv.heroes1
+	let heroes2 = kv.heroes2 
 	let wins1 = kv.wins1
 	let wins2 = kv.wins2
 	let final_duel = kv.final
-	let id1 = kv.id1 
-	let id2 = kv.id2
 
 	var text = ''
 
@@ -413,32 +419,18 @@ function OnDuelTimer( kv )
 	var normal = $.GetContextPanel().FindChildTraverse("NormalDuelBot");
 	var final = $.GetContextPanel().FindChildTraverse("FinalDuelBot");
 
-	if (final_duel == 0)
-	{
+	let icon_name = ""
 
+	if (final_duel == 0)
+	{		
+		icon_name = "Normal"
 		normal.RemoveClass("PanelHidden")
 		final.AddClass("PanelHidden")
-
-		var DuelHero = $.GetContextPanel().FindChildTraverse("NormalDuelHeroLeft");
-		DuelHero.style.backgroundImage =  'url( "file://{images}/heroes/' +  Game.GetHeroImage(id1 , hero1) + '.png")'
-		DuelHero.style.backgroundSize = '100%'
-
-		var DuelHero2 = $.GetContextPanel().FindChildTraverse("NormalDuelHeroRight");
-		DuelHero2.style.backgroundImage =  'url( "file://{images}/heroes/' +  Game.GetHeroImage(id2 , hero2) + '.png")'
-		DuelHero2.style.backgroundSize = '100%'
 	}else 
 	{
-
+		icon_name = "Final"
 		normal.AddClass("PanelHidden")
 		final.RemoveClass("PanelHidden")
-
-		var DuelHero = $.GetContextPanel().FindChildTraverse("DuelHeroLeft");
-		DuelHero.style.backgroundImage =  'url( "file://{images}/heroes/' + Game.GetHeroImage(id1 , hero1) + '.png")'
-		DuelHero.style.backgroundSize = '100%'
-
-		var DuelHero2 = $.GetContextPanel().FindChildTraverse("DuelHeroRight");
-		DuelHero2.style.backgroundImage =  'url( "file://{images}/heroes/' + Game.GetHeroImage(id2 , hero2) + '.png")'
-		DuelHero2.style.backgroundSize = '100%'
 
 		var DuelTextLeft = $.GetContextPanel().FindChildTraverse("DuelTimerTextLeft");
 		DuelTextLeft.text = String(wins1)
@@ -447,6 +439,37 @@ function OnDuelTimer( kv )
 		DuelTextRight.text = String(wins2)
 
 	}
+
+
+
+	for (var i = 1; i <= 2; i++) 
+	{
+		let icon = $.GetContextPanel().FindChildTraverse(icon_name + "DuelHeroLeft_Icon" + String(i))
+		if (heroes1[i])
+		{
+			icon.RemoveClass("DuelHero_icon_hidden")
+			icon.style.backgroundImage =  'url( "file://{images}/heroes/' +  Game.GetHeroImage(heroes1[i].id , heroes1[i].hero) + '.png")'
+			icon.style.backgroundSize = '100%'
+		}else
+		{
+			icon.AddClass("DuelHero_icon_hidden")
+		}
+	}
+
+	for (var i = 1; i <= 2; i++) 
+	{
+		let icon = $.GetContextPanel().FindChildTraverse(icon_name + "DuelHeroRight_Icon" + String(i))
+		if (heroes2[i])
+		{
+			icon.RemoveClass("DuelHero_icon_hidden")
+			icon.style.backgroundImage =  'url( "file://{images}/heroes/' +  Game.GetHeroImage(heroes2[i].id , heroes2[i].hero) + '.png")'
+			icon.style.backgroundSize = '100%'
+		}else
+		{
+			icon.AddClass("DuelHero_icon_hidden")
+		}
+	}
+
 
 
 

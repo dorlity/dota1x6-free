@@ -14,15 +14,17 @@ function modifier_archer_passive:IsHidden() return true end
 
 function modifier_archer_passive:DeclareFunctions()
     return {
-        MODIFIER_EVENT_ON_ATTACK_START,
-        MODIFIER_EVENT_ON_ATTACK,
-        MODIFIER_EVENT_ON_ATTACK_LANDED,
-        MODIFIER_EVENT_ON_ORDER
+        MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
     }
 end
 
+function modifier_archer_passive:OnCreated()
+self.parent = self:GetParent()
+self.parent:AddAttackStartEvent_out(self)
+self.parent:AddAttackRecordEvent_out(self)
+end
 
-function modifier_archer_passive:OnAttackStart(keys)
+function modifier_archer_passive:AttackRecordEvent_out(keys)
 
     if IsServer() then
         local attacker = keys.attacker
@@ -49,7 +51,7 @@ function modifier_archer_passive:OnAttackStart(keys)
         end
     end
 end
-function modifier_archer_passive:OnAttack(keys)
+function modifier_archer_passive:AttackStartEvent_out(keys)
     if IsServer() then
         local attacker = keys.attacker
         local target = keys.target
@@ -66,7 +68,7 @@ function modifier_archer_passive:OnAttack(keys)
     end
 end
 
-function modifier_archer_passive:OnAttackLanded(keys)
+function modifier_archer_passive:GetModifierProcAttack_Feedback(keys)
     if IsServer() then
         local attacker = keys.attacker
         local target = keys.target

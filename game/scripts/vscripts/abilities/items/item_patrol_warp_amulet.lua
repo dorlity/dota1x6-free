@@ -1,5 +1,4 @@
 LinkLuaModifier("modifier_patrol_warp_amulet", "abilities/items/item_patrol_warp_amulet", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_patrol_warp_amulet_building", "abilities/items/item_patrol_warp_amulet", LUA_MODIFIER_MOTION_NONE)
 
 
 item_patrol_warp_amulet              = class({})
@@ -9,6 +8,12 @@ function item_patrol_warp_amulet:GetChannelTime()
 end
 
 
+function item_patrol_warp_amulet:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/econ/events/ti10/teleport/teleport_start_ti10_lvl1_rewardline.vpcf", context )
+PrecacheResource( "particle","particles/econ/events/ti5/teleport_end_lvl2_ti5.vpcf", context )
+PrecacheResource( "particle","particles/items2_fx/smoke_of_deceit.vpcf", context )
+end
 
 
 function item_patrol_warp_amulet:OnAbilityPhaseStart()
@@ -53,8 +58,6 @@ ParticleManager:SetParticleControlEnt(self.teleportToEffect, 1, self.teleport_ce
 ParticleManager:SetParticleControlEnt(self.teleportToEffect, 3, self:GetCaster(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self.teleport_center:GetAbsOrigin(), true)
 ParticleManager:SetParticleControl(self.teleportToEffect, 4, Vector(0.9, 0, 0))
 ParticleManager:SetParticleControlEnt(self.teleportToEffect, 5, self.teleport_center, PATTACH_POINT_FOLLOW, "attach_hitloc", self.teleport_center:GetAbsOrigin(), true)
-
-
 end
 
 function item_patrol_warp_amulet:OnChannelThink(fInterval)
@@ -135,9 +138,9 @@ if smoke then
 end
 
 
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_patrol_warp_amulet_building", {duration = self:GetSpecialValueFor("duration_building")})
+self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_can_not_push", {duration = self:GetSpecialValueFor("duration_building")})
 
-self:SpendCharge()
+self:SpendCharge(0)
 end
 
 
@@ -155,7 +158,6 @@ function modifier_patrol_warp_amulet:GetTexture() return "buffs/warp_amulet" end
 function modifier_patrol_warp_amulet:DeclareFunctions()
 	local decFuncs = {
 		MODIFIER_PROPERTY_OVERRIDE_ANIMATION,
-		MODIFIER_EVENT_ON_TAKEDAMAGE
     }
 
     return decFuncs
@@ -166,7 +168,7 @@ function modifier_patrol_warp_amulet:GetOverrideAnimation()
 end
 
 
-function modifier_patrol_warp_amulet:OnTakeDamage(params)
+function modifier_patrol_warp_amulet:DamageEvent_inc(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.unit then return end
 if self:GetParent() == params.attacker then return end
@@ -177,8 +179,14 @@ end
 
 
 
+
 function modifier_patrol_warp_amulet:OnCreated(table)
 if not IsServer() then return end
+
+self.parent = self:GetParent()
+if self.parent:IsRealHero() then 
+    self.parent:AddDamageEvent_inc(self, true)
+end 
 
 self.unit = EntIndexToHScript(table.unit)
 
@@ -201,9 +209,3 @@ end
 
 
 
-modifier_patrol_warp_amulet_building = class({})
-function modifier_patrol_warp_amulet_building:IsHidden() return false end
-function modifier_patrol_warp_amulet_building:IsPurgable() return false end
-function modifier_patrol_warp_amulet_building:RemoveOnDeath() return false end
-function modifier_patrol_warp_amulet_building:IsDebuff() return true end
-function modifier_patrol_warp_amulet_building:GetTexture() return "buffs/warp_amulet" end

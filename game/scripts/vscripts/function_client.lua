@@ -2,31 +2,115 @@ require( 'talents_values')
 
 
 function C_DOTA_BaseNPC:IsOnDuel()
-if not self.duel_data then return false end 
-if not duel_data[self.duel_data] then return false end 
-if duel_data[self.duel_data].stage ~= 2 then return false end
-
-return true
+return false
 end 
 
+function C_DOTA_BaseNPC:PrintTalents()
+DeepPrintTable(active_talents)
+end
+
+function C_DOTA_BaseNPC:IsCreepHero()
+return self:HasModifier("modifier_life_stealer_infest_custom_legendary_creep") or (self:IsCreep() and self:IsConsideredHero())
+end
+
+
+
+function C_DOTA_BaseNPC:IsUnit()
+return not self:IsNull() 
+    and (self:IsHero() or self:IsCreep() or self.is_crystal) 
+    and self:GetUnitName() ~= "npc_teleport" 
+    and not self.is_hero_icon 
+    and self:GetUnitName() ~= "npc_dota_donate_item_illusion"
+    and not self:HasModifier("modifier_bounty_map")
+end
+
+
+function C_DOTA_BaseNPC:IsTempest()
+return self:HasModifier("modifier_arc_warden_tempest_double_custom") or self:HasModifier("modifier_monkey_king_wukongs_command_custom_soldier")
+end
+
+function C_DOTA_BaseNPC:TalentLevel(talent)
+
+local player_id = self:GetUnitName() -- self:GetPlayerOwnerID()
+
+
+if self:HasModifier(talent) then 
+    return self:GetModifierStackCount(talent, self)
+end 
+
+if not active_talents[player_id] then return 0 end
+if not active_talents[player_id][talent] then return 0 end
+
+return active_talents[player_id][talent].level
+end
+
+
+
+
+function C_DOTA_BaseNPC:HasTalent(talent)
+if not self or self:IsNull() then return false end
+
+local player_id = self:GetUnitName() -- self:GetPlayerOwnerID()
+
+if self:HasModifier(talent) then return true end
+if not active_talents[player_id] then return false end
+if not active_talents[player_id][talent] then return false end
+
+if (self:IsIllusion() or self:IsTempest()) and (not active_talents[player_id][talent].allow_illusion or active_talents[player_id][talent].allow_illusion ~= 1) then 
+    return false
+end
+
+return true
+end
+
+function C_DOTA_BaseNPC:AddTalent(talent, new_level)
+
+local player_id = self:GetUnitName() -- self:GetPlayerOwnerID()
+
+if not active_talents[player_id] then 
+    active_talents[player_id] = {}
+end 
+
+if not active_talents[player_id][talent] then 
+    active_talents[player_id][talent] = {}
+    active_talents[player_id][talent].level = 1
+
+    if self:GetTalentValue(talent, "allow_illusion") ~= 0 then 
+        active_talents[player_id][talent].allow_illusion = self:GetTalentValue(talent, "allow_illusion")
+    end
+else 
+    active_talents[player_id][talent].level = active_talents[player_id][talent].level + 1
+end
+
+if new_level then 
+    active_talents[player_id][talent].level = new_level
+end
+
+end
 
 
 
 function C_DOTA_BaseNPC:GetTalentValue(name, property, ignore_level)
 
+local hero_table = nil
 
-local hero_table = global_values[self:GetUnitName()]
-
+if global_values[self:GetUnitName()] and global_values[self:GetUnitName()][name] then
+    hero_table = global_values[self:GetUnitName()]
+elseif global_values["general"][name] then 
+    hero_table = global_values["general"]
+elseif global_values["patrol"][name] then
+    hero_table = global_values["patrol"]
+elseif talents_heroes[name] and global_values[talents_heroes[name]] then
+    hero_table = global_values[talents_heroes[name]]
+end
 
 if not hero_table then return 0 end
 
 local talent_table = hero_table[name]
 
-
 if not talent_table then return 0 end
 
 local value = talent_table[property]
-
 
 if not value then return 0 end
 
@@ -34,22 +118,20 @@ if ignore_level and ignore_level == true and type(value) ~= "table" then
     return value
 end 
 
+if not self:HasTalent(name) then return 0 end
 
-if not self:HasModifier(name) then
-return 0
-end
-
-local level = self:GetModifierStackCount(name, self)
-
-
+local level = self:TalentLevel(name)
 
 if level == 0 then return 0 end
-
 
 if type(value) == "table" then
     return value[level]
 else
-    return value
+    if property == "general_bonus" then 
+        return value*level
+    else
+        return value
+    end
 end
 
 return 0
@@ -57,75 +139,136 @@ end
 
 
 
+function C_DOTA_BaseNPC:UpdateTalentsClient()
 
-function C_DOTA_BaseNPC:GetWexCd(new_stack)
 
-local ability = self:FindAbilityByName("invoker_wex_custom")
-if not ability then return 0 end
+end
 
-local stack = 0
-if new_stack then 
-    stack = new_stack
-else
-    if self:HasModifier("modifier_invoker_wex_custom_passive") then 
-       stack = self:GetUpgradeStack("modifier_invoker_wex_custom_passive")
-    end 
-end 
 
-return ability:GetSpecialValueFor("cooldown_reduction")*stack
-end     
 
+
+function C_DOTA_BaseNPC:UpdateUIshort(params)
+
+end
+
+
+function C_DOTA_BaseNPC:UpdateUIlong(params)
+
+end
+
+
+
+function C_DOTA_BaseNPC:GetId()
+local id = self:GetPlayerOwnerID()
+if self.owner then
+    id = self.owner:GetPlayerOwnerID()
+end
+return id
+end
 
 
 function C_DOTA_BaseNPC:GetValueQuas(ability, value)
 local quas = self:FindAbilityByName("invoker_quas_custom")
-
+local level = 0
 if quas then
-    local level = quas:GetLevel() - 1
+    level = quas:GetLevel() - 1
 
-    if self:HasModifier("modifier_invoker_invoke_6") then  
+    if self:HasTalent("modifier_invoker_invoke_6") then  
         level = level + self:GetTalentValue("modifier_invoker_invoke_6", "level")
     end 
-
-    return ability:GetLevelSpecialValueFor(value, level)
+else
+    local quas_mod = self:GetUpgradeStack("modifier_morphling_replicate_custom_quas")
+    if quas_mod then
+        level = math.max(0, quas_mod - 1)
+    end
 end
-return 0
+if self:HasTalent("modifier_slark_essence_7") or self:HasTalent("modifier_terror_reflection_7") then
+    level = 3
+end
+return ability:GetLevelSpecialValueFor(value, level)
 end
 
 
 function C_DOTA_BaseNPC:GetValueWex(ability, value)
 local wex = self:FindAbilityByName("invoker_wex_custom")
+local level = 0
 if wex then
-    local level = wex:GetLevel() - 1
+    level = wex:GetLevel() - 1
 
-    if self:HasModifier("modifier_invoker_invoke_6") then  
+    if self:HasTalent("modifier_invoker_invoke_6") then  
         level = level + self:GetTalentValue("modifier_invoker_invoke_6", "level")
     end  
+else
+    local wex_mod = self:GetUpgradeStack("modifier_morphling_replicate_custom_wex")
+    if wex_mod then
+        level = math.max(0, wex_mod - 1)
+    end
+end
+if self:HasTalent("modifier_slark_essence_7") then
+    level = 3
+end
+return ability:GetLevelSpecialValueFor(value, level)
+end
 
-    return ability:GetLevelSpecialValueFor(value, level)
-end
-return 0
-end
 
 function C_DOTA_BaseNPC:GetValueExort(ability, value)
 local exort = self:FindAbilityByName("invoker_exort_custom")
-if exort then
-    local level = exort:GetLevel() - 1
+local level = 0
 
-    if self:HasModifier("modifier_invoker_invoke_6") then  
+if exort then
+    level = exort:GetLevel() - 1
+
+    if self:HasTalent("modifier_invoker_invoke_6") then  
         level = level + self:GetTalentValue("modifier_invoker_invoke_6", "level")
     end 
-
-    return ability:GetLevelSpecialValueFor(value, level)
+else
+    local exort_mod = self:GetUpgradeStack("modifier_morphling_replicate_custom_exort")
+    if exort_mod then
+        level = math.max(0, exort_mod - 1)
+    end
 end
-return 0
+if self:HasTalent("modifier_slark_essence_7") then
+    level = 3
+end
+return ability:GetLevelSpecialValueFor(value, level)
 end
 
 
 
 
 
+function C_DOTA_BaseNPC:AddAttackEvent_out(new_mod) end
+function C_DOTA_BaseNPC:AddAttackEvent_inc(new_mod) end
 
+function C_DOTA_BaseNPC:AddAttackStartEvent_out(mod) end
+function C_DOTA_BaseNPC:AddAttackStartEvent_inc(mod) end
+
+function C_DOTA_BaseNPC:AddAttackRecordEvent_out(mod) end
+function C_DOTA_BaseNPC:AddAttackRecordEvent_inc(mod) end
+
+function C_DOTA_BaseNPC:AddAttackFailEvent_out(mod) end
+function C_DOTA_BaseNPC:AddAttackFailEvent_inc(mod) end
+
+function C_DOTA_BaseNPC:AddRecordDestroyEvent(mod) end
+function C_DOTA_BaseNPC:AddAttackCreateEvent(mod) end
+
+function C_DOTA_BaseNPC:AddDamageEvent_out(new_mod) end
+function C_DOTA_BaseNPC:AddDamageEvent_inc(new_mod) end
+
+function C_DOTA_BaseNPC:AddHealEvent_inc(new_mod) end
+
+function C_DOTA_BaseNPC:AddSpellStartEvent(mod) end
+function C_DOTA_BaseNPC:AddSpellEvent(mod) end
+function C_DOTA_BaseNPC:AddDeathEvent(mod) end
+function C_DOTA_BaseNPC:AddRespawnEvent(mod) end
+function C_DOTA_BaseNPC:AddOrderEvent(mod) end
+
+
+
+function C_DOTA_BaseNPC:GetLeshracRadius()
+if not self:HasModifier("modifier_leshrac_defilement_custom") then return 0 end
+return self:GetUpgradeStack("modifier_leshrac_defilement_custom")
+end
 
 
 
@@ -137,10 +280,10 @@ end
 
 
 function C_DOTA_BaseNPC:GetUpgradeStack( mod )
-   if self:HasModifier(mod) then 
-   			
-		return self:GetModifierStackCount(mod, self)
-	else return 0 end 
+if self:HasModifier(mod) then 
+			
+	return self:GetModifierStackCount(mod, self)
+else return 0 end 
 
 end
 
@@ -228,6 +371,9 @@ return false
 end
 
 
+function C_DOTA_BaseNPC:GenericParticle()
+
+end
 
 
 function C_DOTA_BaseNPC:GenericHeal(heal, ability, no_text)

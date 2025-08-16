@@ -1,330 +1,235 @@
-LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_BOTH )
-LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_attacks", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_heal", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_speed", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_tracker", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_cookie", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_bombs", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_bomb_cookie", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_bomb_slow", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_damage", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_lowhp_cd", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_lowhp_visual", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_lowhp_reduce", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_resist", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_legendary_cd", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_legendary_tracker", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_legendary_speed", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_unslow", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_shield", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_snapfire_firesnap_cookie_custom_shield_cd", "abilities/snapfire/snapfire_firesnap_cookie_custom", LUA_MODIFIER_MOTION_NONE )
 
 
 
 snapfire_firesnap_cookie_custom = class({})
-
-snapfire_firesnap_cookie_custom.attack_range = 800
-snapfire_firesnap_cookie_custom.attack_interval = 0.15
-snapfire_firesnap_cookie_custom.attack_max = 3
-snapfire_firesnap_cookie_custom.attack_damage = {-70, -55, -40}
+snapfire_firesnap_cookie_custom_2 = class({})
 
 
-snapfire_firesnap_cookie_custom.speed_attack = {50, 75, 100}
-snapfire_firesnap_cookie_custom.speed_move = {10, 15, 20}
-snapfire_firesnap_cookie_custom.speed_duration = 4
+function snapfire_firesnap_cookie_custom:CreateTalent()
+--self:UpdateJs()
 
-snapfire_firesnap_cookie_custom.damage_inc = {6, 9, 12}
-snapfire_firesnap_cookie_custom.damage_inc_duration = 5
+if dota1x6.current_wave >= upgrade_orange then 
+	local caster = self:GetCaster()
+	local max = caster:GetTalentValue("modifier_snapfire_cookie_7", "max_speed", true)/2
 
-snapfire_firesnap_cookie_custom.cd_inc = -3
+	local mod = caster:AddNewModifier(caster, self, "modifier_snapfire_firesnap_cookie_custom_legendary_speed", {})
+	if mod then
+		mod:SetStackCount(max)
+	end
+end
 
-snapfire_firesnap_cookie_custom.lowhp_health = 30
-snapfire_firesnap_cookie_custom.lowhp_cd = 30
-snapfire_firesnap_cookie_custom.lowhp_radius = 500
-snapfire_firesnap_cookie_custom.lowhp_reduce = -50
-snapfire_firesnap_cookie_custom.lowhp_reduce_duration = 4
-snapfire_firesnap_cookie_custom.lowhp_knockback = 400
+end
 
-
-
-
+function snapfire_firesnap_cookie_custom_2:CreateTalent()
+self:GetCaster():SwapAbilities(self:GetName(), "snapfire_firesnap_cookie_custom", true, false)
+end
 
 function snapfire_firesnap_cookie_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-PrecacheResource( "particle", "particles/units/heroes/hero_snapfire/hero_snapfire_cookie_selfcast.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_snapfire/hero_snapfire_cookie_buff.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_snapfire/hero_snapfire_cookie_receive.vpcf", context )
-PrecacheResource( "particle", "particles/sf_refresh_a.vpcf", context )
-PrecacheResource( "particle", "particles/cleance_blade.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_snapfire/hero_snapfire_cookie_landing.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_snapfire/hero_snapfire_cookie_receive.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_oracle/oracle_false_promise_heal.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_snapfire/hero_snapfire_cookie_projectile.vpcf", context )
-PrecacheResource( "particle", "particles/alch_stun_legendary.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_monkey_king/monkey_king_disguise.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_timer.vpcf", context )
-PrecacheResource( "particle", "particles/items3_fx/black_powder_bag.vpcf", context )
-PrecacheResource( "particle", "particles/zeus_resist_stack.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_sniper/sniper_headshot_slow.vpcf", context )
-PrecacheResource( "particle", "particles/status_fx/status_effect_huskar_lifebreak.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_snapfire/hero_snapfire_cookie_selfcast.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_snapfire/hero_snapfire_cookie_buff.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_snapfire/hero_snapfire_cookie_receive.vpcf", context )
+PrecacheResource( "particle","particles/sf_refresh_a.vpcf", context )
+PrecacheResource( "particle","particles/cleance_blade.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_snapfire/hero_snapfire_cookie_landing.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_snapfire/hero_snapfire_cookie_landing.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_snapfire/hero_snapfire_cookie_receive.vpcf", context )
+PrecacheResource( "particle","particles/generic_gameplay/generic_stunned.vpcf", context )
+PrecacheResource( "particle","particles/generic_gameplay/generic_lifesteal.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_oracle/oracle_false_promise_heal.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_snapfire/hero_snapfire_cookie_projectile.vpcf", context )
+PrecacheResource( "particle","particles/alch_stun_legendary.vpcf", context )
+PrecacheResource( "particle","particles/sf_refresh_a.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_monkey_king/monkey_king_disguise.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_snapfire/hero_snapfire_cookie_projectile.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_timer.vpcf", context )
+PrecacheResource( "particle","particles/items3_fx/black_powder_bag.vpcf", context )
+PrecacheResource( "particle","particles/zeus_resist_stack.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_sniper/sniper_headshot_slow.vpcf", context )
+PrecacheResource( "particle","particles/status_fx/status_effect_huskar_lifebreak.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_snapfire/hero_snapfire_cookie_projectile.vpcf", context )
+PrecacheResource( "particle","particles/lc_odd_proc_.vpcf", context )
+PrecacheResource( "particle","particles/snapfire/cookie_shield.vpcf", context )
 
 end
 
+function snapfire_firesnap_cookie_custom_2:GetBehavior()
+local bonus = DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES
+if self:GetCaster():HasTalent("modifier_snapfire_cookie_5") then
+	bonus = 0
+end
+return DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_AOE + bonus
+end
 
+function snapfire_firesnap_cookie_custom:GetBehavior()
+local bonus = DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES
+if self:GetCaster():HasTalent("modifier_snapfire_cookie_5") then
+	bonus = 0
+end
+return DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_AOE + bonus
+end
 
-
-
+function snapfire_firesnap_cookie_custom_2:GetAbilityChargeRestoreTime(level)
+local bonus = 0
+if self:GetCaster():HasTalent("modifier_snapfire_cookie_6") then 
+	bonus = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_6", "cd")
+end 
+return self:GetSpecialValueFor("AbilityChargeRestoreTime") + bonus
+end
 
 function snapfire_firesnap_cookie_custom:GetCastPoint()
-if self:GetCaster():HasModifier("modifier_snapfire_cookie_5") then 
-	return 0
+local bonus = 0
+if self:GetCaster():HasTalent("modifier_snapfire_cookie_3") then 
+	bonus = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_3", "cast")
 end
-	return self:GetSpecialValueFor("AbilityCastPoint")
-end
-
-
-
-function snapfire_firesnap_cookie_custom:GetCooldown(iLevel)
-
-local upgrade_cooldown = 0
-if self:GetCaster():HasModifier("modifier_snapfire_cookie_5") then 
-  upgrade_cooldown = self.cd_inc
+return self:GetSpecialValueFor("AbilityCastPoint") + bonus
 end
 
- return self.BaseClass.GetCooldown(self, iLevel) + upgrade_cooldown
-
+function snapfire_firesnap_cookie_custom_2:GetCastPoint()
+local bonus = 0
+if self:GetCaster():HasTalent("modifier_snapfire_cookie_3") then 
+	bonus = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_3", "cast")
+end
+return self:GetSpecialValueFor("AbilityCastPoint") + bonus
 end
 
-
-
-
-
-
-function snapfire_firesnap_cookie_custom:OnAbilityPhaseStart()
-	local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_snapfire/hero_snapfire_cookie_selfcast.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-	ParticleManager:ReleaseParticleIndex( particle )
-	return true
+function snapfire_firesnap_cookie_custom_2:GetAOERadius()
+return self:GetSpecialValueFor("impact_radius")
 end
 
+function snapfire_firesnap_cookie_custom:GetAOERadius()
+return self:GetSpecialValueFor("impact_radius")
+end
 
 function snapfire_firesnap_cookie_custom:GetManaCost(iLevel)
-if self:GetCaster():HasModifier("modifier_snapfire_cookie_7") then
-    return self:GetCaster():GetTalentValue("modifier_snapfire_cookie_7", "mana")
+if self:GetCaster():HasTalent("modifier_snapfire_cookie_6") then
+    return 0
 end
-
 return self.BaseClass.GetManaCost(self, iLevel)
 end
 
+function snapfire_firesnap_cookie_custom_2:GetManaCost(iLevel)
+if self:GetCaster():HasTalent("modifier_snapfire_cookie_6") then
+    return 0
+end
+return self.BaseClass.GetManaCost(self, iLevel)
+end
 
+function snapfire_firesnap_cookie_custom:GetRange()
+return self:GetSpecialValueFor( "jump_horizontal_distance" ) + self:GetCaster():GetTalentValue("modifier_snapfire_cookie_2", "range")
+end
+
+function snapfire_firesnap_cookie_custom_2:GetRange()
+return self:GetSpecialValueFor( "jump_horizontal_distance" ) + self:GetCaster():GetTalentValue("modifier_snapfire_cookie_2", "range")
+end
+
+function snapfire_firesnap_cookie_custom_2:GetCastRange(vLocation, hTarget)
+if IsServer() then return 999999 end 
+return self:GetRange() - self:GetCaster():GetCastRangeBonus()
+end
+
+function snapfire_firesnap_cookie_custom:GetCastRange(vLocation, hTarget)
+if IsServer() then return 999999 end 
+return self:GetRange() - self:GetCaster():GetCastRangeBonus()
+end
+
+function snapfire_firesnap_cookie_custom:OnAbilityPhaseStart()
+self:GetCaster():GenericParticle("particles/units/heroes/hero_snapfire/hero_snapfire_cookie_selfcast.vpcf")
+return true
+end
+
+function snapfire_firesnap_cookie_custom_2:OnAbilityPhaseStart()
+self:GetCaster():GenericParticle("particles/units/heroes/hero_snapfire/hero_snapfire_cookie_selfcast.vpcf")
+return true
+end
 
 function snapfire_firesnap_cookie_custom:GetIntrinsicModifierName()
+if not self:GetCaster():IsRealHero() then return end
 return "modifier_snapfire_firesnap_cookie_custom_tracker"
 end
 
 
-
-function snapfire_firesnap_cookie_custom:GetCastRange(vLocation, hTarget)
-
-if IsServer() then 
-	return 999999
-else 
-
-	if self:GetCaster():HasShard() then 
-		return self:GetSpecialValueFor("shard_distance")
-	else 
-		return self:GetSpecialValueFor( "jump_horizontal_distance" ) 
-	end
-
+function snapfire_firesnap_cookie_custom:UpdateJs()
+local mod = self:GetCaster():FindModifierByName("modifier_snapfire_firesnap_cookie_custom_tracker")
+if mod then
+	mod:UpdateJs()
 end
 
 end
+
+
+function snapfire_firesnap_cookie_custom:LaunchBomb(target, point)
+
+local caster = self:GetCaster()
+local cookie = CreateUnitByName("npc_snapfire_cookie_bomb", point, true, nil, nil, caster:GetTeamNumber())
+
+local vector = point - target:GetAbsOrigin()
+local direction = vector:Normalized()
+local distance = vector:Length2D()
+local speed = 1200
+
+local info = 
+{
+    Target = cookie,
+    Source = target,
+    Ability = self,    
+        
+    EffectName ="particles/units/heroes/hero_snapfire/hero_snapfire_cookie_projectile.vpcf",
+    iMoveSpeed = speed,
+    bDodgeable = false,                           
+    
+    vSourceLoc = target:GetAttachmentOrigin(target:ScriptLookupAttachment("attach_hitloc")),                
+        
+    bDrawsOnMinimap = false,                          
+    bVisibleToEnemies = true,                         
+    bProvidesVision = true,                           
+    iVisionRadius = 200,                              
+    iVisionTeamNumber = caster:GetTeamNumber()       
+}
+
+ProjectileManager:CreateTrackingProjectile(info)
+
+target:EmitSound("Snapfire.Bombs_activate")
+cookie:AddNewModifier(caster, self, "modifier_snapfire_firesnap_cookie_custom_bomb_cookie", {interval = distance/speed})
+end
+
+function snapfire_firesnap_cookie_custom_2:OnSpellStart()
+local caster = self:GetCaster()
+local point = self:GetCursorPosition()
+local ability = caster:FindAbilityByName("snapfire_firesnap_cookie_custom")
+
+if not ability then return end
+
+if point == caster:GetAbsOrigin() then 
+	point = caster:GetAbsOrigin() +caster:GetForwardVector()*10
+end
+caster:AddNewModifier(caster, ability, "modifier_snapfire_firesnap_cookie_custom", {duration = self:GetSpecialValueFor("jump_duration"), x = point.x, y = point.y})
+end
+
 
 function snapfire_firesnap_cookie_custom:OnSpellStart()
-	if not IsServer() then return end
-	self:GetCaster():EmitSound("Hero_Snapfire.FeedCookie.Cast")
+local caster = self:GetCaster()
+local point = self:GetCursorPosition()
 
-	local duration = self:GetSpecialValueFor( "jump_duration" )
-	local height = self:GetSpecialValueFor( "jump_height" )
-	local distance = self:GetSpecialValueFor( "jump_horizontal_distance" )
-	local impact_stun_duration = self:GetSpecialValueFor( "impact_stun_duration" )
-	local impact_damage = self:GetSpecialValueFor( "impact_damage" )
-	local impact_radius = self:GetSpecialValueFor( "impact_radius" )
-
-	local speed = distance/duration
-
-
-  	self.scatter_ability = self:GetCaster():FindAbilityByName("snapfire_scatterblast_custom")
-	local ulti = self:GetCaster():FindAbilityByName("snapfire_mortimer_kisses_custom")
-
-
-
-	if self:GetCaster():HasModifier("modifier_snapfire_cookie_3") then 
-		my_game:GenericHeal(self:GetCaster(), self:GetCaster():GetTalentValue("modifier_snapfire_cookie_3", "heal"), self)
-
-		self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_snapfire_firesnap_cookie_custom_heal", {duration = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_3", "duration")})
-	end
-
-
-	if self:GetCaster():HasShard() then 
-		height = self:GetSpecialValueFor("shard_height")
-		distance = self:GetSpecialValueFor("shard_distance")
-
-	end
-
-	local point = self:GetCaster():GetCursorPosition()
-
-	if point == self:GetCaster():GetAbsOrigin() then 
-		point = self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector()*10
-	end
-
-	local vec = point - self:GetCaster():GetAbsOrigin()
-
-	vec.z = 0
-
-	local dir = vec:Normalized()
-
-
-
-	self:GetCaster():SetForwardVector(dir)
-	self:GetCaster():FaceTowards(self:GetCaster():GetAbsOrigin() + dir*10)
-
-	local max_dist = distance
-
-	distance = math.min(max_dist, math.max(200, vec:Length2D()))
-	height = distance*0.55
-
-
-	if ulti and ulti:GetLevel() > 0 and self:GetCaster():HasShard() then 
-		ulti:LauchBall(self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector()*distance, 0.7, self:GetSpecialValueFor("shard_damage")/100)
-	end
-
-	duration = distance/speed
-
-
-	local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_snapfire/hero_snapfire_cookie_buff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-	ParticleManager:ReleaseParticleIndex( particle )
-	local particle_buff = ParticleManager:CreateParticle( "particles/units/heroes/hero_snapfire/hero_snapfire_cookie_receive.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-	self:GetCaster():EmitSound("Hero_Snapfire.FeedCookie.Consume")
-
-	local knockback = self:GetCaster():AddNewModifier( self:GetCaster(), self, "modifier_snapfire_firesnap_cookie_custom", { distance = distance, height = height, duration = duration, direction_x = self:GetCaster():GetForwardVector().x, direction_y = self:GetCaster():GetForwardVector().y, IsStun = true } )
-
-	local callback = function()
-
-		if self:GetCaster():HasModifier("modifier_snapfire_scatter_7") and self.scatter_ability and self.scatter_ability:GetLevel() > 0 and self.scatter_ability:GetCooldownTimeRemaining() > 0 then 
-
-			local particle = ParticleManager:CreateParticle("particles/sf_refresh_a.vpcf", PATTACH_CUSTOMORIGIN, self:GetCaster())
-		   	ParticleManager:SetParticleControlEnt( particle, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetCaster():GetOrigin(), true )
-		   	ParticleManager:ReleaseParticleIndex(particle)
-
-		    self:GetCaster():EmitSound("Hero_Rattletrap.Overclock.Cast")
-
-			self.scatter_ability:EndCooldown()
-		end
-
-		if self:GetCaster():HasModifier("modifier_snapfire_cookie_4") then 
-			self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_snapfire_firesnap_cookie_custom_bombs", {})
-		end
-
-		if self:GetCaster():HasModifier("modifier_snapfire_cookie_2") then 
-			self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_snapfire_firesnap_cookie_custom_speed", {duration = self.speed_duration})
-		end
-
-		local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetCaster():GetOrigin(), nil, impact_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false)
-		
-		if #enemies > 0 and self:GetCaster():HasModifier("modifier_snapfire_cookie_5") then 
-			self:GetCaster():EmitSound("Brewmaster_Storm.DispelMagic")
-		end
-
-		for _,enemy in pairs(enemies) do
-
-			if self:GetCaster():HasModifier("modifier_snapfire_cookie_1") then 
-				enemy:AddNewModifier(self:GetCaster(), self, "modifier_snapfire_firesnap_cookie_custom_damage", {duration = self.damage_inc_duration})
-			end
-
-			if enemy:IsRealHero() and self:GetCaster():GetQuest() == "Snapfire.Quest_6" and not self:GetCaster():QuestCompleted() then 
- 				self:GetCaster():UpdateQuest(1)
-			end
-
-
-			if self:GetCaster():HasModifier("modifier_snapfire_cookie_5") then 
-				enemy:Purge(true, false, false, false, false)
-
-				local effect_cast = ParticleManager:CreateParticle( "particles/cleance_blade.vpcf", PATTACH_ABSORIGIN_FOLLOW,  enemy)
-				ParticleManager:SetParticleControl( effect_cast, 0, enemy:GetAbsOrigin())
-				ParticleManager:SetParticleControl( effect_cast, 1, Vector(170,0,0) )
-				ParticleManager:ReleaseParticleIndex( effect_cast )
-			end
-
-			ApplyDamage({ attacker = self:GetCaster(), victim = enemy, damage = impact_damage, damage_type = self:GetAbilityDamageType(), ability = self })
-			enemy:AddNewModifier( self:GetCaster(), self, "modifier_stunned", { duration = (1 - enemy:GetStatusResistance())* impact_stun_duration } )
-		end
-
-		GridNav:DestroyTreesAroundPoint( self:GetCaster():GetOrigin(), impact_radius, true )
-
-		ParticleManager:DestroyParticle( particle_buff, false )
-		ParticleManager:ReleaseParticleIndex( particle_buff )
-
-		local land_particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_snapfire/hero_snapfire_cookie_landing.vpcf", PATTACH_WORLDORIGIN, nil )
-		ParticleManager:SetParticleControl( land_particle, 0, GetGroundPosition(self:GetCaster():GetOrigin(), nil) )
-		ParticleManager:SetParticleControl( land_particle, 1, Vector( impact_radius, impact_radius, impact_radius ) )
-		ParticleManager:ReleaseParticleIndex( land_particle )
-
-		self:GetCaster():EmitSound("Hero_Snapfire.FeedCookie.Impact")
-	end
-
-	knockback:SetEndCallback( callback )
+if point == caster:GetAbsOrigin() then 
+	point = caster:GetAbsOrigin() +caster:GetForwardVector()*10
 end
-
-
-function snapfire_firesnap_cookie_custom:OnProjectileHit( target, location )
-if not IsServer() then return end
-if not target then return end
-if not target:IsCreep() and not target:IsHero() then return end
-
-local vec = (target:GetAbsOrigin() - self:GetCaster():GetAbsOrigin())
-
-local dir = vec:Normalized()
-local point = target:GetAbsOrigin() + dir*self.lowhp_knockback
-
-local distance = 400
-local speed = 1000
-local height = 180
-
-
-local arc = target:AddNewModifier(caster, self, "modifier_generic_arc",
-{
-    target_x = point.x,
-    target_y = point.y,
-    distance = distance,
-    speed = speed,
-    height = height,
-    fix_end = false,
-    isStun = true,
-    activity = ACT_DOTA_FLAIL,
-
-})
-
-
-local impact_radius = self:GetSpecialValueFor( "impact_radius" )
-
-local callback = function()
-
-	if target and not target:IsNull() then 
-
-		local land_particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_snapfire/hero_snapfire_cookie_landing.vpcf", PATTACH_WORLDORIGIN, nil )
-		ParticleManager:SetParticleControl( land_particle, 0, GetGroundPosition(target:GetOrigin(), nil) )
-		ParticleManager:SetParticleControl( land_particle, 1, Vector( impact_radius, impact_radius, impact_radius ) )
-		ParticleManager:ReleaseParticleIndex( land_particle )
-		target:EmitSound("Hero_Snapfire.FeedCookie.Impact")
-
-		target:AddNewModifier(self:GetCaster(), self, "modifier_snapfire_firesnap_cookie_custom_lowhp_reduce", {duration = self.lowhp_reduce_duration})
-	end
-end
-
-if arc and target and not target:IsNull() then 
-
-	local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_snapfire/hero_snapfire_cookie_receive.vpcf", PATTACH_ABSORIGIN_FOLLOW, target )
-
-	arc:AddParticle(particle, false, false, -1, false, false) 
-	arc:SetEndCallback( callback )
-end
-
+caster:AddNewModifier(caster, self, "modifier_snapfire_firesnap_cookie_custom", {duration = self:GetSpecialValueFor("jump_duration"), x = point.x, y = point.y})
 end
 
 
@@ -332,253 +237,159 @@ end
 
 
 modifier_snapfire_firesnap_cookie_custom = class({})
+function modifier_snapfire_firesnap_cookie_custom:IsHidden() return true end
+function modifier_snapfire_firesnap_cookie_custom:IsPurgable()return false end
+function modifier_snapfire_firesnap_cookie_custom:OnCreated( table )
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+self.anim_end = false
 
-function modifier_snapfire_firesnap_cookie_custom:IsHidden()
-	return true
+if not IsServer() then return end
+self.point = GetGroundPosition(Vector(table.x, table.y, 0), nil)
+
+self.duration = self:GetRemainingTime()
+self.height = self.ability:GetSpecialValueFor( "jump_height" )
+self.distance = self.ability:GetRange()
+self.impact_stun_duration = self.ability:GetSpecialValueFor( "impact_stun_duration" ) + self.parent:GetTalentValue("modifier_snapfire_cookie_3", "stun")
+self.impact_damage = self.ability:GetSpecialValueFor( "impact_damage" ) + self.parent:GetTalentValue("modifier_snapfire_cookie_1", "damage")
+self.impact_radius = self.ability:GetSpecialValueFor( "impact_radius" )
+
+if self.parent:HasTalent("modifier_snapfire_cookie_6") then
+	self.impact_stun_duration = self.impact_stun_duration * (1 + self.parent:GetTalentValue("modifier_snapfire_cookie_6", "stun")/100)
+	self.impact_damage = self.impact_damage * (1 + self.parent:GetTalentValue("modifier_snapfire_cookie_6", "damage")/100)
 end
 
-function modifier_snapfire_firesnap_cookie_custom:IsPurgable()
-	return false
-end
+local speed = self.distance/self.duration
 
-function modifier_snapfire_firesnap_cookie_custom:GetAttributes()
-	return MODIFIER_ATTRIBUTE_MULTIPLE
-end
+self.scatter_ability = self.parent:FindAbilityByName("snapfire_scatterblast_custom")
+local ulti = self.parent:FindAbilityByName("snapfire_mortimer_kisses_custom")
 
-function modifier_snapfire_firesnap_cookie_custom:OnCreated( kv )
-	if IsServer() then
-		self.distance = kv.distance or 0
-		self.height = kv.height or -1
-		self.duration = kv.duration or 0
-		if kv.direction_x and kv.direction_y then
-			self.direction = Vector(kv.direction_x,kv.direction_y,0):Normalized()
-		else
-			self.direction = -(self:GetParent():GetForwardVector())
-		end
-		self.tree = kv.tree_destroy_radius or self:GetParent():GetHullRadius()
-		if kv.IsStun then self.stun = kv.IsStun==1 else self.stun = false end
-		if kv.IsFlail then self.flail = kv.IsFlail==1 else self.flail = true end
-		if self.duration == 0 then
-			self:Destroy()
-			return
-		end
-		self.parent = self:GetParent()
-		self.origin = self.parent:GetOrigin()
-		self.hVelocity = self.distance/self.duration
-		local half_duration = self.duration/2
-		self.gravity = 2*self.height/(half_duration*half_duration)
-		self.vVelocity = self.gravity*half_duration
-		if self.distance>0 then
-			if self:ApplyHorizontalMotionController() == false then 
-				self:Destroy()
-				return
-			end
-		end
-		if self.height>=0 then
-			if self:ApplyVerticalMotionController() == false then 
-				self:Destroy()
-				return
-			end
-		end
-		if self.flail then
-			self:SetStackCount( 1 )
-		elseif self.stun then
-			self:SetStackCount( 2 )
-		end
-	else
-		self.anim = self:GetStackCount()
-		self:SetStackCount( 0 )
+local vec = self.point - self.parent:GetAbsOrigin()
+vec.z = 0
+local dir = vec:Normalized()
+
+self.parent:SetForwardVector(dir)
+self.parent:FaceTowards(self.parent:GetAbsOrigin() + dir*10)
+
+self.distance = math.min(self.distance, math.max(200, vec:Length2D()))
+self.height = math.min(250, self.distance*0.55)
+self.duration = self.distance/speed
+
+if self.parent:HasShard() then
+	if ulti and ulti:IsTrained() then 
+		ulti:LauchBall(self.parent:GetAbsOrigin() + self.parent:GetForwardVector()*self.distance, "shard")
 	end
+	self.parent:GenericHeal(self.parent:GetMaxHealth()*self.ability:GetSpecialValueFor("shard_heal")/100, self.ability, nil, nil, "shard")
 end
 
-function modifier_snapfire_firesnap_cookie_custom:OnDestroy( kv )
-	if not IsServer() then return end
+self.parent:EmitSound("Hero_Snapfire.FeedCookie.Cast")
+self.parent:EmitSound("Hero_Snapfire.FeedCookie.Consume")
 
-	if not self.interrupted then
-		if self.tree>0 then
-			GridNav:DestroyTreesAroundPoint( self:GetParent():GetOrigin(), self.tree, true )
-		end
-	end
+self.mod = self.parent:AddNewModifier( self.parent, self.ability, "modifier_generic_arc", 
+{ 
+	distance = self.distance, 
+	height = self.height, 
+	duration = self.duration, 
+	direction_x = self.parent:GetForwardVector().x, 
+	direction_y = self.parent:GetForwardVector().y, 
+    isStun = true,
+})
 
-	if self.EndCallback then
-		self.EndCallback( self.interrupted )
-	end
-
-	self:GetParent():InterruptMotionControllers( true )
+self.parent:GenericParticle("particles/units/heroes/hero_snapfire/hero_snapfire_cookie_buff.vpcf")
+self.parent:GenericParticle("particles/units/heroes/hero_snapfire/hero_snapfire_cookie_receive.vpcf", self)
+self:StartIntervalThink(0.1)
 end
 
-function modifier_snapfire_firesnap_cookie_custom:SetEndCallback( func ) 
-	self.EndCallback = func
+function modifier_snapfire_firesnap_cookie_custom:OnIntervalThink()
+if not IsServer() then return end
+
+if not self.mod or self.mod:IsNull() then
+	self:Destroy()
+	return
+end
+
+if self:GetElapsedTime()/self.duration >= 0.8 and not self.anim_end then 
+    self.anim_end = true
+    self.parent:StartGestureWithPlaybackRate(ACT_DOTA_CAST_ABILITY_2_END, 1.4)
+end
+
 end
 
 function modifier_snapfire_firesnap_cookie_custom:DeclareFunctions()
-	local funcs = {
-		MODIFIER_PROPERTY_OVERRIDE_ANIMATION,
-	}
-
-	return funcs
+return 
+{
+	MODIFIER_PROPERTY_OVERRIDE_ANIMATION,
+}
 end
 
 function modifier_snapfire_firesnap_cookie_custom:GetOverrideAnimation( params )
 return ACT_DOTA_OVERRIDE_ABILITY_2
 end
 
-function modifier_snapfire_firesnap_cookie_custom:CheckState()
-	local state = 
-	{
-		[MODIFIER_STATE_STUNNED] = self.stun,
-	}
-	return state
-end
+function modifier_snapfire_firesnap_cookie_custom:OnDestroy()
+if not IsServer() then return end
 
-function modifier_snapfire_firesnap_cookie_custom:UpdateHorizontalMotion( me, dt )
-	local parent = self:GetParent()
-	local target = self.direction*self.distance*(dt/self.duration)
-	parent:SetOrigin( parent:GetOrigin() + target )
-end
+if self.scatter_ability and self.scatter_ability:IsTrained() then
 
-function modifier_snapfire_firesnap_cookie_custom:OnHorizontalMotionInterrupted()
-	if IsServer() then
-		self.interrupted = true
-		self:Destroy()
+	if self.parent:HasTalent("modifier_snapfire_scatter_7") and self.scatter_ability:GetCooldownTimeRemaining() > 0 then 
+
+		local particle = ParticleManager:CreateParticle("particles/sf_refresh_a.vpcf", PATTACH_CUSTOMORIGIN, self.parent)
+	   	ParticleManager:SetParticleControlEnt( particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetOrigin(), true )
+	   	ParticleManager:ReleaseParticleIndex(particle)
+
+	    self.parent:EmitSound("Hero_Rattletrap.Overclock.Cast")
+		self.scatter_ability:EndCooldown()
+	end
+
+	if self.parent:HasTalent("modifier_snapfire_scatter_6") then
+		self.parent:CdItems(self.parent:GetTalentValue("modifier_snapfire_scatter_6", "cd_items"))
 	end
 end
 
-function modifier_snapfire_firesnap_cookie_custom:UpdateVerticalMotion( me, dt )
-    local time = dt/self.duration
+if self.parent:HasTalent("modifier_snapfire_cookie_4") then 
+	local vec = self.parent:GetForwardVector()
+	vec.z = 0
+	local dist = self.parent:GetTalentValue("modifier_snapfire_cookie_4", "distance")
 
-
-    if self:GetElapsedTime()/self.duration >= 0.8 and not self.anim_end then 
-        self.anim_end = true
-        self:GetParent():StartGestureWithPlaybackRate(ACT_DOTA_CAST_ABILITY_2_END, 1.4)
-    end
-
-
-    local new_pos = self.parent:GetOrigin() + Vector( 0, 0, self.vVelocity*dt )
-    new_pos.z = math.max( new_pos.z, GetGroundHeight( self.parent:GetOrigin(), self.parent ) )
-    self.parent:SetOrigin( new_pos )
-    
-    self.vVelocity = self.vVelocity - self.gravity*dt
-end
-
-function modifier_snapfire_firesnap_cookie_custom:OnVerticalMotionInterrupted()
-	if IsServer() then
-		self.interrupted = true
-		self:Destroy()
+	for i = 1, self.parent:GetTalentValue("modifier_snapfire_cookie_4", "count") do 
+		vec = vec*-1
+		self.ability:LaunchBomb(self.parent, self.parent:GetAbsOrigin() + vec*dist)
 	end
 end
 
-function modifier_snapfire_firesnap_cookie_custom:GetEffectName()
-	if not IsServer() then return end
-	if self.stun then
-		return "particles/generic_gameplay/generic_stunned.vpcf"
+if self.parent:HasTalent("modifier_snapfire_cookie_5") then
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_snapfire_firesnap_cookie_custom_unslow", {duration = self.parent:GetTalentValue("modifier_snapfire_cookie_5", "unslow")})
+	if not self.parent:HasModifier("modifier_snapfire_firesnap_cookie_custom_shield_cd") then
+		self.parent:AddNewModifier(self.parent, self.ability, "modifier_snapfire_firesnap_cookie_custom_shield_cd", {duration = self.parent:GetTalentValue("modifier_snapfire_cookie_5", "cd")})
+		self.parent:AddNewModifier(self.parent, self.ability, "modifier_snapfire_firesnap_cookie_custom_shield", {duration = self.parent:GetTalentValue("modifier_snapfire_cookie_5", "duration")})
 	end
 end
 
-function modifier_snapfire_firesnap_cookie_custom:GetEffectAttachType()
-	if not IsServer() then return end
-	return PATTACH_OVERHEAD_FOLLOW
+if self.parent:HasTalent("modifier_snapfire_cookie_2") then 
+	self.parent:RemoveModifierByName("modifier_snapfire_firesnap_cookie_custom_speed")
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_snapfire_firesnap_cookie_custom_speed", {duration = self.parent:GetTalentValue("modifier_snapfire_cookie_2", "duration")})
 end
 
+local enemies = self.parent:FindTargets(self.impact_radius)
 
 
-modifier_snapfire_firesnap_cookie_custom_attacks = class({})
-function modifier_snapfire_firesnap_cookie_custom_attacks:IsHidden() return true end
-function modifier_snapfire_firesnap_cookie_custom_attacks:IsPurgable() return false end
-function modifier_snapfire_firesnap_cookie_custom_attacks:OnCreated(table)
-if not IsServer() then return end
-
-self:OnIntervalThink()
-self:StartIntervalThink(self:GetAbility().attack_interval)
+for _,enemy in pairs(enemies) do
+	if enemy:IsRealHero() and self.parent:GetQuest() == "Snapfire.Quest_6" and not self.parent:QuestCompleted() then 
+		self.parent:UpdateQuest(1)
+	end
+	DoDamage({ attacker = self.parent, victim = enemy, damage = self.impact_damage, damage_type = self.ability:GetAbilityDamageType(), ability = self.ability })
+	enemy:AddNewModifier( self.parent, self.ability, "modifier_stunned", { duration = (1 - enemy:GetStatusResistance())* self.impact_stun_duration } )
 end
 
-function modifier_snapfire_firesnap_cookie_custom_attacks:OnIntervalThink()
-if not IsServer() then return end
-if not self:GetParent():IsAlive() then 
-	self:Destroy()
+GridNav:DestroyTreesAroundPoint( self.parent:GetOrigin(), self.impact_radius, true )
+
+local land_particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_snapfire/hero_snapfire_cookie_landing.vpcf", PATTACH_WORLDORIGIN, nil )
+ParticleManager:SetParticleControl( land_particle, 0, GetGroundPosition(self.parent:GetOrigin(), nil) )
+ParticleManager:SetParticleControl( land_particle, 1, Vector( self.impact_radius, self.impact_radius, self.impact_radius ) )
+ParticleManager:ReleaseParticleIndex( land_particle )
+
+self.parent:EmitSound("Hero_Snapfire.FeedCookie.Impact")
 end
-
-
-local units_heroes = FindUnitsInRadius( self:GetParent():GetTeamNumber(),  self:GetParent():GetAbsOrigin(),  nil, self:GetAbility().attack_range,  DOTA_UNIT_TARGET_TEAM_ENEMY,  DOTA_UNIT_TARGET_HERO,  DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES,  FIND_CLOSEST,  false )
-local units_creeps = FindUnitsInRadius( self:GetParent():GetTeamNumber(),  self:GetParent():GetAbsOrigin(),  nil, self:GetAbility().attack_range,  DOTA_UNIT_TARGET_TEAM_ENEMY,  DOTA_UNIT_TARGET_BASIC,  DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES,  FIND_CLOSEST,  false )
-                
-local units = units_heroes
-
-if #units == 0 then 
-    units = units_creeps
-end
-
-if #units > 0 then 
-    local unit = units[1]
-    self:GetParent():PerformAttack(unit, true, true, true, false, true, false, true)
-end
-
-self:IncrementStackCount()
-
-if self:GetStackCount() >= self:GetAbility().attack_max then 
-	self:Destroy()
-end
-
-end
-
-
-function modifier_snapfire_firesnap_cookie_custom_attacks:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE
-}
-
-end
-
-
-
-function modifier_snapfire_firesnap_cookie_custom_attacks:GetModifierDamageOutgoing_Percentage()
-return self:GetAbility().attack_damage[self:GetCaster():GetUpgradeStack("modifier_snapfire_cookie_1")]
-end
-
-
-
-modifier_snapfire_firesnap_cookie_custom_heal = class({})
-function modifier_snapfire_firesnap_cookie_custom_heal:IsHidden() return false end
-function modifier_snapfire_firesnap_cookie_custom_heal:IsPurgable() return false end
-function modifier_snapfire_firesnap_cookie_custom_heal:GetTexture() return "buffs/cookie_heal" end
-function modifier_snapfire_firesnap_cookie_custom_heal:OnCreated()
-
-self.heal = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_3", "heal")/self:GetRemainingTime()
-if not IsServer() then return end
-
-
-self:StartIntervalThink(1)
-end
-
-
-function modifier_snapfire_firesnap_cookie_custom_heal:OnIntervalThink()
-if not IsServer() then return end
-
-local particle = ParticleManager:CreateParticle( "particles/generic_gameplay/generic_lifesteal.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-ParticleManager:ReleaseParticleIndex( particle )
-
-SendOverheadEventMessage(self:GetParent(), 10, self:GetParent(), self.heal, nil)
-end
-
-
-function modifier_snapfire_firesnap_cookie_custom_heal:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT
-}
-
-end
-
-
-function modifier_snapfire_firesnap_cookie_custom_heal:GetModifierConstantHealthRegen()
-return self.heal
-end
-
-
-
-
-
 
 
 
@@ -586,52 +397,20 @@ end
 
 
 modifier_snapfire_firesnap_cookie_custom_speed = class({})
-
-function modifier_snapfire_firesnap_cookie_custom_speed:IsHidden()
-	return false
-end
-
-
-function modifier_snapfire_firesnap_cookie_custom_speed:GetTexture()
-return "buffs/chains_speed"
-end
-
-function modifier_snapfire_firesnap_cookie_custom_speed:IsPurgable()
-	return true
-end
-
-function modifier_snapfire_firesnap_cookie_custom_speed:OnCreated( kv )
-self.ms_bonus = self:GetAbility().speed_move[self:GetCaster():GetUpgradeStack("modifier_snapfire_cookie_2")]
-self.as_bonus = self:GetAbility().speed_attack[self:GetCaster():GetUpgradeStack("modifier_snapfire_cookie_2")]
-end
-
-
-
-
-function modifier_snapfire_firesnap_cookie_custom_speed:DeclareFunctions()
-	local funcs = {
-		MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-		MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
-	}
-
-	return funcs
-end
-
-function modifier_snapfire_firesnap_cookie_custom_speed:GetModifierMoveSpeedBonus_Percentage()
-	return self.ms_bonus
-end
-function modifier_snapfire_firesnap_cookie_custom_speed:GetModifierAttackSpeedBonus_Constant()
-	return self.as_bonus
-end
-
+function modifier_snapfire_firesnap_cookie_custom_speed:IsHidden() return false end
+function modifier_snapfire_firesnap_cookie_custom_speed:GetTexture() return "buffs/chains_speed" end
+function modifier_snapfire_firesnap_cookie_custom_speed:IsPurgable() return false end
 
 function modifier_snapfire_firesnap_cookie_custom_speed:GetEffectName()
-	return "particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf"
+return "particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf"
 end
 
 function modifier_snapfire_firesnap_cookie_custom_speed:GetEffectAttachType()
-	return PATTACH_ABSORIGIN_FOLLOW
+return PATTACH_ABSORIGIN_FOLLOW
 end
+
+
+
 
 
 
@@ -641,111 +420,183 @@ end
 modifier_snapfire_firesnap_cookie_custom_tracker = class({})
 function modifier_snapfire_firesnap_cookie_custom_tracker:IsHidden() return true end
 function modifier_snapfire_firesnap_cookie_custom_tracker:IsPurgable() return false end
+
+function modifier_snapfire_firesnap_cookie_custom_tracker:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.legendary_duration = self.parent:GetTalentValue("modifier_snapfire_cookie_7", "timer", true)
+self.cd = self.parent:GetTalentValue("modifier_snapfire_cookie_7", "cd", true)
+self.distance = self.parent:GetTalentValue("modifier_snapfire_cookie_7", "distance", true)
+self.legendary_chance = self.parent:GetTalentValue("modifier_snapfire_cookie_7", "chance", true)
+
+self.bomb_distance = self.parent:GetTalentValue("modifier_snapfire_cookie_4", "distance", true)
+self.bomb_chance = self.parent:GetTalentValue("modifier_snapfire_cookie_4", "chance", true)
+
+self.move_bonus = self.parent:GetTalentValue("modifier_snapfire_cookie_2", "bonus", true)
+
+self.resist_duration = self.parent:GetTalentValue("modifier_snapfire_cookie_1", "duration", true)
+
+self.parent:AddAttackEvent_out(self)
+end
+
 function modifier_snapfire_firesnap_cookie_custom_tracker:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_TAKEDAMAGE
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT
 }
 end
 
+function modifier_snapfire_firesnap_cookie_custom_tracker:GetModifierMoveSpeedBonus_Constant()
+if not self.parent:HasTalent("modifier_snapfire_cookie_2") then return end
+local bonus = self.parent:GetTalentValue("modifier_snapfire_cookie_2", "move")
+if self.parent:HasModifier("modifier_snapfire_firesnap_cookie_custom_speed") then
+	bonus = self.move_bonus*bonus
+end
+return bonus
+end
 
-function modifier_snapfire_firesnap_cookie_custom_tracker:OnTakeDamage(params)
+function modifier_snapfire_firesnap_cookie_custom_tracker:UpdateJs()
 if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_snapfire_cookie_6") then return end
-if self:GetParent() ~= params.unit then return end
-if self:GetParent():GetHealthPercent() > self:GetAbility().lowhp_health then return end
-if self:GetParent():HasModifier("modifier_snapfire_firesnap_cookie_custom_lowhp_cd") then return end
-if self:GetParent():PassivesDisabled() then return end
+if not self.parent:HasTalent("modifier_snapfire_cookie_7") then return end
 
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_snapfire_firesnap_cookie_custom_lowhp_cd", {duration = self:GetAbility().lowhp_cd})
+local max = 1
+local stack = 0
+local use_zero = nil
+local override_stack = nil
+local active = 1
+local mod = self.parent:FindModifierByName("modifier_snapfire_firesnap_cookie_custom_legendary_tracker")
+if mod and mod.max then
+	max = mod.max
+	stack = mod:GetStackCount()
+end
+local cd = self.parent:FindModifierByName("modifier_snapfire_firesnap_cookie_custom_legendary_cd")
+if cd and cd.max_time then
+	max = cd.max_time
+	stack = 0
+	use_zero = 1
+	active = 0
+	override_stack = cd:GetRemainingTime()
+end
 
-self:GetParent():EmitSound("Snapfire.cookie_lowhp")
-self:GetParent():EmitSound("Snapfire.cookie_lowhp2")
+self.parent:UpdateUIlong({max = max, stack = stack, use_zero = use_zero, no_min = 1, active = active, override_stack = override_stack, style = "SnapfireCookie"})
+end
 
-local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_oracle/oracle_false_promise_heal.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-ParticleManager:ReleaseParticleIndex( particle )
 
-local qangle_rotation_rate = 60
+function modifier_snapfire_firesnap_cookie_custom_tracker:AttackEvent_out(params)
+if not IsServer() then return end
+if self.parent ~= params.attacker then return end
+if not params.target:IsUnit() then return end
+if params.no_attack_cooldown then return end
 
-local line_position = self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector() * 400
+local target = params.target
 
-local speed = 1300
+if self.parent:HasTalent("modifier_snapfire_cookie_7") and not self.parent:HasModifier("modifier_snapfire_firesnap_cookie_custom_legendary_cd") then
+	if RollPseudoRandomPercentage(self.legendary_chance, 1887, self.parent) then
+		self:ProcLegendary(params.target)
+	end
+end
 
-local info = {
-	Source = self:GetCaster(),
-	Ability = self:GetAbility(),    
-	        
-	EffectName ="particles/units/heroes/hero_snapfire/hero_snapfire_cookie_projectile.vpcf",
-	iMoveSpeed = speed,
-	bDodgeable = false,                           -- Optional
-	    
-	vSourceLoc = self:GetCaster():GetAttachmentOrigin(self:GetCaster():ScriptLookupAttachment("attach_hitloc")),                -- Optional (HOW)
-	        
-	bDrawsOnMinimap = false,                          -- Optional
-	bVisibleToEnemies = true,                         -- Optional
-	bProvidesVision = true,                           -- Optional
-	iVisionRadius = 200,                              -- Optional
-	iVisionTeamNumber = self:GetCaster():GetTeamNumber()       
+if self.parent:HasTalent("modifier_snapfire_cookie_4") and RollPseudoRandomPercentage(self.bomb_chance, 1886, self.parent) then
+	local vec = target:GetAbsOrigin() + self.bomb_distance*(self.parent:GetAbsOrigin() - target:GetAbsOrigin()):Normalized()
+	local point = RotatePosition(target:GetAbsOrigin(), QAngle(0, RandomInt(-75, 75), 0), vec)
+	self.ability:LaunchBomb(target, point)
+end
+
+if self.parent:HasTalent("modifier_snapfire_cookie_1") then
+	target:AddNewModifier(self.parent, self.ability, "modifier_snapfire_firesnap_cookie_custom_resist", {duration = self.resist_duration})
+end
+
+end
+
+
+function modifier_snapfire_firesnap_cookie_custom_tracker:ProcLegendary(target)
+if not IsServer() then return end
+
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_snapfire_firesnap_cookie_custom_legendary_cd", {duration = self.cd})
+
+local point = (	target:GetAbsOrigin() + RandomVector(self.distance))
+local vector = point - target:GetAbsOrigin()
+local direction = vector:Normalized()
+local distance = vector:Length2D()
+local speed = 1200
+
+local cookie = CreateUnitByName("npc_snapfire_cookie", point, false, nil, nil, self.parent:GetTeamNumber())
+
+local info = 
+{
+    Target = cookie,
+    Source = target,
+    Ability = nil,    
+        
+    EffectName ="particles/units/heroes/hero_snapfire/hero_snapfire_cookie_projectile.vpcf",
+    iMoveSpeed = speed,
+    bDodgeable = false,
+    
+    vSourceLoc = self:GetCaster():GetAttachmentOrigin(self:GetCaster():ScriptLookupAttachment("attach_hitloc")),
+        
+    bDrawsOnMinimap = false,
+    bVisibleToEnemies = true, 
+    bProvidesVision = true,
+    iVisionRadius = 200,
+    iVisionTeamNumber = self.parent:GetTeamNumber()       
 }
 
-for i = 1, 6 do
+ProjectileManager:CreateTrackingProjectile(info)
 
-	local qangle = QAngle(0, qangle_rotation_rate, 0)
-	line_position = RotatePosition(self:GetCaster():GetAbsOrigin() , qangle, line_position)
+target:EmitSound("Snapfire.Cookie_legendary")
+target:EmitSound("Snapfire.Cookie_legendary_proc")
 
-	local distance = (line_position - self:GetCaster():GetAbsOrigin()):Length2D()
-
-	local thinker = CreateModifierThinker( self:GetCaster(),  self:GetAbility(),  "modifier_snapfire_firesnap_cookie_custom_lowhp_visual",   { duration = distance/speed}, line_position, self:GetCaster():GetTeamNumber(),  false )
-
-	local info = {
-	    Target = thinker,
-	    Source = self:GetCaster(),
-	    Ability = self:GetAbility(),    
-	        
-	    EffectName ="particles/units/heroes/hero_snapfire/hero_snapfire_cookie_projectile.vpcf",
-	    iMoveSpeed = speed,
-	    bDodgeable = false,                           -- Optional
-	    
-	    vSourceLoc = self:GetCaster():GetAttachmentOrigin(self:GetCaster():ScriptLookupAttachment("attach_hitloc")),                -- Optional (HOW)
-	        
-	    bDrawsOnMinimap = false,                          -- Optional
-	    bVisibleToEnemies = true,                         -- Optional
-	    bProvidesVision = true,                           -- Optional
-	    iVisionRadius = 200,                              -- Optional
-	    iVisionTeamNumber = self:GetCaster():GetTeamNumber()       
-	}
-
-
-	ProjectileManager:CreateTrackingProjectile(info)
+local is_hero = 0
+if target:IsRealHero() then
+	is_hero = 1
 end
-
-local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetParent():GetOrigin(), nil, self:GetAbility().lowhp_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false)
-
-for _,enemy in pairs(enemies) do 
-
-	local info = {
-	    Target = enemy,
-	    Source = self:GetCaster(),
-	    Ability = self:GetAbility(),    
-	        
-	    EffectName ="particles/units/heroes/hero_snapfire/hero_snapfire_cookie_projectile.vpcf",
-	    iMoveSpeed = speed,
-	    bDodgeable = false,                           -- Optional
-	    
-	    vSourceLoc = self:GetCaster():GetAttachmentOrigin(self:GetCaster():ScriptLookupAttachment("attach_hitloc")),                -- Optional (HOW)
-	        
-	    bDrawsOnMinimap = false,                          -- Optional
-	    bVisibleToEnemies = true,                         -- Optional
-	    bProvidesVision = true,                           -- Optional
-	    iVisionRadius = 200,                              -- Optional
-	    iVisionTeamNumber = self:GetCaster():GetTeamNumber()       
-	}
-
-
-	ProjectileManager:CreateTrackingProjectile(info)
+cookie:AddNewModifier(self.parent, self.ability, "modifier_snapfire_firesnap_cookie_custom_cookie", {duration = 12, is_hero = is_hero, interval = distance/speed})
 end
 
 
+
+
+modifier_snapfire_firesnap_cookie_custom_legendary_tracker = class({})
+function modifier_snapfire_firesnap_cookie_custom_legendary_tracker:IsHidden() return true end
+function modifier_snapfire_firesnap_cookie_custom_legendary_tracker:IsPurgable() return false end
+function modifier_snapfire_firesnap_cookie_custom_legendary_tracker:RemoveOnDeath() return false end
+function modifier_snapfire_firesnap_cookie_custom_legendary_tracker:OnCreated(table)
+if not IsServer() then return end
+
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.max = self.parent:GetTalentValue("modifier_snapfire_cookie_7", "max")
+self.cd = self.parent:GetTalentValue("modifier_snapfire_cookie_7", "cd")
+self.distance = self.parent:GetTalentValue("modifier_snapfire_cookie_7", "distance")
+
+self:SetStackCount(1)
+end
+
+function modifier_snapfire_firesnap_cookie_custom_legendary_tracker:OnRefresh(table)
+if not IsServer() then return end
+self:IncrementStackCount()
+
+if self:GetStackCount() < self.max then return end
+
+local target = EntIndexToHScript(table.target)
+if not target then
+	target = self.parent
+end
+
+self.ability:ProcLegendary(target)
+self:Destroy()
+end
+
+function modifier_snapfire_firesnap_cookie_custom_legendary_tracker:OnStackCountChanged(iStackCount)
+if not IsServer() then return end
+self.ability:UpdateJs()
+end
+
+function modifier_snapfire_firesnap_cookie_custom_legendary_tracker:OnDestroy()
+if not IsServer() then return end
+self.ability:UpdateJs()
 end
 
 
@@ -769,43 +620,58 @@ end
 function modifier_snapfire_firesnap_cookie_custom_cookie:OnCreated(table)
 if not IsServer() then return end
 
-self.particle_ally_fx = ParticleManager:CreateParticleForTeam("particles/alch_stun_legendary.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent(), self:GetParent():GetTeamNumber())
-ParticleManager:SetParticleControl(self.particle_ally_fx, 0, self:GetParent():GetAbsOrigin())
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+self.caster = self:GetCaster()
+
+self.parent:SetAbsOrigin(self.parent:GetAbsOrigin() + Vector(0,0,25))
+
+self.is_hero = table.is_hero
+
+self.particle_ally_fx = ParticleManager:CreateParticleForTeam("particles/alch_stun_legendary.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent, self.parent:GetTeamNumber())
+ParticleManager:SetParticleControl(self.particle_ally_fx, 0, self.parent:GetAbsOrigin())
 self:AddParticle(self.particle_ally_fx, false, false, -1, false, false) 
 
 self.start = true 
-self:GetParent():AddNoDraw()
+self.parent:AddNoDraw()
 
-self.radius = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_7", "radius")
-
+self.radius = self.caster:GetTalentValue("modifier_snapfire_cookie_7", "radius")
 self:StartIntervalThink(table.interval)
-
 end
 
 
 function modifier_snapfire_firesnap_cookie_custom_cookie:OnIntervalThink()
 if not IsServer() then return end
-if not self:GetCaster() then return end
+if not self.caster or self.caster:IsNull() then return end
 
 if self.start == true then 
 	self.start = false
-	self:GetParent():RemoveNoDraw()
+	self.parent:RemoveNoDraw()
 end
 
+AddFOWViewer(self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), 200, 0.2, false)
 
-AddFOWViewer(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), 200, 0.2, false)
+if (self.parent:GetAbsOrigin() - self.caster:GetAbsOrigin()):Length2D() <= self.radius 
+  and self.caster:IsAlive() and not self.caster:HasModifier("modifier_snapfire_firesnap_cookie_custom") then 
 
-if (self:GetParent():GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D() <= self.radius 
-  and self:GetCaster():IsAlive() and not self:GetCaster():HasModifier("modifier_snapfire_firesnap_cookie_custom") then 
-
-	local particle = ParticleManager:CreateParticle("particles/sf_refresh_a.vpcf", PATTACH_CUSTOMORIGIN, self:GetCaster())
-   	ParticleManager:SetParticleControlEnt( particle, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetCaster():GetOrigin(), true )
+	local particle = ParticleManager:CreateParticle("particles/sf_refresh_a.vpcf", PATTACH_CUSTOMORIGIN, self.caster)
+   	ParticleManager:SetParticleControlEnt( particle, 0, self.caster, PATTACH_POINT_FOLLOW, "attach_hitloc", self.caster:GetOrigin(), true )
    	ParticleManager:ReleaseParticleIndex(particle)
 
-   	self:GetAbility():EndCooldown()
+   	if self.is_hero == 1 then
+   		self.caster:AddNewModifier(self.caster, self.ability, "modifier_snapfire_firesnap_cookie_custom_legendary_speed", {})
+   	end
 
-    self:GetCaster():EmitSound("Snapfire.Cookie_legendary_activate")
-    self:GetCaster():EmitSound("Hero_Rattletrap.Overclock.Cast")	
+   	if self.caster:HasTalent("modifier_snapfire_cookie_6") then
+   		local ability = self.caster:FindAbilityByName("snapfire_firesnap_cookie_custom_2")
+   		if ability then
+   			ability:AddCharge(1)
+   		end
+   	else
+   		self.ability:EndCooldown()
+    end
+    self.caster:EmitSound("Snapfire.Cookie_legendary_activate")
+    self.caster:EmitSound("Hero_Rattletrap.Overclock.Cast")	
   	self:Destroy()
 end
 
@@ -816,100 +682,51 @@ end
 function modifier_snapfire_firesnap_cookie_custom_cookie:OnDestroy()
 if not IsServer() then return end
 
-  local part = ParticleManager:CreateParticle("particles/units/heroes/hero_monkey_king/monkey_king_disguise.vpcf", PATTACH_WORLDORIGIN, nil)
-  ParticleManager:SetParticleControl(part, 0, self:GetParent():GetAbsOrigin())
-  self:GetParent():EmitSound("Hero_MonkeyKing.Transform.On")
+local part = ParticleManager:CreateParticle("particles/units/heroes/hero_monkey_king/monkey_king_disguise.vpcf", PATTACH_WORLDORIGIN, nil)
+ParticleManager:SetParticleControl(part, 0, self.parent:GetAbsOrigin())
+ParticleManager:ReleaseParticleIndex(part)
 
-
-  UTIL_Remove(self:GetParent())
+self.parent:EmitSound("Hero_MonkeyKing.Transform.On")
+UTIL_Remove(self.parent)
 end
 
 
 
+modifier_snapfire_firesnap_cookie_custom_legendary_speed = class({})
+function modifier_snapfire_firesnap_cookie_custom_legendary_speed:IsHidden() return false end
+function modifier_snapfire_firesnap_cookie_custom_legendary_speed:IsPurgable() return false end
+function modifier_snapfire_firesnap_cookie_custom_legendary_speed:RemoveOnDeath() return false end
+function modifier_snapfire_firesnap_cookie_custom_legendary_speed:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-
-modifier_snapfire_firesnap_cookie_custom_bombs = class({})
-function modifier_snapfire_firesnap_cookie_custom_bombs:IsHidden() return true end
-function modifier_snapfire_firesnap_cookie_custom_bombs:IsPurgable() return false end
-function modifier_snapfire_firesnap_cookie_custom_bombs:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-
-function modifier_snapfire_firesnap_cookie_custom_bombs:OnCreated(table)
+self.speed = self.parent:GetTalentValue("modifier_snapfire_cookie_7", "speed")
+self.max = self.parent:GetTalentValue("modifier_snapfire_cookie_7", "max_speed")
 if not IsServer() then return end
-
-self.RemoveForDuel = true
-
-self.quartal = 0
-
-self.count = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_4", "count")
-self.distance = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_4", "distance")
-self.interval = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_4", "interval")
-
-self:SetStackCount(self.count)
-
-self:OnIntervalThink()
-self:StartIntervalThink(self.interval)
+self:SetStackCount(1)
 end
 
-
-function modifier_snapfire_firesnap_cookie_custom_bombs:OnIntervalThink()
+function modifier_snapfire_firesnap_cookie_custom_legendary_speed:OnRefresh()
 if not IsServer() then return end
+if self:GetStackCount() >= self.max then return end
+self:IncrementStackCount()
 
-if not self:GetParent():IsAlive() then 
-	self:Destroy()
-	return 
+if self:GetStackCount() >= self.max then
+	self.parent:GenericParticle("particles/lc_odd_proc_.vpcf")
+	self.parent:EmitSound("BS.Thirst_legendary_active")
 end
 
-self.quartal = self.quartal+1
-if self.quartal>3 then self.quartal = 0 end
-local a = 90 + self.quartal*90
-local r = self.distance
-local point = Vector( math.cos(a), math.sin(a), 0 ):Normalized() * r
-point = self:GetCaster():GetOrigin() + point
+end
 
-
-local target = self:GetParent()
-
-local cookie = CreateUnitByName("npc_snapfire_cookie", point, true, nil, nil, self:GetCaster():GetTeamNumber())
-
-local vector = point - target:GetAbsOrigin()
-local direction = vector:Normalized()
-local distance = vector:Length2D()
-
-local speed = 1200
-
-
-local info = {
-    Target = cookie,
-    Source = target,
-    Ability = self:GetAbility(),    
-        
-    EffectName ="particles/units/heroes/hero_snapfire/hero_snapfire_cookie_projectile.vpcf",
-    iMoveSpeed = speed,
-    bDodgeable = false,                           -- Optional
-    
-    vSourceLoc = self:GetCaster():GetAttachmentOrigin(self:GetCaster():ScriptLookupAttachment("attach_hitloc")),                -- Optional (HOW)
-        
-    bDrawsOnMinimap = false,                          -- Optional
-    bVisibleToEnemies = true,                         -- Optional
-    bProvidesVision = true,                           -- Optional
-    iVisionRadius = 200,                              -- Optional
-    iVisionTeamNumber = self:GetCaster():GetTeamNumber()       
+function modifier_snapfire_firesnap_cookie_custom_legendary_speed:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
 }
-
---target:EmitSound("Snapfire.Cookie_legendary")
-target:EmitSound("Snapfire.Bombs_activate")
-
-ProjectileManager:CreateTrackingProjectile(info)
-
-cookie:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_snapfire_firesnap_cookie_custom_bomb_cookie", {interval = distance/speed})
-
-
-self:DecrementStackCount()
-
-if self:GetStackCount() == 0 then 
-	self:Destroy()
 end
-	
+
+function modifier_snapfire_firesnap_cookie_custom_legendary_speed:GetModifierAttackSpeedBonus_Constant()
+return self.speed*self:GetStackCount()
 end
 
 
@@ -935,46 +752,40 @@ end
 function modifier_snapfire_firesnap_cookie_custom_bomb_cookie:OnCreated(table)
 if not IsServer() then return end
 
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+
 self.start = true 
-self:GetParent():AddNoDraw()
+self.parent:AddNoDraw()
 
-self:StartIntervalThink(table.interval)
-
-self.aoe = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_4", "radius")
-self.bomb_timer = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_4", "timer")
-self.damage = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_4", "damage")/100
-self.damage_creeps = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_4", "damage_creeps")
-self.duration = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_4", "duration")
+self.aoe = self.caster:GetTalentValue("modifier_snapfire_cookie_4", "radius")
+self.bomb_timer = self.caster:GetTalentValue("modifier_snapfire_cookie_4", "timer")
+self.damage = self.caster:GetTalentValue("modifier_snapfire_cookie_4", "damage")/100
+self.damage_creeps = self.caster:GetTalentValue("modifier_snapfire_cookie_4", "damage_creeps")
+self.duration = self.caster:GetTalentValue("modifier_snapfire_cookie_4", "duration")
 
 self.timer = self.bomb_timer*2
 self.t = 0
+self:StartIntervalThink(table.interval)
 end
-
 
 function modifier_snapfire_firesnap_cookie_custom_bomb_cookie:OnIntervalThink()
 if not IsServer() then return end
-if not self:GetCaster() then return end
 
-
-self:GetParent():SetRenderColor(255, 255 * (self.bomb_timer - self:GetElapsedTime() / self.bomb_timer ), 255 * (self.bomb_timer - self:GetElapsedTime() / self.bomb_timer ))
+self.parent:SetRenderColor(255, 255 * (self.bomb_timer - self:GetElapsedTime() / self.bomb_timer ), 255 * (self.bomb_timer - self:GetElapsedTime() / self.bomb_timer ))
 
 if self.start == true then 
 	self.start = false
-	self:GetParent():RemoveNoDraw()
+	self.parent:RemoveNoDraw()
 end
-
 
 if self.t == self.timer then 
 	self:Destroy()
 end
 
-
-local caster = self:GetParent()
-
-
 local number = (self.timer-self.t)/2 
-local int = 0
-int = number
+local int = number
 
 if number % 1 ~= 0 then 
     int = number - 0.5  
@@ -989,19 +800,20 @@ else
     decimal = 1
 end
 
-local particleName = "particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_timer.vpcf"
-local particle = ParticleManager:CreateParticle(particleName, PATTACH_OVERHEAD_FOLLOW, caster)
-ParticleManager:SetParticleControl(particle, 0, caster:GetAbsOrigin())
+if not self.parent or self.parent:IsNull() then
+	self:Destroy()
+	return
+end
+
+local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_timer.vpcf", PATTACH_OVERHEAD_FOLLOW, self.parent)
+ParticleManager:SetParticleControl(particle, 0, self.parent:GetAbsOrigin())
 ParticleManager:SetParticleControl(particle, 1, Vector(0, int, decimal))
 ParticleManager:SetParticleControl(particle, 2, Vector(digits, 0, 0))
 ParticleManager:ReleaseParticleIndex(particle)
 
-
 self.t = self.t + 1
 
-AddFOWViewer(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), 200, 0.5, false)
-
-
+AddFOWViewer(self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), 200, 0.5, false)
 self:StartIntervalThink(0.5)
 end
 
@@ -1009,44 +821,36 @@ end
 function modifier_snapfire_firesnap_cookie_custom_bomb_cookie:OnDestroy()
 if not IsServer() then return end
 
-
-local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetParent():GetOrigin(), nil, self.aoe, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false)
-for _,enemy in pairs(enemies) do
-
+for _,enemy in pairs(self.caster:FindTargets(self.aoe, self.parent:GetAbsOrigin())) do
 	local damage = self.damage*enemy:GetMaxHealth()
-
 	if enemy:IsCreep() then 
-		damage = damage*self.damage_creeps
+		damage = self.damage_creeps
 	end
 
-	local real_damage = ApplyDamage({ attacker = self:GetCaster(), victim = enemy, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility() })
-
-	SendOverheadEventMessage(enemy, 4, enemy, real_damage, nil)
-
-	enemy:AddNewModifier( self:GetCaster(), self:GetAbility(), "modifier_snapfire_firesnap_cookie_custom_bomb_slow", { duration = (1 - enemy:GetStatusResistance())*self.duration} )
+	local real_damage = DoDamage({ attacker = self.caster, victim = enemy, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self.ability }, "modifier_snapfire_cookie_4")
+	enemy:SendNumber(4, real_damage)
+	enemy:AddNewModifier( self.caster, self.ability, "modifier_snapfire_firesnap_cookie_custom_bomb_slow", { duration = (1 - enemy:GetStatusResistance())*self.duration} )
 end
 
-self:GetParent():EmitSound("Snapfire.Shredder_silence")
-local effect_cast = ParticleManager:CreateParticle( "particles/items3_fx/black_powder_bag.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-ParticleManager:SetParticleControl( effect_cast, 0,  self:GetParent():GetOrigin() )
-ParticleManager:SetParticleControl( effect_cast, 1, self:GetParent():GetOrigin() )
-ParticleManager:SetParticleControl( effect_cast, 5, self:GetParent():GetOrigin() )
+self.parent:EmitSound("Snapfire.Shredder_silence")
+local effect_cast = ParticleManager:CreateParticle( "particles/items3_fx/black_powder_bag.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent )
+ParticleManager:SetParticleControl( effect_cast, 0,  self.parent:GetOrigin() )
+ParticleManager:SetParticleControl( effect_cast, 1, self.parent:GetOrigin() )
+ParticleManager:SetParticleControl( effect_cast, 5, self.parent:GetOrigin() )
 ParticleManager:ReleaseParticleIndex(effect_cast)
 
-UTIL_Remove(self:GetParent())
+UTIL_Remove(self.parent)
 end
-
-
 
 
 
 modifier_snapfire_firesnap_cookie_custom_bomb_slow = class({})
 function modifier_snapfire_firesnap_cookie_custom_bomb_slow:IsHidden() return true end
 function modifier_snapfire_firesnap_cookie_custom_bomb_slow:IsPurgable() return true end
-
 function modifier_snapfire_firesnap_cookie_custom_bomb_slow:OnCreated(table)
-
 self.slow = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_4", "slow")
+if not IsServer() then return end
+self:GetParent():GenericParticle("particles/units/heroes/hero_sniper/sniper_headshot_slow.vpcf", self, true)
 end
 
 function modifier_snapfire_firesnap_cookie_custom_bomb_slow:DeclareFunctions()
@@ -1063,86 +867,34 @@ end
 
 
 
-modifier_snapfire_firesnap_cookie_custom_damage = class({})
-function modifier_snapfire_firesnap_cookie_custom_damage:IsHidden() return false end
-function modifier_snapfire_firesnap_cookie_custom_damage:IsPurgable() return true end
-function modifier_snapfire_firesnap_cookie_custom_damage:GetTexture() return "buffs/cookie_damage" end
-function modifier_snapfire_firesnap_cookie_custom_damage:OnCreated(table)
+
+modifier_snapfire_firesnap_cookie_custom_resist = class({})
+function modifier_snapfire_firesnap_cookie_custom_resist:IsHidden() return false end
+function modifier_snapfire_firesnap_cookie_custom_resist:IsPurgable() return false end
+function modifier_snapfire_firesnap_cookie_custom_resist:GetTexture() return "buffs/cookie_damage" end
+function modifier_snapfire_firesnap_cookie_custom_resist:OnCreated(table)
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.max = self.caster:GetTalentValue("modifier_snapfire_cookie_1", "max")
+self.resist = self.caster:GetTalentValue("modifier_snapfire_cookie_1", "resist")
+self:SetStackCount(1)
+end
+
+function modifier_snapfire_firesnap_cookie_custom_resist:OnRefresh()
 if not IsServer() then return end
-  self.particle_peffect = ParticleManager:CreateParticle("particles/zeus_resist_stack.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())   
-  ParticleManager:SetParticleControl(self.particle_peffect, 0, self:GetParent():GetAbsOrigin())
-  self:AddParticle(self.particle_peffect, false, false, -1, false, true)
+if self:GetStackCount() >= self.max then return end
+self:IncrementStackCount()
 end
 
-
-
-function modifier_snapfire_firesnap_cookie_custom_damage:DeclareFunctions()
+function modifier_snapfire_firesnap_cookie_custom_resist:DeclareFunctions()
 return
 {
-  MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE
+  MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS
 }
 end
 
-function modifier_snapfire_firesnap_cookie_custom_damage:GetModifierIncomingDamage_Percentage()
-return self:GetAbility().damage_inc[self:GetCaster():GetUpgradeStack("modifier_snapfire_cookie_1")]
-end
-
-
-
-
-
-
-
-
-modifier_snapfire_firesnap_cookie_custom_lowhp_visual = class({})
-function modifier_snapfire_firesnap_cookie_custom_lowhp_visual:IsHidden() return true end
-function modifier_snapfire_firesnap_cookie_custom_lowhp_visual:IsPurgable() return false end
-
-
-
-modifier_snapfire_firesnap_cookie_custom_lowhp_reduce = class({})
-function modifier_snapfire_firesnap_cookie_custom_lowhp_reduce:IsHidden() return false end
-function modifier_snapfire_firesnap_cookie_custom_lowhp_reduce:IsPurgable() return false end
-function modifier_snapfire_firesnap_cookie_custom_lowhp_reduce:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE
-}
-end
-
-function modifier_snapfire_firesnap_cookie_custom_lowhp_reduce:GetModifierTotalDamageOutgoing_Percentage()
-return self:GetAbility().lowhp_reduce
-end
-
-function modifier_snapfire_firesnap_cookie_custom_lowhp_reduce:GetEffectName()
-return "particles/units/heroes/hero_sniper/sniper_headshot_slow.vpcf"
-end
-
-
-function modifier_snapfire_firesnap_cookie_custom_lowhp_reduce:GetEffectAttachType()
-return PATTACH_OVERHEAD_FOLLOW
-end
-
-
-function modifier_snapfire_firesnap_cookie_custom_lowhp_reduce:GetStatusEffectName()
-  return "particles/status_fx/status_effect_huskar_lifebreak.vpcf"
-end
-
-function modifier_snapfire_firesnap_cookie_custom_lowhp_reduce:StatusEffectPriority()
-  return 99999
-end
-
-
-
-
-modifier_snapfire_firesnap_cookie_custom_lowhp_cd = class({})
-function modifier_snapfire_firesnap_cookie_custom_lowhp_cd:IsHidden() return false end
-function modifier_snapfire_firesnap_cookie_custom_lowhp_cd:IsPurgable() return false end
-function modifier_snapfire_firesnap_cookie_custom_lowhp_cd:RemoveOnDeath() return false end
-function modifier_snapfire_firesnap_cookie_custom_lowhp_cd:IsDebuff() return true end
-function modifier_snapfire_firesnap_cookie_custom_lowhp_cd:GetTexture() return "buffs/fireblast_lowhp" end
-function modifier_snapfire_firesnap_cookie_custom_lowhp_cd:OnCreated(table)
-self.RemoveForDuel = true 
+function modifier_snapfire_firesnap_cookie_custom_resist:GetModifierMagicalResistanceBonus()
+return self:GetStackCount()*self.resist
 end
 
 
@@ -1152,132 +904,99 @@ modifier_snapfire_firesnap_cookie_custom_legendary_cd = class({})
 function modifier_snapfire_firesnap_cookie_custom_legendary_cd:IsHidden() return true end
 function modifier_snapfire_firesnap_cookie_custom_legendary_cd:IsPurgable() return false end
 function modifier_snapfire_firesnap_cookie_custom_legendary_cd:OnCreated(table)
+self.ability = self:GetAbility()
+self.max_time = self:GetRemainingTime()
+
 if not IsServer() then return end
-
-self.max = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_7", "max")
-
-self:OnIntervalThink()
-self:StartIntervalThink(0.1)
+--self:OnIntervalThink()
+--self:StartIntervalThink(0.1)
 end
 
 function modifier_snapfire_firesnap_cookie_custom_legendary_cd:OnIntervalThink()
 if not IsServer() then return end
-
-
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'snapfire_cookie_change',  { max = self.max, current = self:GetRemainingTime(), active = 0})
-
+--self.ability:UpdateJs()
 end
 
 function modifier_snapfire_firesnap_cookie_custom_legendary_cd:OnDestroy()
 if not IsServer() then return end
-
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'snapfire_cookie_change',  { max = self.max, current = 0, active = 1})
-
+--self.ability:UpdateJs()
 end
 
 
 
 
-modifier_snapfire_firesnap_cookie_custom_legendary_tracker = class({})
-function modifier_snapfire_firesnap_cookie_custom_legendary_tracker:IsHidden() return true end
-function modifier_snapfire_firesnap_cookie_custom_legendary_tracker:IsPurgable() return false end
-function modifier_snapfire_firesnap_cookie_custom_legendary_tracker:RemoveOnDeath() return false end
-function modifier_snapfire_firesnap_cookie_custom_legendary_tracker:OnCreated(table)
-if not IsServer() then return end
-
-self.max = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_7", "max")
-self.cd = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_7", "cd")
-self.timer = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_7", "timer")
-self.distance = self:GetCaster():GetTalentValue("modifier_snapfire_cookie_7", "distance")
-
-
-self:SetStackCount(0)
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'snapfire_cookie_change',  { max = self.max, current = 0, active = 1})
-
-end
-
-
-function modifier_snapfire_firesnap_cookie_custom_legendary_tracker:DeclareFunctions()
+modifier_snapfire_firesnap_cookie_custom_unslow = class({})
+function modifier_snapfire_firesnap_cookie_custom_unslow:IsHidden() return true end
+function modifier_snapfire_firesnap_cookie_custom_unslow:IsPurgable() return false end
+function modifier_snapfire_firesnap_cookie_custom_unslow:CheckState()
 return
 {
-	MODIFIER_EVENT_ON_ATTACK_LANDED
+	[MODIFIER_STATE_UNSLOWABLE] = true
 }
 end
 
 
-function modifier_snapfire_firesnap_cookie_custom_legendary_tracker:OnAttackLanded(params)
-if not IsServer() then return end
-if params.attacker ~= self:GetParent() then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end
-if self:GetParent():HasModifier("modifier_snapfire_firesnap_cookie_custom_legendary_cd") then return end
 
-self:IncrementStackCount()
-
-self:StartIntervalThink(self.timer)
-
-if self:GetStackCount() >= self.max then 
-	self:SetStackCount(0)
-
-	local target = params.target
-
-	local point = target:GetAbsOrigin() + RandomVector(self.distance)
-
-	self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_snapfire_firesnap_cookie_custom_legendary_cd", {duration = self.cd})
-
-	local cookie = CreateUnitByName("npc_snapfire_cookie", point, true, nil, nil, self:GetCaster():GetTeamNumber())
-
-	local vector = point - target:GetAbsOrigin()
-	local direction = vector:Normalized()
-	local distance = vector:Length2D()
-
-	local speed = 1200
-
-
-	local info = {
-	    Target = cookie,
-	    Source = target,
-	    Ability = nil,    
-	        
-	    EffectName ="particles/units/heroes/hero_snapfire/hero_snapfire_cookie_projectile.vpcf",
-	    iMoveSpeed = speed,
-	    bDodgeable = false,                           -- Optional
-	    
-	    vSourceLoc = self:GetCaster():GetAttachmentOrigin(self:GetCaster():ScriptLookupAttachment("attach_hitloc")),                -- Optional (HOW)
-	        
-	    bDrawsOnMinimap = false,                          -- Optional
-	    bVisibleToEnemies = true,                         -- Optional
-	    bProvidesVision = true,                           -- Optional
-	    iVisionRadius = 200,                              -- Optional
-	    iVisionTeamNumber = self:GetCaster():GetTeamNumber()       
-	}
-
-	target:EmitSound("Snapfire.Cookie_legendary")
-	target:EmitSound("Snapfire.Cookie_legendary_proc")
-
-	ProjectileManager:CreateTrackingProjectile(info)
-
-	cookie:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_snapfire_firesnap_cookie_custom_cookie", {duration = 12, interval = distance/speed})
-
-
-end
-
-end
-
-
-function modifier_snapfire_firesnap_cookie_custom_legendary_tracker:OnIntervalThink()
-if not IsServer() then return end
-if self:GetStackCount() == 0 then return end
-
-self:DecrementStackCount()
-
-self:StartIntervalThink(0.2)
+modifier_snapfire_firesnap_cookie_custom_shield_cd = class({})
+function modifier_snapfire_firesnap_cookie_custom_shield_cd:IsHidden() return false end
+function modifier_snapfire_firesnap_cookie_custom_shield_cd:IsPurgable() return false end
+function modifier_snapfire_firesnap_cookie_custom_shield_cd:RemoveOnDeath() return false end
+function modifier_snapfire_firesnap_cookie_custom_shield_cd:IsDebuff() return true end
+function modifier_snapfire_firesnap_cookie_custom_shield_cd:GetTexture() return "buffs/berserker_armor" end
+function modifier_snapfire_firesnap_cookie_custom_shield_cd:OnCreated()
+self.RemoveForDuel = true
 end
 
 
 
-function modifier_snapfire_firesnap_cookie_custom_legendary_tracker:OnStackCountChanged(iStackCount)
+
+
+modifier_snapfire_firesnap_cookie_custom_shield = class({})
+function modifier_snapfire_firesnap_cookie_custom_shield:IsHidden() return true end
+function modifier_snapfire_firesnap_cookie_custom_shield:IsPurgable() return false end
+function modifier_snapfire_firesnap_cookie_custom_shield:OnCreated(table)
+self.parent = self:GetParent()
+self.shield_talent = "modifier_snapfire_cookie_5"
+self.max_shield = self.parent:GetTalentValue("modifier_snapfire_cookie_5", "shield")*self.parent:GetMaxHealth()/100
+
 if not IsServer() then return end
 
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'snapfire_cookie_change',  { max = self.max, current = self:GetStackCount(), active = 1})
+self.parent:EmitSound("Snapfire.Cookie_shield")
+self.particle = ParticleManager:CreateParticle("particles/snapfire/cookie_shield.vpcf", PATTACH_CUSTOMORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt(self.particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true)
+ParticleManager:SetParticleControlEnt(self.particle, 1, self.parent, PATTACH_ABSORIGIN_FOLLOW, nil, self.parent:GetAbsOrigin(), true)
+self:AddParticle(self.particle, false, false, -1, false, false)
 
+self.RemoveForDuel = true
+self:SetStackCount(self.max_shield)
+end
+
+function modifier_snapfire_firesnap_cookie_custom_shield:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
+}
+end
+
+function modifier_snapfire_firesnap_cookie_custom_shield:GetModifierIncomingDamageConstant( params )
+
+if IsClient() then 
+	if params.report_max then 
+		return self.max_shield
+	else 
+     	return self:GetStackCount()
+    end 
+end
+
+if not IsServer() then return end
+
+local damage = math.min(params.damage, self:GetStackCount())
+self.parent:AddShieldInfo({shield_mod = self, healing = damage, healing_type = "shield"})
+
+self:SetStackCount(self:GetStackCount() - damage)
+if self:GetStackCount() <= 0 then
+  self:Destroy()
+end
+
+return -damage
 end

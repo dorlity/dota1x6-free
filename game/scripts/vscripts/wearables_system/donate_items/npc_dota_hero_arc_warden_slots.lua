@@ -1,0 +1,56 @@
+return
+{
+    ["arms"] = 
+    {
+        "models/heroes/arc_warden/arc_warden_bracers.vmdl",
+        "models/items/arc_warden/galactic_wanderer_arms/galactic_wanderer_arms.vmdl",
+        "models/items/arc_warden/arc_warden_magician_arms/arc_warden_magician_arms.vmdl",
+        "models/items/arc_warden/wicked_space_knight_arms/wicked_space_knight_arms.vmdl",
+        "models/items/arc_warden/time_wanderer_arcwarden_arms/time_wanderer_arcwarden_arms.vmdl",
+        "models/items/arc_warden/arctic_warden_arms/arctic_warden_arms.vmdl",
+        "models/items/arc_warden/ti9_cache_aw_ancient_mechanism_arms/ti9_cache_aw_ancient_mechanism_arms.vmdl",
+        "models/items/arc_warden/magnetite_abyss_watcher_arm/magnetite_abyss_watcher_arm.vmdl",
+        "models/items/arc_warden/galactic_sentinel_arms/galactic_sentinel_arms.vmdl",
+        "models/items/arc_warden/broken_envoy_arms/broken_envoy_arms.vmdl",
+    },
+    ["back"] = 
+    {
+        "models/heroes/arc_warden/arc_warden_back.vmdl",
+        "models/items/arc_warden/galactic_wanderer_back/galactic_wanderer_back.vmdl",
+        "models/items/arc_warden/arc_warden_magician_back/arc_warden_magician_back.vmdl",
+        "models/items/arc_warden/wicked_space_knight_back/wicked_space_knight_back.vmdl",
+        "models/items/arc_warden/time_wanderer_arcwarden_back/time_wanderer_arcwarden_back.vmdl",
+        "models/items/arc_warden/arctic_warden_back/arctic_warden_back.vmdl",
+        "models/items/arc_warden/ti9_cache_aw_ancient_mechanism_back/ti9_cache_aw_ancient_mechanism_back.vmdl",
+        "models/items/arc_warden/magnetite_abyss_watcher_back/magnetite_abyss_watcher_back.vmdl",
+        "models/items/arc_warden/galactic_sentinel_back/galactic_sentinel_back.vmdl",
+        "models/items/arc_warden/broken_envoy_back/broken_envoy_back.vmdl",
+    },
+    ["head"] = 
+    {
+        "models/items/arc_warden/arctic_warden_shoulder/arctic_warden_head.vmdl",
+        "models/items/arc_warden/broken_envoy_shoulder/broken_envoy_head.vmdl",
+        "models/items/arc_warden/wicked_space_knight_head/wicked_space_knight_head.vmdl",
+        "models/items/arc_warden/time_wanderer_arcwarden_head/time_wanderer_arcwarden_head.vmdl",
+        "models/items/arc_warden/ti9_cache_aw_ancient_mechanism_head/ti9_cache_aw_ancient_mechanism_head.vmdl",
+        "models/items/arc_warden/magnetite_abyss_watcher_head/magnetite_abyss_watcher_head.vmdl",
+        "models/items/arc_warden/galactic_sentinel_head/galactic_sentinel_head.vmdl",
+        "models/items/arc_warden/arc_warden_frostivus/arc_warden_frostivus_head.vmdl",
+        "models/items/arc_warden/arc_warden_magician_head/arc_warden_magician_head.vmdl",
+        "models/items/arc_warden/galactic_wanderer_head/galactic_wanderer_head.vmdl",
+    },	
+    ["shoulder"] = 
+    {
+        "models/items/arc_warden/aw_ti9_immortal_shoulders/aw_ti9_immortal_shoulders.vmdl",
+        "models/heroes/arc_warden/arc_warden_shoulder.vmdl",
+        "models/items/arc_warden/galactic_wanderer_shoulder/galactic_wanderer_shoulder.vmdl",
+        "models/items/arc_warden/wicked_space_knight_shoulder/wicked_space_knight_shoulder.vmdl",
+        "models/items/arc_warden/time_wanderer_arcwarden_shoulder/time_wanderer_arcwarden_shoulder.vmdl",
+        "models/items/arc_warden/arctic_warden_shoulder/arctic_warden_shoulder.vmdl",
+        "models/items/arc_warden/ti9_cache_aw_ancient_mechanism_shoulder/ti9_cache_aw_ancient_mechanism_shoulder.vmdl",
+        "models/items/arc_warden/magnetite_abyss_watcher_shoulders/magnetite_abyss_watcher_shoulders.vmdl",
+        "models/items/arc_warden/galactic_sentinel_shoulder/galactic_sentinel_shoulder.vmdl",
+        "models/items/arc_warden/arc_warden_magician_shoulder/arc_warden_magician_shoulder.vmdl",
+        "models/items/arc_warden/broken_envoy_shoulder/broken_envoy_shoulder.vmdl",
+    },
+}

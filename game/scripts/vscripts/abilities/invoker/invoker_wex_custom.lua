@@ -1,97 +1,128 @@
 LinkLuaModifier( "modifier_invoker_wex_custom", "abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_invoker_wex_custom_passive", "abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_invoker_emp_custom", "abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_invoker_emp_custom_break", "abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_invoker_emp_custom_legendary", "abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_invoker_emp_custom_armor", "abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_invoker_alacrity_custom", "abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_invoker_alacrity_custom_damage", "abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier("modifier_invoker_tornado_custom", "abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_invoker_tornado_custom_speed", "abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier( "modifier_invoker_tornado_custom", "abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier( "modifier_invoker_tornado_custom_damage", "abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier( "modifier_invoker_emp_custom_teleport","abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_invoker_tornado_custom_thinker","abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_invoker_alacrity_custom_tracker", "abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_invoker_emp_custom_slow","abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_invoker_alacrity_custom_speed","abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier("modifier_invoker_tornado_custom_purge", "abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier( "modifier_invoker_tornado_custom_purge", "abilities/invoker/invoker_wex_custom", LUA_MODIFIER_MOTION_NONE)
 
 
 
 invoker_wex_custom = class({})
+
+function invoker_wex_custom:CreateTalent()
+
+local ability = self:GetCaster():FindAbilityByName("invoker_emp_custom")
+if ability then 
+    ability:ToggleAutoCast()
+end 
+end
+
 
 function invoker_wex_custom:ProcsMagicStick()
     return false
 end
 
 function invoker_wex_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
+PrecacheResource( "particle", "particles/invoker/emp_blink_start.vpcf", context )
+PrecacheResource( "particle", "particles/items3_fx/blink_arcane_end.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_invoker/invoker_emp.vpcf", context )
+PrecacheResource( "particle", "particles/invoker/emp_legendarya.vpcf", context )
+PrecacheResource( "particle", "particles/cleance_blade.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_invoker/invoker_alacrity.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_invoker/invoker_alacrity_buff.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_invoker/invoker_tornado.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_invoker/invoker_tornado_child.vpcf", context )
+PrecacheResource( "particle", "particles/void_astral_slow.vpcf", context )
+PrecacheResource( "particle", "particles/invoker/alacrity_max.vpcf", context )
+PrecacheResource( "particle", "particles/generic_gameplay/generic_break.vpcf", context )
+PrecacheResource( "particle", "particles/items4_fx/nullifier_mute_debuff.vpcf", context )
+PrecacheResource( "particle", "particles/invoker/emp_stack.vpcf", context )
+PrecacheResource( "particle", "particles/hoodwink/bush_damage.vpcf", context )
 
+end
+
+function invoker_wex_custom:GetAbilityTextureName()
+if self:GetCaster():HasModifier("modifier_invoker_persona_1") or self:GetCaster():HasModifier("modifier_invoker_persona_2") or self:GetCaster():HasModifier("modifier_invoker_persona_3") or self:GetCaster():HasModifier("modifier_invoker_persona_4") or self:GetCaster():HasModifier("modifier_invoker_persona_5") or self:GetCaster():HasModifier("modifier_invoker_persona_6") then
+    return "invoker_wex_persona1"
+end
+if self:GetCaster():HasModifier("modifier_magus_apex_custom") then
+    return "invoker/magus_apex/invoker_wex"
+end
+return "invoker_wex"
 end
 
 
 function invoker_wex_custom:GetIntrinsicModifierName()
-    return "modifier_invoker_wex_custom_passive"
+if not self:GetCaster():IsRealHero() then return end
+return "modifier_invoker_wex_custom_passive"
 end
 
 function invoker_wex_custom:OnSpellStart()
-    local caster = self:GetCaster()
-    local modifier = caster:AddNewModifier(
-        caster,
-        self, 
-        "modifier_invoker_wex_custom",
-        {  }
-    )
-    self.invoke:AddOrb( modifier )
+local caster = self:GetCaster()
+local modifier = caster:AddNewModifier(
+    caster,
+    self, 
+    "modifier_invoker_wex_custom",
+    {  }
+)
+self.invoke:AddOrb( modifier )
 end
 
 function invoker_wex_custom:OnUpgrade()
-    if not self.invoke then
-        local invoke = self:GetCaster():FindAbilityByName( "invoker_invoke_custom" )
-        if invoke:GetLevel()<1 then invoke:UpgradeAbility(true) end
-        self.invoke = invoke
-    else
-        self.invoke:UpdateOrb("modifier_invoker_wex_custom", self:GetLevel())
-    end
+if not self.invoke then
+    local invoke = self:GetCaster():FindAbilityByName( "invoker_invoke_custom" )
+    if invoke:GetLevel()<1 then invoke:UpgradeAbility(true) end
+    self.invoke = invoke
+else
+    self.invoke:UpdateOrb("modifier_invoker_wex_custom", self:GetLevel())
+end
+
 end
 
 modifier_invoker_wex_custom = class({})
 
-function modifier_invoker_wex_custom:IsHidden()
-    return false
-end
-
-function modifier_invoker_wex_custom:IsDebuff()
-    return false
-end
-
-function modifier_invoker_wex_custom:GetAttributes()
-    return MODIFIER_ATTRIBUTE_PERMANENT + MODIFIER_ATTRIBUTE_MULTIPLE 
-end
-
-function modifier_invoker_wex_custom:IsPurgable()
-    return false
-end
+function modifier_invoker_wex_custom:IsHidden() return false end
+function modifier_invoker_wex_custom:GetAttributes() return MODIFIER_ATTRIBUTE_PERMANENT + MODIFIER_ATTRIBUTE_MULTIPLE  end
+function modifier_invoker_wex_custom:IsPurgable() return false end
 
 function modifier_invoker_wex_custom:OnCreated( kv )
-    self.move_speed_per_instance = self:GetAbility():GetSpecialValueFor( "move_speed_per_instance" )
+self.caster = self:GetCaster()
+self.move_speed_per_instance = self:GetAbility():GetSpecialValueFor( "move_speed_per_instance" )
+self.attack_speed = self:GetAbility():GetSpecialValueFor( "attack_speed" )
 end
 
 function modifier_invoker_wex_custom:OnRefresh( kv )
-    self.move_speed_per_instance = self:GetAbility():GetSpecialValueFor( "move_speed_per_instance" )
+self.move_speed_per_instance = self:GetAbility():GetSpecialValueFor( "move_speed_per_instance" )
+self.attack_speed = self:GetAbility():GetSpecialValueFor( "attack_speed" )
 end
 
 function modifier_invoker_wex_custom:DeclareFunctions()
-    local funcs = 
-    {
-        MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-    }
-
-    return funcs
+return 
+{
+    MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+    MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
+}
 end
-
 
 function modifier_invoker_wex_custom:GetModifierMoveSpeedBonus_Percentage()
-    return self.move_speed_per_instance
+if self.caster:HasShard() then return end
+return self.move_speed_per_instance
 end
 
+function modifier_invoker_wex_custom:GetModifierAttackSpeedBonus_Constant()
+if self.caster:HasShard() then return end
+return self.attack_speed
+end
 
 
 
@@ -103,34 +134,54 @@ function modifier_invoker_wex_custom_passive:IsPurgable() return false end
 function modifier_invoker_wex_custom_passive:IsPurgeException() return false end
 
 function modifier_invoker_wex_custom_passive:OnCreated()
-self.agi = self:GetAbility():GetSpecialValueFor("agility_bonus")
+
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+self.move_speed_per_instance = self.ability:GetSpecialValueFor( "move_speed_per_instance" )
+self.attack_speed = self.ability:GetSpecialValueFor( "attack_speed" )
+self.shard_bonus = self.ability:GetSpecialValueFor("shard_bonus")/100
+
+self.agi = self.ability:GetSpecialValueFor("agility_bonus")
 
 if not IsServer() then return end
 self:StartIntervalThink(FrameTime())
 end
 
-function modifier_invoker_wex_custom_passive:OnIntervalThink()
-if not IsServer() then return end
-local mod = self:GetCaster():FindAllModifiersByName("modifier_invoker_wex_custom")
-self:SetStackCount(#mod)
+
+function modifier_invoker_wex_custom_passive:OnRefresh()
+self.attack_speed = self.ability:GetSpecialValueFor( "attack_speed" )
+self.move_speed_per_instance = self.ability:GetSpecialValueFor( "move_speed_per_instance" )
 end
 
-
-
+function modifier_invoker_wex_custom_passive:OnIntervalThink()
+if not IsServer() then return end
+local mod = self.parent:FindAllModifiersByName("modifier_invoker_wex_custom")
+self:SetStackCount(#mod)
+end
 
 function modifier_invoker_wex_custom_passive:DeclareFunctions()
 return
 {
-  MODIFIER_PROPERTY_STATS_AGILITY_BONUS
+  MODIFIER_PROPERTY_STATS_AGILITY_BONUS,
+  MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+  MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
 }
 end
 
 function modifier_invoker_wex_custom_passive:GetModifierBonusStats_Agility()
-return self.agi*self:GetAbility():GetLevel()
+return self.agi*self.ability:GetLevel()
+end
+
+function modifier_invoker_wex_custom_passive:GetModifierAttackSpeedBonus_Constant()
+if not self.parent:HasShard() then return end
+return 3*self.attack_speed*(1 + self.shard_bonus)
 end
 
 
-
+function modifier_invoker_wex_custom_passive:GetModifierMoveSpeedBonus_Percentage()
+if not self.parent:HasShard() then return end
+return 3*self.move_speed_per_instance*(1 + self.shard_bonus)
+end
 
 
 
@@ -138,59 +189,39 @@ end
 
 invoker_emp_custom = class({})
 
-function invoker_emp_custom:Precache(context)
-    PrecacheResource( "particle", "particles/units/heroes/hero_invoker/invoker_emp.vpcf", context )
-    PrecacheResource( "particle", "particles/invoker/emp_blink_start.vpcf", context )
-    PrecacheResource( "particle", "particles/invoker/emp_legendarya.vpcf", context )
-    PrecacheResource( "particle", "particles/void_astral_slow.vpcf", context )
-    PrecacheResource( "particle", "particles/void_spirit/remnant_hit.vpcf", context )
-end
-
-
-
 function invoker_emp_custom:GetIntrinsicModifierName()
+if not self:GetCaster():IsRealHero() then return end
 return "modifier_invoker_alacrity_custom_tracker"
 end
 
 function invoker_emp_custom:GetCastRange(vLocation, hTarget)
 
-if self:GetCaster():HasModifier("modifier_invoker_wex_7") then 
+if self:GetCaster():HasTalent("modifier_invoker_wex_7") then 
   return self:GetCaster():GetTalentValue("modifier_invoker_wex_7", "range") - self:GetCaster():GetCastRangeBonus()
 end
 return self.BaseClass.GetCastRange(self , vLocation , hTarget)
 end
 
 function invoker_emp_custom:GetCooldown(level)
-return self.BaseClass.GetCooldown( self, level ) * (1 - self:GetCaster():GetWexCd()/100)
+return self.BaseClass.GetCooldown( self, level )
 end
-
 
 function invoker_emp_custom:GetAOERadius()
-    return self:GetSpecialValueFor( "area_of_effect" )
+return self:GetSpecialValueFor( "area_of_effect" )
 end
 
-
 function invoker_emp_custom:GetAbilityTextureName()
-
 if self:GetCaster():HasModifier("modifier_invoker_emp_custom_teleport") then 
     return "emp_blink"
 end 
-
-if self:GetCaster():HasScepter() and not self:GetCaster():HasModifier("modifier_invoker_invoke_custom_scepter_cd") then 
-    return "invoker_emp_aghanim"
-else
-    return "invoker_emp"
-end
-
+return "invoker_emp"
 end 
-
 
 
 function invoker_emp_custom:GetManaCost(iLevel)
 if self:GetCaster():HasModifier("modifier_invoker_emp_custom_teleport") then 
     return 0
 end
-
 return self.BaseClass.GetManaCost(self,iLevel) 
 end
 
@@ -200,105 +231,80 @@ function invoker_emp_custom:GetBehavior()
 
 local bonus = 0
 
-if self:GetCaster():HasModifier("modifier_invoker_wex_7") then 
+if self:GetCaster():HasTalent("modifier_invoker_wex_7") then 
     bonus = DOTA_ABILITY_BEHAVIOR_AUTOCAST
 end 
-
 if self:GetCaster():HasModifier("modifier_invoker_emp_custom_teleport") then 
     return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE + DOTA_ABILITY_BEHAVIOR_AOE + DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING + DOTA_ABILITY_BEHAVIOR_IMMEDIATE + bonus
 end 
-
 return DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE + DOTA_ABILITY_BEHAVIOR_AOE + DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING + bonus
 end 
 
 
 
 function invoker_emp_custom:OnSpellStart()
-if not IsServer() then return end
+local caster = self:GetCaster()
 
-if self:GetCaster():HasModifier("modifier_invoker_emp_custom_teleport") then 
+if caster:HasModifier("modifier_invoker_emp_custom_teleport") then 
 
-    self:GetCaster():StartGesture(ACT_DOTA_CAST_TORNADO)
+    caster:StartGesture(ACT_DOTA_CAST_TORNADO)
 
-    local mod = self:GetCaster():FindModifierByName("modifier_invoker_emp_custom_teleport")
+    local mod = caster:FindModifierByName("modifier_invoker_emp_custom_teleport")
     if mod and mod.thinker and not mod.thinker:IsNull() then 
 
+        if self:GetAutoCastState() == true and not caster:IsRooted() and not caster:IsLeashed() then 
 
-        if self:GetAutoCastState() == true and not self:GetCaster():IsRooted() and not self:GetCaster():IsLeashed() then 
-
-            local start_point = self:GetCaster():GetAbsOrigin()
+            local start_point = caster:GetAbsOrigin()
             local end_point = mod.thinker:GetAbsOrigin()
 
-            EmitSoundOnLocationWithCaster(start_point, "Invoker.Tornado_blink_start" , self:GetCaster())
-            EmitSoundOnLocationWithCaster(start_point, "Invoker.Tornado_blink_start2" , self:GetCaster())
+            EmitSoundOnLocationWithCaster(start_point, "Invoker.Tornado_blink_start" , caster)
+            EmitSoundOnLocationWithCaster(start_point, "Invoker.Tornado_blink_start2" , caster)
 
             local particle = ParticleManager:CreateParticle( "particles/invoker/emp_blink_start.vpcf", PATTACH_WORLDORIGIN, nil )
             ParticleManager:SetParticleControl(particle, 0,  start_point)
             ParticleManager:ReleaseParticleIndex(particle)
 
-            FindClearSpaceForUnit(self:GetCaster(), end_point, true)
-            ProjectileManager:ProjectileDodge(self:GetCaster())
+            FindClearSpaceForUnit(caster, end_point, true)
+            ProjectileManager:ProjectileDodge(caster)
 
-            local particle4 = ParticleManager:CreateParticle( "particles/items3_fx/blink_arcane_end.vpcf", PATTACH_POINT_FOLLOW, self:GetCaster() )
-            ParticleManager:SetParticleControlEnt( particle4, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetCaster():GetAbsOrigin(), true )
+            local particle4 = ParticleManager:CreateParticle( "particles/items3_fx/blink_arcane_end.vpcf", PATTACH_POINT_FOLLOW, caster )
+            ParticleManager:SetParticleControlEnt( particle4, 0, caster, PATTACH_POINT_FOLLOW, "attach_hitloc", caster:GetAbsOrigin(), true )
             ParticleManager:ReleaseParticleIndex(particle4)
 
-
-            self:GetCaster():EmitSound("Invoker.Tornado_blink_end")
-        
-            self:GetCaster():Stop()
+            caster:EmitSound("Invoker.Tornado_blink_end")
+            caster:Stop()
 
             if mod.thinker:HasModifier("modifier_invoker_emp_custom") then 
                 mod.thinker:FindModifierByName("modifier_invoker_emp_custom").teleport = true
             end 
-
         end
-
         mod.thinker:Destroy()
-        self:GetCaster():RemoveModifierByName("modifier_invoker_emp_custom_teleport")
+        caster:RemoveModifierByName("modifier_invoker_emp_custom_teleport")
     end 
 
     return
 end 
 
 
-
-
 local point = self:GetCursorPosition()
-local delay = self:GetSpecialValueFor("delay") + self:GetCaster():GetTalentValue("modifier_invoker_wex_5", "delay")
+local delay = self:GetSpecialValueFor("delay") + caster:GetTalentValue("modifier_invoker_wex_3", "delay")
 local target = Vector(0,0,0)
 
-
-local ult = self:GetCaster():FindAbilityByName("invoker_invoke_custom")
-local scepter = 0
-
-if self:GetCaster():HasScepter() and ult and ult:GetAutoCastState() == true
-    and not self:GetCaster():HasModifier("modifier_invoker_invoke_custom_scepter_cd") then
-    scepter = 1
-    delay = delay + self:GetSpecialValueFor("scepter_delay")
-
-    ult:UseScepter()
-end 
-
-
-
-
-if self:GetCaster():HasModifier("modifier_invoker_wex_7") then 
-
-    point = self:GetCaster():GetAbsOrigin()
+if caster:HasTalent("modifier_invoker_wex_7") then 
+    point = caster:GetAbsOrigin()
     target = self:GetCursorPosition()
 
     if target == point then 
-        target = self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector()
+        target = caster:GetAbsOrigin() + caster:GetForwardVector()
     end 
 
     local dir = (target - point):Normalized()
-    target = self:GetCaster():GetAbsOrigin() + dir*self:GetCaster():GetTalentValue("modifier_invoker_wex_7", "range")
+    target = caster:GetAbsOrigin() + dir*caster:GetTalentValue("modifier_invoker_wex_7", "range")
 end 
 
-self:GetCaster():StartGesture(ACT_DOTA_CAST_EMP)
+caster:StartGesture(ACT_DOTA_CAST_EMP)
 
-local thinker = CreateModifierThinker( self:GetCaster(), self, "modifier_invoker_emp_custom", {is_scepter = scepter, x = target.x, y = target.y, quas = self:GetCaster():GetQuasHeal(), exort = self:GetCaster():GetExortDamage(), duration = delay }, point, self:GetCaster():GetTeamNumber(), false )
+local thinker = CreateModifierThinker( caster, self, "modifier_invoker_emp_custom", {x = target.x, y = target.y, duration = delay }, point, caster:GetTeamNumber(), false )
 thinker:EmitSound("Hero_Invoker.EMP.Cast")
 end
 
@@ -306,176 +312,136 @@ end
 
 
 modifier_invoker_emp_custom = class({})
-
-function modifier_invoker_emp_custom:IsHidden()
-    return true
-end
-
-function modifier_invoker_emp_custom:IsPurgable()
-    return false
-end
+function modifier_invoker_emp_custom:IsHidden() return true end
+function modifier_invoker_emp_custom:IsPurgable() return false end
 
 function modifier_invoker_emp_custom:OnCreated( kv )
 if not IsServer() then return end
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+
 self.teleport = false
 
-self.is_scepter = kv.is_scepter
+self.creeps_damage = self.caster:GetValueWex(self.ability, "creeps_damage")
+self.area_of_effect = self.ability:GetSpecialValueFor("area_of_effect")
+self.mana_burned = self.caster:GetValueWex(self.ability, "mana_burned")/100
+self.self_mana = self.ability:GetSpecialValueFor("self_mana")
+self.damage_per_mana_pct = self.ability:GetSpecialValueFor("damage_per_mana_pct") / 100
 
-self.creeps_damage = self:GetCaster():GetValueWex(self:GetAbility(), "creeps_damage")
+self.parent:EmitSound("Hero_Invoker.EMP.Charge")
 
-self.break_duration = self:GetAbility():GetSpecialValueFor("scepter_break")
-
-self.area_of_effect = self:GetAbility():GetSpecialValueFor("area_of_effect")
-self.mana_burned = self:GetCaster():GetValueWex(self:GetAbility(), "mana_burned")/100
-
-self.self_mana = self:GetAbility():GetSpecialValueFor("self_mana")
-
-self.damage_per_mana_pct = self:GetAbility():GetSpecialValueFor("damage_per_mana_pct") / 100
-
-self.quas_heal = kv.quas/100
-self.exort_damage = kv.exort/100
-
-self:GetParent():EmitSound("Hero_Invoker.EMP.Charge")
-
-local abs = self:GetParent():GetAbsOrigin()
+local abs = self.parent:GetAbsOrigin()
 abs.z = abs.z + 100
 
-if self:GetCaster():HasModifier("modifier_invoker_wex_7") then 
-    self.effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_invoker/invoker_emp.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
+if self.caster:HasTalent("modifier_invoker_wex_7") then 
+    self.effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_invoker/invoker_emp.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent )
 else 
     self.effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_invoker/invoker_emp.vpcf", PATTACH_WORLDORIGIN, nil )
 end 
+
 ParticleManager:SetParticleControl( self.effect_cast, 0, abs )
 ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( self.area_of_effect, 0, 0 ) )
 self:AddParticle(self.effect_cast, false, false, -1, false, true)
 
-self.more_damage = 0
+self.slow_duration = self.caster:GetTalentValue("modifier_invoker_wex_6", "duration")
+self.knock_duration = self.caster:GetTalentValue("modifier_invoker_wex_6", "knock_duration")
+self.slow_knock = self.caster:GetTalentValue("modifier_invoker_wex_6", "min_distance")
 
+if not self.caster:HasTalent("modifier_invoker_wex_7") then return end
 
-self.slow_duration = self:GetCaster():GetTalentValue("modifier_invoker_wex_6", "duration")
-self.knock_duration = self:GetCaster():GetTalentValue("modifier_invoker_wex_6", "knock_duration")
-self.slow_knock = self:GetCaster():GetTalentValue("modifier_invoker_wex_6", "min_distance")
+self.legendary_damage = self.caster:GetTalentValue("modifier_invoker_wex_7", "damage")/100
 
-if not self:GetCaster():HasModifier("modifier_invoker_wex_7") then return end
-
-self.legendary_k = self:GetCaster():GetTalentValue("modifier_invoker_wex_7", "damage")/100
-
-self:GetAbility():EndCooldown()
-self.mod = self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_invoker_emp_custom_teleport", {thinker = self:GetParent():entindex()})
+self.ability:EndCooldown()
+self.mod = self.caster:AddNewModifier(self.caster, self.ability, "modifier_invoker_emp_custom_teleport", {thinker = self.parent:entindex()})
 
 self.target_point = GetGroundPosition(Vector(kv.x, kv.y, 0), nil)
-self.origin_point = self:GetParent():GetAbsOrigin()
+self.origin_point = self.parent:GetAbsOrigin()
 
 self.origin_point.z = 0
 self.target_point.z = 0
 
 self.dir = (self.target_point - self.origin_point):Normalized()
-self.speed = self:GetCaster():GetTalentValue("modifier_invoker_wex_7", "range")/self:GetRemainingTime() 
+self.speed = self.caster:GetTalentValue("modifier_invoker_wex_7", "range")/self:GetRemainingTime() 
 self.interval = 0.03
 
 self.max_time = (self.target_point - self.origin_point):Length2D()/self.speed
 
-if not self:GetParent():HasModifier("modifier_invoker_invoke_custom_legendary") then
-    CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), 'invoker_emp_change',  {hide = 0, max_time = self.max_time, time = (self.max_time - self:GetElapsedTime()), damage = 0})
-end
+self.caster:UpdateUIshort({max_time = self.max_time, time = (self.max_time - self:GetElapsedTime()), style = "InvokerWex"})
 
 self:StartIntervalThink(self.interval)
 end
-
 
 
 function modifier_invoker_emp_custom:OnIntervalThink()
 if not IsServer() then return end 
 if not self.max_time then return end
 local original = (self.target_point - self.origin_point):Length2D()
-local dist = (self.origin_point - self:GetParent():GetAbsOrigin()):Length2D()
+local dist = (self.origin_point - self.parent:GetAbsOrigin()):Length2D()
 
+self.caster:UpdateUIshort({max_time = self.max_time, time = (self.max_time - self:GetElapsedTime()), style = "InvokerWex"})
 
-
-self.legendary_damage = self:GetCaster():GetAverageTrueAttackDamage(nil)*self.legendary_k
-
-if self:GetParent():HasModifier("modifier_invoker_invoke_custom_legendary") then 
-    CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), 'invoker_emp_change',  {hide = 1, max_time = self.max_time, time = (self.max_time - self:GetElapsedTime()), damage = self.legendary_damage*(dist/original)})
-else 
-    CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), 'invoker_emp_change',  {hide = 0, max_time = self.max_time, time = (self.max_time - self:GetElapsedTime()), damage = self.legendary_damage*(dist/original)})
-end 
-
-
-if (self:GetParent():GetAbsOrigin() - self.target_point):Length2D() <= 20 then 
+if (self.parent:GetAbsOrigin() - self.target_point):Length2D() <= 20 then 
     self:Destroy()
     return
 end
 
 local dist = self.speed*self.interval*self.dir
-local point = GetGroundPosition((self:GetParent():GetAbsOrigin() + dist), nil)
+local point = GetGroundPosition((self.parent:GetAbsOrigin() + dist), nil)
 point.z = point.z + 100
 
-AddFOWViewer(self:GetCaster():GetTeamNumber(), point, self.area_of_effect/2, self.interval, false)
+AddFOWViewer(self.caster:GetTeamNumber(), point, self.area_of_effect/2, self.interval, false)
 
-self:GetParent():SetAbsOrigin(point)
-
+self.parent:SetAbsOrigin(point)
 end 
-
 
 
 
 function modifier_invoker_emp_custom:OnDestroy( kv )
 if not IsServer() then return end
 self.max_time = nil
+local parent_abs = self:GetParent():GetAbsOrigin()
 
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), 'invoker_emp_change',  {hide = 1, max_time = 1, time = 0, damage = 0})
-
+self.caster:UpdateUIshort({hide = 1, style = "InvokerWex", hide_full = 1})
 
 ParticleManager:DestroyParticle(self.effect_cast, true)
 ParticleManager:ReleaseParticleIndex(self.effect_cast)
 
 local effect_cast = ParticleManager:CreateParticle( "particles/invoker/emp_legendarya.vpcf", PATTACH_WORLDORIGIN, nil)
-ParticleManager:SetParticleControl( effect_cast, 0, self:GetParent():GetAbsOrigin() )
+ParticleManager:SetParticleControl( effect_cast, 0, parent_abs )
 ParticleManager:SetParticleControl( effect_cast, 1, Vector( self.area_of_effect, 0, 0 ) )
 ParticleManager:DestroyParticle(effect_cast, false)
 ParticleManager:ReleaseParticleIndex(effect_cast)
 
-
 if self.mod and not self.mod:IsNull() then 
-    self:GetCaster():RemoveModifierByName("modifier_invoker_emp_custom_teleport")
+    self.caster:RemoveModifierByName("modifier_invoker_emp_custom_teleport")
 end 
 
-if self:GetCaster():HasModifier("modifier_invoker_wex_7") and self.origin_point and self.target_point and self.legendary_k then 
-    local original = (self.target_point - self.origin_point):Length2D()
-    local dist = (self.origin_point - self:GetParent():GetAbsOrigin()):Length2D()
+if self.caster:HasTalent("modifier_invoker_wex_3") then
+    self.caster:AddNewModifier(self.caster, self.ability, "modifier_invoker_emp_custom_armor", {duration = self.caster:GetTalentValue("modifier_invoker_wex_3", "armor")})
+end
 
-    self.legendary_damage = self:GetCaster():GetAverageTrueAttackDamage(nil)*self.legendary_k
-
-    self.more_damage = self.legendary_damage*(dist/original)
-end 
-
-local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetParent():GetOrigin(), nil, self.area_of_effect, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MANA_ONLY, 0, false )
+local enemies = self.caster:FindTargets(self.area_of_effect, parent_abs) 
 
 local damageTable = 
 {
-    attacker = self:GetCaster(),
+    attacker = self.caster,
     damage_type = DAMAGE_TYPE_MAGICAL,
-    ability = self:GetAbility(),
+    ability = self.ability,
 }
 
-local heroes_hit = false
+local ability = self.caster:FindAbilityByName("invoker_invoke_custom")
 
 for _,enemy in pairs(enemies) do
-    if enemy:IsRealHero() then 
-        heroes_hit = true
-    end 
 
-    if self.is_scepter and self.is_scepter == 1 then 
-        enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_invoker_emp_custom_break", {duration = (1 - enemy:GetStatusResistance())*self.break_duration})
-    end 
+    local mana_burn = 0
 
-    local mana_burn = enemy:GetMaxMana()*self.mana_burned
-
-    enemy:Script_ReduceMana( mana_burn, self:GetAbility() )
-
-    self:GetCaster():GiveMana(mana_burn * self.self_mana)
-
-    self:GetCaster():SendNumber(11, mana_burn * self.self_mana)
+    if enemy:GetMaxMana() > 0 then
+        mana_burn = enemy:GetMaxMana()*self.mana_burned
+        enemy:Script_ReduceMana( mana_burn, self.ability )
+        self.caster:GiveMana(mana_burn * self.self_mana)
+        self.caster:SendNumber(11, mana_burn * self.self_mana)
+    end
 
     local damage = mana_burn * self.damage_per_mana_pct 
 
@@ -483,46 +449,31 @@ for _,enemy in pairs(enemies) do
         damage = self.creeps_damage
     end
 
-    damage = damage + self.more_damage 
-
-    if self.exort_damage and self.exort_damage > 0 then 
-      damage = damage * (1 + self.exort_damage)
+    local mod = enemy:FindModifierByName("modifier_invoker_emp_custom_legendary")
+    if mod then 
+        damage = damage + mod:GetStackCount()*self.legendary_damage*self.caster:GetAverageTrueAttackDamage(nil)
+        mod:Destroy()
     end 
 
     damageTable.victim = enemy
     damageTable.damage = damage
+    local real_damage = DoDamage(damageTable)
 
+    if ability then 
+        ability:AbilityHit(enemy)
+    end 
 
-    local real_damage = ApplyDamage(damageTable)
+    if self.caster:HasTalent("modifier_invoker_wex_6") then 
 
-    if self.quas_heal and self.quas_heal > 0 and not enemy:IsIllusion() then
+        enemy:AddNewModifier(self.caster, self.ability, "modifier_invoker_emp_custom_slow", {duration = self.slow_duration})
 
-        local heal = real_damage*self.quas_heal
-        if enemy:IsCreep() then 
-            heal = heal/3
-        end  
-
-        self:GetCaster():GenericHeal(heal, self:GetAbility(), true, "particles/items3_fx/octarine_core_lifesteal.vpcf")
-    end
-
-    if enemy:IsRealHero() then 
-        local ability = self:GetCaster():FindAbilityByName("invoker_invoke_custom")
-        if ability then 
-            ability:AbilityHit()
-        end 
-    end
-
-    if self:GetCaster():HasModifier("modifier_invoker_wex_6") then 
-
-        enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_invoker_emp_custom_slow", {duration = self.slow_duration})
-
-        local direction = enemy:GetOrigin()-self:GetParent():GetOrigin()
-        local center = self:GetParent():GetAbsOrigin()
+        local direction = enemy:GetOrigin()-parent_abs
+        local center = parent_abs
 
         direction.z = 0
         direction = direction:Normalized()
 
-        if enemy:GetOrigin() == self:GetParent():GetOrigin() then 
+        if enemy:GetOrigin() == parent_abs then 
             direction = enemy:GetForwardVector()
             center = enemy:GetAbsOrigin() - direction
         end 
@@ -530,11 +481,10 @@ for _,enemy in pairs(enemies) do
 
         local distance = math.max(self.slow_knock, self.area_of_effect*0.9 - length)
 
-
         if self.teleport == false then
             center = enemy:GetAbsOrigin() + direction
             
-            local point = self:GetParent():GetAbsOrigin() + direction*150
+            local point = parent_abs + direction*150
 
             length = (point - enemy:GetAbsOrigin()):Length2D()
 
@@ -553,39 +503,11 @@ for _,enemy in pairs(enemies) do
           knockback_height = 0,
           should_stun = 0
         }
-        enemy:AddNewModifier( self:GetCaster(), self, "modifier_knockback", knockbackProperties )
-        
+        enemy:AddNewModifier( self.caster, self, "modifier_knockback", knockbackProperties )
     end 
 end
-
-
-if heroes_hit == true then 
-    local mod = self:GetCaster():FindModifierByName("modifier_invoker_chaos_meteor_custom_cataclysm_stack")
-
-    if mod then 
-        --mod:AddStack()
-    end 
-end
-
-
-
-if self:GetCaster():HasModifier("modifier_invoker_wex_5") and (self:GetParent():GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D() <= self.area_of_effect then 
-    local effect_cast = ParticleManager:CreateParticle( "particles/cleance_blade.vpcf", PATTACH_ABSORIGIN_FOLLOW,  self:GetCaster())
-    ParticleManager:SetParticleControl( effect_cast, 0, self:GetCaster():GetAbsOrigin())
-    ParticleManager:SetParticleControl( effect_cast, 1, Vector(170,0,0) )
-    ParticleManager:ReleaseParticleIndex( effect_cast )
-
-    self:GetCaster():EmitSound("Invoker.EMP_purge")
-
-    self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_invoker_tornado_custom_speed", {duration = self:GetCaster():GetTalentValue("modifier_invoker_wex_5", "duration")})
-
-    self:GetCaster():GenericHeal((self:GetCaster():GetMaxHealth() - self:GetCaster():GetHealth())*self:GetCaster():GetTalentValue("modifier_invoker_wex_5", "heal")/100, self:GetAbility())
-    self:GetCaster():Purge(false, true, false, true, false)
-end 
-
 
 self:GetParent():EmitSound("Hero_Invoker.EMP.Discharge")
-
 UTIL_Remove( self:GetParent() )
 end
 
@@ -597,65 +519,65 @@ end
 modifier_invoker_alacrity_custom_tracker = class({})
 function modifier_invoker_alacrity_custom_tracker:IsHidden() return true end
 function modifier_invoker_alacrity_custom_tracker:IsPurgable() return false end
-function modifier_invoker_alacrity_custom_tracker:DeclareFunctions()
-return
-{
-    MODIFIER_EVENT_ON_ATTACK_LANDED,
-    MODIFIER_PROPERTY_ATTACK_RANGE_BONUS
-}
+
+
+function modifier_invoker_alacrity_custom_tracker:OnCreated()
+
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.cdr_duration = self.parent:GetTalentValue("modifier_invoker_wex_4", "duration", true)
+self.legendary_cd = self.parent:GetTalentValue("modifier_invoker_wex_7", "cd", true)
+self.legendary_duration = self.parent:GetTalentValue("modifier_invoker_wex_7", "duration", true)
+self.legendary_radius = self.parent:GetTalentValue("modifier_invoker_wex_7", "radius", true)
+
+self.lifesteal = self.parent:GetTalentValue("modifier_invoker_wex_5", "heal", true)/100
+self.heal_creeps = self.parent:GetTalentValue("modifier_invoker_wex_5", "heal_creeps", true)
+
+self.parent:AddAttackEvent_out(self)
+self.parent:AddDamageEvent_out(self)
 end
 
 
-function modifier_invoker_alacrity_custom_tracker:GetModifierAttackRangeBonus()
-if not self:GetCaster():HasModifier("modifier_invoker_wex_3") then return end
-return self:GetCaster():GetTalentValue("modifier_invoker_wex_3", "range")
+function modifier_invoker_alacrity_custom_tracker:DamageEvent_out(params)
+if not IsServer() then return end
+if not self.parent:HasTalent("modifier_invoker_wex_5") then return end
+if not params.unit:IsUnit() then return end
+
+local attacker = params.attacker
+if attacker:GetTeamNumber() ~= self.parent:GetTeamNumber() then return end
+
+local mod = attacker:FindModifierByName("modifier_invoker_alacrity_custom")
+if mod then
+    local heal = (1 - attacker:GetHealthPercent()/100)*self.lifesteal
+    if params.unit:IsCreep() then
+        heal = heal/self.heal_creeps
+    end
+    attacker:GenericHeal(heal*params.damage, mod:GetAbility(), true, nil, "modifier_invoker_wex_5")
+end
+
 end
 
 
-
-function modifier_invoker_alacrity_custom_tracker:OnAttackLanded(params)
+function modifier_invoker_alacrity_custom_tracker:AttackEvent_out(params)
 if not IsServer() then return end 
-if not params.target:IsHero() and not params.target:IsCreep() then return end
+if not params.target:IsUnit() then return end
+if self.parent ~= params.attacker then return end 
+if not self.parent:HasTalent("modifier_invoker_wex_7") then return end
 
-
-
-if params.attacker:HasModifier("modifier_invoker_alacrity_custom") and self:GetCaster():HasModifier("modifier_invoker_wex_4") then
-
-    local duration = self:GetCaster():GetTalentValue("modifier_invoker_wex_4", "duration")
-    self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_invoker_alacrity_custom_speed", {duration = duration})
+for _,target in pairs(self.parent:FindTargets(self.legendary_radius, params.target:GetAbsOrigin())) do 
+    target:AddNewModifier(self.parent, self.ability, "modifier_invoker_emp_custom_legendary", {duration = self.legendary_duration})
 end
 
-
-if self:GetParent() ~= params.attacker then return end 
-
-if self:GetParent():HasModifier("modifier_invoker_wex_3") then 
-    self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_invoker_alacrity_custom_damage", {duration = self:GetCaster():GetTalentValue("modifier_invoker_wex_3", "duration")})
-end 
-
-
-if not self:GetCaster():HasModifier("modifier_invoker_wex_7") then return end
-
-local mod = self:GetCaster():FindModifierByName("modifier_invoker_emp_custom_teleport")
+local mod = self.parent:FindModifierByName("modifier_invoker_emp_custom_teleport")
 
 if mod then 
     mod:IncrementStackCount()
 else 
-    self:GetCaster():CdAbility(self:GetAbility(), self:GetCaster():GetTalentValue("modifier_invoker_wex_7", "cd"))
+    self.parent:CdAbility(self.ability, self.legendary_cd)
 end 
 
-
 end 
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -666,167 +588,132 @@ end
 
 invoker_alacrity_custom = class({})
 
-
-function invoker_alacrity_custom:Precache(context)
-    PrecacheResource( "particle", "particles/units/heroes/hero_invoker/invoker_alacrity.vpcf", context )
-    PrecacheResource( "particle", "particles/units/heroes/hero_invoker/invoker_alacrity_buff.vpcf", context )
-end
-
-function invoker_alacrity_custom:GetBehavior()
-    return DOTA_ABILITY_BEHAVIOR_UNIT_TARGET + DOTA_ABILITY_BEHAVIOR_HIDDEN + DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK + DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING + DOTA_ABILITY_BEHAVIOR_SHOW_IN_GUIDES
-end
-
 function invoker_alacrity_custom:GetCooldown(level)
-
-return self.BaseClass.GetCooldown( self, level ) * (1 - self:GetCaster():GetWexCd()/100)
+return self.BaseClass.GetCooldown( self, level ) 
 end
 
 function invoker_alacrity_custom:GetAbilityTextureName()
-if self:GetCaster():HasScepter() and not self:GetCaster():HasModifier("modifier_invoker_invoke_custom_scepter_cd") then 
-    return "invoker_alacrity_aghanim"
-else
-    return "invoker_alacrity"
+if self:GetCaster():HasModifier("modifier_magus_accord_custom") then
+    return "invoker/immortal/invoker_alacrity"
 end
-
+return "invoker_alacrity"
 end
 
 function invoker_alacrity_custom:OnSpellStart()
-if not IsServer() then return end
+local caster = self:GetCaster()
 
 
+if caster:HasTalent("modifier_invoker_wex_5") then
+    caster:Purge(false, true, false, false, false)
+
+    local effect_cast = ParticleManager:CreateParticle( "particles/cleance_blade.vpcf", PATTACH_ABSORIGIN_FOLLOW,  caster)
+    ParticleManager:SetParticleControl( effect_cast, 0, caster:GetAbsOrigin())
+    ParticleManager:SetParticleControl( effect_cast, 1, Vector(170,0,0) )
+    ParticleManager:ReleaseParticleIndex( effect_cast )
+
+    caster:EmitSound("Invoker.EMP_purge")
+end
 
 local target = self:GetCursorTarget()
-local duration = self:GetSpecialValueFor("duration") + self:GetCaster():GetTalentValue("modifier_invoker_wex_2", "duration")
 
-local ult = self:GetCaster():FindAbilityByName("invoker_invoke_custom")
-local scepter = 0
+caster:StartGesture(ACT_DOTA_CAST_ALACRITY)
+self:ApplyEffect(target)
+end
 
-if self:GetCaster():HasScepter() and ult and ult:GetAutoCastState() == true
-    and not self:GetCaster():HasModifier("modifier_invoker_invoke_custom_scepter_cd") then
-    
-    scepter = 1
-
-    local friends = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), target:GetOrigin(), nil, self:GetSpecialValueFor("radius_scepter"), DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_PLAYER_CONTROLLED, FIND_CLOSEST, false )
-    local count = 0 
-    local max = self:GetSpecialValueFor("count")
-    for _,unit in pairs(friends) do 
-        if not unit:IsIllusion() and (unit:IsHero() or unit:IsCreep()) and unit ~= target then 
-            count = count + 1
-            unit:RemoveModifierByName("modifier_invoker_alacrity_custom")
-            unit:AddNewModifier( self:GetCaster(), self, "modifier_invoker_alacrity_custom", {is_scepter = scepter, duration = duration } )
-        end 
-
-        if count >= max then 
-            break
-        end 
-    end 
-
-    ult:UseScepter()
-end 
-
-
-self:GetCaster():StartGesture(ACT_DOTA_CAST_ALACRITY)
-
-
-
+function invoker_alacrity_custom:ApplyEffect(target)
+local caster = self:GetCaster()
+local duration = self:GetSpecialValueFor("duration") + caster:GetTalentValue("modifier_invoker_wex_2", "duration")
 target:RemoveModifierByName("modifier_invoker_alacrity_custom")
-target:AddNewModifier( self:GetCaster(), self, "modifier_invoker_alacrity_custom", {is_scepter = scepter, duration = duration } )
-
-
+target:AddNewModifier( caster, self, "modifier_invoker_alacrity_custom", {duration = duration } )
 target:EmitSound("Hero_Invoker.Alacrity")
 end
 
 
 
-
 modifier_invoker_alacrity_custom = class({})
+
+function modifier_invoker_alacrity_custom:IsPurgable() return not self:GetCaster():HasTalent("modifier_invoker_wex_5") end
 
 function modifier_invoker_alacrity_custom:OnCreated( kv )
 
-self.damage_heal = self:GetCaster():GetTalentValue("modifier_invoker_wex_2", "heal")/100
-self.damage_heal_creeps = self:GetCaster():GetTalentValue("modifier_invoker_wex_2", "heal_creeps")
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
 
-self.bonus_damage = self:GetCaster():GetValueExort(self:GetAbility(),  "bonus_damage")
-self.bonus_attack_speed = self:GetCaster():GetValueWex(self:GetAbility(), "bonus_attack_speed")
+self.bonus_damage = self.caster:GetValueExort(self.ability,  "bonus_damage") + self.caster:GetTalentValue("modifier_invoker_wex_2", "damage")
+self.bonus_attack_speed = self.caster:GetValueWex(self.ability, "bonus_attack_speed") + self.caster:GetTalentValue("modifier_invoker_wex_2", "speed")
 
+self.damage_reduce = self.caster:GetTalentValue("modifier_invoker_wex_5", "damage_reduce")
 
-if IsServer() then 
+self.cdr = self.caster:GetTalentValue("modifier_invoker_wex_4", "cdr")
 
-    self:SetStackCount(kv.is_scepter)
+if not IsServer() then return end
 
-    self.tornado = self:GetCaster():FindAbilityByName("invoker_tornado_custom")
-    self.emp = self:GetCaster():FindAbilityByName("invoker_emp_custom")
-
-    local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_invoker/invoker_alacrity.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-    self:AddParticle( effect_cast, false, false, -1, false, false )
-end 
-
-if self:GetStackCount() == 1 then 
-    self.bonus_damage = self.bonus_damage + self:GetAbility():GetSpecialValueFor("damage_scepter")
-    self.bonus_attack_speed = self.bonus_attack_speed + self:GetAbility():GetSpecialValueFor("speed_scepter")
-end 
-
+local effect_name = "particles/units/heroes/hero_invoker/invoker_alacrity.vpcf"
+if self:GetCaster():HasModifier("modifier_magus_accord_custom") then
+    effect_name = "particles/econ/items/invoker/invoker_ti7/invoker_ti7_alacrity.vpcf"
 end
 
+local effect_cast = ParticleManager:CreateParticle( effect_name, PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
+self:AddParticle( effect_cast, false, false, -1, false, false )
 
+local buff_name_particle = "particles/units/heroes/hero_invoker/invoker_alacrity_buff.vpcf"
+if self:GetCaster():HasModifier("modifier_magus_accord_custom") then
+    buff_name_particle = "particles/econ/items/invoker/invoker_ti7/invoker_ti7_alacrity_buff.vpcf"
+end
 
+local overhead_effect = ParticleManager:CreateParticle( buff_name_particle, PATTACH_OVERHEAD_FOLLOW, self:GetParent() )
+self:AddParticle( overhead_effect, false, false, -1, false, false )
+
+if self:GetCaster():HasModifier("") then
+    local particle_effect_hands = ParticleManager:CreateParticle("particles/econ/items/invoker/invoker_ti7/invoker_ti7_alacrity_cast.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
+    ParticleManager:SetParticleControlEnt(particle_effect_hands, 1, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_attack1", Vector(0,0,0), true)
+    ParticleManager:SetParticleControlEnt(particle_effect_hands, 2, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_attack2", Vector(0,0,0), true)
+    ParticleManager:ReleaseParticleIndex(particle_effect_hands)
+end
+
+end
 
 function modifier_invoker_alacrity_custom:DeclareFunctions()
-    local funcs = 
-    {
-        MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
-        MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-        MODIFIER_EVENT_ON_TAKEDAMAGE
-    }
-    return funcs
+return 
+{
+    MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
+    MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+    MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
+    MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE,
+}
 end
 
 
+function modifier_invoker_alacrity_custom:GetModifierPercentageCooldown()
+if not self.caster:HasTalent("modifier_invoker_wex_4") then return end
+return self.cdr
+end 
 
-
-function modifier_invoker_alacrity_custom:OnTakeDamage( params )
+function modifier_invoker_alacrity_custom:GetModifierIncomingDamage_Percentage()
 if not IsServer() then return end 
-if not self:GetCaster():HasModifier("modifier_invoker_wex_2") then return end 
-if self:GetParent() ~= params.attacker or params.unit:IsIllusion() then return end  
-if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end
-if params.unit:IsIllusion() then return end
-
-local heal = params.damage*self.damage_heal
-if params.unit:IsCreep() then 
-    heal = heal/self.damage_heal_creeps
-end 
-
-
-self:GetParent():GenericHeal(heal, self:GetAbility(), true)
-
-end 
-
-
-
-
+if not self.caster:HasTalent("modifier_invoker_wex_5") then return end
+return (1 - self.parent:GetHealthPercent()/100)*self.damage_reduce
+end
 
 function modifier_invoker_alacrity_custom:GetModifierPreAttack_BonusDamage()
-    return self.bonus_damage
+return self.bonus_damage
 end
 
 function modifier_invoker_alacrity_custom:GetModifierAttackSpeedBonus_Constant()
-    return self.bonus_attack_speed
-end
-
-function modifier_invoker_alacrity_custom:GetEffectName()
-    return "particles/units/heroes/hero_invoker/invoker_alacrity_buff.vpcf"
-end
-
-function modifier_invoker_alacrity_custom:GetEffectAttachType()
-    return PATTACH_OVERHEAD_FOLLOW
+return self.bonus_attack_speed
 end
 
 
 function modifier_invoker_alacrity_custom:GetStatusEffectName()
-    return "particles/status_fx/status_effect_alacrity.vpcf"
+if self:GetCaster():HasModifier("modifier_magus_accord_custom") then
+    return "particles/econ/items/invoker/invoker_ti7/status_effect_alacrity_ti7.vpcf"
 end
+return "particles/status_fx/status_effect_alacrity.vpcf"
+end
+
 function modifier_invoker_alacrity_custom:StatusEffectPriority()
-    return 999999
+return MODIFIER_PRIORITY_HIGH 
 end
 
 
@@ -839,26 +726,32 @@ end
 
 invoker_tornado_custom = class({})
 
-function invoker_tornado_custom:Precache(context)
-    PrecacheResource( "particle", "particles/units/heroes/hero_invoker/invoker_tornado.vpcf", context )
-    PrecacheResource( "particle", "particles/units/heroes/hero_invoker/invoker_tornado_child.vpcf", context )
-end
-
-
-
 function invoker_tornado_custom:GetCooldown(level)
-
 local bonus = 0
-if self:GetCaster():HasModifier("modifier_invoker_wex_1") then 
+if self:GetCaster():HasTalent("modifier_invoker_wex_1") then 
     bonus = self:GetCaster():GetTalentValue("modifier_invoker_wex_1", "cd")
 end 
-
-return (self.BaseClass.GetCooldown( self, level ) + bonus) * (1 - self:GetCaster():GetWexCd()/100)
+return self.BaseClass.GetCooldown( self, level ) + bonus
 end
 
 
 function invoker_tornado_custom:GetAbilityTextureName()
-if self:GetCaster():HasScepter() and not self:GetCaster():HasModifier("modifier_invoker_invoke_custom_scepter_cd") then 
+local scepter = false
+local caster = self:GetCaster()
+
+if caster:HasScepter() and not caster:HasModifier("modifier_invoker_invoke_custom_scepter_cd") and caster:FindAbilityByName("invoker_invoke_custom") then 
+   scepter = true
+end
+
+if caster:HasModifier("modifier_invoker_persona_2") or (caster:HasModifier("modifier_invoker_dark_artistry_cape") and not (caster:HasModifier("modifier_invoker_persona_1") or caster:HasModifier("modifier_invoker_persona_3") or caster:HasModifier("modifier_invoker_persona_4") or caster:HasModifier("modifier_invoker_persona_5") or caster:HasModifier("modifier_invoker_persona_6"))) then
+    if scepter then
+        return "invoker_tornado_dark_artistry_aghanim"
+    else
+        return "invoker/dark_artistry/invoker_tornado"
+    end
+end
+
+if scepter then
     return "invoker_tornado_aghanim"
 else
     return "invoker_tornado"
@@ -867,65 +760,60 @@ end
 end
 
 
+
 function invoker_tornado_custom:OnSpellStart()
-if not IsServer() then return end
 
-self:GetCaster():StartGesture(ACT_DOTA_CAST_TORNADO)
-
-
+local caster = self:GetCaster()
+caster:StartGesture(ACT_DOTA_CAST_TORNADO)
 
 local point = self:GetCursorPosition()
 
-if point == self:GetCaster():GetAbsOrigin() then
-    point = point + self:GetCaster():GetForwardVector()
+if point == caster:GetAbsOrigin() then
+    point = point + caster:GetForwardVector()
 end
 
-
-self.caster_origin = self:GetCaster():GetOrigin()
-
+self.caster_origin = caster:GetOrigin()
 self.parent_origin = point
-
 self.direction = self.parent_origin - self.caster_origin
-
 self.direction.z = 0
 
 self.direction = self.direction:Normalized()
 
 self.radius = self:GetSpecialValueFor("area_of_effect")
-self.distance = self:GetCaster():GetValueWex(self, "travel_distance")
-self.speed = self:GetSpecialValueFor("travel_speed") + self:GetCaster():GetTalentValue("modifier_invoker_wex_1", "speed")
+self.distance = caster:GetValueWex(self, "travel_distance")
+self.speed = self:GetSpecialValueFor("travel_speed")
 self.vision = self:GetSpecialValueFor("vision_distance")
 self.vision_duration = self:GetSpecialValueFor("end_vision_duration")
-self.duration = self:GetCaster():GetValueQuas(self, "lift_duration")
+self.duration = caster:GetValueQuas(self, "lift_duration")
 
-local thinker = CreateModifierThinker( self:GetCaster(), self, "modifier_invoker_tornado_custom_thinker", {}, self:GetCaster():GetAbsOrigin(), self:GetCaster():GetTeamNumber(), false )
+local thinker = CreateModifierThinker( caster, self, "modifier_invoker_tornado_custom_thinker", {}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false )
+thinker.hit_targets = {}
 
-thinker.hit_heroes = {}
-
-
-
-local ult = self:GetCaster():FindAbilityByName("invoker_invoke_custom")
+local ult = caster:FindAbilityByName("invoker_invoke_custom")
 local scepter = 0
 
-if self:GetCaster():HasScepter() and ult and ult:GetAutoCastState() == true
-    and not self:GetCaster():HasModifier("modifier_invoker_invoke_custom_scepter_cd") then
+if caster:HasScepter() and ult and not caster:HasModifier("modifier_invoker_invoke_custom_scepter_cd") then
     scepter = 1
-
     ult:UseScepter()
 end 
 
-
-
+local particle_name = "particles/units/heroes/hero_invoker/invoker_tornado.vpcf"
+if caster:HasModifier("modifier_invoker_dark_artistry_cape") and not (caster:HasModifier("modifier_invoker_persona_1") or caster:HasModifier("modifier_invoker_persona_3") or caster:HasModifier("modifier_invoker_persona_4") or caster:HasModifier("modifier_invoker_persona_5") or caster:HasModifier("modifier_invoker_persona_6")) then
+    particle_name = "particles/econ/items/invoker/invoker_ti6/invoker_tornado_ti6.vpcf"
+end
+if caster:HasModifier("modifier_invoker_persona_2") then
+    particle_name = "particles/econ/items/invoker/invoker_ti6/invoker_tornado_ti6.vpcf"
+end
 
 local tornado_projectile = 
 {
     Ability = self,
-    EffectName = "particles/units/heroes/hero_invoker/invoker_tornado.vpcf",
+    EffectName = particle_name,
     vSpawnOrigin = self.caster_origin,
     fDistance = self.distance,
     fStartRadius = self.radius,
     fEndRadius = self.radius,
-    Source = self:GetCaster(),
+    Source = caster,
     bHasFrontalCone = false,
     bReplaceExisting = false,
     iUnitTargetTeam = DOTA_UNIT_TARGET_TEAM_ENEMY,
@@ -934,13 +822,22 @@ local tornado_projectile =
     vVelocity = self.direction * self.speed,
     bProvidesVision = true,
     iVisionRadius = self.vision,
-    iVisionTeamNumber = self:GetCaster():GetTeamNumber(),
+    iVisionTeamNumber = caster:GetTeamNumber(),
     fExpireTime = GameRules:GetGameTime() + 10,
-    ExtraData = {quas = self:GetCaster():GetQuasHeal(), exort = self:GetCaster():GetExortDamage(), thinker = thinker:entindex(), is_scepter = scepter}
+    ExtraData = {thinker = thinker:entindex(), is_scepter = scepter}
 }
 
 ProjectileManager:CreateLinearProjectile(tornado_projectile)
-EmitSoundOnLocationWithCaster(self.caster_origin, "Hero_Invoker.Tornado.Cast", self:GetCaster())
+
+local sound = "Hero_Invoker.Tornado.Cast"
+if caster:HasModifier("modifier_invoker_dark_artistry_cape") and not (caster:HasModifier("modifier_invoker_persona_1") or caster:HasModifier("modifier_invoker_persona_3") or caster:HasModifier("modifier_invoker_persona_4") or caster:HasModifier("modifier_invoker_persona_5") or caster:HasModifier("modifier_invoker_persona_6")) then
+    sound = "Hero_Invoker.Tornado.Cast.Immortal"
+end
+if caster:HasModifier("modifier_invoker_persona_2") then
+    sound = "Hero_Invoker.Tornado.Cast.Immortal"
+end
+
+EmitSoundOnLocationWithCaster(self.caster_origin, sound, caster)
 end
 
 
@@ -949,59 +846,46 @@ function invoker_tornado_custom:OnProjectileHit_ExtraData(hTarget, vLocation, ta
 if not IsServer() then return end 
 if not table.thinker then return end 
 
+local caster = self:GetCaster()
 local thinker = EntIndexToHScript(table.thinker)
 if not thinker then return end
 
 if not hTarget then
     UTIL_Remove(thinker)
-    AddFOWViewer(self:GetCaster():GetTeamNumber(), vLocation, self.vision, self.vision_duration, false)
+    AddFOWViewer(caster:GetTeamNumber(), vLocation, self.vision, self.vision_duration, false)
     return nil
 end
 
-if hTarget:IsRealHero() and not thinker.hit_hero then 
-    thinker.hit_hero = true
-    local mod = self:GetCaster():FindModifierByName("modifier_invoker_chaos_meteor_custom_cataclysm_stack")
+if not thinker.hit_targets[hTarget] then 
 
-    if mod then 
-        --mod:AddStack()
-    end 
-end 
+    thinker.hit_targets[hTarget] = true
 
-if hTarget:IsRealHero() and not thinker.hit_heroes[hTarget] then 
-
-    thinker.hit_heroes[hTarget] = true
-
-    local ability = self:GetCaster():FindAbilityByName("invoker_invoke_custom")
+    local ability = caster:FindAbilityByName("invoker_invoke_custom")
     if ability then 
-        ability:AbilityHit()
+        ability:AbilityHit(hTarget)
     end 
-
-
 end 
-
 
 
 if hTarget:IsCreep() then 
     local damageTable = 
     { 
         victim = hTarget,
-        attacker = self:GetCaster(),
+        attacker = caster,
         damage = 1,
         damage_type = self:GetAbilityDamageType(),
         ability = self
     }
-    local real_damage = ApplyDamage(damageTable)
+    local real_damage = DoDamage(damageTable)
 end 
 
 if not hTarget:IsDebuffImmune() then 
     hTarget:InterruptMotionControllers(true)
-    hTarget:AddNewModifier(self:GetCaster(), self, "modifier_invoker_tornado_custom", {is_scepter = table.is_scepter, quas = table.quas, exort = table.exort, duration = self.duration*(1 - hTarget:GetStatusResistance()) })
+    hTarget:AddNewModifier(caster, self, "modifier_invoker_tornado_custom", {is_scepter = table.is_scepter, duration = self.duration*(1 - hTarget:GetStatusResistance()) })
 end
 
 return false
 end
-
-
 
 
 function invoker_tornado_custom:OnProjectileThink_ExtraData(location, data)
@@ -1016,59 +900,51 @@ end
 
 
 
-
-
-
-
-
-
-
-
 modifier_invoker_tornado_custom = class({})
 
-function modifier_invoker_tornado_custom:IsMotionController()
-    return true
-end
-
-function modifier_invoker_tornado_custom:GetMotionControllerPriority()
-    return DOTA_MOTION_CONTROLLER_PRIORITY_HIGH
-end
-
-
+function modifier_invoker_tornado_custom:IsMotionController() return true end
+function modifier_invoker_tornado_custom:GetMotionControllerPriority()  return DOTA_MOTION_CONTROLLER_PRIORITY_HIGHm end
 
 function modifier_invoker_tornado_custom:OnCreated(kv)
 if not IsServer() then return end
 
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+
+self.damage_duration = self.caster:GetTalentValue("modifier_invoker_wex_1", "duration")
+
 local abs = GetGroundPosition(self:GetParent():GetAbsOrigin(), nil)
 
-self.effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_invoker/invoker_tornado_child.vpcf", PATTACH_WORLDORIGIN, nil )
+local effect_name = "particles/units/heroes/hero_invoker/invoker_tornado_child.vpcf"
+if self:GetCaster():HasModifier("modifier_invoker_dark_artistry_cape") and not (self:GetCaster():HasModifier("modifier_invoker_persona_1") or self:GetCaster():HasModifier("modifier_invoker_persona_3") or self:GetCaster():HasModifier("modifier_invoker_persona_4") or self:GetCaster():HasModifier("modifier_invoker_persona_5") or self:GetCaster():HasModifier("modifier_invoker_persona_6")) then
+    effect_name = "particles/econ/items/invoker/invoker_ti6/invoker_tornado_child_ti6.vpcf"
+end
+if self:GetCaster():HasModifier("modifier_invoker_persona_2") then
+    effect_name = "particles/econ/items/invoker/invoker_ti6/invoker_tornado_child_ti6.vpcf"
+end
+
+self.effect_cast = ParticleManager:CreateParticle( effect_name, PATTACH_WORLDORIGIN, nil )
 ParticleManager:SetParticleControl( self.effect_cast, 0, abs )
 self:AddParticle(self.effect_cast, false, false, -1, false, true)
 
 self.interval = 0.02
 
-self.purge_duration = self:GetAbility():GetSpecialValueFor("scepter_purge")
+self.purge_duration = self.ability:GetSpecialValueFor("scepter_purge")
 self.is_scepter = kv.is_scepter
 
-self:GetParent():EmitSound("Hero_Invoker.Tornado.Target" )
-self:GetParent():Purge(true, false, false, false, false)
+self.parent:EmitSound("Hero_Invoker.Tornado.Target" )
+self.parent:Purge(true, false, false, false, false)
 
 self.height = 450
 self.height_duration = 0.3
 self.height_inc = self.height/(self.height_duration/self.interval)
 
-self.damage = self:GetAbility():GetSpecialValueFor("base_damage") + self:GetCaster():GetValueWex(self:GetAbility(), "wex_damage")
+self.damage = self.ability:GetSpecialValueFor("base_damage") + self.caster:GetValueWex(self.ability, "wex_damage")
 
-self.exort_damage = kv.exort/100
-self.quas_heal = kv.quas/100
-
-if self.exort_damage and self.exort_damage > 0 then 
-  self.damage = self.damage * (1 + self.exort_damage)
-end 
-
-self.angle = self:GetParent():GetAngles()
-self.abs = self:GetParent():GetAbsOrigin()
-self.cyc_pos = self:GetParent():GetAbsOrigin()
+self.angle = self.parent:GetAngles()
+self.abs = self.parent:GetAbsOrigin()
+self.cyc_pos = self.parent:GetAbsOrigin()
 self:StartIntervalThink(self.interval)
 end
 
@@ -1086,108 +962,99 @@ end
 
 
 function modifier_invoker_tornado_custom:OnIntervalThink()
-if self:GetParent():IsDebuffImmune() then self:Destroy() return end
-if self:GetParent():IsMagicImmune() then self:Destroy() return end
+if self.parent:IsDebuffImmune() then self:Destroy() return end
+if self.parent:IsMagicImmune() then self:Destroy() return end
 
-self:HorizontalMotion(self:GetParent(), self.interval)
+self:HorizontalMotion(self.parent, self.interval)
 end
-
 
 
 function modifier_invoker_tornado_custom:OnDestroy()
 if not IsServer() then return end
-self:GetParent():Stop()
+self.parent:Stop()
 
-self:GetParent():StopSound("Hero_Invoker.Tornado.Target")
+self.parent:StopSound("Hero_Invoker.Tornado.Target")
+self.parent:EmitSound("Hero_Invoker.Tornado.LandDamage")
 
-self:GetParent():EmitSound("Hero_Invoker.Tornado.LandDamage")
-
-
-if not self:GetParent():IsDebuffImmune() then
-    self:GetParent():SetAbsOrigin(self.abs)
-    ResolveNPCPositions(self:GetParent():GetAbsOrigin(), 128)
-    self:GetParent():SetAngles(self.angle[1], self.angle[2], self.angle[3])
+if not self.parent:IsDebuffImmune() then
+    self.parent:SetAbsOrigin(self.abs)
+    ResolveNPCPositions(self.parent:GetAbsOrigin(), 128)
+    self.parent:SetAngles(self.angle[1], self.angle[2], self.angle[3])
 end
 
-
-if self:GetCaster() and self:GetAbility() then
+if self.caster and self.ability then
 
     if self.is_scepter and self.is_scepter == 1 then 
-        self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_invoker_tornado_custom_purge", {duration = self.purge_duration})
+        self.parent:AddNewModifier(self.caster, self.ability, "modifier_invoker_tornado_custom_purge", {duration = self.purge_duration})
     end 
+
+    if self.caster:HasTalent("modifier_invoker_wex_1") then
+        self.parent:AddNewModifier(self.caster, self.ability, "modifier_invoker_tornado_custom_damage", {duration = self.damage_duration})
+    end
 
     local damageTable = 
     { 
-        victim = self:GetParent(),
-        attacker = self:GetCaster(),
+        victim = self.parent,
+        attacker = self.caster,
         damage = self.damage,
-        damage_type = self:GetAbility():GetAbilityDamageType(),
-        ability = self:GetAbility() 
+        damage_type = self.ability:GetAbilityDamageType(),
+        ability = self.ability 
     }
-    local real_damage = ApplyDamage(damageTable)
+    DoDamage(damageTable)
 
-    if self.quas_heal and self.quas_heal > 0 and not self:GetParent():IsIllusion() then 
-
-        local heal = real_damage*self.quas_heal
-        if self:GetParent():IsCreep() then 
-            heal = heal/3
-        end 
-
-        self:GetCaster():GenericHeal(heal, self:GetAbility(), true, "particles/items3_fx/octarine_core_lifesteal.vpcf")
-    end
-
-    if self:GetCaster():HasModifier("modifier_invoker_wex_6") then 
-        self:GetParent():EmitSound("Sf.Raze_Silence")
-        self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_generic_silence", {duration = (1 - self:GetParent():GetStatusResistance())*self:GetCaster():GetTalentValue("modifier_invoker_wex_6", "silence")})
+    if self.caster:HasTalent("modifier_invoker_wex_6") then 
+        self.parent:EmitSound("Sf.Raze_Silence")
+        self.parent:AddNewModifier(self.caster, self.ability, "modifier_generic_silence", {duration = (1 - self.parent:GetStatusResistance())*self.caster:GetTalentValue("modifier_invoker_wex_6", "silence")})
     end 
 end
 
-
 end
+
 
 function modifier_invoker_tornado_custom:CheckState()
-    local state =    
-    {
-        [MODIFIER_STATE_STUNNED] = true,
-        [MODIFIER_STATE_INVULNERABLE] = true,
-        [MODIFIER_STATE_NO_HEALTH_BAR] = true,
-        [MODIFIER_STATE_NO_UNIT_COLLISION] = true,
-    }
-    return state
+local state =    
+{
+    [MODIFIER_STATE_STUNNED] = true,
+    [MODIFIER_STATE_INVULNERABLE] = true,
+    [MODIFIER_STATE_NO_HEALTH_BAR] = true,
+    [MODIFIER_STATE_NO_UNIT_COLLISION] = true,
+}
+if self:GetCaster():HasTalent("modifier_invoker_wex_6") then 
+    state[MODIFIER_STATE_SILENCED] = true
 end
+
+return state
+end
+
 
 function modifier_invoker_tornado_custom:HorizontalMotion(unit, time)
 if not IsServer() then return end
-local angle = self:GetParent():GetAngles()
+local angle = self.parent:GetAngles()
 local new_angle = RotateOrientation(angle, QAngle(0, 14, 0))
 
-self:GetParent():SetAngles(new_angle[1], new_angle[2], new_angle[3])
-
-
+self.parent:SetAngles(new_angle[1], new_angle[2], new_angle[3])
 
 if self:GetElapsedTime() <= self.height_duration then
     self.cyc_pos.z = self.cyc_pos.z + self.height_inc
-    self:GetParent():SetAbsOrigin(self.cyc_pos)
+    self.parent:SetAbsOrigin(self.cyc_pos)
 
 elseif self:GetDuration() - self:GetElapsedTime() < self.height_duration then
    
     self.cyc_pos.z = self.cyc_pos.z - self.height_inc
-    self:GetParent():SetAbsOrigin(self.cyc_pos)
+    self.parent:SetAbsOrigin(self.cyc_pos)
 else
-    local pos = GetRandomPosition2D(self:GetParent():GetAbsOrigin(), 4)
+    local pos = GetRandomPosition2D(self.parent:GetAbsOrigin(), 4)
     if (pos - self.abs):Length2D() < self.height_inc  then
-        self:GetParent():SetAbsOrigin(pos)
+        self.parent:SetAbsOrigin(pos)
     end
 end
 
 end
 
 
-
 function GetRandomPosition2D(point, distance)
-    return point + RandomVector(distance)
+return point + RandomVector(distance)
 end
-
 
 
 
@@ -1197,17 +1064,14 @@ function modifier_invoker_tornado_custom_thinker:IsPurgable() return false end
 function modifier_invoker_tornado_custom_thinker:OnCreated()
 if not IsServer() then return end 
 self:GetParent():EmitSound("Hero_Invoker.Tornado")
-
-
 end 
 
 function modifier_invoker_tornado_custom_thinker:OnDestroy()
 if not IsServer() then return end 
-
 self:GetParent():StopSound("Hero_Invoker.Tornado")
-
-
 end
+
+
 
 modifier_invoker_emp_custom_teleport = class({})
 function modifier_invoker_emp_custom_teleport:IsHidden() return true end
@@ -1223,18 +1087,14 @@ end
 
 function modifier_invoker_emp_custom_teleport:OnDestroy()
 if not IsServer() then return end 
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-local more_cd = self:GetCaster():GetTalentValue("modifier_invoker_wex_7", "cd")*self:GetStackCount()
+local more_cd = self.parent:GetTalentValue("modifier_invoker_wex_7", "cd")*self:GetStackCount()
 
-self:GetAbility():UseResources(false, false, false, true)
-self:GetCaster():CdAbility(self:GetAbility(), self:GetElapsedTime() - more_cd)
+self.ability:UseResources(false, false, false, true)
+self.parent:CdAbility(self.ability, self:GetElapsedTime() - more_cd)
 end 
-
-
-
-
-
-
 
 
 
@@ -1255,15 +1115,9 @@ function modifier_invoker_emp_custom_slow:GetModifierMoveSpeedBonus_Percentage()
 return self.move
 end 
 
-
-
 function modifier_invoker_emp_custom_slow:OnCreated()
-
 self.move = self:GetCaster():GetTalentValue("modifier_invoker_wex_6", "slow")
 end
-
-
-
 
 
 
@@ -1277,73 +1131,27 @@ function modifier_invoker_alacrity_custom_speed:DeclareFunctions()
 return
 {
     MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-    MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE,
+    MODIFIER_PROPERTY_ATTACK_RANGE_BONUS
 }
 end
 
 function modifier_invoker_alacrity_custom_speed:GetModifierAttackSpeedBonus_Constant()
-return self.speed*self:GetStackCount()
+return self.speed
 end
    
-
-
-function modifier_invoker_alacrity_custom_speed:GetModifierPercentageCooldown()
-if self:GetStackCount() < self.max then return end
-return self.cdr
-end 
-
+function modifier_invoker_alacrity_custom_speed:GetModifierAttackRangeBonus()
+return self.range
+end
 
 function modifier_invoker_alacrity_custom_speed:OnCreated()
-self.max = self:GetCaster():GetTalentValue("modifier_invoker_wex_4", "max")
-self.cdr = self:GetCaster():GetTalentValue("modifier_invoker_wex_4", "cdr")
-self.speed = self:GetCaster():GetTalentValue("modifier_invoker_wex_4", "speed")
+self.parent = self:GetParent()
 
-
+self.speed = self.parent:GetTalentValue("modifier_invoker_wex_4", "speed")
+self.range = self.parent:GetTalentValue("modifier_invoker_wex_4", "range")
 if not IsServer() then return end 
-self:SetStackCount(1)
+self.parent:GenericParticle("particles/invoker/alacrity_max.vpcf", self)
 end
 
-function modifier_invoker_alacrity_custom_speed:OnRefresh()
-if not IsServer() then return end 
-if self:GetStackCount() >= self.max then return end
-self:IncrementStackCount()
-
-if self:GetStackCount() >= self.max then 
-
-    self:GetParent():EmitSound("Invoker.Alacrity_max")
-    local effect_cast = ParticleManager:CreateParticle( "particles/invoker/alacrity_max.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-    ParticleManager:SetParticleControl( effect_cast, 0, self:GetParent():GetAbsOrigin() )
-    self:AddParticle( effect_cast, false, false, -1, false, false)
-end 
-
-end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-modifier_invoker_emp_custom_break = class({})
-function modifier_invoker_emp_custom_break:IsHidden() return true end
-function modifier_invoker_emp_custom_break:IsPurgable() return false end
-function modifier_invoker_emp_custom_break:CheckState() return {[MODIFIER_STATE_PASSIVES_DISABLED] = true} end
-
-
-function modifier_invoker_emp_custom_break:OnCreated(table)
-if not IsServer() then return end
-self.particle = ParticleManager:CreateParticle("particles/generic_gameplay/generic_break.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())
-ParticleManager:SetParticleControl(self.particle, 1, self:GetParent():GetAbsOrigin())
-self:AddParticle(self.particle, false, false, -1, false, false)
-end
 
 
 
@@ -1352,22 +1160,30 @@ modifier_invoker_tornado_custom_purge = class({})
 function modifier_invoker_tornado_custom_purge:IsHidden() return false end
 function modifier_invoker_tornado_custom_purge:IsPurgable() return false end
 function modifier_invoker_tornado_custom_purge:GetEffectName()
-    return "particles/items4_fx/nullifier_mute_debuff.vpcf"
+return "particles/items4_fx/nullifier_mute_debuff.vpcf"
 end 
 
 function modifier_invoker_tornado_custom_purge:GetStatusEffectName()
-    return "particles/status_fx/status_effect_nullifier.vpcf"
+return "particles/status_fx/status_effect_nullifier.vpcf"
 end 
 
 function modifier_invoker_tornado_custom_purge:StatusEffectPriority()
-    return 9999999
+return MODIFIER_PRIORITY_SUPER_ULTRA 
 end 
 
-function modifier_invoker_tornado_custom_purge:OnCreated()
-self.damage = self:GetAbility():GetSpecialValueFor("scepter_damage")
+function modifier_invoker_tornado_custom_purge:CheckState() 
+return 
+{
+    [MODIFIER_STATE_PASSIVES_DISABLED] = true
+} 
+end
 
+function modifier_invoker_tornado_custom_purge:OnCreated()
 if not IsServer() then return end 
-self:GetParent():EmitSound("Invoker.Scepter_tornado")
+self.parent = self:GetParent()
+self.parent:GenericParticle("particles/generic_gameplay/generic_break.vpcf", self, true)
+
+self.parent:EmitSound("Invoker.Scepter_tornado")
 
 self:OnIntervalThink()
 self:StartIntervalThink(FrameTime())
@@ -1375,102 +1191,95 @@ end
 
 function modifier_invoker_tornado_custom_purge:OnIntervalThink()
 if not IsServer() then return end 
-if self:GetParent():IsDebuffImmune() then return end
+if self.parent:IsDebuffImmune() then return end
 
-self:GetParent():Purge(true, false, false, false,false)
+self.parent:Purge(true, false, false, false,false)
 end 
 
 
-function modifier_invoker_tornado_custom_purge:DeclareFunctions()
-return
-{
-    MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE
-}
-end
-
-
-function modifier_invoker_tornado_custom_purge:GetModifierIncomingDamage_Percentage()
-return self.damage
-end
 
 
 
 
+modifier_invoker_emp_custom_legendary = class({})
+function modifier_invoker_emp_custom_legendary:IsHidden() return false end
+function modifier_invoker_emp_custom_legendary:IsPurgable() return false end
+function modifier_invoker_emp_custom_legendary:OnCreated()
+self.caster = self:GetCaster()
+self.parent = self:GetParent()
+self.max = self.caster:GetTalentValue("modifier_invoker_wex_7", "max")
 
+if not IsServer() then return end 
 
+self.effect_cast = ParticleManager:CreateParticle( "particles/invoker/emp_stack.vpcf", PATTACH_OVERHEAD_FOLLOW, self.parent )
+self:AddParticle(self.effect_cast,false, false, -1, false, false)
 
-
-modifier_invoker_tornado_custom_speed = class({})
-function modifier_invoker_tornado_custom_speed:IsHidden() return true end
-function modifier_invoker_tornado_custom_speed:IsPurgable() return true end
-function modifier_invoker_tornado_custom_speed:GetTexture() return "buffs/psiblades_speed" end
-
-function modifier_invoker_tornado_custom_speed:DeclareFunctions()
-return
-{
-    MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
-}
-end
-
-
-
-function modifier_invoker_tornado_custom_speed:GetModifierMoveSpeedBonus_Percentage()
-return self.speed
-end
-
-function modifier_invoker_tornado_custom_speed:OnCreated(table)
-
-self.speed = self:GetCaster():GetTalentValue("modifier_invoker_wex_5", "speed")
-if not IsServer() then return end
-
-local effect_cast = ParticleManager:CreateParticle( "particles/ta_psi_speed.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-ParticleManager:SetParticleControl( effect_cast, 0, self:GetParent():GetAbsOrigin() )
-self:AddParticle( effect_cast, false, false, -1, false, false)
-end
-
-
-
-
-
-
-
-
-
-modifier_invoker_alacrity_custom_damage = class({})
-function modifier_invoker_alacrity_custom_damage:IsHidden() return false end
-function modifier_invoker_alacrity_custom_damage:IsPurgable() return true end
-function modifier_invoker_alacrity_custom_damage:GetTexture() return "buffs/wex_attack" end
-function modifier_invoker_alacrity_custom_damage:OnCreated(table)
-
-self.damage = self:GetCaster():GetTalentValue("modifier_invoker_wex_3", "damage")
-self.max = self:GetCaster():GetTalentValue("modifier_invoker_wex_3", "max")
-if not IsServer() then return end
 self:SetStackCount(1)
+self:OnIntervalThink()
+self:StartIntervalThink(0.5)
 end
 
-function modifier_invoker_alacrity_custom_damage:OnRefresh()
+function modifier_invoker_emp_custom_legendary:OnRefresh()
 if not IsServer() then return end 
 if self:GetStackCount() >= self.max then return end 
 
 self:IncrementStackCount()
 end
 
+function modifier_invoker_emp_custom_legendary:OnIntervalThink()
+if not IsServer() then return end
+if not self.parent:HasModifier("modifier_invoker_cold_snap_custom_legendary") then return end
+if not self.effect_cast then return end 
 
-function modifier_invoker_alacrity_custom_damage:DeclareFunctions()
-return
-{
-    MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
-}
+ParticleManager:DestroyParticle(self.effect_cast, true)
+ParticleManager:ReleaseParticleIndex(self.effect_cast)
+self.effect_cast = nil
+
+end
+
+function modifier_invoker_emp_custom_legendary:OnStackCountChanged(iStackCount)
+if not IsServer() then return end
+if not self.effect_cast then return end
+
+ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( 0, self:GetStackCount(), 0 ) )
 end
 
 
- 
+modifier_invoker_tornado_custom_damage = class({})
+function modifier_invoker_tornado_custom_damage:IsHidden() return true end
+function modifier_invoker_tornado_custom_damage:IsPurgable() return false end
+function modifier_invoker_tornado_custom_damage:GetEffectName() return "particles/hoodwink/bush_damage.vpcf" end
+function modifier_invoker_tornado_custom_damage:OnCreated()
+self.damage = self:GetCaster():GetTalentValue("modifier_invoker_wex_1", "damage")
+end
+
+function modifier_invoker_tornado_custom_damage:DeclareFunctions()
+return
+{
+    MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE
+}
+end
+
+function modifier_invoker_tornado_custom_damage:GetModifierIncomingDamage_Percentage()
+return self.damage
+end
 
 
-function modifier_invoker_alacrity_custom_damage:GetModifierSpellAmplify_Percentage()
-return self.damage*self:GetStackCount()
-end 
+modifier_invoker_emp_custom_armor = class({})
+function modifier_invoker_emp_custom_armor:IsHidden() return false end
+function modifier_invoker_emp_custom_armor:IsPurgable() return false end
+function modifier_invoker_emp_custom_armor:GetTexture() return "buffs/wex_attack" end
+function modifier_invoker_emp_custom_armor:OnCreated()
+self.armor = self:GetParent():GetTalentValue("modifier_invoker_wex_3", "armor")
+end
 
+function modifier_invoker_emp_custom_armor:DeclareFunctions()
+return
+{
+    MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS
+}
+end
 
-
-
+function modifier_invoker_emp_custom_armor:GetModifierPhysicalArmorBonus()
+return self.armor
+end

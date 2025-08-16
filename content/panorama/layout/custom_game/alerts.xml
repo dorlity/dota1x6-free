@@ -1,4 +1,4 @@
-<!-- xml reconstructed by Source 2 Viewer 7.0.0.0 - https://valveresourceformat.github.io -->
+<!-- xml reconstructed by Source 2 Viewer 14.1.0.0 - https://valveresourceformat.github.io -->
 <root>
 	<styles>
 		<include src="s2r://panorama/styles/custom_game/alerts.vcss_c" />
@@ -17,6 +17,7 @@
 			<Panel id="WaitingPlayers_spin" hittest="false" />
 			<Label id="WaitingPlayers_text" text="Ожидание игроков" hittest="false" />
 		</Panel>
+		<Panel id="EndPanel_alert" hittest="false" />
 		<Panel id="DuelAlert" hittest="false" />
 		<Panel class="Patrol_timer" id="Patrol_timer" hittest="false" />
 		<Panel class="Patrol" id="Patrol" hittest="false" />
@@ -64,6 +65,29 @@
 				<Panel class="Unranked_image" id="Unranked_image" />
 			</Panel>
 		</Panel>
+		<Panel id="arcana_alert" class="arcana_alert_hidden">
+			<Panel id="arcana_alert_top" class="arcana_alert_top">
+				<Label class="arcana_alert_text arcana_alert_text_top" id="arcana_alert_top_text" html="true" />
+				<Label class="arcana_alert_text arcana_alert_text_top2" id="arcana_alert_top_text2" html="true" />
+			</Panel>
+			<Panel id="arcana_alert_mid" class="arcana_alert_mid">
+				<Panel id="arcana_alert_icon" class="arcana_alert_icon" />
+			</Panel>
+			<Panel id="arcana_alert_bot" class="arcana_alert_bot">
+				<Panel class="arcana_alert_button" id="arcana_alert_button">
+					<Label class="arcana_alert_button_text" id="arcana_alert_button_text" />
+				</Panel>
+			</Panel>
+		</Panel>
+		<Panel id="duo_alert" class="duo_alert_hidden">
+			<Panel id="duo_alert_top" class="duo_alert_top">
+				<Label class="duo_alert_text duo_alert_text_top" id="duo_alert_top_text" html="true" />
+				<Label class="duo_alert_text duo_alert_text_top2" id="duo_alert_top_text2" html="true" />
+			</Panel>
+			<Panel id="duo_alert_mid" class="duo_alert_mid">
+				<Panel id="duo_alert_icon" class="duo_alert_icon" />
+			</Panel>
+		</Panel>
 		<Panel class="BadMap_hidden" id="BadMap" hittest="false">
 			<Panel class="BadMap_top" id="BadMap_top" hittest="false">
 				<Label class="BadMap_text" id="BadMap_top_text" hittest="false" />
@@ -93,7 +117,7 @@
 				<Label class="NecroWaveText" id="NecroWaveText" hittest="false" />
 			</Panel>
 		</Panel>
-		<Panel class="patrol_refresher_status_main" id="patrol_refresher_status_main" hittest="false" />
+		<Panel id="mini_alert_feed" hittest="false" />
 		<Panel class="legion_duel_alert" id="legion_duel_alert" hittest="false" />
 		<Panel class="legion_duel_status_main" id="legion_duel_status_main" hittest="false" />
 		<Panel class="muerta_quest_alert" id="muerta_quest_alert" hittest="false" />
@@ -119,10 +143,6 @@
 		<Panel class="Pauses" id="Pauses" hittest="false" />
 		<Panel class="Reports" id="Reports" hittest="false" />
 		<Panel class="Ban" id="Ban" hittest="false" />
-		<Panel class="PickOrbs" id="PickOrbs" hittest="false">
-			<Button id="SwapPickOrbs" class="SwapPickOrbs" onactivate="SwapPickOrbs();" />
-			<Label class="PickOrbsText" text="#PickOrbsText" html="true" />
-		</Panel>
 		<Panel class="Combat_info_close" id="Combat_info" hittest="false" />
 	</Panel>
 </root>

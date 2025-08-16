@@ -96,7 +96,7 @@ function ShowHeroQuest(icon, exp, shards)
 
 
 
-var max_games = 5
+var max_games = 1
 
 
 

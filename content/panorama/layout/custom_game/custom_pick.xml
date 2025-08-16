@@ -1,4 +1,4 @@
-<!-- xml reconstructed by Source 2 Viewer 7.0.0.0 - https://valveresourceformat.github.io -->
+<!-- xml reconstructed by Source 2 Viewer 14.1.0.0 - https://valveresourceformat.github.io -->
 <root>
 	<styles>
 		<include src="s2r://panorama/styles/custom_game/custom_pick.vcss_c" />
@@ -45,6 +45,10 @@
 				</Panel>
 			</Panel>
 			<Panel id="hero_pick_content">
+				<Panel id="tg_panel" class="tg_panel" hittest="true">
+					<Label id="tg_panel_text" text="#tg_pick_info" />
+					<Panel id="tg_panel_icon" />
+				</Panel>
 				<Panel class="hero_attribute_info" id="InfoStr">
 					<Panel class="hero_icon_str" id="IconStr" />
 					<Label class="hero_attribute_text" id="TextStr" text="#DOTA_Tooltip_Ability_item_power_treads_str" />
@@ -121,21 +125,22 @@
 				<Panel class="Button_HeroPortrait" id="Button_HeroPortrait" />
 			</Panel>
 		</Panel>
-		<Panel class="pick_base_players_hidden base_pick_left" id="pick_base_players">
-			<Panel class="pick_base_heroes" id="pick_base_heroes" />
-			<Panel class="pick_base_timer" id="pick_base_timer" />
-		</Panel>
-		<Panel class="pick_base_mimimap_hidden base_pick_right" id="pick_base_mimimap">
-			<Panel class="minimap_text" id="minimap_text">
-				<Label class="minimap_text_text" id="minimap_text_text" />
+		<Panel id="pick_base_main">
+			<Panel class="pick_base_players_hidden base_pick_left" id="pick_base_players">
+				<Panel class="pick_base_heroes" id="pick_base_heroes" />
 			</Panel>
-			<Panel class="minimap" id="minimap">
-				<Panel class="base_icon" id="base_icon1" />
-				<Panel class="base_icon" id="base_icon2" />
-				<Panel class="base_icon" id="base_icon3" />
-				<Panel class="base_icon" id="base_icon4" />
-				<Panel class="base_icon" id="base_icon5" />
-				<Panel class="base_icon" id="base_icon6" />
+			<Panel class="pick_base_mimimap_hidden base_pick_right" id="pick_base_mimimap">
+				<Panel class="minimap_text" id="minimap_text">
+					<Label class="minimap_text_text" id="minimap_text_text" />
+				</Panel>
+				<Panel class="minimap" id="minimap">
+					<Panel class="base_icon" id="base_icon1" />
+					<Panel class="base_icon" id="base_icon2" />
+					<Panel class="base_icon" id="base_icon3" />
+					<Panel class="base_icon" id="base_icon4" />
+					<Panel class="base_icon" id="base_icon5" />
+					<Panel class="base_icon" id="base_icon6" />
+				</Panel>
 			</Panel>
 		</Panel>
 		<Panel class="HeroQuests_close HeroQuests_collapse" id="HeroQuests">

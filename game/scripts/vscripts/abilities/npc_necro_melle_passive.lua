@@ -7,6 +7,15 @@ function npc_necro_melle_passive:GetIntrinsicModifierName()
 return "modifier_npc_necro_melle_passive"
 end
 
+function npc_necro_melle_passive:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle", "particles/units/heroes/hero_doom_bringer/doom_infernal_blade_impact.vpcf", context )
+
+end
+
+
+
+
 modifier_npc_necro_melle_passive = class({})
 
 function modifier_npc_necro_melle_passive:IsHidden() return true end
@@ -14,6 +23,9 @@ function modifier_npc_necro_melle_passive:IsPurgable() return false end
 
 function modifier_npc_necro_melle_passive:OnCreated(table)
 if not IsServer() then return end
+
+self.parent = self:GetParent()
+self.parent:AddDeathEvent(self)
 
 self.damage = self:GetAbility():GetSpecialValueFor("damage")/100
 self.stun = self:GetAbility():GetSpecialValueFor("stun")
@@ -23,14 +35,13 @@ end
 function modifier_npc_necro_melle_passive:DeclareFunctions()
 return
 {
-    MODIFIER_EVENT_ON_DEATH,
-    MODIFIER_EVENT_ON_ATTACK_LANDED
+    MODIFIER_PROPERTY_PROCATTACK_FEEDBACK
 }
 
 end
 
 
-function modifier_npc_necro_melle_passive:OnAttackLanded(params)
+function modifier_npc_necro_melle_passive:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end
 if params.attacker ~= self:GetParent() then return end
 if params.target:IsMagicImmune() then return end
@@ -47,7 +58,7 @@ return
 }
 end
 
-function modifier_npc_necro_melle_passive:OnDeath(params)
+function modifier_npc_necro_melle_passive:DeathEvent(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.unit then return end
 if not params.attacker then return end
@@ -67,7 +78,7 @@ local damageTable =
     ability     = self:GetAbility()
 }
 
-ApplyDamage(damageTable)
+DoDamage(damageTable)
 
 local effect_target = ParticleManager:CreateParticle( "particles/units/heroes/hero_doom_bringer/doom_infernal_blade_impact.vpcf", PATTACH_ABSORIGIN_FOLLOW, params.attacker )
 ParticleManager:SetParticleControl( effect_target, 0, params.attacker:GetAbsOrigin() )

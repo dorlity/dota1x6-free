@@ -14,28 +14,70 @@ mklink /j content "%dota2_path%\content\dota_addons\%custom_game_folder%"
 ```
 
 ## Как запустить у себя для внесения правок
-- Запустить Dota 2 - Tools
+- Запустить Dota 2 - Tools (в свойствах steam dota2 / dls ставился галка на установление)
 - Создать новый проект "Create New Addon"
-- По пути `{Пусть установки доты}/steamapps/common/dota 2 beta/` будет находиться две папки "content" и "game". Содержимое кастомки по отдельному из путей представлено в данном репозитории. Нужно создать до них mklink и появится возможность удаленно в них заходить
-- При запуске в самих "Dota 2 - Tools" запустить свой проект
-- Открыть Hammer
-- Далее открыть mock карту из `content/maps/unranked.vmap` у себя в проекте, куда вы прилинковали содержимое (File/Open)
-- Открыть меню сборки "File/Build map..."
-- В данном меню нажимать "Run (Skip Build)". НЕ надо Build, тк нет исходников карты, что с нуля ее собирать.
-- Читаем/Меняем скрипты `content/panorama/` ИЛИ `game/scripts` и смотрим за результатом
+- По пути `{Пусть установки доты}/steamapps/common/dota 2 beta/` будет находиться две папки "content" и "game". Содержимое кастомки по отдельному из путей представлено в данном репозитории. Для удобства можно создать до них mklink и появится возможность удаленно в них заходить
+- Запуститься в "Dota 2 - Tools" в свой созданный проект
+- Открыть Hammer (иконка с молотом)
+- Далее открыть mock карту из `content/maps/unranked.vmap` у себя в проекте, куда вы прилинковали содержимое (File/Open). В этом файле просто должна быть любая валидная vmap карта
+- Открыть меню сборки "File/Build map... (F9)"
+- В данном меню нажимать "Run (Skip Build)". НЕ надо Build, тк нет исходников карты, чтобы с нуля ее собирать. mock карта с названием карты автора помогает запустить нужную. Тут либо solo/duo варианты
+- Читаем/Меняем скрипты `content/panorama/` (тут UI) ИЛИ `game/scripts` (тут lua скрипты) и смотрим за результатом
 
 ## Добавлять обновления к проекту
 - Загрузить https://valveresourceformat.github.io/
 - Открываем с графическим интерфейсом софт
-- Переходим через закладку "Explorer" к кастомке DOTA 1x6 "Explorer/Dota 2/[Workshop ...] DOTA 1x6 ...". Двойной клик
-- Копируем все содержимое "Export as is" по пути кастомки в game
-- А файлы из папок `"panorama/(layout|scripts|styles)"` по пути кастомки в content через "Decompile & export"
+- Переходим через закладку "Explorer" в dota2. В конце списка доходим до кастомки DOTA 1x6. Двойной клик
+- Копируем все содержимое "Export as is" по пути кастомки в `game/dota_addons/xeno_free`
+- А файлы из папок `panorama/(layout|scripts|styles)` по пути кастомки в `content/dota_addons/xeno_free` через "Decompile & export"
+- lua скрипты не запаковываются и потому хватает as is экспортировать. А UI (js,css,xml) из панорамы приходится
 
 ## Ветки
 free - ветка с правками
+
 main - оригинал от авторов
 
+## Сжатие видео ffmpeg в panorama/videos/custom_game (bash)
+Такой вариант сжимает xeno "мусор" на 1.6 гига до ~180мегабайт. И плюс минус нормально выглядит. У него вес кастомки это видосики, которые нужны только на стадии пика...
+```sh
+for file in *.webm; do
+  ffmpeg -i "$file" \
+    -vf "scale=640:360,fps=24" \
+    -c:v libvpx-vp9 \
+    -crf 60 \
+    -b:v 400k \
+    -cpu-used 4 \
+    -an \
+    tmp.webm;
+  rm -f "$file" && mv "tmp.webm" "$file"
+done
+
+for file in ./shop/*/*.webm; do
+  ffmpeg -i "$file" \
+    -vf "scale=640:360,fps=24" \
+    -c:v libvpx-vp9 \
+    -crf 60 \
+    -b:v 400k \
+    -cpu-used 4 \
+    -an \
+    tmp.webm;
+  rm -f "$file" && mv "tmp.webm" "$file"
+done
+
+for file in ./heroes/*/*.webm; do
+  ffmpeg -i "$file" \
+    -vf "scale=640:360,fps=24" \
+    -c:v libvpx-vp9 \
+    -crf 60 \
+    -b:v 400k \
+    -cpu-used 4 \
+    -an \
+    tmp.webm;
+  rm -f "$file" && mv "tmp.webm" "$file"
+done
+```
+
 ## Отличия от основной кастомки XENO
-- Sand king больше не донатный герой
-- Бесплатная подписка
+- донатный герой не заблокирован
+- Бесплатная подписка. То есть все ее фишки
 - Дейли шарды рандомно выдаются от 50к до 700к

@@ -1,628 +1,399 @@
-LinkLuaModifier("modifier_custom_pudge_flesh_heap","abilities/pudge/custom_pudge_flesh_heap", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_custom_pudge_flesh_heap_stack","abilities/pudge/custom_pudge_flesh_heap", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_pudge_flesh_heap_creep","abilities/pudge/custom_pudge_flesh_heap", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_pudge_flesh_heap_damage","abilities/pudge/custom_pudge_flesh_heap", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_custom_pudge_flesh_heap_tempo_count","abilities/pudge/custom_pudge_flesh_heap", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_pudge_flesh_heap_tempo","abilities/pudge/custom_pudge_flesh_heap", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_pudge_flesh_heap_legendary","abilities/pudge/custom_pudge_flesh_heap", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_pudge_flesh_heap","abilities/pudge/custom_pudge_flesh_heap", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_custom_pudge_flesh_heap_hit_cd","abilities/pudge/custom_pudge_flesh_heap", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_pudge_flesh_heap_hit_heal","abilities/pudge/custom_pudge_flesh_heap", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_pudge_flesh_heap_hit_ready","abilities/pudge/custom_pudge_flesh_heap", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_pudge_flesh_heap_charge","abilities/pudge/custom_pudge_flesh_heap", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_pudge_flesh_heap_charge_active","abilities/pudge/custom_pudge_flesh_heap", LUA_MODIFIER_MOTION_HORIZONTAL)
 
 
 
 custom_pudge_flesh_heap = class({})
 
-custom_pudge_flesh_heap.str_init = 0.5
-custom_pudge_flesh_heap.str_inc = 0.5
-
-custom_pudge_flesh_heap.creeps_k = 150
-custom_pudge_flesh_heap.creeps_max = 15
-
-custom_pudge_flesh_heap.lowhp_health = 30
-custom_pudge_flesh_heap.lowhp_init = -10
-custom_pudge_flesh_heap.lowhp_inc = -1
-custom_pudge_flesh_heap.lowhp_max = -30
-
-
-custom_pudge_flesh_heap.legendary_scale = 30
-custom_pudge_flesh_heap.legendary_speed = 120
-custom_pudge_flesh_heap.legendary_multi = 2
-custom_pudge_flesh_heap.legendary_cd = 25
-custom_pudge_flesh_heap.legendary_resist = 30
-
-custom_pudge_flesh_heap.armor_inc = {30, 25, 20}
-custom_pudge_flesh_heap.armor_damage = {30, 25, 20}
-
-
-
-
-
 
 function custom_pudge_flesh_heap:Precache(context)
-
-    
-PrecacheResource( "particle", "particles/status_fx/status_effect_grimstroke_dark_artistry.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_pudge/pudge_fleshheap_status_effect.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_undying/undying_fg_aura.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_pudge/pudge_fleshheap_block_activation.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_undying/undying_decay_strength_buff.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_pudge/pudge_fleshheap_count.vpcf", context )
-PrecacheResource( "particle", "particles/econ/items/centaur/centaur_ti9/flesh_bash.vpcf", context )
-PrecacheResource( "particle", "particles/pudge_bash_heal.vpcf", context )
-
-
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/status_fx/status_effect_grimstroke_dark_artistry.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_pudge/pudge_fleshheap_status_effect.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_undying/undying_fg_aura.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_pudge/pudge_fleshheap_block_activation.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_undying/undying_decay_strength_buff.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_pudge/pudge_fleshheap_count.vpcf", context )
+PrecacheResource( "particle","particles/econ/items/centaur/centaur_ti9/flesh_bash.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_bloodseeker/bloodseeker_bloodbath.vpcf", context )
+PrecacheResource( "particle","particles/pudge/meat_lowhealth.vpcf", context )
+PrecacheResource( "particle","particles/pudge/meat_charge.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_primal_beast/primal_beast_onslaught_charge_active.vpcf", context )
 end
 
 
-
-
+function custom_pudge_flesh_heap:GetAbilityTextureName()
+local caster = self:GetCaster()
+if caster:HasModifier("modifier_pudge_persona_custom") or caster:HasModifier("modifier_pudge_persona_custom_1") or caster:HasModifier("modifier_pudge_persona_custom_2") or caster:HasModifier("modifier_pudge_persona_custom_3") then
+    return "pudge/persona_toy_butcher/pudge_flesh_heap_persona1"
+end
+if caster:HasModifier("modifier_pudge_arcana_custom") then
+    return "pudge/arcana/pudge_flesh_heap_arcana"
+end
+if caster:HasModifier("modifier_pudge_arcana_custom_green") then
+    return "pudge/arcana/pudge_flesh_heap_arcana_style1"
+end
+return "pudge_flesh_heap"
+end
 
 function custom_pudge_flesh_heap:GetIntrinsicModifierName()
-	return "modifier_custom_pudge_flesh_heap_stack"
+if not self:GetCaster():IsRealHero() then return end
+return "modifier_custom_pudge_flesh_heap_stack"
+end
+
+function custom_pudge_flesh_heap:GetManaCost(level)
+if self:GetCaster():HasTalent("modifier_pudge_flesh_6") then 
+    return 0 
+end
+return self.BaseClass.GetManaCost(self,level)
+end
+
+function custom_pudge_flesh_heap:GetCooldown(iLevel)
+local bonus = 0
+local caster = self:GetCaster()
+if caster:HasTalent("modifier_pudge_flesh_1") then
+	bonus = caster:GetTalentValue("modifier_pudge_flesh_1", "cd")
+end 
+return self.BaseClass.GetCooldown(self, iLevel) + bonus
 end
 
 
-
-function custom_pudge_flesh_heap:GetCooldown(iLevel)
-if self:GetCaster():HasModifier("modifier_pudge_flesh_legendary") 
-	then return self.legendary_cd 
-end 
-return self.BaseClass.GetCooldown(self, iLevel)
+function custom_pudge_flesh_heap:GetBehavior()
+local bonus = 0
+if self:GetCaster():HasModifier("modifier_custom_pudge_flesh_heap_charge") then
+	bonus = DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES
+end
+return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IMMEDIATE + DOTA_ABILITY_BEHAVIOR_IGNORE_CHANNEL + bonus
 end
 
 
 function custom_pudge_flesh_heap:OnSpellStart()
-if not IsServer() then return end
+local caster = self:GetCaster()
+local duration = self:GetSpecialValueFor("duration") + caster:GetTalentValue("modifier_pudge_flesh_1", "duration")
+local mod = caster:FindModifierByName("modifier_custom_pudge_flesh_heap_charge")
 
-local duration = self:GetSpecialValueFor("duration")
+self:EndCd()
 
-if self:GetCaster():HasModifier("modifier_pudge_flesh_1") then 
-	duration = duration + self:GetCaster():GetTalentValue("modifier_pudge_flesh_1", "duration")
+if mod then
+	local dist = caster:GetTalentValue("modifier_pudge_flesh_6", "range")
+	local point = caster:GetAbsOrigin() + caster:GetForwardVector()*dist
+	local duration = dist/caster:GetTalentValue("modifier_pudge_flesh_6", "speed")
+
+	caster:AddNewModifier(caster, self, "modifier_custom_pudge_flesh_heap_charge_active", {x = point.x, y = point.y, duration = duration})
+	mod:Destroy()
+	return
 end
 
-	
-
-if self:GetCaster():HasModifier("modifier_pudge_flesh_legendary") then 
-	self:GetCaster():EmitSound("Pudge.Flesh_active")
+if caster:HasTalent("modifier_pudge_flesh_6") then
+	caster:AddNewModifier(caster, self, "modifier_custom_pudge_flesh_heap_charge", {duration = duration})
+	self:SetActivated(true)
+	self:StartCooldown(0.5)
 end
 
-
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_custom_pudge_flesh_heap_legendary", {duration = duration})
-
-end
-
-
-
-
-modifier_custom_pudge_flesh_heap_legendary = class({})
-function modifier_custom_pudge_flesh_heap_legendary:IsHidden() return false end
-function modifier_custom_pudge_flesh_heap_legendary:IsPurgable() return false end
-
-function modifier_custom_pudge_flesh_heap_legendary:GetStatusEffectName()
-if self:GetParent():HasModifier("modifier_pudge_flesh_legendary") then
-	return "particles/status_fx/status_effect_grimstroke_dark_artistry.vpcf"
-else 
-	return "particles/units/heroes/hero_pudge/pudge_fleshheap_status_effect.vpcf"
-end
-end
-
-function modifier_custom_pudge_flesh_heap_legendary:StatusEffectPriority()
-    return 10010
-end
-
-
-
-function modifier_custom_pudge_flesh_heap_legendary:GetEffectName()
-if self:GetParent():HasModifier("modifier_pudge_flesh_legendary") then 
-	return "particles/units/heroes/hero_undying/undying_fg_aura.vpcf"
-else 
-	return "particles/units/heroes/hero_pudge/pudge_fleshheap_block_activation.vpcf"
-end
-
-end
-function modifier_custom_pudge_flesh_heap_legendary:OnCreated(table)
-
-self.heal = self:GetCaster():GetTalentValue("modifier_pudge_flesh_1", "heal")/100
-
-if not IsServer() then return end
-
-self.RemoveForDuel = true
-
-self.damage_block = self:GetAbility():GetSpecialValueFor("damage_block")
-
-if self:GetParent():HasModifier("modifier_pudge_flesh_legendary") then 
-	self.hands = ParticleManager:CreateParticle("particles/units/heroes/hero_undying/undying_decay_strength_buff.vpcf",PATTACH_ABSORIGIN_FOLLOW,self:GetParent())
-	ParticleManager:SetParticleControlEnt(self.hands,0,self:GetParent(),PATTACH_ABSORIGIN_FOLLOW,"follow_origin",self:GetParent():GetOrigin(),false)
-	self:AddParticle(self.hands,true,false,0,false,false)
-	self:StartIntervalThink(FrameTime())
-end
-
-end
-
-
-
-
-function modifier_custom_pudge_flesh_heap_legendary:OnIntervalThink()
-if not IsServer() then return end
-local mod = self:GetParent():FindModifierByName("modifier_custom_pudge_flesh_heap")
-
-if mod then 
-	self:SetStackCount(mod:GetStackCount()*self:GetAbility().legendary_multi)
-end
-
-end
-
-function modifier_custom_pudge_flesh_heap_legendary:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_MODEL_SCALE,
-	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-	MODIFIER_EVENT_ON_DEATH,
-	MODIFIER_PROPERTY_TOOLTIP,
-	MODIFIER_PROPERTY_TOTAL_CONSTANT_BLOCK,
-	MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT,
-    MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING
-
-}
-end
-
-
-function modifier_custom_pudge_flesh_heap_legendary:GetModifierConstantHealthRegen()
-
-if self:GetCaster():HasModifier("modifier_pudge_flesh_1") then 
-	return self.heal*(self:GetParent():GetMaxHealth() - self:GetParent():GetHealth())
-end
-
-end
-
-function modifier_custom_pudge_flesh_heap_legendary:GetModifierTotal_ConstantBlock(params)
-if not IsServer() then return end
-
-if params.damage_type == DAMAGE_TYPE_MAGICAL then 
-  local mod = self:GetParent():FindModifierByName("modifier_magic_shield")
-  if mod and mod:GetStackCount() > 0 then 
-    return
-  end
-end
-
-if params.damage_type == DAMAGE_TYPE_PHYSICAL then 
-  local mod = self:GetParent():FindModifierByName("modifier_attack_shield")
-  if mod and mod:GetStackCount() > 0 then 
-    return
-  end
-end
-
-return self.damage_block
-
-end
-
-
-function modifier_custom_pudge_flesh_heap_legendary:OnTooltip()
-local bonus = 0
-
-if self:GetParent():HasModifier("modifier_pudge_flesh_2") then 
-	bonus = self:GetAbility().str_init + self:GetAbility().str_inc*self:GetParent():GetUpgradeStack("modifier_pudge_flesh_2")
-end
-
-local str = (self:GetAbility():GetSpecialValueFor("flesh_heap_strength_buff_amount") + bonus)
-
-
-return self:GetStackCount()*str
-
-end
-
-
-
-
-function modifier_custom_pudge_flesh_heap_legendary:GetModifierModelScale()
-if not self:GetParent():HasModifier("modifier_pudge_flesh_legendary") then return end
-return self:GetAbility().legendary_scale
-end
-
-
-function modifier_custom_pudge_flesh_heap_legendary:GetModifierStatusResistanceStacking()
-if not self:GetParent():HasModifier("modifier_pudge_flesh_legendary") then return end
-return self:GetAbility().legendary_resist
-end
-
-function modifier_custom_pudge_flesh_heap_legendary:GetModifierAttackSpeedBonus_Constant()
-if not self:GetParent():HasModifier("modifier_pudge_flesh_legendary") then return end
-return self:GetAbility().legendary_speed
+caster:RemoveModifierByName("modifier_custom_pudge_flesh_heap_tempo_count")
+caster:AddNewModifier(caster, self, "modifier_custom_pudge_flesh_heap", {duration = duration})
 end
 
 
 
 
 modifier_custom_pudge_flesh_heap = class({})
-
-modifier_custom_pudge_flesh_heap.radius = 450
-
-function modifier_custom_pudge_flesh_heap:IsHidden() return true end
+function modifier_custom_pudge_flesh_heap:IsHidden() return false end
 function modifier_custom_pudge_flesh_heap:IsPurgable() return false end
-function modifier_custom_pudge_flesh_heap:RemoveOnDeath() return false end
-
-function modifier_custom_pudge_flesh_heap:DeclareFunctions()
-	return {
-		MODIFIER_EVENT_ON_DEATH
-	}
+function modifier_custom_pudge_flesh_heap:GetStatusEffectName()
+if self:GetParent():HasTalent("modifier_pudge_flesh_legendary") then
+	return "particles/status_fx/status_effect_grimstroke_dark_artistry.vpcf"
+else 
+	return "particles/units/heroes/hero_pudge/pudge_fleshheap_status_effect.vpcf"
 end
 
+end
+
+function modifier_custom_pudge_flesh_heap:StatusEffectPriority()
+return MODIFIER_PRIORITY_HIGH 
+end
+
+function modifier_custom_pudge_flesh_heap:GetEffectName()
+return "particles/units/heroes/hero_pudge/pudge_fleshheap_block_activation.vpcf"
+end
 
 function modifier_custom_pudge_flesh_heap:OnCreated(table)
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.legendary_scale = self.parent:GetTalentValue("modifier_pudge_flesh_legendary", "model", true)
+self.legendary_speed = self.parent:GetTalentValue("modifier_pudge_flesh_legendary", "speed", true)
+
+self.damage_block = self.ability:GetSpecialValueFor("damage_block")
 if not IsServer() then return end
 
-self.stack = 0
-self.max = 25--self:GetAbility():GetSpecialValueFor("max_stacks")
+self.RemoveForDuel = true
+
+if self.parent:HasTalent("modifier_pudge_flesh_legendary") then 
+	self.parent:EmitSound("Pudge.Flesh_active")
+	self.parent:StartGesture(ACT_DOTA_CAST_ABILITY_ROT)
+
+	self.parent:GenericParticle("particles/units/heroes/hero_undying/undying_fg_aura.vpcf", self)
+
+	self.hands = ParticleManager:CreateParticle("particles/units/heroes/hero_undying/undying_decay_strength_buff.vpcf",PATTACH_ABSORIGIN_FOLLOW,self.parent)
+	ParticleManager:SetParticleControlEnt(self.hands,0,self.parent,PATTACH_ABSORIGIN_FOLLOW,"follow_origin",self.parent:GetOrigin(),false)
+	self:AddParticle(self.hands,true,false,0,false,false)
+end
+
+if self.parent:HasTalent("modifier_pudge_flesh_3") then
+	self.PercentStr = self.parent:GetTalentValue("modifier_pudge_flesh_3", "str")/100
+end
 
 end
 
-
-function modifier_custom_pudge_flesh_heap:OnDeath(params)
+function modifier_custom_pudge_flesh_heap:OnDestroy()
 if not IsServer() then return end
-
-local target = params.unit
-if self:GetCaster():GetTeamNumber() == target:GetTeamNumber() then return end
-if target:IsReincarnating() then return end
-if not self:GetCaster():IsRealHero() then return end
-
-local mod = self:GetCaster():FindModifierByName("modifier_custom_pudge_flesh_heap_creep")
-
-if self.stack >= self.max then 
-	if mod then 
-		CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'pudge_shard_change',  {hide = 1, max = 1, damage = 1})
-		mod:Destroy()
-	end
-	return
+self.ability:StartCd()
+self.parent:PercentRefresh()
 end
 
 
-if mod and  target:GetTeam() == DOTA_TEAM_NEUTRALS and self:GetCaster():HasShard() and params.attacker == self:GetParent() then 
-
-	local inc = math.min(self:GetAbility().creeps_max,target:GetMaxHealth()/self:GetAbility().creeps_k)
-
-	local max = self:GetAbility():GetSpecialValueFor("shard_point")
-
-
-	if mod:GetStackCount() + inc < max then 
-		mod:SetStackCount(mod:GetStackCount() + inc)
-	else 
-		mod:SetStackCount(inc - (max - mod:GetStackCount()))
-		self:SetStackCount(self:GetStackCount() + 1)
-		local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_pudge/pudge_fleshheap_count.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-		ParticleManager:ReleaseParticleIndex(pfx)
-
-		if self:GetParent():GetQuest() == "Pudge.Quest_7" then 
-			self:GetParent():UpdateQuest(1)
-		end
-
-		self.stack = self.stack + 1
-
-	end
-
-	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'pudge_shard_change',  {hide = 0, max = max, damage = mod:GetStackCount()})
-
-
-
+function modifier_custom_pudge_flesh_heap:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_MODEL_SCALE,
+	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+	MODIFIER_PROPERTY_TOTAL_CONSTANT_BLOCK,
+}
 end
 
-if self.stack >= self.max then 
-	if mod then 
-		CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'pudge_shard_change',  {hide = 1, max = 1, damage = 1})
-		mod:Destroy()
-	end
-	return
+function modifier_custom_pudge_flesh_heap:GetModifierTotal_ConstantBlock(params)
+return self.damage_block
 end
 
-if not target:IsValidKill(self:GetParent()) then return end
+function modifier_custom_pudge_flesh_heap:GetModifierModelScale()
+if not self.parent:HasTalent("modifier_pudge_flesh_legendary") then return end
+return self.legendary_scale
+end
 
-if ((self:GetCaster():GetAbsOrigin() - target:GetAbsOrigin()):Length2D() <= self.radius) or (params.attacker and params.attacker == self:GetParent()) then
-	self:SetStackCount(self:GetStackCount() + 1)
-
-	if self:GetParent():GetQuest() == "Pudge.Quest_7" then 
-		self:GetParent():UpdateQuest(1)
-	end
-
-
-	self.stack = self.stack + 1
-
-	local pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_pudge/pudge_fleshheap_count.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-	ParticleManager:ReleaseParticleIndex(pfx)
-
-
-	if self.stack <  self.max and self:GetParent():HasModifier("modifier_custom_pudge_flesh_heap_legendary") and self:GetCaster():HasModifier("modifier_pudge_flesh_legendary") then 
-		self:SetStackCount(self:GetStackCount() + 1)
-
-		if self:GetParent():GetQuest() == "Pudge.Quest_7" then 
-			self:GetParent():UpdateQuest(1)
-		end
-
-
-		self.stack = self.stack + 1
-	end
-
-
+function modifier_custom_pudge_flesh_heap:GetModifierAttackSpeedBonus_Constant()
+if not self.parent:HasTalent("modifier_pudge_flesh_legendary") then return end
+return self.legendary_speed
 end
 
 
-if self.stack >= self.max then 
-	if mod then 
-		CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'pudge_shard_change',  {hide = 1, max = 1, damage = 1})
-		mod:Destroy()
-	end
-	return
-end
-
-
-end
 
 
 
 
 modifier_custom_pudge_flesh_heap_stack = class({})
 
-function modifier_custom_pudge_flesh_heap_stack:IsDebuff() return false end
-function modifier_custom_pudge_flesh_heap_stack:IsHidden() 
-	return self:GetParent():HasModifier("modifier_custom_pudge_flesh_heap_legendary")
+function modifier_custom_pudge_flesh_heap_stack:IsHidden()
+if not self.parent:HasTalent("modifier_pudge_flesh_5") then return true end
+if self.parent:PassivesDisabled() then return true end
+return self.parent:GetHealthPercent() > self.low_health
 end
+
 function modifier_custom_pudge_flesh_heap_stack:IsPurgable() return false end
-function modifier_custom_pudge_flesh_heap_stack:IsStunDebuff() return false end
 function modifier_custom_pudge_flesh_heap_stack:RemoveOnDeath() return false end
+function modifier_custom_pudge_flesh_heap_stack:GetTexture() return "buffs/flesh_lowhp" end
 
 function modifier_custom_pudge_flesh_heap_stack:OnCreated()
-if not IsServer() then return end
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_pudge_flesh_heap_creep" , {})
+self.legendary_duration = self.parent:GetTalentValue("modifier_pudge_flesh_legendary", "duration", true)
 
-if self:GetParent():IsIllusion() and self:GetParent():GetPlayerOwner():GetAssignedHero():HasModifier("modifier_custom_pudge_flesh_heap_stack") then
-	self:SetStackCount(self:GetParent():GetPlayerOwner():GetAssignedHero():FindModifierByName("modifier_custom_pudge_flesh_heap_stack"):GetStackCount())
-end
-		
-if not self:GetParent():IsIllusion() then
-	self:StartIntervalThink(0.1)
-end
+self.heal_creeps = self.parent:GetTalentValue("modifier_pudge_flesh_2", "creeps", true)
+self.heal_bonus = self.parent:GetTalentValue("modifier_pudge_flesh_2", "bonus", true)
 
-end
+self.low_health = self.parent:GetTalentValue("modifier_pudge_flesh_5", "health", true)
+self.low_status = self.parent:GetTalentValue("modifier_pudge_flesh_5", "status", true)
+self.low_reduce = self.parent:GetTalentValue("modifier_pudge_flesh_5", "damage_reduce", true)
+self.low_bonus = self.parent:GetTalentValue("modifier_pudge_flesh_5", "bonus", true)
+self.low_max = self.parent:GetTalentValue("modifier_pudge_flesh_5", "max", true)
 
-function modifier_custom_pudge_flesh_heap_stack:OnIntervalThink()
-	if self:GetCaster():HasModifier("modifier_custom_pudge_flesh_heap") then
-		self:SetStackCount(self:GetCaster():FindModifierByName("modifier_custom_pudge_flesh_heap"):GetStackCount())
-	end
-	self:GetCaster():CalculateStatBonus(true)
-end
+self.stun_duration = self.parent:GetTalentValue("modifier_pudge_flesh_4", "stun", true)
+self.stun_damage = self.parent:GetTalentValue("modifier_pudge_flesh_4", "damage", true)/100
+self.stun_heal = self.parent:GetTalentValue("modifier_pudge_flesh_4", "heal", true)/100
 
-function modifier_custom_pudge_flesh_heap_stack:DeclareFunctions()
-	return {
-		MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
-		MODIFIER_EVENT_ON_ATTACK_LANDED,
-		MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
-		MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
-  	MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
-  	MODIFIER_PROPERTY_PRE_ATTACK,
-  	MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS,
-  	MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
-  	MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE
-	}
-end
-
-
-function modifier_custom_pudge_flesh_heap_stack:GetModifierAttackRangeBonus()
-if not self:GetParent():HasModifier("modifier_pudge_flesh_6") then return end
-
-return self:GetCaster():GetTalentValue("modifier_pudge_flesh_6", "range")
-end 
-
-
-function modifier_custom_pudge_flesh_heap_stack:GetModifierPreAttack(params)
-if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_pudge_flesh_4") then return end
-if self:GetParent():HasModifier("modifier_custom_pudge_flesh_heap_hit_cd") then return end
-if params.target and params.target:IsBuilding() then return end
-
-
-self.record = params.record
-
-end
-
-
-
-function modifier_custom_pudge_flesh_heap_stack:GetModifierMagicalResistanceBonus()
-if not self:GetParent():HasShard() then return end
-
-return self:GetAbility():GetSpecialValueFor("shard_resist")
-end
-
-
-function modifier_custom_pudge_flesh_heap_stack:GetModifierPreAttack_BonusDamage(params)
-if not self:GetParent():HasModifier("modifier_pudge_flesh_4") then return end
-if self:GetParent():HasModifier("modifier_custom_pudge_flesh_heap_hit_cd") then return end
-
-if IsClient() then 
-	return self:GetParent():GetStrength()*self:GetCaster():GetTalentValue("modifier_pudge_flesh_4", "damage")/100
-end 
+self.parent:AddAttackEvent_out(self)
+self.parent:AddDamageEvent_out(self)
 
 if not IsServer() then return end
-if params.target and params.target:IsBuilding() then return end
-
-return self:GetParent():GetStrength()*self:GetCaster():GetTalentValue("modifier_pudge_flesh_4", "damage")/100
-
+self:StartIntervalThink(1)
 end
 
-function modifier_custom_pudge_flesh_heap_stack:GetModifierProcAttack_Feedback(params)
+function modifier_custom_pudge_flesh_heap_stack:AttackEvent_out(params)
 if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_pudge_flesh_4") then return end
-if self:GetParent():HasModifier("modifier_custom_pudge_flesh_heap_hit_cd") then return end
-if params.target:IsBuilding() then return end
-if self.record ~= params.record then return end
+if self.parent ~= params.attacker then return end
+if not params.target:IsUnit() then return end
 
-local cd =  self:GetCaster():GetTalentValue("modifier_pudge_flesh_4", "cd")
+local mod = self.parent:FindModifierByName("modifier_custom_pudge_flesh_heap")
+
+if self.parent:HasTalent("modifier_pudge_flesh_legendary") and mod then
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_custom_pudge_flesh_heap_tempo_count", {duration = mod:GetRemainingTime() + self.legendary_duration})
+end
+
+
+if not self.parent:HasTalent("modifier_pudge_flesh_4") then return end
+if self.parent:PassivesDisabled() then return end
+if self.parent:HasModifier("modifier_custom_pudge_flesh_heap_hit_cd") then return end 
 
 params.target:EmitSound("Pudge.Flesh_bash")
+self.parent:EmitSound("Pudge.Flesh_hit")
 
-self:GetParent():EmitSound("Pudge.Flesh_hit")
-
-local forward = (params.target:GetOrigin()-self:GetCaster():GetOrigin()):Normalized()
+local forward = (params.target:GetOrigin()-self.parent:GetOrigin()):Normalized()
 
 local effect_cast = ParticleManager:CreateParticle( "particles/econ/items/centaur/centaur_ti9/flesh_bash.vpcf", PATTACH_ABSORIGIN_FOLLOW, params.target )
-ParticleManager:SetParticleControlEnt(effect_cast,0,self:GetCaster(),PATTACH_POINT_FOLLOW,"attach_hitloc",params.target:GetOrigin(), true)
-ParticleManager:SetParticleControlEnt(effect_cast,1,params.target,PATTACH_POINT_FOLLOW,"attach_hitloc",params.target:GetOrigin(), true)
+ParticleManager:SetParticleControlEnt(effect_cast, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetOrigin(), true)
+ParticleManager:SetParticleControlEnt(effect_cast, 1, params.target, PATTACH_POINT_FOLLOW, "attach_hitloc", params.target:GetOrigin(), true)
 ParticleManager:SetParticleControl( effect_cast, 2, params.target:GetOrigin() )
-ParticleManager:SetParticleControl(effect_cast, 3, params.target:GetAbsOrigin())
+ParticleManager:SetParticleControl( effect_cast, 3, params.target:GetAbsOrigin())
 ParticleManager:SetParticleControl( effect_cast, 5, params.target:GetOrigin() )
 ParticleManager:SetParticleControl( effect_cast, 6, Vector(150,1,1) )
 ParticleManager:ReleaseParticleIndex( effect_cast )
 
+local damage = DoDamage({victim = params.target, attacker = self.parent, damage = self.parent:GetStrength()*self.stun_damage, ability = self.ability, damage_type = DAMAGE_TYPE_MAGICAL}, "modifier_pudge_flesh_4")
+self.parent:GenericHeal(damage*self.stun_heal, self.ability, false, "particles/units/heroes/hero_bloodseeker/bloodseeker_bloodbath.vpcf", "modifier_pudge_flesh_4")
 
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_pudge_flesh_heap_hit_cd", {duration = cd})
-params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_bashed", {duration = (1 - params.target:GetStatusResistance())*self:GetCaster():GetTalentValue("modifier_pudge_flesh_4", "stun")})
-params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_pudge_flesh_heap_hit_heal", {duration = 0.1})
-
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_custom_pudge_flesh_heap_hit_cd", {duration = self.parent:GetTalentValue("modifier_pudge_flesh_4", "cd")})
+params.target:AddNewModifier(self.parent, self.ability, "modifier_bashed", {duration = (1 - params.target:GetStatusResistance())*self.stun_duration})
 end
 
-
-function modifier_custom_pudge_flesh_heap_stack:GetModifierSpellAmplify_Percentage() 
-if self:GetParent():HasModifier("modifier_pudge_flesh_3") then 
-	return self:GetParent():GetStrength()/(self:GetAbility().armor_inc[self:GetParent():GetUpgradeStack("modifier_pudge_flesh_3")])
-end
-
-end
-
-
-function modifier_custom_pudge_flesh_heap_stack:GetModifierPhysicalArmorBonus()
-if self:GetParent():HasModifier("modifier_pudge_flesh_3") then 
-	return self:GetParent():GetStrength()/(self:GetAbility().armor_inc[self:GetParent():GetUpgradeStack("modifier_pudge_flesh_3")])
-end
-
-end
-
-
-function modifier_custom_pudge_flesh_heap_stack:GetModifierBonusStats_Strength()
-local bonus = 0
-if self:GetParent():HasModifier("modifier_pudge_flesh_2") then 
-	bonus = self:GetAbility().str_init + self:GetAbility().str_inc*self:GetParent():GetUpgradeStack("modifier_pudge_flesh_2")
-end
-
-
-if self:GetParent():HasModifier("modifier_custom_pudge_flesh_heap_legendary") and self:GetParent():HasModifier("modifier_pudge_flesh_legendary") then 
-	return (self:GetAbility():GetSpecialValueFor("flesh_heap_strength_buff_amount") + bonus) * self:GetParent():GetUpgradeStack("modifier_custom_pudge_flesh_heap_legendary")
-else 
-	return (self:GetAbility():GetSpecialValueFor("flesh_heap_strength_buff_amount") + bonus) * self:GetStackCount()	
-end
-
-
-end
-
-function modifier_custom_pudge_flesh_heap_stack:OnAttackLanded(params)
+function modifier_custom_pudge_flesh_heap_stack:DamageEvent_out(params)
 if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end
-if params.target:IsBuilding() then return end
-if not self:GetParent():HasModifier("modifier_pudge_flesh_6") then return end
-if params.target:HasModifier("modifier_custom_pudge_meat_hook_attacks") then return end
+if not self.parent:HasTalent("modifier_pudge_flesh_2") then return end
+if not self.parent:CheckLifesteal(params) then return end
 
-local duration = self:GetCaster():GetTalentValue("modifier_pudge_flesh_6", "duration")
+local particle = ""
+local heal = params.damage*self.parent:GetTalentValue("modifier_pudge_flesh_2", "heal")/100
+if params.unit:IsCreep() then
+	heal = heal/self.heal_creeps
+end
 
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_pudge_flesh_heap_tempo", {duration = duration})
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_pudge_flesh_heap_tempo_count", {duration = duration})
+if self.parent:HasModifier("modifier_custom_pudge_flesh_heap") then
+	particle = nil
+	heal = heal*self.heal_bonus
+end
 
+self.parent:GenericHeal(heal, self.ability, true, particle, "modifier_pudge_flesh_2")
 end
 
 
-modifier_custom_pudge_flesh_heap_creep = class({})
-function modifier_custom_pudge_flesh_heap_creep:IsHidden()
- return true
-end
-function modifier_custom_pudge_flesh_heap_creep:IsPurgable() return false end
-function modifier_custom_pudge_flesh_heap_creep:RemoveOnDeath() return false end
-function modifier_custom_pudge_flesh_heap_creep:GetTexture() return "buffs/flesh_creep" end
-function modifier_custom_pudge_flesh_heap_creep:DeclareFunctions()
+function modifier_custom_pudge_flesh_heap_stack:CheckState()
+if not self.parent:HasTalent("modifier_pudge_flesh_4") then return end
+if self.parent:HasModifier("modifier_custom_pudge_flesh_heap_hit_cd") then return end
 return
 {
-	MODIFIER_PROPERTY_TOOLTIP
+	[MODIFIER_STATE_CANNOT_MISS] = true
 }
 end
 
-function modifier_custom_pudge_flesh_heap_creep:OnTooltip()
-return self:GetAbility():GetSpecialValueFor("shard_point")
-end
 
-modifier_custom_pudge_flesh_heap_damage = class({})
-function modifier_custom_pudge_flesh_heap_damage:IsHidden()
-if self:GetParent():PassivesDisabled() then return true end
-return self:GetParent():GetHealthPercent() > self:GetAbility().lowhp_health
-end
-function modifier_custom_pudge_flesh_heap_damage:IsPurgable() return false end
-function modifier_custom_pudge_flesh_heap_damage:RemoveOnDeath() return false end
-function modifier_custom_pudge_flesh_heap_damage:GetTexture() return "buffs/flesh_lowhp" end
-function modifier_custom_pudge_flesh_heap_damage:DeclareFunctions()
+function modifier_custom_pudge_flesh_heap_stack:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE
+	MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
+	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
 }
 end
 
-function modifier_custom_pudge_flesh_heap_damage:GetModifierIncomingDamage_Percentage()
-if self:GetParent():GetHealthPercent() > self:GetAbility().lowhp_health then return end
-if self:GetParent():PassivesDisabled() then return end
-
-local name = "modifier_custom_pudge_flesh_heap"
-if self:GetParent():HasModifier("modifier_custom_pudge_flesh_heap_legendary") then 
-	name = "modifier_custom_pudge_flesh_heap_legendary"
+function modifier_custom_pudge_flesh_heap_stack:GetModifierStatusResistanceStacking()
+if not self.parent:HasTalent("modifier_pudge_flesh_5") then return end
+if self.parent:PassivesDisabled() then return end
+if self.parent:GetHealthPercent() > self.low_health then return end
+local bonus = self.low_status 
+if self.parent:HasModifier("modifier_pudge_innate_custom") then
+	bonus = bonus + self.low_bonus*self.parent:GetUpgradeStack("modifier_pudge_innate_custom")
 end
-
-local reduce = math.max(self:GetAbility().lowhp_max, self:GetAbility().lowhp_init + self:GetAbility().lowhp_inc*self:GetParent():GetUpgradeStack(name))
-
-return reduce
+return math.min(bonus, self.low_max)
 end
 
 
-modifier_custom_pudge_flesh_heap_tempo = class({})
-function modifier_custom_pudge_flesh_heap_tempo:IsHidden() return true end
-function modifier_custom_pudge_flesh_heap_tempo:IsPurgable() return false end
-function modifier_custom_pudge_flesh_heap_tempo:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-function modifier_custom_pudge_flesh_heap_tempo:OnCreated(table)
-self.RemoveForDuel = true 
+function modifier_custom_pudge_flesh_heap_stack:GetModifierIncomingDamage_Percentage()
+if not self.parent:HasTalent("modifier_pudge_flesh_5") then return end
+if self.parent:PassivesDisabled() then return end
+if self.parent:GetHealthPercent() > self.low_health then return end
+local bonus = self.low_reduce 
+if self.parent:HasModifier("modifier_pudge_innate_custom") then
+	bonus = bonus + self.low_bonus*self.parent:GetUpgradeStack("modifier_pudge_innate_custom")
+end
+return math.min(bonus, self.low_max)*-1
+end
+
+
+function modifier_custom_pudge_flesh_heap_stack:OnIntervalThink()
 if not IsServer() then return end
 
-local mod = self:GetParent():FindModifierByName("modifier_custom_pudge_flesh_heap")
-if mod then 
-	mod:IncrementStackCount()
+if not self.parent:HasModifier("modifier_custom_pudge_flesh_heap") and not self.ability:IsActivated() then
+	self.ability:StartCd()
 end
 
+if not self.parent:HasTalent("modifier_pudge_flesh_5") then return end
+if not self.parent:IsAlive() then return end
+
+if (self.parent:GetHealthPercent() > self.low_health or self.parent:PassivesDisabled()) and self.particle then
+	ParticleManager:DestroyParticle(self.particle, false)
+	ParticleManager:ReleaseParticleIndex(self.particle)
+	self.particle = nil
 end
 
-function modifier_custom_pudge_flesh_heap_tempo:OnDestroy()
-if not IsServer() then return end
+if (self.parent:GetHealthPercent() <= self.low_health and not self.parent:PassivesDisabled()) and not self.particle then
+	self.particle = ParticleManager:CreateParticle( "particles/pudge/meat_lowhealth.vpcf", PATTACH_OVERHEAD_FOLLOW, self.parent )
+	ParticleManager:SetParticleControlEnt(self.particle, 0, self.parent, PATTACH_OVERHEAD_FOLLOW, nil, self.parent:GetAbsOrigin(), true)
+	ParticleManager:SetParticleControlEnt(self.particle, 1, self.parent, PATTACH_ABSORIGIN_FOLLOW, nil, self.parent:GetAbsOrigin(), true)
+	self:AddParticle(self.particle,true,false,0,false,false)
 
-local mod = self:GetParent():FindModifierByName("modifier_custom_pudge_flesh_heap_tempo_count")
-if mod then 
-	mod:DecrementStackCount()
-	if mod:GetStackCount() == 0 then 
-		mod:Destroy()
-	end
+	self.parent:EmitSound("Pudge.Meat_lowhealth")
 end
 
-mod = self:GetParent():FindModifierByName("modifier_custom_pudge_flesh_heap")
-if mod then 
-	mod:DecrementStackCount()
+self:StartIntervalThink(0.2)
 end
 
 
-end
+
+
+
 
 modifier_custom_pudge_flesh_heap_tempo_count = class({})
 function modifier_custom_pudge_flesh_heap_tempo_count:IsHidden() return false end
 function modifier_custom_pudge_flesh_heap_tempo_count:IsPurgable() return false end
 function modifier_custom_pudge_flesh_heap_tempo_count:GetTexture() return "buffs/quill_cdr" end
 function modifier_custom_pudge_flesh_heap_tempo_count:OnCreated(table)
-self.RemoveForDuel = true
 if not IsServer() then return end
+self.RemoveForDuel = true
+self.parent = self:GetParent()
+
+local mod = self.parent:FindModifierByName("modifier_pudge_innate_custom")
+if mod then
+	mod:IncrementStackCount()
+end
+
 self:SetStackCount(1)
 end
 
 function modifier_custom_pudge_flesh_heap_tempo_count:OnRefresh(table)
 if not IsServer() then return end
 self:IncrementStackCount()
+
+local mod = self.parent:FindModifierByName("modifier_pudge_innate_custom")
+if mod then
+	mod:IncrementStackCount()
 end
+
+end
+
+
+function modifier_custom_pudge_flesh_heap_tempo_count:OnDestroy()
+if not IsServer() then return end
+
+local mod = self.parent:FindModifierByName("modifier_pudge_innate_custom")
+if mod then
+	mod:SetStackCount(math.max(0, mod:GetStackCount() - self:GetStackCount()))
+end
+
+end
+
 
 modifier_custom_pudge_flesh_heap_hit_cd = class({})
 function modifier_custom_pudge_flesh_heap_hit_cd:IsHidden() return false end
@@ -634,38 +405,199 @@ function modifier_custom_pudge_flesh_heap_hit_cd:OnCreated(table)
 self.RemoveForDuel = true
 end
 
-modifier_custom_pudge_flesh_heap_hit_heal = class({})
-function modifier_custom_pudge_flesh_heap_hit_heal:IsHidden() return true end
-function modifier_custom_pudge_flesh_heap_hit_heal:IsPurgable() return false end
-function modifier_custom_pudge_flesh_heap_hit_heal:DeclareFunctions()
+
+
+modifier_custom_pudge_flesh_heap_charge = class({})
+function modifier_custom_pudge_flesh_heap_charge:IsHidden() return true end
+function modifier_custom_pudge_flesh_heap_charge:IsPurgable() return false end
+
+
+
+modifier_custom_pudge_flesh_heap_charge_active = class({})
+function modifier_custom_pudge_flesh_heap_charge_active:IsHidden() return true end
+function modifier_custom_pudge_flesh_heap_charge_active:IsPurgable() return false end
+
+function modifier_custom_pudge_flesh_heap_charge_active:OnCreated(kv)
+if not IsServer() then return end
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.parent:AddOrderEvent(self)
+
+self.turn_speed = 70
+self.target_angle = self.parent:GetAnglesAsVector().y
+self.current_angle = self.target_angle
+self.face_target = true
+
+self.speed = self.parent:GetTalentValue("modifier_pudge_flesh_6", "speed")
+self.parent:EmitSound("Pudge.Meat_charge_start")
+self.parent:EmitSound("Pudge.Meat_charge_start2")
+
+self.point = GetGroundPosition(Vector(kv.x, kv.y, 0), nil)
+self.angle = self.parent:GetForwardVector():Normalized()
+self.distance = (self.point - self.parent:GetAbsOrigin()):Length2D() / ( self:GetDuration() / FrameTime())
+
+self.knock_distance = self.parent:GetTalentValue("modifier_pudge_flesh_6", "distance")
+self.knock_height = self.parent:GetTalentValue("modifier_pudge_flesh_6", "height")
+self.knock_duration = self.parent:GetTalentValue("modifier_pudge_flesh_6", "duration")
+self.knock_radius = self.parent:GetTalentValue("modifier_pudge_flesh_6", "width")
+self.knock_stun = self.parent:GetTalentValue("modifier_pudge_flesh_6", "stun")
+
+self.parent:GenericParticle("particles/units/heroes/hero_primal_beast/primal_beast_onslaught_charge_active.vpcf", self)
+
+if self:ApplyHorizontalMotionController() == false then
+    self:Destroy()
+end
+
+end
+
+function modifier_custom_pudge_flesh_heap_charge_active:GetEffectName() 
+return --return "particles/pudge/meat_charge.vpcf" 
+end
+
+function modifier_custom_pudge_flesh_heap_charge_active:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_TAKEDAMAGE
+  MODIFIER_PROPERTY_DISABLE_TURNING,
+  MODIFIER_PROPERTY_OVERRIDE_ANIMATION,
+  MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
 }
 end
 
-function modifier_custom_pudge_flesh_heap_hit_heal:OnTakeDamage(params)
-if not IsServer() then return end
-if params.unit ~= self:GetParent() then return end
-if params.inflictor ~= nil then return end
-if params.attacker ~= self:GetCaster() then return end
+function modifier_custom_pudge_flesh_heap_charge_active:GetActivityTranslationModifiers()
+return "haste"
+end
 
-local heal = params.damage*self:GetCaster():GetTalentValue("modifier_pudge_flesh_4", "heal")/100
+function modifier_custom_pudge_flesh_heap_charge_active:OrderEvent( params )
 
-self:GetCaster():GenericHeal(heal, self:GetAbility())
+if params.order_type==DOTA_UNIT_ORDER_MOVE_TO_POSITION then
+	self:SetDirection( params.pos )
+elseif
+	params.order_type==DOTA_UNIT_ORDER_MOVE_TO_DIRECTION
+then
+	self:SetDirection( params.pos )
+elseif 
+	(params.order_type==DOTA_UNIT_ORDER_MOVE_TO_TARGET or
+	params.order_type==DOTA_UNIT_ORDER_ATTACK_TARGET) and params.target
+then
+	self:SetDirection( params.target:GetOrigin() )
+elseif
+	params.order_type==DOTA_UNIT_ORDER_STOP or 
+	params.order_type==DOTA_UNIT_ORDER_CAST_TARGET or
+	params.order_type==DOTA_UNIT_ORDER_CAST_POSITION or
+	params.order_type==DOTA_UNIT_ORDER_HOLD_POSITION
+then
+	self:Destroy()
+end	
 
-local particle = ParticleManager:CreateParticle( "particles/pudge_bash_heal.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-ParticleManager:ReleaseParticleIndex( particle )
-
-
-self:Destroy()
 end
 
 
-modifier_custom_pudge_flesh_heap_hit_ready = class({})
-function modifier_custom_pudge_flesh_heap_hit_ready:IsHidden() return self:GetParent():HasModifier("modifier_custom_pudge_flesh_heap_hit_cd") end
-function modifier_custom_pudge_flesh_heap_hit_ready:IsPurgable() return false end
-function modifier_custom_pudge_flesh_heap_hit_ready:RemoveOnDeath() return false end
-function modifier_custom_pudge_flesh_heap_hit_ready:GetTexture() return "buffs/flesh_hit" end
+function modifier_custom_pudge_flesh_heap_charge_active:SetDirection( location )
+local dir = ((location-self.parent:GetOrigin())*Vector(1,1,0)):Normalized()
+self.target_angle = VectorToAngles( dir ).y
+self.face_target = false
+end
 
+
+function modifier_custom_pudge_flesh_heap_charge_active:TurnLogic( dt )
+if self.face_target then return end
+local angle_diff = AngleDiff( self.current_angle, self.target_angle )
+local turn_speed = self.turn_speed*dt
+
+local sign = -1
+if angle_diff<0 then sign = 1 end
+
+if math.abs( angle_diff )<1.1*turn_speed then
+	self.current_angle = self.target_angle
+	self.face_target = true
+else
+	self.current_angle = self.current_angle + sign*turn_speed
+end
+
+local angles = self.parent:GetAnglesAsVector()
+self.parent:SetLocalAngles( angles.x, self.current_angle, angles.z )
+end
+
+
+function modifier_custom_pudge_flesh_heap_charge_active:GetOverrideAnimation()
+return ACT_DOTA_RUN
+end
+
+function modifier_custom_pudge_flesh_heap_charge_active:GetModifierDisableTurning() return 1 end
+function modifier_custom_pudge_flesh_heap_charge_active:GetStatusEffectName() return "particles/status_fx/status_effect_forcestaff.vpcf" end
+function modifier_custom_pudge_flesh_heap_charge_active:StatusEffectPriority() return MODIFIER_PRIORITY_NORMAL  end
+
+function modifier_custom_pudge_flesh_heap_charge_active:OnDestroy()
+if not IsServer() then return end
+self.parent:InterruptMotionControllers( true )
+
+local dir = self.parent:GetForwardVector()
+dir.z = 0
+self.parent:SetForwardVector(dir)
+self.parent:FaceTowards(self.parent:GetAbsOrigin() + dir*10)
+
+ResolveNPCPositions(self.parent:GetAbsOrigin(), 128)
+end
+
+
+function modifier_custom_pudge_flesh_heap_charge_active:UpdateHorizontalMotion( me, dt )
+if not IsServer() then return end
+
+if self.parent:IsStunned() or self.parent:IsHexed() or self.parent:IsRooted() then 
+	self:Destroy()
+	return
+end
+local targets = self.parent:FindTargets(self.knock_radius)
+if #targets > 0 then 
+	self.parent:EmitSound("Pudge.Meat_charge_hit")
+
+	for _,enemy in pairs(self.parent:FindTargets(self.knock_radius*2)) do 
+
+		local hit_effect = ParticleManager:CreateParticle("particles/units/heroes/hero_monkey_king/monkey_king_quad_tap_hit.vpcf", PATTACH_CUSTOMORIGIN, enemy)
+		ParticleManager:SetParticleControlEnt(hit_effect, 0, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), false) 
+		ParticleManager:SetParticleControlEnt(hit_effect, 1, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), false) 
+		ParticleManager:ReleaseParticleIndex(hit_effect)
+
+		local direction = enemy:GetOrigin()-self.parent:GetOrigin()
+		direction.z = 0
+		direction = direction:Normalized()
+
+		enemy:AddNewModifier(self.parent, self.ability, "modifier_stunned", {duration = (1 - enemy:GetStatusResistance())*self.knock_stun})
+
+		local knockbackProperties =
+	  	{
+	      center_x = self.parent:GetOrigin().x,
+	      center_y = self.parent:GetOrigin().y,
+	      center_z = self.parent:GetOrigin().z,
+	      duration = self.knock_duration,
+	      knockback_duration = self.knock_duration,
+	      knockback_distance = self.knock_distance,
+	      knockback_height = self.knock_height,
+	      should_stun = 0,
+	  	}
+	    enemy:AddNewModifier( self.parent, self.ability, "modifier_knockback", knockbackProperties )
+	end 
+	self:Destroy()
+	return
+end
+
+self:TurnLogic( dt )
+local nextpos = me:GetOrigin() + me:GetForwardVector() * self.speed * dt
+me:SetOrigin(nextpos)
+GridNav:DestroyTreesAroundPoint(nextpos, self.knock_radius*0.75, true)
+end
+
+
+function modifier_custom_pudge_flesh_heap_charge_active:OnHorizontalMotionInterrupted()
+self:Destroy()
+end
+
+function modifier_custom_pudge_flesh_heap_charge_active:CheckState()
+return
+{
+	[MODIFIER_STATE_SILENCED] = true,
+	[MODIFIER_STATE_DISARMED] = true
+}
+end
 

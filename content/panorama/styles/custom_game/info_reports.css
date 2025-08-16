@@ -1,10 +1,15 @@
-/* Prettified by Source 2 Viewer 7.0.0.0 - https://valveresourceformat.github.io */
+/* Prettified by Source 2 Viewer 14.1.0.0 - https://valveresourceformat.github.io */
 
 .MainInfoReports
 {
 	width: 100%;
 	height: 100%;
 	z-index: 2;
+}
+
+.hidden_panel
+{
+	opacity: 0;
 }
 
 .info_reports_buttons
@@ -16,33 +21,6 @@
 	align: right top;
 	z-index: -1;
 	flow-children: right;
-}
-
-.ButtonItemStyle
-{
-	width: 18px;
-	height: 18px;
-	margin: 3px;
-	border-radius: 3px;
-	box-shadow: fill black 0px 0px 6px -1px;
-	border: 1px solid black;
-}
-
-.ButtonItemStyleActiveIcon
-{
-	align: center center;
-	opacity: 0;
-	width: 10px;
-	height: 10px;
-	border-radius: 10px;
-	background-color: white;
-	box-shadow: fill black 0px 0px 5px -1px;
-	border: 1px solid black;
-}
-
-.ButtonItemStyle_active .ButtonItemStyleActiveIcon
-{
-	opacity: 1;
 }
 
 .ButtonsItemStyles
@@ -265,7 +243,7 @@
 .shop_window_buttons_top
 {
 	width: 100%;
-	height: 15%;
+	height: 160px;
 }
 
 .shop_window_content
@@ -572,6 +550,32 @@
 	z-index: 5;
 }
 
+.pass_window_10
+{
+	width: 100%;
+	height: 340px;
+	background-image: url("s2r://panorama/images/custom_game/shop/plus_8_png.vtex");
+	background-size: contain;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	box-shadow: fill black 0px 0px 20px -2px;
+	background-repeat: no-repeat;
+	z-index: 5;
+}
+
+.pass_window_11
+{
+	width: 100%;
+	height: 340px;
+	background-image: url("s2r://panorama/images/custom_game/shop/plus_9_png.vtex");
+	background-size: contain;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	box-shadow: fill black 0px 0px 20px -2px;
+	background-repeat: no-repeat;
+	z-index: 5;
+}
+
 .pass_window_7
 {
 	width: 100%;
@@ -627,7 +631,7 @@
 
 .ChooseCategoryBlock_new
 {
-	animation-name: ShopNewAnim;
+	animation-name: SaleNewAnim;
 	animation-iteration-count: infinite;
 	animation-duration: 1.5s;
 	transition-property: opacity, transform;
@@ -656,8 +660,22 @@
 	transition-duration: .24s;
 }
 
+#ChooseCategoryBlockSale
+{
+	width: 74px;
+	height: 32px;
+	margin-top: 8px;
+	margin-left: 6px;
+	z-index: 9999;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #1d0302 ), to( #4f1311) );
+	border: 1px solid #fa0202;
+	border-radius: 5px;
+	box-shadow: fill #fa0202 0px 0px 12px -3px;
+}
+
 #shop_items_new
 {
+	opacity: 0;
 	width: 61.6px;
 	height: 26.6px;
 	margin-bottom: 220px;
@@ -667,6 +685,31 @@
 	background-image: url("s2r://panorama/images/custom_game/shop/new_shop_png.vtex");
 	background-size: 100%;
 	box-shadow: fill #f0bd22 0px 0px 6px -3px;
+}
+
+#shop_items_sale
+{
+	width: 70px;
+	height: 28px;
+	margin-bottom: 190px;
+	margin-left: 10px;
+	vertical-align: center;
+	z-index: 9999;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #1d0302 ), to( #4f1311) );
+	border: 1px solid #fa0202;
+	border-radius: 5px;
+	box-shadow: fill #fa0202 0px 0px 12px -3px;
+}
+
+.shop_items_sale_text
+{
+	z-index: 99999;
+	color: white;
+	align: center center;
+	font-size: 23px;
+	color: gradient( linear, 0% 100%, 0% 0%, from( #ff9e9e ), to( #f5d5d5 ) );
+	font-family: Radiance;
+	font-weight: bold;
 }
 
 @keyframes 'ShopNewAnim'
@@ -684,6 +727,25 @@
 	100%
 	{
 		box-shadow: fill #f0bd22 0px 0px 4px -2px;
+	}
+	
+}
+
+@keyframes 'SaleNewAnim'
+{
+	0%
+	{
+		box-shadow: fill #ff2424 0px 0px 4px -2px;
+	}
+	
+	50%
+	{
+		box-shadow: fill #ff2424 0px 0px 12px -3px;
+	}
+	
+	100%
+	{
+		box-shadow: fill #ff2424 0px 0px 4px -2px;
 	}
 	
 }
@@ -820,10 +882,9 @@
 	width: 32px;
 	height: 35px;
 	z-index: 5;
-	vertical-align: center;
-	align: center top;
-	margin-right: 42%;
-	margin-top: 38%;
+	align: left top;
+	margin-left: 55px;
+	margin-top: 20px;
 }
 
 .CurrencyInfo
@@ -834,8 +895,8 @@
 	height: 28px;
 	z-index: 5;
 	align: right top;
-	margin-right: 10%;
-	margin-top: 41%;
+	margin-right: 15px;
+	margin-top: 25px;
 }
 
 .CurrencyInfo:hover
@@ -843,34 +904,12 @@
 	brightness: 2;
 }
 
-.CurrencyNumber
-{
-	font-size: 36px;
-	color: white;
-	font-weight: bold;
-	z-index: 5;
-	align: center center;
-	width: 100%;
-	text-shadow: 0px 0px 7px #B7894666;
-	color: gradient( linear, 0% 100%, 0% 0%, from( #f9e0bb ), to( #fff442 ) );
-	text-align: center;
-}
-
-.CurrencyNumber_limit
-{
-	font-size: 25px;
-	text-shadow: 0px 0px 7px black;
-	color: gradient( linear, 0% 100%, 0% 0%, from( #ff5e5e ), to( #d30000 ) );
-	margin-top: 15%;
-	text-overflow: shrink;
-}
-
 .CurrencyBackground
 {
 	width: 50%;
 	height: 35%;
 	margin-left: 8%;
-	margin-top: 35%;
+	margin-top: 14px;
 	align: center top;
 }
 
@@ -880,6 +919,85 @@
 	height: 100%;
 	flow-children: right-wrap;
 	overflow: squish scroll;
+}
+
+.BlockItemBuyButtonLabelChat
+{
+	font-size: 14px;
+	color: white;
+	margin-left: 3px;
+	font-weight: bold;
+	align: center center;
+	text-shadow: 0px 0px 3px 1.5 black;
+}
+
+.BlockItemBuyButtonChat
+{
+	horizontal-align: center;
+	vertical-align: bottom;
+	margin-bottom: 20px;
+	width: 120px;
+	height: 30px;
+	margin-top: 0px;
+	border-top: 1px solid #ffffff22;
+	border-bottom: 1px solid #00000088;
+}
+
+.BlockItemLabelChat
+{
+	font-size: 16px;
+	color: #ddd;
+	horizontal-align: center;
+	margin-top: 8px;
+	font-weight: bold;
+	text-align: center;
+	height: 32px;
+	width: 90%;
+}
+
+.BlockItemChat
+{
+	width: 142px;
+	height: 175px;
+	margin-left: 1%;
+	margin-bottom: 10px;
+	margin-top: 8px;
+	flow-children: down;
+	background-color: gradient( linear, 0% 0%, 90% 100%, from( #040010 ), to( #000000 ) );
+	border-radius: 3px;
+	box-shadow: fill #ccc 0px 0px 5px -3px;
+}
+
+.BlockItemChat:hover
+{
+	background-color: gradient( linear, 0% 30%, 0% 100%, from( #000000 ), to( #17002b ) );
+	brightness: 1.3;
+	pre-transform-scale2d: 1.05;
+}
+
+.BlockItemImageChat
+{
+	width: 80px;
+	horizontal-align: center;
+	height: 80px;
+	margin-top: 10px;
+	background-image: url("s2r://panorama/images/front_page/arlington_major_22_home_bg_psd.vtex");
+	background-size: 100%;
+}
+
+.BlockItemChat_video
+{
+	width: 200px;
+}
+
+.BlockItemImageChat_high_five
+{
+	width: 135px;
+	horizontal-align: center;
+	height: 90px;
+	margin-top: 2px;
+	background-image: url("s2r://panorama/images/front_page/arlington_major_22_home_bg_psd.vtex");
+	background-size: 100%;
 }
 
 .BlockItem
@@ -914,7 +1032,7 @@
 
 .BlockItem_sale
 {
-	box-shadow: fill #71f337 0px 0px 8px -3px;
+	box-shadow: fill #f00 0px 0px 12px -3px;
 }
 
 .BlockItem_money:hover
@@ -945,12 +1063,12 @@
 
 .BlockItemImage_sale
 {
-	width: 70px;
+	width: 90px;
 	height: 22%;
 	align: right top;
-	margin-top: 2px;
+	margin-top: 5px;
 	margin-right: 0.3px;
-	background-color: gradient( linear, 0% 0%, 100% 0%, from( #3bc20000 ), to( #71f33790 ) );
+	background-color: gradient( linear, 0% 0%, 100% 0%, from( #c2000000 ), to( #ff0000 ) );
 }
 
 .BlockItemImage_sale_text
@@ -959,7 +1077,7 @@
 	font-weight: bold;
 	align: center center;
 	font-size: 18px;
-	margin-left: 20px;
+	margin-left: 40px;
 	text-shadow: 0px 0px 6px 2 black;
 }
 
@@ -985,9 +1103,9 @@
 	height: 100%;
 	flow-children: down;
 	overflow: squish scroll;
-	padding-left: 50px;
-	padding-right: 50px;
-	padding-bottom: 50px;
+	padding-left: 30px;
+	padding-right: 30px;
+	padding-bottom: 30px;
 }
 
 .heroes_list_top
@@ -1056,7 +1174,7 @@
 {
 	flow-children: right;
 	width: 100%;
-	height: 75px;
+	height: 65px;
 }
 
 .hero_icon_str
@@ -1169,41 +1287,42 @@
 
 .BlockHero
 {
-	width: 120px;
+	width: 110px;
 	margin: 8px;
-	flow-children: down;
-	background-color: #000;
-	background-color: gradient( linear, 0% 0%, 90% 100%, from( #040010 ), to( #000000 ) );
+	height: 110px;
+	box-shadow: fill black 0px 0px 18px -3px;
+	background-color: gradient( linear, 0% 0%, 90% 100%, from( #151515 ), to( #000000 ) );
 }
 
 .BlockHero_0
 {
-	box-shadow: fill #be8700 0px 0px 6px -3px;
+	border: 1px solid #c2643e20;
 }
 
 .BlockHero_1
 {
-	box-shadow: fill #b7deff 0px 0px 5.5px -3px;
+	border: 1px solid #9bb3c720;
 }
 
 .BlockHero_2
 {
-	box-shadow: fill #ffe323 0px 0px 7px -3px;
+	border: 1px solid #b2872c40;
 }
 
 .BlockHero_3
 {
-	box-shadow: fill #48abff 0px 0px 7px -3px;
+	border: 1px solid #5a84d750;
 }
 
 .BlockHero_4
 {
-	box-shadow: fill #8a44ff 0px 0px 8px -3px;
+	border: 1px solid #783eaf50;
 }
 
 .BlockHero_5
 {
-	box-shadow: fill #ff1616 0px 0px 8px -3px;
+	box-shadow: fill #ff1616 0px 0px 7px -2px;
+	border: 1px solid #b83b3690;
 }
 
 .BlockHero:hover
@@ -1213,29 +1332,98 @@
 
 .HeroImage
 {
-	width: 80px;
-	height: 80px;
+	width: 82px;
+	height: 82px;
 	border-radius: 50%;
-	margin-top: 10px;
-	horizontal-align: center;
+	align: center center;
 }
 
 .LevelPanel
 {
-	margin-top: 10px;
-	margin-bottom: 10px;
 	flow-children: right;
-	horizontal-align: center;
-	height: 30px;
+	height: 26px;
+	width: 55px;
+	align: center bottom;
+	margin-bottom: 5px;
+	border-radius: 4px;
+	box-shadow: fill 0px 0px 18px black;
+}
+
+.LevelPanel_0
+{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #311104 ), to( #582b18) );
+	border: 1px solid #c2643e;
+}
+
+.LevelPanel_1
+{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #022327 ), to( #505d67) );
+	border: 1px solid #9bb3c7;
+}
+
+.LevelPanel_2
+{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #191802 ), to( #545113) );
+	border: 1px solid #b2872c;
+}
+
+.LevelPanel_3
+{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #010919 ), to( #1e3563) );
+	border: 1px solid #5a84d7;
+}
+
+.LevelPanel_4
+{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #0d0115 ), to( #46206a) );
+	border: 1px solid #783eaf;
+}
+
+.LevelPanel_5
+{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #1d0302 ), to( #4f1311) );
+	border: 1px solid #b83b36;
+}
+
+.HeroImage_0
+{
+	border: 1px solid #c2643e;
+}
+
+.HeroImage_1
+{
+	border: 1px solid #9bb3c7;
+}
+
+.HeroImage_2
+{
+	border: 1px solid #b2872c;
+}
+
+.HeroImage_3
+{
+	border: 1px solid #5a84d7;
+}
+
+.HeroImage_4
+{
+	border: 1px solid #783eaf;
+}
+
+.HeroImage_5
+{
+	border: 1px solid #b83b36;
 }
 
 .DotaPlusIcon
 {
-	width: 24px;
-	height: 24px;
+	width: 22px;
+	height: 22px;
 	background-image: url("s2r://panorama/images/hero_badges/hero_badge_rank_0_tiny_png.vtex");
 	background-size: 100%;
 	vertical-align: center;
+	margin-left: 4px;
+	margin-top: 1px;
 }
 
 .HeroLevelLabel
@@ -1244,7 +1432,14 @@
 	color: white;
 	vertical-align: center;
 	font-weight: bold;
-	margin-left: 5px;
+	margin-left: 1px;
+	text-align: center;
+	margin-top: 1px;
+}
+
+.HeroLevelLabel_1
+{
+	margin-left: 3px;
 }
 
 .BlockItemBuyButton
@@ -1343,7 +1538,7 @@
 
 .BlockItemBuyButton_sale
 {
-	background-color: gradient( linear, 0% 0%, 100% 0%, from( #3bc20000 ), to( #71f33790 ) );
+	background-color: gradient( linear, 0% 0%, 100% 100%, from( #3bc20050 ), to( #71f33790 ) );
 }
 
 .GeneralHeroInformation
@@ -2097,7 +2292,7 @@
 
 .inshop_button_first
 {
-	margin-top: 8%;
+	margin-top: 50px;
 }
 
 .ChatWheelSoundsList
@@ -5920,11 +6115,13 @@ Slider.HorizontalSlider
 .BuyCurrencyButton_not
 {
 	background-color: gradient( linear, 0% 0%, 90% 100%, from( #d35f04 ), to( #d0af02 ) );
-	align: center bottom;
 	box-shadow: 0px 0px 10px black;
+	box-shadow: fill #f0bd22 0px 0px 6px -2px;
+	margin-top: 60px;
+	align: left center;
+	margin-left: 28px;
 	width: 200px;
 	height: 34px;
-	margin-right: 45px;
 	wash-color: #777;
 	saturation: 0.1;
 }
@@ -5932,11 +6129,13 @@ Slider.HorizontalSlider
 .BuyCurrencyButton
 {
 	background-color: gradient( linear, 0% 0%, 90% 100%, from( #d35f04 ), to( #d0af02 ) );
-	align: center bottom;
 	box-shadow: 0px 0px 10px black;
+	margin-top: 20px;
+	box-shadow: fill #f0bd22 0px 0px 6px -2px;
+	align: left center;
+	margin-left: 28px;
 	width: 200px;
 	height: 34px;
-	margin-right: 45px;
 }
 
 .BuyCurrencyButton:hover
@@ -5956,12 +6155,63 @@ Slider.HorizontalSlider
 	font-family: Radiance;
 }
 
+.CurrencyNumber
+{
+	font-size: 36px;
+	color: white;
+	font-weight: bold;
+	z-index: 5;
+	align: center center;
+	width: 100%;
+	text-shadow: 0px 0px 7px #B7894666;
+	color: gradient( linear, 0% 100%, 0% 0%, from( #f9e0bb ), to( #fff442 ) );
+	text-align: center;
+}
+
+.CurrencyNumber_limit
+{
+	font-size: 29px;
+	text-shadow: 0px 0px 7px black;
+	color: gradient( linear, 0% 100%, 0% 0%, from( #ff5e5e ), to( #d30000 ) );
+	text-overflow: shrink;
+}
+
+.PromoButton
+{
+	background-color: gradient( linear, 0% 0%, 90% 100%, from( #1763d4 ), to( #1aa3d9 ) );
+	align: left center;
+	box-shadow: fill #f0bd22 0px 0px 6px -2px;
+	opacity: 1;
+	margin-left: 28px;
+	width: 200px;
+	height: 34px;
+	margin-top: 110px;
+}
+
+.PromoButton:hover
+{
+	brightness: 1.6;
+}
+
+.PromoButtonLabel
+{
+	font-size: 20px;
+	color: white;
+	text-shadow: 0px 0px 5px 2 black;
+	align: center center;
+	font-weight: bold;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	font-family: Radiance;
+}
+
 .BonusCurrencyButton
 {
-	align: right bottom;
-	width: 34px;
-	height: 34px;
-	margin-right: 28px;
+	align: right center;
+	margin-top: 60px;
+	width: 40px;
+	height: 40px;
+	margin-right: 25px;
 }
 
 .BonusCurrencyButton_notactive
@@ -6026,6 +6276,176 @@ Slider.HorizontalSlider
 	background-size: contain;
 	align: center center;
 	background-repeat: no-repeat;
+}
+
+.promo_panel
+{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #242E33 ), to( #0E1619 ) );
+	box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.5);
+	border: 1px solid #5e6869;
+	align: center center;
+	width: 900px;
+	height: 330px;
+	z-index: 10;
+	animation-name: BuyPanelShow;
+	animation-duration: 0.25s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: 1;
+}
+
+.promo_panel_hide
+{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #242E33 ), to( #0E1619 ) );
+	box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.5);
+	border: 1px solid #5e6869;
+	align: center center;
+	width: 900px;
+	height: 330px;
+	z-index: 10;
+	opacity: 0;
+	animation-name: BuyPanelHide;
+	animation-duration: 0.25s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: 1;
+}
+
+.promo_panel_header
+{
+	color: gradient( linear, 0% 100%, 0% 0%, from( #f9e0bb ), to( #fff442 ) );
+	font-size: 55px;
+	font-weight: bold;
+	font-family: Radiance;
+	text-shadow: 0px 0px 5px 3.0 black;
+	z-index: 5;
+	text-transform: uppercase;
+	horizontal-align: center;
+	margin-top: 10px;
+}
+
+.promo_panel_content
+{
+	width: 100%;
+	height: 100%;
+	flow-children: down;
+}
+
+.promo_entry_and_button
+{
+	width: 100%;
+	height: 80px;
+	flow-children: right;
+	margin-top: 50px;
+}
+
+.promo_button
+{
+	width: 200px;
+	height: 50px;
+	background-color: gradient( linear, 0% 0%, 90% 100%, from( #9f6500 ), to( #dbc428 ) );
+	border-top: 2px solid #ffffff22;
+	border-bottom: 2px solid #00000088;
+	vertical-align: center;
+	margin-left: 30px;
+	box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5);
+}
+
+.promo_button:hover
+{
+	brightness: 1.6;
+}
+
+.promo_text_entry
+{
+	width: 500px;
+	height: 55px;
+	border-radius: 4px;
+	border: 2px solid #5e6869;
+	vertical-align: center;
+	margin-left: 85px;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #111111FF ), to( #222222FF ) );
+	padding: 5px;
+	box-shadow: 0px 0px 5px 3.0 black;
+	color: gradient( linear, 0% 100%, 0% 0%, from( #dddddd ), to( #ffffff ) );
+	font-size: 32px;
+	font-weight: bold;
+	font-family: Radiance;
+	text-transform: uppercase;
+}
+
+.promo_button_text
+{
+	font-size: 25px;
+	color: gradient( linear, 0% 100%, 0% 0%, from( #dddddd ), to( #ffffff ) );
+	font-weight: bold;
+	font-family: Radiance;
+	align: center center;
+	text-shadow: 1px 1px 3px 2.0 black;
+	text-align: center;
+	text-overflow: shrink;
+	white-space: nowrap;
+}
+
+.promo_text_status
+{
+	font-size: 28px;
+	color: gradient( linear, 0% 100%, 0% 0%, from( #dddddd ), to( #ffffff ) );
+	font-weight: bold;
+	font-family: Radiance;
+	margin-top: 8px;
+	horizontal-align: center;
+	text-shadow: 1px 1px 3px 2.0 black;
+	text-align: center;
+}
+
+.promo_text_status_yes
+{
+	color: gradient( linear, 0% 100%, 0% 0%, from( #15a323 ), to( #4fe85e ) );
+}
+
+.promo_text_status_no
+{
+	color: gradient( linear, 0% 100%, 0% 0%, from( #db2121 ), to( #f55b5b ) );
+}
+
+.telegram_content
+{
+	width: 600px;
+	height: 40px;
+	align: left bottom;
+	flow-children: right;
+	margin-left: 12px;
+	margin-bottom: 6px;
+}
+
+.telegram_icon
+{
+	width: 36px;
+	height: 36px;
+	background-image: url("s2r://panorama/images/custom_game/telegram_png.vtex");
+	background-size: 100%;
+	background-repeat: no-repeat;
+	vertical-align: center;
+	border: 1px solid #5e6869;
+	box-shadow: 2px 2px 5px black;
+}
+
+.telegram_content:hover
+{
+	brightness: 2.3;
+}
+
+.promo_telegram_text
+{
+	font-size: 21px;
+	color: gradient( linear, 0% 100%, 0% 0%, from( #bbbbbb ), to( #dddddd ) );
+	font-family: Radiance;
+	align: left center;
+	text-shadow: 1px 1px 3px 2.0 black;
+	text-align: center;
+	font-style: italic;
+	text-overflow: shrink;
+	white-space: nowrap;
+	margin-left: 7px;
 }
 
 .currency_panel_buying
@@ -7136,15 +7556,141 @@ Slider.HorizontalSlider
 	text-align: center;
 }
 
+.new_promo_alert
+{
+	width:500px;
+	height: 100px;
+	align: right top;
+	margin-right: 240px;
+	margin-top: 25px;
+	animation-name: ActiveVoteShow;
+	animation-duration: 0.25s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: 1;
+	flow-children: right;
+}
+
+.new_promo_alert_hidden
+{
+	width: 500px;
+	height: 100px;
+	align: right top;
+	margin-right: 240px;
+	margin-top: 25px;
+	opacity: 0;
+	flow-children: right;
+	animation-name: ActiveVoteHide;
+	animation-duration: 0.25s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: 1;
+}
+
+.new_promo_alert_body
+{
+	width: 90%;
+	height: 90%;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #323232 ), to( #000000 ) );
+	border-radius: 8px;
+	border-radius: 8px;
+	vertical-align: center;
+}
+
+.new_promo_alert_arrow
+{
+	height: 50%;
+	width: 10%;
+	vertical-align: center;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-image: url("s2r://panorama/images/custom_game/shop/slider_right_png.vtex");
+}
+
+.new_promo_alert_body_blue
+{
+	border-left: 4px solid #7ab1e6;
+	border-right: 4px solid #7ab1e6;
+}
+
+.new_promo_alert_arrow_blue
+{
+	wash-color: #7ab1e6;
+}
+
+.new_promo_alert_body_orange
+{
+	border-left: 4px solid #ffad14;
+	border-right: 4px solid #ffad14;
+}
+
+.new_promo_alert_arrow_orange
+{
+	wash-color: #ffad14;
+}
+
+.new_promo_alert_content
+{
+	width: 100%;
+	height: 100%;
+	flow-children: down;
+}
+
+.new_promo_alert_top
+{
+	height: 50%;
+	width: 100%;
+}
+
+.new_promo_alert_bot
+{
+	height: 50%;
+	width: 100%;
+}
+
+.new_promo_alert_top_text
+{
+	color: #ccc;
+	font-size: 23px;
+	align: center center;
+	font-weight: bold;
+	font-family: Radiance;
+	text-shadow: 0px 0px 3px 2.0 black;
+	text-align: center;
+	margin-top: 5px;
+}
+
+.new_promo_alert_bot_text
+{
+	color: #ccc;
+	font-size: 21px;
+	font-weight: bold;
+	font-family: Radiance;
+	text-shadow: 0px 0px 3px 2.0 black;
+	text-align: center;
+	align: center center;
+	margin-bottom: 15px;
+	margin-right: 30px;
+}
+
+.new_promo_alert_icon
+{
+	width: 32px;
+	height: 35px;
+	background-image: url("s2r://panorama/images/dota_plus/currency_icon_png.vtex");
+	background-size: 100%;
+	align: center center;
+	margin-left: 190px;
+	margin-bottom: 12px;
+}
+
 .HeroListItems
 {
 	width: 100%;
 	height: 100%;
 	flow-children: down;
 	overflow: squish scroll;
-	padding-left: 50px;
-	padding-right: 50px;
-	padding-bottom: 50px;
+	padding-left: 30px;
+	padding-right: 30px;
+	padding-bottom: 30px;
 }
 
 #CategoryItemsInventory
@@ -7164,10 +7710,11 @@ Slider.HorizontalSlider
 
 .BlockHeroItems
 {
-	width: 120px;
-	height: 100px;
+	width: 110px;
 	margin: 8px;
+	height: 110px;
 	background-color: #000;
+	box-shadow: fill black 0px 0px 18px -3px;
 	background-color: gradient( linear, 0% 0%, 90% 100%, from( #040010 ), to( #000000 ) );
 }
 
@@ -7288,12 +7835,46 @@ Slider.HorizontalSlider
 .buy_full_set_button
 {
 	vertical-align: bottom;
-	horizontal-align: center;
+	horizontal-align: left;
 	margin-bottom: 15px;
-	width: 200px;
+	width: 140px;
 	height: 35px;
-	background-color: gradient( linear, 0% 0%, 90% 100%, from( #d35f04 ), to( #be9d29 ) );
-	box-shadow: inset 0px 0px 4px rgba(0,0,0,0.5);
+	background-color: gradient( linear, 0% 0%, 80% 100%, from( #be9d2960 ), to( #d35f0400 ) );
+	flow-children: right;
+}
+
+.buy_full_set_button_sale
+{
+	width: 220px;
+	background-color: gradient( linear, 0% 0%, 80% 100%, from( #71f33740 ), to( #71f33700 ) );
+}
+
+.buy_full_set_line
+{
+	width: 60px;
+	align: center center;
+	height: 2px;
+	background-color: red;
+	margin-bottom: 3px;
+	box-shadow: #000000b0 1px 0px 4px 0px;
+}
+
+.buy_full_set_old_panel
+{
+	width: 80px;
+	height: 70%;
+	vertical-align: center;
+	margin-top: 5px;
+}
+
+.buy_full_set_old_text
+{
+	font-weight: bold;
+	color: gradient( linear, 0% 100%, 0% 0%, from( #ffc143 ), to( #e5cf15 ) );
+	color: #aaa;
+	align: center center;
+	text-shadow: 0px 0px 5px 3.0 black;
+	font-size: 19px;
 }
 
 .buy_full_set_label
@@ -7303,7 +7884,7 @@ Slider.HorizontalSlider
 	color: #ddd;
 	vertical-align: center;
 	text-shadow: 0px 0px 5px 3.0 black;
-	font-size: 24px;
+	font-size: 23px;
 	margin-top: 1px;
 	margin-left: 4px;
 }
@@ -7319,7 +7900,8 @@ Slider.HorizontalSlider
 
 .set_center_button
 {
-	align: center center;
+	align: left center;
+	margin-left: 5px;
 	flow-children: right;
 }
 
@@ -7330,7 +7912,7 @@ Slider.HorizontalSlider
 	align: right top;
 	margin-top: 2px;
 	margin-right: 0px;
-	background-color: gradient( linear, 0% 0%, 100% 0%, from( #3bc20000 ), to( #71f33790 ) );
+	background-color: gradient( linear, 0% 0%, 100% 0%, from( #c2000000 ), to( #ff0000 ) );
 }
 
 .sets_texture_sale_text
@@ -7733,11 +8315,11 @@ Slider.HorizontalSlider
 
 .ButtonItemStyleBuyPanel
 {
-	width: 35px;
-	height: 35px;
+	width: 29px;
+	height: 29px;
 	margin: 3px;
 	border-radius: 3px;
-	box-shadow: fill black 0px 0px 6px -1px;
+	box-shadow: inset black 0px 0px 9px -2px;
 	border: 1px solid black;
 }
 
@@ -7745,17 +8327,64 @@ Slider.HorizontalSlider
 {
 	align: center center;
 	opacity: 0;
-	width: 15px;
-	height: 15px;
-	border-radius: 10px;
-	background-color: white;
-	box-shadow: fill black 0px 0px 5px -1px;
+	width: 19px;
+	height: 19px;
+	border-radius: 50%;
+	background-color: gradient( radial, 50% 50%, 0% 0%, 50% 50%, from( #e7f6f5 ), to( #333399 ) );
+	box-shadow: fill black 0px 0px 15px -1px;
 	border: 1px solid black;
 }
 
 .ButtonItemStyle_active .ButtonItemStyleBuyPanelActiveIcon
 {
 	opacity: 1;
+}
+
+.ButtonItemStyleBuyPanel_active
+{
+	border: 1px solid #8c8c87;
+	box-shadow: #5b62bfcc 0px 0px 13px -5px;
+}
+
+.ButtonItemStyle
+{
+	width: 18px;
+	height: 18px;
+	margin: 3px;
+	border-radius: 3px;
+	box-shadow: fill black 0px 0px 6px -1px;
+	border: 1px solid black;
+}
+
+.ButtonItemStyleActiveIcon
+{
+	align: center center;
+	opacity: 0;
+	width: 8px;
+	height: 8px;
+	border-radius: 2px;
+	background-color: white;
+	box-shadow: fill #ccc 0px 0px 5px -1px;
+}
+
+.ButtonItemStyle_active .ButtonItemStyleActiveIcon
+{
+	opacity: 1;
+}
+
+.ButtonItemStyleMini_active
+{
+	border: 1px solid #8c8c87;
+	box-shadow: #5b62bfcc 0px 0px 13px -5px;
+}
+
+.active_sale_global_panel
+{
+	width: 300px;
+	height: 55px;
+	vertical-align: center;
+	background-color: gradient( linear, 100% 0%, 0% 0%, from( #fc121200 ), to( #fc121250 ) );
+	flow-children: down;
 }
 
 .active_sale_panel
@@ -7799,6 +8428,17 @@ Slider.HorizontalSlider
 	text-shadow: 0px 0px 5px 2.0 black;
 }
 
+.active_sale_text_bot
+{
+	font-size: 17px;
+	align: left center;
+	margin-left: 32px;
+	color: gradient( linear, 0% 100%, 0% 0%, from( #dddddd ), to( #ffffff ) );
+	font-weight: bold;
+	font-family: Radiance;
+	text-shadow: 0px 0px 5px 2.0 black;
+}
+
 .active_sale_icon
 {
 	height: 25px;
@@ -7807,5 +8447,299 @@ Slider.HorizontalSlider
 	margin-left: 10px;
 	background-size: contain;
 	background-repeat: no-repeat;
+}
+
+.ChooseCategoryBlockCenter
+{
+	horizontal-align: center;
+	margin-left: 0%;
+	margin-right: 76px;
+}
+
+#ChooseCategoryBlockIconCosmetics
+{
+	background-image: url("s2r://panorama/images/custom_game/shop/chat_png.vtex");
+	background-size: 100%;
+	width: 84%;
+	height: 60.8%;
+	align: center top;
+	margin-top: 5%;
+	background-repeat: no-repeat;
+	box-shadow: fill #ccc 0px 0px 6px -3px;
+}
+
+#CategoryCosmetics
+{
+	visibility: collapse;
+	width: 100%;
+	height: 900px;
+}
+
+.pets_info_panel
+{
+	width: 100%;
+	height: 80px;
+	margin-top: 7px;
+	flow-children: right;
+	margin-bottom: 15px;
+	border-brush: gradient( radial, 50% 50%, 0% 0%, 55% 60%, from( white ), to( #fff0 ) );
+	border-bottom: 2px solid #fff;
+}
+
+.pets_info_text
+{
+	font-size: 23px;
+	color: gradient( linear, 0% 100%, 0% 0%, from( #dddddd ), to( #ffffff ) );
+	font-weight: bold;
+	font-family: Radiance;
+	text-shadow: 0px 0px 5px 3.0 black;
+	z-index: 5;
+	text-align: center;
+	align: center center;
+}
+
+.keybind_panel
+{
+	width: 100%;
+	height: 30px;
+	flow-children: right;
+	margin-bottom: 8px;
+}
+
+.keybind_name
+{
+	font-size: 24px;
+	color: gradient( linear, 0% 100%, 0% 0%, from( #dddddd ), to( #ffffff ) );
+	font-weight: bold;
+	font-family: Radiance;
+	text-shadow: 0px 0px 5px 3.0 black;
+	z-index: 5;
+	text-align: left;
+	margin-left: 20px;
+}
+
+.keybind_name_info
+{
+	font-size: 18px;
+	color: #ccc font-weight: bold;
+	font-family: Radiance;
+	text-shadow: 0px 0px 5px 3.0 black;
+	z-index: 5;
+	width: 50%;
+	text-align: left;
+	vertical-align: center;
+	margin-left: 8px;
+}
+
+#CategoryCosmeticsVideo
+{
+	width: 100%;
+	height: 900px;
+}
+
+#CategoryCosmeticsContent
+{
+	width: 100%;
+	height: 900px;
+	flow-children: right-wrap;
+	overflow: clip scroll;
+}
+
+.BlockHoverPanel
+{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #1e2627 ), to( #0f0a18 ) );
+	box-shadow: fill black 0px 0px 120px 0px;
+	border: 1px solid #333;
+	z-index: 9999999;
+}
+
+.BlockHoverPanelRight
+{
+	animation-name: BlockHoverPanelRightShow;
+	animation-duration: 0.15s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: 1;
+}
+
+.BlockHoverPanelLeft
+{
+	animation-name: BlockHoverPanelLeftShow;
+	animation-duration: 0.15s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: 1;
+}
+
+@keyframes 'BlockHoverPanelRightShow'
+{
+	0%
+	{
+		transform: translate3d( -30px, 0%, 0px );
+		opacity: 0;
+	}
+	
+	100%
+	{
+		transform: translate3d( 0, 0, 0px );
+		opacity: 1;
+	}
+	
+}
+
+@keyframes 'BlockHoverPanelLeftShow'
+{
+	0%
+	{
+		transform: translate3d( 30px, 0%, 0px );
+		opacity: 0;
+	}
+	
+	100%
+	{
+		transform: translate3d( 0, 0, 0px );
+		opacity: 1;
+	}
+	
+}
+
+.BlockHoverPanelVideo
+{
+	width: 280px;
+	height: 157.5px;
+	align: center center;
+	border: 1px solid #ccc;
+}
+
+.panels_category_swap
+{
+	width: 100%;
+	height: 50px;
+	margin-bottom: 14px;
+	margin-top: 20px;
+	flow-children: none;
+}
+
+.panels_category_swap_buttons
+{
+	flow-children: right;
+	horizontal-align: center;
+}
+
+.active_buttons_category_not_first
+{
+	margin-left: 15px;
+}
+
+.active_buttons_category
+{
+	width: 500px;
+	height: 50px;
+	border: 1.5px solid #888;
+	margin-bottom: 5px;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #55555550 ), to( #22222250 ) );
+	border-radius: 4px;
+}
+
+.active_buttons_category_current
+{
+	border: 1.5px solid #bd9816;
+	background-color: gradient( linear, 0% 100%, 0% 0%, from( #1d095c90 ), to( #5a35cf90 ) );
+}
+
+.active_buttons_category_label
+{
+	font-size: 30px;
+	color: gradient( linear, 0% 100%, 0% 0%, from( #cccccc ), to( #666666 ) );
+	font-weight: bold;
+	font-family: Radiance;
+	text-shadow: 0px 0px 5px 3.0 black;
+	z-index: 5;
+	text-align: center;
+	align: center center;
+}
+
+.active_buttons_category_label_current
+{
+	color: gradient( linear, 0% 100%, 0% 0%, from( #dddddd ), to( #ffffff ) );
+}
+
+.SoundWheelSettingsButton
+{
+	width: 250px;
+	height: 45px;
+	tooltip-position: bottom;
+	horizontal-align: right;
+	margin-right: 20px;
+	margin-top: 20px;
+	z-index: 10;
+	border: 1.5px solid #888;
+	margin-bottom: 5px;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #55555550 ), to( #22222250 ) );
+	border-radius: 4px;
+}
+
+.SoundWheelSettingsLabel
+{
+	font-size: 19px;
+	color: gradient( linear, 0% 100%, 0% 0%, from( #dddddd ), to( #ffffff ) );
+	font-weight: bold;
+	font-family: Radiance;
+	text-shadow: 0px 0px 5px 3.0 black;
+	z-index: 5;
+	text-align: center;
+	align: center center;
+}
+
+.active_buttons_category_high_five_icon
+{
+	background-image: url("s2r://panorama/images/custom_game/high_five/high_five_png.vtex");
+	background-size: 110% 110%;
+	background-repeat: no-repeat;
+	margin-right: 200px;
+}
+
+.active_buttons_category_tip_icon
+{
+	background-image: url("s2r://panorama/images/custom_game/tips/tip_0_png.vtex");
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	margin-right: 160px;
+}
+
+.active_buttons_category_icon
+{
+	horizontal-align: center;
+	width: 44px;
+	height: 45px;
+	wash-color: #777;
+	saturation: 0.1;
+}
+
+.active_buttons_category_icon_current_tip
+{
+	wash-color: none;
+	saturation: 1;
+}
+
+.active_buttons_category_icon_current_high_five
+{
+	saturation: 1;
+	wash-color: #ddd;
+}
+
+.PanelVideoPet
+{
+	width: 500px;
+	height: 281.25px;
+	margin-bottom: 60px;
+	align: center center;
+	border: 1px solid #ccc;
+	box-shadow: fill #f0bd22 0px 0px 11px -3px;
+}
+
+.buy_panel_pet_video
+{
+	height: 550px;
+	width: 700px;
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #1e2627 ), to( #0f0a18 ) );
 }
 

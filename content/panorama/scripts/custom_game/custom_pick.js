@@ -20,11 +20,21 @@ function IsSpectator() {
 		localTeam !== 9
 }
 
-function init() {
 
-	
-	if (IsSpectator())
-		return
+CustomNetTables.SubscribeNetTableListener( "players_heroes", update_players_heroes );
+
+function update_players_heroes(table, key, data)
+{
+	if (table != "players_heroes") return
+	if (key == -1 || key == "-1" || key == "") return
+
+	pick_select_hero(data)
+}
+
+
+
+function init() 
+{
 
 	GameEvents.Subscribe_custom("pick_start", pick_start)
 	GameEvents.Subscribe_custom("pick_select_hero", pick_select_hero)
@@ -40,7 +50,9 @@ function init() {
 	GameEvents.Subscribe_custom("change_time", change_time)
 	GameEvents.Subscribe_custom("ban_hero_vote", ban_hero_vote)
 	GameEvents.Subscribe_custom("ban_hero", ban_hero)
+	GameEvents.Subscribe_custom("clear_ban_hero", clear_ban_hero)
 	
+//  GameEvents.Subscribe_custom('get_payment_url', get_custom_pick_url)
 
 
 	GameEvents.Subscribe_custom("update_lobby_rating", update_lobby_rating)
@@ -53,8 +65,24 @@ function init() {
 	var InfoText = $.GetContextPanel().FindChildTraverse("InfoText")
 	InfoText.text = $.Localize('#pick_start')
 
+  let text = $.Localize("#RandomBonus_info")
+	var SelectRandomHero_bonus = $.GetContextPanel().FindChildTraverse("SelectRandomHero_bonus")
+	SelectRandomHero_bonus.SetPanelEvent('onmouseover', function() 
+	{
+		$.DispatchEvent('DOTAShowTextTooltip', SelectRandomHero_bonus, text)
+	});
+
+	SelectRandomHero_bonus.SetPanelEvent('onmouseout', function() 
+	{
+		$.DispatchEvent('DOTAHideTextTooltip', SelectRandomHero_bonus);
+	});
+}
 
 
+
+function get_custom_pick_url(kv)
+{
+	$.DispatchEvent("ExternalBrowserGoToURL", kv.url);
 }
 
 
@@ -200,13 +228,6 @@ function RandomHero() {
 
 function Player_Loaded() 
 {
-
-
-	if (IsSpectator()) {
-
-		$.GetContextPanel().DeleteAsync(0)
-		return
-	}
 	check_connection()
 	GameEvents.OnLoaded(() => {
 		const pick_state = CustomNetTables.GetTableValue("custom_pick", "pick_state")
@@ -219,7 +240,6 @@ function Player_Loaded()
 		}
 		else
 		{
-
 			end_pick()
 		}
 	})
@@ -317,8 +337,8 @@ function check_connection()
 var hero_selected = ''
 
 
-function pick_start_time(kv) {
-
+function pick_start_time(kv) 
+{
 	var timer = $.GetContextPanel().FindChildTraverse("pick_timer")
 	if (timer) {
 		timer.DeleteAsync(0)
@@ -340,128 +360,98 @@ function pick_start_time(kv) {
 		timer.text = String(kv.time)
 	}
 
-	Refresh_Random_Button()
 
 	if (hero_selected !== '') {
 		Refresh_Button()
 	}
-
 }
 
 
-function change_time_base(kv) {
-
+function change_time_base(kv) 
+{
 	var timer = $.GetContextPanel().FindChildTraverse("timer_panel_base_time")
 
 	if (timer) {
-		if (Game.GetLocalPlayerID() == kv.id) {
-			if (kv.time == 5) {
+		if (Game.GetLocalPlayerID() == kv.id)
+		{
+			if (kv.time == 5) 
+			{
 				Game.EmitSound("UI.Pick_5_sec")
 			}
 
-			if (kv.time < 5) {
+			if (kv.time < 5) 
+			{
 				Game.EmitSound("General.ButtonClick");
 			}
 		}
-
 		timer.text = String(kv.time)
 	}
 
 	var bases = []
-
-	for (var i = 1; i <= 6; i++) {
+	for (var i = 1; i <= 6; i++) 
+	{
 		bases[i] = $.GetContextPanel().FindChildTraverse("base_icon" + String(i))
 	}
 
 	var flag = true
 	var active_player = CustomNetTables.GetTableValue("custom_pick", "active_player");
 
-	if (active_player.id == Game.GetLocalPlayerID()) {
-		for (var i = 1; i <= 6; i++) {
+	if (active_player.id == Game.GetLocalPlayerID()) 
+	{
+		for (var i = 1; i <= 6; i++) 
+		{
 			flag = true
-			for (var j = 0; j <= kv.picked_bases_length; j++) {
-				if (kv.picked_bases[j] == i) {
+			for (var j = 0; j <= kv.picked_bases_length; j++) 
+			{
+				if (kv.picked_bases[j] == i) 
+				{
 					flag = false
 				}
 			}
-
-			if (flag == true) {
+			if (flag == true) 
+			{
 				SetMouse(bases[i], i)
 			}
 		}
 	}
-
-
 }
 
-
-function pick_start_time_base(kv) {
-
+function pick_start_time_base(kv) 
+{
+	let timer = $.GetContextPanel().FindChildTraverse("pick_timer_base")
+	let time = $.GetContextPanel().FindChildTraverse("timer_panel_base_time")
+	if (timer && timer.IsValid())
+    {
+        timer.DeleteAsync(0)
+    }
+	let hero_panel = $.GetContextPanel().FindChildTraverse("player_base" + kv.id)
 
 	var bases = []
-
-	for (var i = 1; i <= 6; i++) {
+	for (var i = 1; i <= 6; i++) 
+    {
 		bases[i] = $.GetContextPanel().FindChildTraverse("base_icon" + String(i))
 		RemoveMouse(bases[i])
 	}
-
-
-	if (Game.GetLocalPlayerID() == kv.id) {
-
+	if (Game.GetLocalPlayerID() == kv.id) 
+    {
 		Game.EmitSound("UI.Your_turn")
-
 	}
 
-
-	var timer_panel = $.GetContextPanel().FindChildTraverse("pick_base_timer")
-	var hero_panel = $.GetContextPanel().FindChildTraverse("player_base" + kv.id)
-
-	var timer = $.GetContextPanel().FindChildTraverse("pick_timer_base")
-	var time = $.GetContextPanel().FindChildTraverse("timer_panel_base_time")
-
-	if (timer == null) {
-		timer = $.CreatePanel("Panel", timer_panel, "pick_timer_base")
+	if (hero_panel)
+	{
+		timer = $.CreatePanel("Panel", hero_panel.GetChild(0), "pick_timer_base")
 		timer.AddClass("timer_panel_base")
+		timer.current_id = kv.id
+			
 		time = $.CreatePanel("Label", timer, "timer_panel_base_time")
 		time.AddClass("timer_panel_base_time")
 	}
-
-	var order = kv.order + 1
-
-
-	if (order >= 2) {
-		timer.RemoveClass("timer_panel_base_" + String(order - 1))
-	}
-
-	timer.AddClass("timer_panel_base_" + String(order))
-
-	if (kv.time > 0) {
+	
+	if (time && kv.time > 0) 
+	{
 		time.text = String(kv.time)
 	}
-
-	var flag = true
-	var active_player = CustomNetTables.GetTableValue("custom_pick", "active_player");
-
-	if (active_player.id == Game.GetLocalPlayerID()) {
-		for (var i = 1; i <= 6; i++) {
-			flag = true
-			for (var j = 0; j <= kv.picked_bases_length; j++) {
-				if (kv.picked_bases[j] == i) {
-					flag = false
-				}
-			}
-
-			if (flag == true) {
-				SetMouse(bases[i], i)
-			}
-		}
-	}
-
-
-
 }
-
-
 
 function RemoveMouse(panel) {
 
@@ -503,18 +493,43 @@ function SetMouse(panel, number) {
 
 
 
+function Refresh_Random_Button(low_priority) 
+{
 
-function change_time(kv) {
+	var RandomHero_panel = $.GetContextPanel().FindChildTraverse("SelectRandomHero_panel")
+	var RandomHero_button = $.GetContextPanel().FindChildTraverse("SelectRandomHero")
+	var active_player = CustomNetTables.GetTableValue("custom_pick", "active_player");
+
+	if ((active_player && active_player.id !== Game.GetLocalPlayerID()) || (low_priority > 0))
+	{	
+		RandomHero_button.SetPanelEvent("onactivate", function() {});
+		RandomHero_panel.RemoveClass("SelectRandomHero_panel")
+		RandomHero_panel.AddClass("SelectRandomHero_panel_hidden")
+	}else
+	{
+		RandomHero_panel.RemoveClass("SelectRandomHero_panel_hidden")
+		RandomHero_panel.AddClass("SelectRandomHero_panel")
+		RandomHero_button.SetPanelEvent("onactivate", function()
+		{
+			RandomHero();
+		});
+	}
+
+}
 
 
 
+
+
+function change_time(kv) 
+{
 	var server_data = CustomNetTables.GetTableValue("server_data", Game.GetLocalPlayerID().toString());
 
-	
+	let lp_games = 0
 
-	if ((server_data) && (server_data.lp_games_remaining > 0)) {
-
-
+	if ((server_data) && (server_data.lp_games_remaining > 0)) 
+	{
+		lp_games = server_data.lp_games_remaining
 		var LP = $.GetContextPanel().FindChildTraverse("BanStagePanel")
 
 		LP.RemoveClass("BanStagePanel_hidden")
@@ -528,47 +543,47 @@ function change_time(kv) {
 	}
 
 
-
+	Refresh_Random_Button(lp_games)
+	
 	var avg_rating = CustomNetTables.GetTableValue("custom_pick", "avg_rating");
 
-	if (avg_rating) {
+	if (avg_rating) 
+	{
 		var lobby_rating = $.GetContextPanel().FindChildTraverse("lobby_rating_text")
 		lobby_rating.text = $.Localize("#avg_rating") + avg_rating.avg_rating
 	}
 
 	var timer = $.GetContextPanel().FindChildTraverse("pick_timer")
 
-	if (!timer) {
+	if (!timer) 
+	{
 		var hero_panel = $.GetContextPanel().FindChildTraverse("player" + kv.id)
-
-		if (hero_panel) {
-
+		if (hero_panel) 
+		{
 			timer = $.CreatePanel("Label", hero_panel, "pick_timer")
 			timer.AddClass("pick_timer")
 		}
 	}
 
-	if (timer) {
-
-		if (Game.GetLocalPlayerID() == kv.id) {
-			if (kv.time == 10) {
+	if (timer) 
+	{
+		if (Game.GetLocalPlayerID() == kv.id) 
+		{
+			if (kv.time == 10) 
+			{
 				Game.EmitSound("UI.Pick_10_sec")
 			}
-			if (kv.time == 5) {
+			if (kv.time == 5) 
+			{
 				Game.EmitSound("UI.Pick_5_sec")
 			}
-
-			if (kv.time < 5) {
+			if (kv.time < 5) 
+			{
 				Game.EmitSound("General.ButtonClick");
 			}
 		}
-
-
-
 		timer.text = String(kv.time)
 	}
-
-
 }
 
 
@@ -783,13 +798,10 @@ var pick_started = false
 function pick_start() 
 {
 
-
 	if (pick_started == true)
 	{
-		Game.EmitSound("UI.Start_Ban")
 		return
 	}
-
 
 	StealButtons()
 
@@ -803,15 +815,13 @@ function pick_start()
 		lobby_rating.text = $.Localize("#avg_rating") + avg_rating.avg_rating
 	}
 
-
-
 	var player_portraits = []
 	var player_icon = []
-    var random_icon = []
-    var rank_icon = []
-    var random_icon_fill = []
-    var hero_tier = []
-    var hero_tier_text = []
+  var random_icon = []
+  var rank_icon = []
+  var random_icon_fill = []
+  var hero_tier = []
+  var hero_tier_text = []
 	var player_nic = []
 	var player_rank_text = []
 	var player_local = []
@@ -820,28 +830,24 @@ function pick_start()
 	var pick_order_id = []
 
 
-
-
-	if (player_list) {
+	if (player_list) 
+	{
 
 		const players = Object.entries(player_list.lobby_players)
 			.map(([pid, data]) => [pid, data.pick_order])
 			.sort((a, b) => a[1] - b[1])
 
-		for (const [pid, i] of players) {
-
-
+		for (const [pid, i] of players) 
+		{
 
 			pick_started = true
 			var server_data = CustomNetTables.GetTableValue("server_data", String(pid));
 
-
-
 			player_portraits[i] = $.CreatePanel("Panel", lobby_heroes, "player" + pid);
 			player_portraits[i].AddClass("player_portrait")
 
-
-			if (pid == Game.GetLocalPlayerID()) {
+			if (pid == Game.GetLocalPlayerID()) 
+			{
 				player_portraits[i].AddClass("player_portrait_local")
 			}
 
@@ -902,10 +908,9 @@ function pick_start()
 	update_lobby_rating()
 
 
-	$.Schedule(0.2, function() {
+	$.Schedule(0.2, function() 
+	{
 		const pick_state = CustomNetTables.GetTableValue("custom_pick", "pick_state")
-
-
 		if (pick_state === undefined || pick_state.in_progress)
 			pick_start()
 	})
@@ -957,7 +962,6 @@ function RestoreButtons() {
 
 
 function end_pick() {
-	$.Msg('end_pick_js')
 
 	$.GetContextPanel().DeleteAsync(0)
 
@@ -999,20 +1003,24 @@ function pick_base_end() {
 	var player_pick = $.GetContextPanel().FindChildTraverse("pick_base_players")
 
 	var minimap = $.GetContextPanel().FindChildTraverse("pick_base_mimimap")
-
-	player_pick.RemoveClass("pick_base_players_visible")
-	minimap.RemoveClass("pick_base_mimimap_visible")
-
-	minimap.AddClass("pick_base_mimimap_hide")
+  if (GameUI.CustomUIConfig().CloseItemsPanelSelection)
+  {
+      GameUI.CustomUIConfig().CloseItemsPanelSelection()
+  }
+	player_pick.RemoveClass("pick_base_players_show")
 	player_pick.AddClass("pick_base_players_hide")
+
+	minimap.RemoveClass("pick_base_mimimap_show")
+	minimap.AddClass("pick_base_mimimap_hide")
 
 	EndQuestSelection(1)
 
 	$.Schedule(0.7, function() {
-		player_pick.AddClass("pick_base_players_hidden")
-		minimap.AddClass("pick_base_mimimap_hidden")
 		player_pick.RemoveClass("pick_base_players_hide")
+		player_pick.AddClass("pick_base_players_hidden")
+
 		minimap.RemoveClass("pick_base_mimimap_hide")
+		minimap.AddClass("pick_base_mimimap_hidden")
 
 		$.GetContextPanel().FindChildTraverse("BGScene").AddClass("main_hide")
 
@@ -1034,7 +1042,6 @@ function pick_base_end() {
 
 				$.GetContextPanel().AddClass("hidden")
 
-				$.Msg('pick_base_end')
 				end_pick()
 
 			})
@@ -1098,32 +1105,24 @@ function start_base_pick()
 
 	pick_phase.AddClass("panel_close_right")
 	hero_pick.AddClass("panel_close_left")
-
-
-
 	hide_chosen_hero()
 
-
-	$.Schedule(0.6, function() {
-
+	$.Schedule(0.6, function()
+	{
 		Game.EmitSound("UI.Start_Pick_Base")
 
 		pick_phase.DeleteAsync(0)
 		hero_pick.DeleteAsync(0)
 
-		var player_pick = $.GetContextPanel().FindChildTraverse("pick_base_players")
-		player_pick.RemoveClass("pick_base_players_hidden")
-		player_pick.AddClass("pick_base_players_visible")
-
 		var minimap = $.GetContextPanel().FindChildTraverse("pick_base_mimimap")
 		minimap.RemoveClass("pick_base_mimimap_hidden")
+		minimap.AddClass("pick_base_mimimap_show")
 		minimap.AddClass("pick_base_mimimap_visible")
 
 
 		var minimap_text = $.GetContextPanel().FindChildTraverse("minimap_text_text")
 		minimap_text.text = $.Localize("#minimap_text")
 
-		var player_heroes = $.GetContextPanel().FindChildTraverse("pick_base_heroes")
 
 		var player_list = CustomNetTables.GetTableValue("custom_pick", "player_lobby");
 		var player_portraits = []
@@ -1138,56 +1137,71 @@ function start_base_pick()
 
 		var rank_icon = []
 
-
-		if (player_list) {
-
+		if (player_list) 
+		{
 			const players_inv = Object.entries(player_list.lobby_players)
 				.map(([pid, data]) => [pid, data.pick_order])
 				.sort((a, b) => a[1] - b[1])
 				//.reverse()
 
-			for (const [pid, i] of players_inv) {
-
+			for (const [pid, i] of players_inv) 
+			{
 				var sub_data = CustomNetTables.GetTableValue("sub_data", String(pid));
+
+				var player_pick = $.GetContextPanel().FindChildTraverse("pick_base_players")
+				player_pick.RemoveClass("pick_base_players_hidden")
+				player_pick.AddClass("pick_base_players_show")
+				
+				var player_heroes = $.GetContextPanel().FindChildTraverse("pick_base_heroes")
 
 				player_portraits[i] = $.CreatePanel("Panel", player_heroes, "player_base" + pid);
 				player_portraits[i].AddClass("player_base_pick")
-				if (pid == Game.GetLocalPlayerID()) {
+				if (pid == Game.GetLocalPlayerID()) 
+				{
 					player_portraits[i].AddClass("player_base_pick_local")
+          let empty_block_for_items = $.CreatePanel("Panel", $("#pick_base_main"), "")
+          empty_block_for_items.BLoadLayout( "file://{resources}/layout/custom_game/info_reports/hero_selection_items.xml", false, false );
+          if (GameUI.CustomUIConfig().PlayerHasItemInSelection(player_list.lobby_players[pid].picked_hero))
+          {
+              GameUI.CustomUIConfig().InitItemsForPlayer(player_list.lobby_players[pid].picked_hero)
+              $.GetContextPanel().AddClass("HasItemsPanelHeroes")
+							player_pick.AddClass("pick_base_players_visible_items")
+          }
+          else
+          {
+              empty_block_for_items.visible = false
+							player_pick.AddClass("pick_base_players_visible")
+          }
 				}
-
 
 				player_icon[i] = $.CreatePanel("Panel", player_portraits[i], "player_base_icon" + pid);
 				player_icon[i].AddClass("player_base_icon")
 
 				player_icon[i].style.backgroundImage = "url('file://{images}/heroes/" + Game.GetHeroImage(pid, String(player_list.lobby_players[pid].picked_hero)) + ".png')"
-
+				player_icon[i].style.backgroundSize = "100%";
 
         hero_tier[i] = $.CreatePanel("Panel", player_portraits[i], "hero_base_tier" + pid);
         hero_tier[i].AddClass("hero_tier_icon")
         hero_tier[i].backgroundSize = "100%"
         hero_tier[i].style.visibility = "collapse";
 
-
-
         hero_tier_text[i] = $.CreatePanel("Label", hero_tier[i], "hero_base_tier_text" + pid);
         hero_tier_text[i].AddClass("hero_tier_text")
-
 
         rank_icon[i] = $.CreatePanel("Panel", player_portraits[i], "base_rank_icon" + pid);
       	rank_icon[i].AddClass("player_rank_icon")
       	rank_icon[i].backgroundSize = "contain";
 
-		    if (sub_data && sub_data.heroes_data[player_list.lobby_players[pid].picked_hero] && sub_data.heroes_data[player_list.lobby_players[pid].picked_hero].has_level == 1 && sub_data.subscribed == 1  && sub_data.hide_tier == 0) {
-		        hero_tier[i].style.visibility = "visible";
-						hero_tier[i].style.backgroundImage = 'url("file://{images}/custom_game/hero_level_big_' + String(sub_data.heroes_data[player_list.lobby_players[pid].picked_hero].tier) + '.png");'
+		    if (sub_data && sub_data.heroes_data[player_list.lobby_players[pid].picked_hero] && sub_data.heroes_data[player_list.lobby_players[pid].picked_hero].has_level == 1 && sub_data.subscribed == 1  && sub_data.hide_tier == 0) 
+		    {
+	        hero_tier[i].style.visibility = "visible";
+					hero_tier[i].style.backgroundImage = 'url("file://{images}/custom_game/hero_level_big_' + String(sub_data.heroes_data[player_list.lobby_players[pid].picked_hero].tier) + '.png");'
+	    	}
+
+		    if (sub_data && sub_data.heroes_data[player_list.lobby_players[pid].picked_hero] && sub_data.heroes_data[player_list.lobby_players[pid].picked_hero].has_level == 1 && sub_data.subscribed == 1  && sub_data.hide_tier == 0) 
+		    {
+		      hero_tier_text[i].text = sub_data.heroes_data[player_list.lobby_players[pid].picked_hero].level
 		    }
-
-
-		    if (sub_data && sub_data.heroes_data[player_list.lobby_players[pid].picked_hero] && sub_data.heroes_data[player_list.lobby_players[pid].picked_hero].has_level == 1 && sub_data.subscribed == 1  && sub_data.hide_tier == 0) {
-		        hero_tier_text[i].text = sub_data.heroes_data[player_list.lobby_players[pid].picked_hero].level
-		    }
-
 
 				player_rank_text[i] = $.CreatePanel("Label", player_portraits[i], "base_player_rank_text" + pid);
 				player_rank_text[i].AddClass("player_rank_text")
@@ -1195,14 +1209,8 @@ function start_base_pick()
 				player_nic[i] = $.CreatePanel("Label", player_portraits[i], "nicname" + pid);
 				player_nic[i].text = Players.GetPlayerName(parseInt(pid))
 				player_nic[i].AddClass("player_base_text")
-
 			}
-
-
 		}
-
-
-
 		update_lobby_rating()
 	})
 }
@@ -1373,7 +1381,26 @@ function check_donate_heroes()
 
 
 
-function pick_load_heroes() {
+function pick_load_heroes() 
+{
+
+	let main = $("#hero_pick_content")
+
+	let lang = $.Localize("#lang")
+	let tg_panel = main.FindChildTraverse("tg_panel")
+	if (lang != "rus")
+	{
+		tg_panel.AddClass("pick_base_players_hidden")
+	}else
+	{
+		tg_panel.RemoveClass("pick_base_players_hidden")
+	  tg_panel.SetPanelEvent("onactivate", function() 
+	  {  
+	      $.DispatchEvent("ExternalBrowserGoToURL", 'https://t.me/Dota1x6');
+	  })
+	}
+  
+
 	const str_row = $.CreatePanel("Panel", $("#hero_pick_content"), "StrengthSelector");
 	str_row.BLoadLayoutSnippet('heroes_row')
 
@@ -1388,8 +1415,11 @@ function pick_load_heroes() {
 		return
 
 	const hero_names_sorted = [...Object.keys(hero_list)].sort()
-	for (const hero_name of hero_names_sorted) 
+	for (const current_hero of hero_names_sorted) 
 	{
+
+		let hero_name = current_hero
+
 		const attribute = hero_list[hero_name]
 		let selector, attribute_name
 		switch (attribute) {
@@ -1413,11 +1443,21 @@ function pick_load_heroes() {
 				$.Msg(`Unknown attribute ${attribute} on hero ${hero_name}`)
 				continue
 		}
-
 		var hero_creating = selector.FindChild(hero_name)
 		//$.Msg(hero_creating)
-		//$.Msg(hero_creating)
-		if (hero_creating)
+		//$.Msg(hero_creating) 
+		let bane_only = false
+
+		if (false)
+		{
+			let steam_id = Game.GetPlayerInfo( Players.GetLocalPlayer() ).player_steamid
+			if (steam_id == "76561198133050347" || steam_id == 76561198133050347)
+			{
+				bane_only = true
+			}
+		}
+
+		if (hero_creating && bane_only == false)
 		{
 			continue
 		}
@@ -1426,15 +1466,17 @@ function pick_load_heroes() {
 		var panel = $.CreatePanel("Panel", selector, hero_name)
 		panel.AddClass("hero_select_panel")
 
-		SetPSelectEvent(panel, hero_name, attribute_name)
+		let hero_panel_name = hero_name
 
+		if (bane_only == true)
+		{
+			hero_panel_name = "npc_dota_hero_bane"
+		}
 
-		//var portrait = '<DOTAHeroImage id="hero_portrait" heroname="'+hero_name+'" heroimagestyle="portrait" scaling="stretch-to-cover-preserve-aspect" />'
-		//panel.BCreateChildren(portrait )
-
+		SetPSelectEvent(panel, hero_panel_name, attribute_name)
 
 		var port = $.CreatePanel("DOTAHeroImage", panel, 'hero_portrait', {
-			heroname: hero_name,
+			heroname: hero_panel_name,
 			heroimagestyle: "portrait",
 			scaling: "stretch-to-cover-preserve-aspect"
 		})
@@ -1457,9 +1499,7 @@ function pick_load_heroes() {
 		}
 
 		panel.BLoadLayoutSnippet('hero_portrait')
-
-
-		ShowHero(panel, hero_name)
+		ShowHero(panel, hero_panel_name)
 	}
 
 
@@ -1471,9 +1511,11 @@ function pick_select_base(data) {
 
 	Game.EmitSound("General.ButtonClick");
 
+
+
 	var minimap_icon = $.GetContextPanel().FindChildTraverse("base_icon" + String(data.number))
 	if (minimap_icon) {
-		minimap_icon.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + String(data.hero) + '.png" );'
+		minimap_icon.style.backgroundImage = 'url( "file://{images}/heroes/icons/' +  Game.GetHeroImage(data.id, String(data.hero)) + '.png" );'
 		minimap_icon.style.backgroundSize = 'contain'
 	}
 }
@@ -1481,17 +1523,15 @@ function pick_select_base(data) {
 
 
 
-function reload_pick_bases(data) {
-
+function reload_pick_bases(data) 
+{
 	start_base_pick()
 
-
-
-
-	for (var i = 0; i <= Object.keys(data.lobby_players).length - 1; i++) {
-
+	for (var i = 0; i <= Object.keys(data.lobby_players).length - 1; i++) 
+	{
 		var minimap_icon = $.GetContextPanel().FindChildTraverse("base_icon" + String(data.lobby_players[i].select_base))
-		if (minimap_icon) {
+		if (minimap_icon) 
+		{
 			minimap_icon.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + String(data.lobby_players[i].picked_hero) + '.png" );'
 			minimap_icon.style.backgroundSize = 'contain'
 		}
@@ -1526,53 +1566,52 @@ function reload_pick_heroes(data) {
 function pick_select_hero(data) 
 {
 	var icon = $.GetContextPanel().FindChildTraverse(String(data.hero))
-	if (icon) {
+	if (icon)
+	{
 		icon.AddClass("hero_picked")
 	}
 
-	if (Game.GetLocalPlayerID() == data.id) {
-
+	if (Game.GetLocalPlayerID() == data.id) 
+	{
 		Game.EmitSound("UI.Pick_Hero");
-
 	}
-
 
 	Game.EmitSound("UI.Pick_" + Game.GetHeroImage(data.id, String(data.hero)));	
 
-
 	var left_hero = $.GetContextPanel().FindChildTraverse("player_icon" + String(data.id))
-	if (left_hero) {
+	if (left_hero) 
+	{
 		left_hero.style.backgroundImage = "url('file://{images}/heroes/" + Game.GetHeroImage(data.id, String(data.hero)) + ".png')"
 		left_hero.style.backgroundSize = 'contain'
 		left_hero.style.backgroundRepeat = 'no-repeat'
 	}
 
-    var left_random = $.GetContextPanel().FindChildTraverse("random_icon_fill" + String(data.id))
-    var hero_tier = $.GetContextPanel().FindChildTraverse("hero_tier" + String(data.id))
-    var hero_tier_text = $.GetContextPanel().FindChildTraverse("hero_tier_text" + String(data.id))
+  var left_random = $.GetContextPanel().FindChildTraverse("random_icon_fill" + String(data.id))
+  var hero_tier = $.GetContextPanel().FindChildTraverse("hero_tier" + String(data.id))
+  var hero_tier_text = $.GetContextPanel().FindChildTraverse("hero_tier_text" + String(data.id))
 
 	var sub_data = CustomNetTables.GetTableValue("sub_data", String(data.id));
-
 
 	if ((data.id == Game.GetLocalPlayerID())||(data.id == String(Game.GetLocalPlayerID())))
 	{
 		StartQuestSelection()
 	}
 
+  if ((left_random) && (data.random == 1))
+  {
+    left_random.style.visibility = "visible";
+  }
 
-    if ((left_random)&&(data.random ==1)) {
-        left_random.style.visibility = "visible";
-    }
-
-    if ((hero_tier) && (sub_data && sub_data.heroes_data[data.hero] && sub_data.heroes_data[data.hero].has_level == 1) && sub_data.subscribed == 1 && sub_data.hide_tier == 0 ) {
-        hero_tier.style.visibility = "visible";
+  if ((hero_tier) && (sub_data && sub_data.heroes_data[data.hero] && sub_data.heroes_data[data.hero].has_level == 1) && sub_data.subscribed == 1 && sub_data.hide_tier == 0 ) 
+  {
+    hero_tier.style.visibility = "visible";
 		hero_tier.style.backgroundImage = 'url("file://{images}/custom_game/hero_level_big_' + String(sub_data.heroes_data[data.hero].tier) + '.png");'
-    }
+  }
 
-    if ((hero_tier_text) && (sub_data && sub_data.heroes_data[data.hero] && sub_data.heroes_data[data.hero].has_level == 1) && sub_data.subscribed == 1 && sub_data.hide_tier == 0 ) {
+  if ((hero_tier_text) && (sub_data && sub_data.heroes_data[data.hero] && sub_data.heroes_data[data.hero].has_level == 1) && sub_data.subscribed == 1 && sub_data.hide_tier == 0 ) 
+  {
 		hero_tier_text.text = String(sub_data.heroes_data[data.hero].level)
-    }
-
+  }
 
 }
 
@@ -1583,86 +1622,39 @@ function SetPSelectEvent(panel, hero, attribute)
 
 	panel.SetPanelEvent("onactivate", function() 
 	{
-	var ban_state_table = CustomNetTables.GetTableValue("custom_pick", "ban_stage_check");
-	if (ban_state_table) {
-		if (ban_state_table.state == true) {
-
-			Game.EmitSound("General.ButtonClick");
-			GameEvents.SendCustomGameEventToServer_custom("BanVoteHero", {
-				hero: hero
-			})
-		return
+		var ban_state_table = CustomNetTables.GetTableValue("custom_pick", "ban_stage_check");
+		if (ban_state_table) 
+		{
+			if (ban_state_table.state == true) 
+			{
+				Game.EmitSound("General.ButtonClick");
+				GameEvents.SendCustomGameEventToServer_custom("BanVoteHero", { hero: hero })
+			return
+			}
 		}
-	}
 
-	var active_player = CustomNetTables.GetTableValue("custom_pick", "active_player");
+		var active_player = CustomNetTables.GetTableValue("custom_pick", "active_player");
 
-	if (active_player == null) {
-		return
-	}
+		if (active_player == null) 
+		{
+			return
+		}
 
+		let hero_pick = $.GetContextPanel().FindChildTraverse("hero_pick")
+		if (hero_pick.BHasClass("hero_pick_blured"))
+		{
+			hide_chosen_hero()
+			return
+		}
 
-
-	let hero_pick = $.GetContextPanel().FindChildTraverse("hero_pick")
-	if (hero_pick.BHasClass("hero_pick_blured"))
-	{
-		hide_chosen_hero()
-		return
-	}
-
-	ChangeHeroInfo(hero, attribute);
-	var movie = $.GetContextPanel().FindChild('portrait_' + hero + '')
-	if (movie) {
-		movie.DeleteAsync(0)
-	}
-	show_chosen_hero()
-});
-
-}
-
-function Refresh_Random_Button() {
-
-	var hero_list = CustomNetTables.GetTableValue("custom_pick", "player_list");
-	var RandomHero_panel = $.GetContextPanel().FindChildTraverse("SelectRandomHero_panel")
-	var RandomHero_button = $.GetContextPanel().FindChildTraverse("SelectRandomHero")
-	var SelectRandomHero_bonus = $.GetContextPanel().FindChildTraverse("SelectRandomHero_bonus")
-
-    let text = $.Localize("#RandomBonus_info")
-
-	SelectRandomHero_bonus.SetPanelEvent('onmouseover', function() {
-		$.DispatchEvent('DOTAShowTextTooltip', SelectRandomHero_bonus, text)
-	});
-
-	SelectRandomHero_bonus.SetPanelEvent('onmouseout', function() {
-		$.DispatchEvent('DOTAHideTextTooltip', SelectRandomHero_bonus);
-	});
-
-
-	RandomHero_button.SetPanelEvent("onactivate", function() {});
-	
-
-
-	RandomHero_panel.RemoveClass("SelectRandomHero_panel")
-	RandomHero_panel.AddClass("SelectRandomHero_panel_hidden")
-
-	var active_player = CustomNetTables.GetTableValue("custom_pick", "active_player");
-
-	var server_data = CustomNetTables.GetTableValue("server_data", Game.GetLocalPlayerID().toString());
-
-	if ((server_data) && (server_data.lp_games_remaining > 0)) {
-		return
-	}
-
-	if (active_player.id !== Game.GetLocalPlayerID()) {
-		return
-	}
-	RandomHero_panel.RemoveClass("SelectRandomHero_panel_hidden")
-	RandomHero_panel.AddClass("SelectRandomHero_panel")
-	RandomHero_button.SetPanelEvent("onactivate", function() {
-		RandomHero();
+		ChangeHeroInfo(hero, attribute);
+		var movie = $.GetContextPanel().FindChild('portrait_' + hero + '')
+		if (movie) {
+			movie.DeleteAsync(0)
+		}
+		show_chosen_hero()
 	});
 }
-
 
 function Refresh_Button() {
 
@@ -1677,9 +1669,12 @@ function Refresh_Button() {
 	ChoseHero.AddClass("ChoseHero")
 
 	let show = false
-	let data = CustomNetTables.GetTableValue("server_data", String(Players.GetLocalPlayer()));
 
-	if (data && data.total_games && data.total_games >= max_games)
+  let data = CustomNetTables.GetTableValue("server_data", String(Players.GetLocalPlayer()));
+
+  let lang = $.Localize("#lang")
+
+  if ((data && data.total_games && data.total_games >= max_games) || lang == "rus")
 	{
 		show = true
 	}
@@ -1819,12 +1814,22 @@ function DotaChangesHero(hero) {
 	text_space.AddClass("Chosen_hero_space")
 	text_space.AddClass("Chosen_hero_space_changelog")
 
-
+	let general_table = [
+		"innate",
+		"scepter",
+		"Scepter",
+		"Shard",
+		"shard",
+		"movespeed",
+		"Movespeed",
+		"armor",
+	]
 
 	const all_hero_changes = CustomNetTables.GetTableValue("custom_pick", "hero_changes")
 	if (all_hero_changes !== undefined) {
 		const hero_changes = all_hero_changes[hero]
-		if (hero_changes !== undefined) {
+		if (hero_changes !== undefined) 
+		{
 			var hero_change = $.CreatePanel("Panel", text_space, "hero_change")
 			hero_change.AddClass("Change_with_border")
 
@@ -1844,9 +1849,27 @@ function DotaChangesHero(hero) {
 				Changes.AddClass("Change")
 
 				const Changes_icons = $.CreatePanel("Panel", Changes, "Changes_icons" + i)
-				Changes_icons.AddClass("changes_icon")
-				Changes_icons.style.backgroundImage = 'url("file://{images}/custom_game/icons/mini/' + hero + '/' + change + '.png")';
-				Changes_icons.style.backgroundSize = '100%';
+				let path = '"file://{images}/custom_game/icons/mini/' + hero + '/'
+
+				for (const general_icon of Object.values(general_table))
+				{
+					if (general_icon == change)
+					{
+						path = '"file://{images}/custom_game/icons/mini/general_changes/'
+						break
+					}
+				}
+
+				Changes_icons.style.backgroundImage = 'url(' + path + change + '.png")';
+				if (change == "innate")
+				{
+					Changes_icons.AddClass("changes_icon_no_border")
+					Changes_icons.style.backgroundSize = '90%';	
+				}else 
+				{
+					Changes_icons.AddClass("changes_icon")
+					Changes_icons.style.backgroundSize = '100%';
+				}
 
 				const Changes_text_array = $.CreatePanel("Label", Changes, "text" + i)
 				Changes_text_array.html = true
@@ -2259,9 +2282,8 @@ function ShowVideo(table, hero) {
 	text_space.AddClass("Chosen_hero_space")
 	text_space.AddClass("Chosen_hero_space_video")
 
-	let movieSrc = "file://{resources}/videos/custom_game/" + table[1] + ".webm";
-
-	//text_space.BCreateChildren('<MoviePanel  id="Movie"  src="' + movieSrc + '" volume="0" repeat="true" muted="muted" autoplay="onload" />');
+	let movieSrc = `file://{resources}/videos/custom_game/heroes/${hero}/${table[1]}.webm`;
+	
 
 	$.CreatePanel("MoviePanel", text_space, "Movie", {
 		src: movieSrc,
@@ -2389,7 +2411,6 @@ function ChangeHeroInfo(hero_name, attribute) {
 	}
 
 	hero_selected = hero_name
-
 
 	InitHeroQuests()
 
@@ -2594,7 +2615,7 @@ function init_space_pick(hero_alt) {
 			orange_card[c] = $.CreatePanel("Panel", LayerOrange, "orange_card" + c)
 			orange_card[c].AddClass("orange_card")
 
-      MouseOverTalent(orange_card[c], $.Localize('#upgrade_disc_' + name), name, 0, false, true)
+      MouseOverTalent(orange_card[c], '#upgrade_disc_' + name, name, 0, false, true)
 
 			orange_content[c] = $.CreatePanel("Panel", orange_card[c], "orange_content" + c)
 			orange_content[c].AddClass("orange_content_anim");
@@ -2660,7 +2681,7 @@ function init_space_pick(hero_alt) {
 				MouseOver(purple_card[p], final_text )
 			}else 
 			{
-        MouseOverTalent(purple_card[p], talent_text, name, data[4], false)
+        MouseOverTalent(purple_card[p], '#upgrade_disc_' + name, name, data[4], false)
 			}
 
 
@@ -2708,7 +2729,7 @@ function init_space_pick(hero_alt) {
 				MouseOver(blue_card[b], final_text)
       }else 
       {
-        MouseOverTalent(blue_card[b], talent_text, name, data[4], false)
+        MouseOverTalent(blue_card[b], '#upgrade_disc_' + name, name, data[4], false)
       }
 
 
@@ -2741,6 +2762,17 @@ function delete_space_pick() {
 
 }
 
+function clear_ban_hero(data)
+{
+	let hero_name = data.hero
+
+	let hero_panel = $.GetContextPanel().FindChildTraverse(String(hero_name))
+	if (hero_panel) 
+	{
+		hero_panel.RemoveClass("HeroBanned")
+	}
+}
+
 function ban_hero_vote(data) {
 	let hero_name = data.hero
 	let votes = data.votes
@@ -2766,7 +2798,8 @@ function ban_hero_vote(data) {
 	}
 }
 
-function ban_hero(data) {
+function ban_hero(data) 
+{
 	let hero_name = data.hero
 	let votes_heroes_table = data.table_votes
 
@@ -2778,10 +2811,6 @@ function ban_hero(data) {
 			let hero_panel_check = $.GetContextPanel().FindChildTraverse(String(votes_heroes_table[i].name))
 			if (hero_panel_check) {
 				hero_panel_check.RemoveClass("HeroBanned")
-	//			let ban_panel_check = hero_panel_check.FindChildTraverse("BanPanel")
-	//			if (ban_panel_check) {
-	//				ban_panel_check.DeleteAsync(0.03)
-			//	}
 			}
 		}
 	}
@@ -2803,6 +2832,8 @@ function StartBanStage(data) {
 	var BanStagePanel = $.GetContextPanel().FindChildTraverse("BanStagePanel")
 	BanStagePanel.RemoveClass("BanStagePanel_hidden")
 	BanStagePanel.AddClass("BanStagePanel_visible")
+
+	Game.EmitSound("UI.Start_Ban")
 
 	var BanStagePanel_text = $.GetContextPanel().FindChildTraverse("BanStagePanel_text")
 	BanStagePanel_text.text = $.Localize('#PICK_STATE_PICK_BANNED')
@@ -2886,7 +2917,6 @@ function EndBanStage(data) {
 
 function InitHeroQuests()
 {
-
 	var sub_data = CustomNetTables.GetTableValue("sub_data", String(Game.GetLocalPlayerID()));
 	let main = $.GetContextPanel().FindChildTraverse("HeroQuests")
 
@@ -2941,9 +2971,6 @@ function ShowHeroQuests()
 	let main = $.GetContextPanel().FindChildTraverse("HeroQuests")
 	let arrow = $.GetContextPanel().FindChildTraverse("HeroQuestsTop_Icon")
 
-
-
-
 	if (!main)
 	{
 		return
@@ -2970,9 +2997,7 @@ function ShowHeroQuests()
 
 		arrow.AddClass("HeroQuestsTop_Icon_open")
 		arrow.RemoveClass("HeroQuestsTop_Icon_close")
-
-
-        Game.EmitSound("UI.Talent_show")
+    Game.EmitSound("UI.Talent_show")
 	}
 
 
@@ -3051,6 +3076,7 @@ function ChangeQuestsInfo(hero_name)
 
 function StartQuestSelection()
 {
+
 	InitHeroQuests()
 
 	let main = $.GetContextPanel().FindChildTraverse("HeroQuests")
@@ -3058,12 +3084,10 @@ function StartQuestSelection()
 	var quests_data = CustomNetTables.GetTableValue("hero_quests", String(Game.GetLocalPlayerID()));
 	var player_list = CustomNetTables.GetTableValue("players_heroes", String(Game.GetLocalPlayerID()));
 
-
 	if (player_list == null)
 	{
 		return
 	}
-
 
 	let hero_name = player_list.hero
 	let count = 0

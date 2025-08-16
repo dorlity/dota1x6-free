@@ -12,13 +12,14 @@ function modifier_megacreep_passive:IsHidden() return true end
 function modifier_megacreep_passive:IsPurgable() return false end
 
 
-function modifier_megacreep_passive:DeclareFunctions() return {
 
-    MODIFIER_EVENT_ON_DEATH
+function modifier_megacreep_passive:OnCreated()
+self.parent = self:GetParent()
+self.parent:AddDeathEvent(self)
+end
 
-} end
 
-function modifier_megacreep_passive:OnDeath( param )
+function modifier_megacreep_passive:DeathEvent( param )
     if not IsServer() then end 
       
     if param.unit == self:GetParent() then

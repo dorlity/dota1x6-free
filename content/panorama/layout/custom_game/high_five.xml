@@ -1,0 +1,26 @@
+<!-- xml reconstructed by Source 2 Viewer 14.1.0.0 - https://valveresourceformat.github.io -->
+<root>
+	<scripts>
+		<include src="s2r://panorama/scripts/custom_game/utils.vjs_c" />
+		<include src="s2r://panorama/scripts/custom_game/high_five.vjs_c" />
+	</scripts>
+	<styles>
+		<include src="s2r://panorama/styles/custom_game/high_five.vcss_c" />
+	</styles>
+	<snippets>
+		<snippet name="HighFiveSnippet">
+			<Button id="HighFive" class="__HF_Remove__">
+				<Panel class="PanelImageB">
+					<Panel id="CooldownContainer">
+						<Panel id="CooldownBackground" />
+						<Label id="CooldownLabel" text="" />
+					</Panel>
+				</Panel>
+				<Panel class="HighFiveKeyButton">
+					<Label class="HighFiveKeyButtonLabel" id="HighFiveKeyButtonLabel" text="" />
+				</Panel>
+			</Button>
+		</snippet>
+	</snippets>
+	<Panel />
+</root>

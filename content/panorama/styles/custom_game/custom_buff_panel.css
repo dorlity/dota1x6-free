@@ -1,4 +1,4 @@
-/* Prettified by Source 2 Viewer 7.0.0.0 - https://valveresourceformat.github.io */
+/* Prettified by Source 2 Viewer 14.1.0.0 - https://valveresourceformat.github.io */
 
 .CustomBuffPanelMain
 {
@@ -6,12 +6,17 @@
 	height: 100%;
 }
 
+.panel_hidden
+{
+	opacity: 0;
+}
+
 .BuffPanel
 {
-	margin-bottom: 15.3%;
-	margin-right: 630px;
-	align: center bottom;
-	height: 36px;
+	align: left top;
+	margin-top: 25px;
+	margin-left: 60px;
+	height: 40px;
 	flow-children: right;
 	border: 2px solid black;
 	box-shadow: fill black 0px 0px 12px -5px;
@@ -19,8 +24,8 @@
 
 .Buff
 {
-	height: 32px;
-	width: 32px;
+	height: 36px;
+	width: 36px;
 	border-radius: 2px;
 }
 
@@ -61,37 +66,25 @@
 
 #Buff_1_icon
 {
-	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_ogre_magi/bloodlust_legendary_1_png.vtex");
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_ogre_magi/bloodlust_legendary_7_png.vtex");
 	background-size: 100%;
 }
 
 #Buff_2_icon
 {
-	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_ogre_magi/bloodlust_legendary_2_png.vtex");
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_ogre_magi/bloodlust_legendary_6_png.vtex");
 	background-size: 100%;
 }
 
 #Buff_3_icon
 {
-	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_ogre_magi/bloodlust_legendary_3_png.vtex");
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_ogre_magi/bloodlust_legendary_5_png.vtex");
 	background-size: 100%;
 }
 
 #Buff_4_icon
 {
-	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_ogre_magi/bloodlust_legendary_4_png.vtex");
-	background-size: 100%;
-}
-
-#Buff_5_icon
-{
-	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_ogre_magi/bloodlust_legendary_5_png.vtex");
-	background-size: 100%;
-}
-
-#Buff_6_icon
-{
-	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_ogre_magi/bloodlust_legendary_6_png.vtex");
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_ogre_magi/bloodlust_legendary_2_png.vtex");
 	background-size: 100%;
 }
 

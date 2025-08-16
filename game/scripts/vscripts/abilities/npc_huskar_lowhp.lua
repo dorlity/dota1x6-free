@@ -5,6 +5,13 @@ npc_huskar_lowhp = class({})
 
 function npc_huskar_lowhp:GetIntrinsicModifierName() return "modifier_huskar_lowhp" end
  
+function npc_huskar_lowhp:Precache(context)
+PrecacheResource( "particle", "particles/units/heroes/hero_huskar/huskar_berserkers_blood.vpcf", context )
+
+end
+
+
+
 modifier_huskar_lowhp = class ({})
 
 function modifier_huskar_lowhp:IsHidden() return true end
@@ -23,7 +30,7 @@ function modifier_huskar_lowhp:DeclareFunctions()
     MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
     MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
     MODIFIER_PROPERTY_MODEL_SCALE,
-    MODIFIER_EVENT_ON_ATTACK_LANDED,
+    MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
     MODIFIER_PROPERTY_TOOLTIP,
     MODIFIER_PROPERTY_TOOLTIP2
   }
@@ -70,7 +77,7 @@ if self:GetParent():GetHealthPercent() <= self.health then
 end
 
 
-function modifier_huskar_lowhp:OnAttackLanded( params ) 
+function modifier_huskar_lowhp:GetModifierProcAttack_Feedback( params ) 
     if not IsServer() then end 
     if params.attacker == self:GetParent() and self:GetParent():GetHealthPercent() <= self.health then
         local heal = self:GetAbility():GetSpecialValueFor("heal")

@@ -1,39 +1,37 @@
 LinkLuaModifier("modifier_troll_warlord_whirling_axes_melee_custom", "abilities/troll_warlord/troll_warlord_whirling_axes_melee_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_troll_warlord_whirling_axes_melee_custom_thinker", "abilities/troll_warlord/troll_warlord_whirling_axes_melee_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_troll_warlord_whirling_axes_attack", "abilities/troll_warlord/troll_warlord_whirling_axes_melee_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_troll_warlord_whirling_axes_melee_custom_thinker_axe", "abilities/troll_warlord/troll_warlord_whirling_axes_melee_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_troll_warlord_whirling_axes_tracker", "abilities/troll_warlord/troll_warlord_whirling_axes_melee_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_troll_warlord_whirling_axes_melee_quest", "abilities/troll_warlord/troll_warlord_whirling_axes_melee_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_troll_warlord_whirling_axes_melee_custom_stack", "abilities/troll_warlord/troll_warlord_whirling_axes_melee_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_troll_warlord_whirling_axes_ranged_custom_stack", "abilities/troll_warlord/troll_warlord_whirling_axes_melee_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_troll_warlord_whirling_axes_perma_melee", "abilities/troll_warlord/troll_warlord_whirling_axes_melee_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_troll_warlord_whirling_axes_perma_ranged", "abilities/troll_warlord/troll_warlord_whirling_axes_melee_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_troll_warlord_whirling_axes_buff", "abilities/troll_warlord/troll_warlord_whirling_axes_melee_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_troll_warlord_whirling_axes_charge", "abilities/troll_warlord/troll_warlord_whirling_axes_melee_custom", LUA_MODIFIER_MOTION_HORIZONTAL)
-LinkLuaModifier("modifier_troll_warlord_whirling_axes_melee_cd", "abilities/troll_warlord/troll_warlord_whirling_axes_melee_custom", LUA_MODIFIER_MOTION_HORIZONTAL)
-
-
-
+LinkLuaModifier("modifier_troll_warlord_whirling_axes_legendary_stack", "abilities/troll_warlord/troll_warlord_whirling_axes_melee_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_troll_warlord_whirling_axes_attack", "abilities/troll_warlord/troll_warlord_whirling_axes_melee_custom", LUA_MODIFIER_MOTION_NONE)
 
 
 troll_warlord_whirling_axes_melee_custom = class({})
 
+function troll_warlord_whirling_axes_melee_custom:GetAbilityTextureName()
+    if self:GetCaster():HasModifier("modifier_troll_warlord_ti10_immortal_shoulder_custom") then
+        return "troll_warlord/troll_ti10_immortal_ability_icon/troll_ti10_immortal_whirling_axes_melee"
+    end
+    return "troll_warlord_whirling_axes_melee"
+end
 
-
-
-
-
-
-
+function troll_warlord_whirling_axes_melee_custom:CreateTalent()
+self:UpdateUI()
+end
 
 function troll_warlord_whirling_axes_melee_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-    
-PrecacheResource( "particle", "particles/units/heroes/hero_troll_warlord/troll_warlord_whirling_axe_melee.vpcf", context )
-PrecacheResource( "particle", "particles/sf_refresh_a.vpcf", context )
-PrecacheResource( "particle", "particles/troll_hit.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_marci/marci_unleash_stack.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_marci/orb_damage_stack.vpcf", context )
-PrecacheResource( "particle", "particles/troll_warlord/refresh_ranged.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_troll_warlord/troll_warlord_whirling_axe_melee.vpcf", context )
+PrecacheResource( "particle","particles/sf_refresh_a.vpcf", context ) 
+PrecacheResource( "particle","particles/troll_warlord/refresh_ranged.vpcf", context )
+PrecacheResource( "particle","particles/troll_warlord/axes_melle_stack.vpcf", context )
+PrecacheResource( "particle","particles/troll_warlord/axes_ranged_stack.vpcf", context )
+PrecacheResource( "particle","particles/rare_orb_patrol.vpcf", context )
+PrecacheResource( "particle","particles/jugg_parry.vpcf", context )
 end
 
 
@@ -46,57 +44,72 @@ end
 
 end
 
-function troll_warlord_whirling_axes_melee_custom:GetIntrinsicModifierName()
-return "modifier_troll_warlord_whirling_axes_tracker"
+function troll_warlord_whirling_axes_melee_custom:GetBehavior()	
+local bonus = 0
+if self:GetCaster():HasTalent("modifier_troll_axes_6") then
+	bonus = DOTA_ABILITY_BEHAVIOR_IGNORE_PSEUDO_QUEUE
 end
-
-function troll_warlord_whirling_axes_melee_custom:OnUpgrade()
-	if self:GetCaster():HasModifier("modifier_troll_warlord_berserkers_rage_custom") then
-		--self:SetActivated(true)
-	else
-		if not self:GetCaster():HasModifier("modifier_troll_axes_legendary") then 
-		--	self:SetActivated(false)
-		end
-	end
-end
-
-
-function troll_warlord_whirling_axes_melee_custom:GetBehavior()
-
-local bonus = 0 
-
-if self:GetCaster():HasModifier("modifier_troll_axes_6") then 
-	bonus = DOTA_ABILITY_BEHAVIOR_AUTOCAST
-end
-
 return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IMMEDIATE + bonus
 end
 
+function troll_warlord_whirling_axes_melee_custom:GetIntrinsicModifierName()
+if not self:GetCaster():IsRealHero() then return end
+return "modifier_troll_warlord_whirling_axes_tracker"
+end
+
+
+function troll_warlord_whirling_axes_melee_custom:UpdateUI()
+local mod = self:GetCaster():FindModifierByName("modifier_troll_warlord_whirling_axes_tracker")
+if mod then
+	mod:UpdateUI()
+end
+
+end
 
 function troll_warlord_whirling_axes_melee_custom:GetCooldown(level)
 local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_troll_axes_1") then
+if self:GetCaster():HasTalent("modifier_troll_axes_1") then
 	bonus = self:GetCaster():GetTalentValue("modifier_troll_axes_1", "cd")
 end
-
 return self.BaseClass.GetCooldown( self, level ) + bonus
 end
 
-
-
 function troll_warlord_whirling_axes_melee_custom:GetManaCost(level)
 local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_troll_axes_1") then
+if self:GetCaster():HasTalent("modifier_troll_axes_1") then
 	bonus = self:GetCaster():GetTalentValue("modifier_troll_axes_1", "mana")
 end
-
 return self.BaseClass.GetManaCost(self, level) + bonus
-
 end
 
 
+function troll_warlord_whirling_axes_melee_custom:LegendaryProc(index)
+local caster = self:GetCaster()
+if not caster:HasTalent("modifier_troll_axes_legendary") then return 0 end
+
+local tracker = caster:FindModifierByName("modifier_troll_warlord_whirling_axes_tracker")
+if not tracker then return end
+if index ~= tracker:GetStackCount() then return end
+
+caster:AddNewModifier(caster, self, "modifier_troll_warlord_whirling_axes_legendary_stack", {duration = caster:GetTalentValue("modifier_troll_axes_legendary", "duration", true), stack = tracker:GetStackCount()})
+tracker:UpdateUI()
+end
+
+
+function troll_warlord_whirling_axes_melee_custom:ProcHit(target, stun)
+
+local caster = self:GetCaster()
+
+if caster:HasTalent("modifier_troll_axes_4") then
+	target:AddNewModifier(caster, caster:BkbAbility(self, caster:HasScepter()), "modifier_troll_warlord_whirling_axes_melee_custom_stack", {duration = caster:GetTalentValue("modifier_troll_axes_4", "duration")})
+end
+
+end
+
+function troll_warlord_whirling_axes_melee_custom:GetDamage()
+local caster = self:GetCaster()
+return self:GetSpecialValueFor("damage") + caster:GetTalentValue("modifier_troll_axes_3", "damage")*caster:GetAverageTrueAttackDamage(nil)/100
+end
 
 
 function troll_warlord_whirling_axes_melee_custom:OnSpellStart()
@@ -110,268 +123,205 @@ if caster:HasScepter() then
 	caster:Purge(false, true, false, false, false)
 end
 
-if not self:GetCaster():HasModifier("modifier_troll_warlord_berserkers_rage_custom") then 
-
-	local ability = self:GetCaster():FindAbilityByName("troll_warlord_berserkers_rage_custom")
-
+if not caster:HasModifier("modifier_troll_warlord_berserkers_rage_custom") and not caster:HasTalent("modifier_troll_rage_legendary") then 
+	local ability = caster:FindAbilityByName("troll_warlord_berserkers_rage_custom")
 	if ability and ability:IsTrained() then 
 		ability:ToggleAbility()
 	end 
 end 
 
-
-if self:GetCaster():HasModifier("modifier_troll_axes_3") then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_troll_warlord_whirling_axes_attack", {duration = self:GetCaster():GetTalentValue("modifier_troll_axes_3", "duration")})
+if caster:HasTalent("modifier_troll_axes_3") then 
+	caster:AddNewModifier(caster, self, "modifier_troll_warlord_whirling_axes_attack", {duration = caster:GetTalentValue("modifier_troll_axes_3", "duration")})
 end
-
-
 
 local whirl_duration = self:GetSpecialValueFor("whirl_duration")
 
-local max = 1
-local stun = 0
 
-local particle = "particles/units/heroes/hero_troll_warlord/troll_warlord_whirling_axe_melee.vpcf"
-local stun_mod = self:GetCaster():FindModifierByName("modifier_troll_warlord_whirling_axes_perma_melee")
-
-if stun_mod and not self:GetCaster():HasModifier("modifier_troll_warlord_whirling_axes_melee_cd") 
-	and self:GetCaster():HasModifier("modifier_troll_axes_4") and stun_mod:GetStackCount() >= self:GetCaster():GetTalentValue("modifier_troll_axes_4", "max") then 
-	
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_troll_warlord_whirling_axes_melee_cd", {duration = self:GetCaster():GetTalentValue("modifier_troll_axes_4", "cd")})
-	particle = "particles/econ/items/troll_warlord/troll_ti10_shoulder/troll_ti10_whirling_axe_melee.vpcf"
-	stun = 1
+if caster:HasTalent("modifier_troll_axes_legendary") then
+	self:LegendaryProc(0)
 end
 
-if self:GetCaster():HasModifier("modifier_troll_axes_6") and self:GetAutoCastState() == true then 
-	ProjectileManager:ProjectileDodge(self:GetCaster())
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_troll_warlord_whirling_axes_charge", {duration = self:GetCaster():GetTalentValue("modifier_troll_axes_6", "duration")})
-end 
+if caster:HasTalent("modifier_troll_axes_6") then 
+	caster:RemoveModifierByName("modifier_troll_warlord_whirling_axes_buff")
+	caster:AddNewModifier(caster, self ,"modifier_troll_warlord_whirling_axes_buff", {duration = whirl_duration})
+end
 
-for i = 1,max do
-
-
-	if self:GetCaster():HasModifier("modifier_troll_axes_6") or self:GetCaster():HasModifier("modifier_troll_axes_2") then 
-		self:GetCaster():AddNewModifier(self:GetCaster(), self ,"modifier_troll_warlord_whirling_axes_buff", {duration = whirl_duration})
-	end
-
-
-	local angle_east = QAngle(0,90,0)
-	local angle_west = QAngle(0,-90,0)
-	if i == 2 then 
-		angle_east = QAngle(0,0,0)
-		angle_west = QAngle(0,180,0)
-	end
-
-	local start_radius = 100
-
-	local forward_vector = caster:GetForwardVector()
-	local front_position = caster_location + forward_vector * start_radius
-	local position_east = RotatePosition(caster_location, angle_east, front_position) 
-	local position_west = RotatePosition(caster_location, angle_west, front_position)
-
-	position_east = GetGroundPosition( position_east, self:GetCaster() )
-	position_west = GetGroundPosition( position_west, self:GetCaster() )
-	position_east.z = position_east.z + 75
-	position_west.z = position_west.z + 75
-
-
-	local index = DoUniqueString("index")
-	self[index] = {}
-
-	self.whirling_axes_east = CreateUnitByName("npc_dota_troll_warlord_axe", position_east, false, caster, caster, caster:GetTeam() )
-	self.whirling_axes_east:SetAbsOrigin(position_east)
-	self.whirling_axes_east:AddNewModifier(caster, self, "modifier_troll_warlord_whirling_axes_melee_custom_thinker", {stun = stun, i = i, index = index, count = 1})
-
-	self.whirling_axes_east.particle = ParticleManager:CreateParticle(particle, PATTACH_ABSORIGIN_FOLLOW, self.whirling_axes_east)
-	ParticleManager:SetParticleControl(self.whirling_axes_east.particle, 0, self.whirling_axes_east:GetAbsOrigin())
-	ParticleManager:SetParticleControl(self.whirling_axes_east.particle, 1, self.whirling_axes_east:GetAbsOrigin())
-	ParticleManager:SetParticleControl(self.whirling_axes_east.particle, 4, Vector(whirl_duration,0,0))
-	self.whirling_axes_east.axe_radius = start_radius
-	self.whirling_axes_east.start_time = GameRules:GetGameTime()
-	self.whirling_axes_east.side = 0
-
-	self.whirling_axes_west = CreateUnitByName("npc_dota_troll_warlord_axe", position_west, false, caster, caster, caster:GetTeam() )
-	self.whirling_axes_west:SetAbsOrigin(position_west)
-	self.whirling_axes_west:AddNewModifier(caster, self, "modifier_troll_warlord_whirling_axes_melee_custom_thinker", {stun = stun, i = i, index = index, count = 2})
-	self.whirling_axes_west.particle = ParticleManager:CreateParticle(particle, PATTACH_ABSORIGIN_FOLLOW, self.whirling_axes_west)
-	ParticleManager:SetParticleControl(self.whirling_axes_west.particle, 0, self.whirling_axes_west:GetAbsOrigin())
-	ParticleManager:SetParticleControl(self.whirling_axes_west.particle, 1, self.whirling_axes_west:GetAbsOrigin())
-	ParticleManager:SetParticleControl(self.whirling_axes_west.particle, 4, Vector(whirl_duration,0,0))
-	self.whirling_axes_west.axe_radius = start_radius
-	self.whirling_axes_west.start_time = GameRules:GetGameTime()
-	self.whirling_axes_west.side = 1
-
+caster:AddNewModifier(caster, self, "modifier_troll_warlord_whirling_axes_melee_custom_thinker", {duration = whirl_duration, damage = damage})
 end
 
 
-
-end
 
 modifier_troll_warlord_whirling_axes_melee_custom_thinker = class({})
-
+function modifier_troll_warlord_whirling_axes_melee_custom_thinker:IsHidden() return true end
+function modifier_troll_warlord_whirling_axes_melee_custom_thinker:IsPurgable() return false end
+function modifier_troll_warlord_whirling_axes_melee_custom_thinker:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_troll_warlord_whirling_axes_melee_custom_thinker:OnCreated(params)
 if not IsServer() then return end
-self.index = params.index
-self.stun = params.stun
-self:StartIntervalThink(FrameTime())
-self.i = params.i
 
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+self.caster = self:GetCaster()
 
-self.damage = self:GetAbility():GetSpecialValueFor("damage")
+self.blind_duration = self.ability:GetSpecialValueFor("blind_duration")
+self.hit_radius = self.ability:GetSpecialValueFor("hit_radius")
+self.max_range = self.ability:GetSpecialValueFor("max_range")
+self.axe_movement_speed = self.ability:GetSpecialValueFor("axe_movement_speed")
+self.whirl_duration = self.ability:GetSpecialValueFor("whirl_duration")
 
-local legen_mod = self:GetCaster():FindModifierByName("modifier_troll_warlord_whirling_axes_melee_custom_stack")
-local epic_mod = self:GetCaster():FindModifierByName("modifier_troll_warlord_whirling_axes_perma_melee")
+self.damage = self.ability:GetDamage()
 
-if not legen_mod then 
-	legen_mod = self:GetCaster():FindModifierByName("modifier_troll_warlord_whirling_axes_ranged_custom_stack")
-end 
+self.max = 2
 
-if epic_mod and self:GetCaster():HasModifier("modifier_troll_axes_4") then 
-	self.damage = self.damage + epic_mod:GetStackCount()*self:GetCaster():GetTalentValue("modifier_troll_axes_4", "damage")
-end 
+local start_radius = 100
+local forward_vector = self.caster:GetForwardVector()
+local caster_location = self.caster:GetAbsOrigin()
+local front_position = caster_location + forward_vector * start_radius
 
-if legen_mod then 
-	self.damage = self.damage*(1 + legen_mod:GetStackCount()*self:GetCaster():GetTalentValue("modifier_troll_axes_legendary", "damage")/100)
+self.axes = {}
+
+for i = 1,self.max do
+	local pos = GetGroundPosition(RotatePosition(caster_location, QAngle(0, 90 * i, 0), front_position), nil)
+	pos.z = pos.z + 75
+
+	self.axes[i] = CreateUnitByName("npc_dota_troll_warlord_axe", pos, false, self.caster, self.caster, self.caster:GetTeamNumber() )
+	self.axes[i]:SetAbsOrigin(pos)
+	self.axes[i]:AddNewModifier(self.caster, self.ability, "modifier_troll_warlord_whirling_axes_melee_custom_thinker_axe", {})
+	self.axes[i].current_radius = start_radius
+
+    local particle_name = "particles/units/heroes/hero_troll_warlord/troll_warlord_whirling_axe_melee.vpcf"
+    if self.caster:HasModifier("modifier_troll_warlord_ti10_immortal_shoulder_custom") then
+        particle_name = "particles/econ/items/troll_warlord/troll_ti10_shoulder/troll_ti10_whirling_axe_melee.vpcf"
+    end
+
+	self.axes[i].particle = ParticleManager:CreateParticle(particle_name, PATTACH_ABSORIGIN_FOLLOW, self.axes[i])
+	ParticleManager:SetParticleControl(self.axes[i].particle, 0, self.axes[i]:GetAbsOrigin())
+	ParticleManager:SetParticleControl(self.axes[i].particle, 1, self.axes[i]:GetAbsOrigin())
+	ParticleManager:SetParticleControl(self.axes[i].particle, 4, Vector(self.whirl_duration + 0.1,0,0))
 end
 
+self.interval = 0.01
+self.targets = {}
+self:StartIntervalThink(self.interval)
 end
-
 
 
 
 function modifier_troll_warlord_whirling_axes_melee_custom_thinker:OnIntervalThink()
 if not IsServer() then return end
-if not self:GetParent().start_time then return end
 
-	local elapsed_time = GameRules:GetGameTime() - self:GetParent().start_time
-	if not self:GetCaster():IsAlive() then self:GetParent():RemoveSelf() return end
-	local hit_radius = self:GetAbility():GetSpecialValueFor("hit_radius")
-	local max_range = self:GetAbility():GetSpecialValueFor("max_range")
-	local axe_movement_speed = self:GetAbility():GetSpecialValueFor("axe_movement_speed")
-	local blind_duration = self:GetAbility():GetSpecialValueFor("blind_duration")
-	local whirl_duration = self:GetAbility():GetSpecialValueFor("whirl_duration")
-	local caster_location = self:GetCaster():GetAbsOrigin()
-	local currentRadius	= self:GetParent().axe_radius 
+local elapsed_time = self:GetElapsedTime()
+local caster_location = self.caster:GetAbsOrigin()
 
+for i = 1,self.max do
+	if self.axes[i] and not self.axes[i]:IsNull() then
 
-	local deltaRadius = axe_movement_speed / whirl_duration/2 * FrameTime()
-	if elapsed_time >= whirl_duration * 0.65 then
-		currentRadius = currentRadius - deltaRadius
-	else
-		currentRadius = currentRadius + deltaRadius
-	end
-	currentRadius = math.min( currentRadius, (max_range - hit_radius))
-	self:GetParent().axe_radius = currentRadius
+		local currentRadius	= self.axes[i].current_radius 
 
-	local rotation_angle
-
-	if self.i == 1 then 
-
-		if self:GetParent().side == 1 then
-		rotation_angle = elapsed_time * 360
+		local deltaRadius = self.axe_movement_speed / self.whirl_duration/2 * self.interval
+		if elapsed_time >= self.whirl_duration * 0.5 then
+			currentRadius = currentRadius - deltaRadius
 		else
-			rotation_angle = elapsed_time * 360 + 180
+			currentRadius = currentRadius + deltaRadius
+		end
+		currentRadius = math.min( currentRadius, (self.max_range - self.hit_radius))
+		self.axes[i].current_radius = currentRadius
+
+		local rotation_angle = elapsed_time * 360 + -90 + 180*(i - 1)
+
+		local relPos = Vector( 0, currentRadius, 0 )
+		relPos = RotatePosition( Vector(0,0,0), QAngle( 0, -rotation_angle, 0 ), relPos )
+		local absPos = GetGroundPosition( relPos + caster_location, nil )
+		absPos.z = absPos.z + 75
+		self.axes[i]:SetAbsOrigin( absPos )
+
+		if self.axes[i].particle then
+			ParticleManager:SetParticleControl(self.axes[i].particle, 1, absPos)
 		end
 
-	else 
+		for _, unit in pairs(self.caster:FindTargets(self.hit_radius, absPos)) do
+			if not self.targets[unit] then
 
-		if self:GetParent().side == 1 then
-		rotation_angle = elapsed_time * 360 + 90
-		else
-			rotation_angle = elapsed_time * 360 - 90
-		end
+				self.targets[unit] = true
 
-	end
+				unit:AddNewModifier(self.caster, self.caster:BkbAbility(self.ability, self.caster:HasScepter()), "modifier_troll_warlord_whirling_axes_melee_custom", {duration = self.blind_duration})
 
-	local relPos = Vector( 0, currentRadius, 0 )
-	relPos = RotatePosition( Vector(0,0,0), QAngle( 0, -rotation_angle, 0 ), relPos )
-	local absPos = GetGroundPosition( relPos + caster_location, self:GetParent() )
-	absPos.z = absPos.z + 75
-	self:GetParent():SetAbsOrigin( absPos )
+				self.ability:ProcHit(unit)
 
-	ParticleManager:SetParticleControl(self:GetParent().particle, 0, self:GetParent():GetAbsOrigin())
-	ParticleManager:SetParticleControl(self:GetParent().particle, 1, self:GetParent():GetAbsOrigin())
-	ParticleManager:SetParticleControl(self:GetParent().particle, 3, self:GetParent():GetAbsOrigin())
-	if elapsed_time >= whirl_duration then
-		self:GetParent():RemoveSelf()
-	end
-
-	local units = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, hit_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO+DOTA_UNIT_TARGET_BASIC, 0, FIND_CLOSEST, false)
-	for _, unit in pairs(units) do
-		local was_hit = false
-		if self:GetAbility() and self.index and self:GetAbility()[self.index] then
-			for _, stored_target in ipairs(self:GetAbility()[self.index]) do
-				if unit == stored_target then
-					was_hit = true
-				end
-			end
-		end
-		if was_hit == false then
-			table.insert(self:GetAbility()[self.index],unit)
-			unit:AddNewModifier(self:GetCaster(), self:GetCaster():BkbAbility(self:GetAbility(), self:GetCaster():HasScepter()), "modifier_troll_warlord_whirling_axes_melee_custom", {duration = blind_duration})
-
-
-			if self.stun == 1 then 
-				unit:EmitSound("BB.Goo_stun") 
-				unit:ApplyStun(self:GetAbility(), self:GetCaster():HasScepter(), self:GetCaster(), (1 - unit:GetStatusResistance())*self:GetCaster():GetTalentValue("modifier_troll_axes_4", "stun"))
-			end
-
-
-			if self:GetCaster():GetQuest() == "Troll.Quest_6" and unit:IsRealHero() then 
-
-				local mod = unit:FindModifierByName("modifier_troll_warlord_whirling_axes_ranged_quest")
-				if mod then 
-					mod:Destroy()
-					self:GetCaster():UpdateQuest(1)
-				else 
-					unit:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_troll_warlord_whirling_axes_melee_quest", {duration = self:GetCaster().quest.number})
+				if self.caster:GetQuest() == "Troll.Quest_6" and unit:IsRealHero() then 
+					local mod = unit:FindModifierByName("modifier_troll_warlord_whirling_axes_ranged_quest")
+					if mod then 
+						mod:Destroy()
+						self.caster:UpdateQuest(1)
+					else 
+						unit:AddNewModifier(self.caster, self.ability, "modifier_troll_warlord_whirling_axes_melee_quest", {duration = self.caster.quest.number})
+					end
 				end
 
+				DoDamage({victim = unit, attacker = self.caster, damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self.ability})
+				unit:EmitSound("Hero_TrollWarlord.WhirlingAxes.Target")
 			end
-
-			ApplyDamage({victim = unit, attacker = self:GetCaster(), damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility()})
-			unit:EmitSound("Hero_TrollWarlord.WhirlingAxes.Target")
-
-	
 		end
 	end
 end
 
-function modifier_troll_warlord_whirling_axes_melee_custom_thinker:CheckState()
-    local state = {
-    [MODIFIER_STATE_NO_UNIT_COLLISION] = true,
-    [MODIFIER_STATE_NO_HEALTH_BAR]              = true,
-    [MODIFIER_STATE_INVULNERABLE]        = true  }
-    return state
 end
+
 
 function modifier_troll_warlord_whirling_axes_melee_custom_thinker:OnDestroy()
-	if not IsServer() then return end
-	--self:GetAbility()[self.index] = nil
-	UTIL_Remove(self:GetParent())
+if not IsServer() then return end
+
+for i = 1, self.max do
+	if self.axes[i].particle then
+		ParticleManager:Delete(self.axes[i].particle, 1)
+		self.axes[i].particle = nil
+	end
+
+	if self.axes[i] and not self.axes[i]:IsNull() then
+		self.axes[i]:RemoveModifierByName("modifier_troll_warlord_whirling_axes_melee_custom_thinker_axe")
+		UTIL_Remove(self.axes[i])
+	end
+end
+
 end
 
 
 
+modifier_troll_warlord_whirling_axes_melee_custom_thinker_axe = class({})
+function modifier_troll_warlord_whirling_axes_melee_custom_thinker_axe:IsHidden() return true end
+function modifier_troll_warlord_whirling_axes_melee_custom_thinker_axe:IsPurgable() return false end
+function modifier_troll_warlord_whirling_axes_melee_custom_thinker_axe:OnCreated()
+self.parent = self:GetParent()
+
+end
+
+function modifier_troll_warlord_whirling_axes_melee_custom_thinker_axe:CheckState()
+return 
+{
+	[MODIFIER_STATE_NO_UNIT_COLLISION] = true,
+	[MODIFIER_STATE_NO_HEALTH_BAR]  = true,
+	[MODIFIER_STATE_OUT_OF_GAME]  = true,
+	[MODIFIER_STATE_INVULNERABLE] = true  
+}
+end
 
 
 
 
 modifier_troll_warlord_whirling_axes_melee_custom = class({})
-
 function modifier_troll_warlord_whirling_axes_melee_custom:IsPurgable() return not self:GetCaster():HasScepter() end
-
-function modifier_troll_warlord_whirling_axes_melee_custom:OnCreated(params)
-
 function modifier_troll_warlord_whirling_axes_melee_custom:GetTexture() return "troll_warlord_whirling_axes_melee" end
+function modifier_troll_warlord_whirling_axes_melee_custom:OnCreated(params)
+self.caster = self:GetCaster()
+self.parent = self:GetParent()
 
+self.damage_reduce = self.caster:GetTalentValue("modifier_troll_axes_2", "damage_reduce")
 
-self.ability = self:GetCaster():FindAbilityByName("troll_warlord_whirling_axes_melee_custom")
+self.ability = self.caster:FindAbilityByName("troll_warlord_whirling_axes_melee_custom")
 if not self.ability then self:Destroy() return end
 
 self.miss_chance = self.ability:GetSpecialValueFor("blind_pct")
 
-if not self:GetParent():IsHero() then 
+if self.parent:IsCreep() then 
 	self.miss_chance = self.ability:GetSpecialValueFor("blind_creeps")
 end
 
@@ -379,16 +329,24 @@ end
 
 
 function modifier_troll_warlord_whirling_axes_melee_custom:DeclareFunctions()
-	local decFuns =
-		{
-			MODIFIER_PROPERTY_MISS_PERCENTAGE,
-		}
-		
-	return decFuns
+return
+{
+	MODIFIER_PROPERTY_MISS_PERCENTAGE,
+	MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
+	MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
+}
 end
 
 function modifier_troll_warlord_whirling_axes_melee_custom:GetModifierMiss_Percentage()
-	return self.miss_chance
+return self.miss_chance
+end
+
+function modifier_troll_warlord_whirling_axes_melee_custom:GetModifierDamageOutgoing_Percentage()
+return self.damage_reduce
+end
+
+function modifier_troll_warlord_whirling_axes_melee_custom:GetModifierSpellAmplify_Percentage()
+return self.damage_reduce
 end
 
 
@@ -400,55 +358,22 @@ function modifier_troll_warlord_whirling_axes_attack:IsHidden() return false end
 function modifier_troll_warlord_whirling_axes_attack:IsPurgable() return true end
 function modifier_troll_warlord_whirling_axes_attack:GetTexture() return "buffs/quill_cdr" end
 function modifier_troll_warlord_whirling_axes_attack:OnCreated(table)
-
-self.damage = self:GetCaster():GetTalentValue("modifier_troll_axes_3", "damage")
-if not IsServer() then return end
-self.radius = self:GetCaster():GetTalentValue("modifier_troll_axes_3", "radius")
-self:SetStackCount(self:GetCaster():GetTalentValue("modifier_troll_axes_3", "max"))
-
+self.parent = self:GetParent()
+self.speed = self.parent:GetTalentValue("modifier_troll_axes_3", "speed")
 end
-
-function modifier_troll_warlord_whirling_axes_attack:OnRefresh(table)
-self:OnCreated(table)
-end
-
 
 function modifier_troll_warlord_whirling_axes_attack:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_ATTACK_LANDED,
-	MODIFIER_PROPERTY_TOOLTIP
+	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
 }
 end
 
-function modifier_troll_warlord_whirling_axes_attack:OnTooltip()
-return self.damage
-end
-
-function modifier_troll_warlord_whirling_axes_attack:OnAttackLanded(params)
-if not IsServer() then return end
-if self:GetCaster() ~= params.attacker then return end
-if not params.target:IsCreep() and not params.target:IsHero() then return end
-
-local units = FindUnitsInRadius( self:GetCaster():GetTeamNumber(),  params.target:GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, FIND_ANY_ORDER, false )
-
-local particle = ParticleManager:CreateParticle("particles/troll_hit.vpcf", PATTACH_WORLDORIGIN, nil)	
-ParticleManager:SetParticleControl(particle, 0, params.target:GetAbsOrigin())
-
-for _,unit in pairs(units) do 
-
-	local real_damage = ApplyDamage({victim = unit, attacker = self:GetCaster(), damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility()})
-	SendOverheadEventMessage(unit, 4, unit, real_damage, nil)
+function modifier_troll_warlord_whirling_axes_attack:GetModifierAttackSpeedBonus_Constant()
+return self.speed
 end
 
 
-self:DecrementStackCount()
-
-if self:GetStackCount() == 0 then 
-	self:Destroy()
-end
-
-end
 
 
 
@@ -458,265 +383,177 @@ function modifier_troll_warlord_whirling_axes_tracker:IsPurgable() return false 
 function modifier_troll_warlord_whirling_axes_tracker:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_ABILITY_FULLY_CAST,
-	MODIFIER_EVENT_ON_ATTACK_LANDED
+	MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS,
 }
+end
+
+function modifier_troll_warlord_whirling_axes_tracker:GetModifierMagicalResistanceBonus()
+return self.magic_resist
 end
 
 function modifier_troll_warlord_whirling_axes_tracker:OnCreated()
+
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.parent:AddRecordDestroyEvent(self)
+
+self.magic_resist = self.parent:GetTalentValue("modifier_troll_axes_2", "magic")
+
+self.legendary_duration = self.parent:GetTalentValue("modifier_troll_axes_legendary", "duration", true)
+self.legendary_max = self.parent:GetTalentValue("modifier_troll_axes_legendary", "max", true)
+self.legendary_stun = self.parent:GetTalentValue("modifier_troll_axes_legendary", "stun", true)
+self.legendary_damage = self.parent:GetTalentValue("modifier_troll_axes_legendary", "damage", true)/100
+self.legendary_radius = self.parent:GetTalentValue("modifier_troll_axes_legendary", "radius", true)
+
+self.records = {}
+
 if not IsServer() then return end 
-
-self:StartIntervalThink(1)
+self:SetHasCustomTransmitterData(true)
+self:UpdateTalent()
 end
 
-function modifier_troll_warlord_whirling_axes_tracker:OnIntervalThink()
+function modifier_troll_warlord_whirling_axes_tracker:UpdateTalent(name)
+
+if name == "modifier_troll_axes_legendary" or self.parent:HasTalent("modifier_troll_axes_legendary") then
+	self.parent:AddAttackStartEvent_out(self)
+	self.parent:AddAttackEvent_out(self)
+end
+ 
+self.magic_resist = self.parent:GetTalentValue("modifier_troll_axes_2", "magic")
+self:SendBuffRefreshToClients()
+end
+
+function modifier_troll_warlord_whirling_axes_tracker:AddCustomTransmitterData() 
+return 
+{
+    magic_resist = self.magic_resist,
+} 
+end
+
+function modifier_troll_warlord_whirling_axes_tracker:HandleCustomTransmitterData(data)
+self.magic_resist = data.magic_resist
+end
+
+function modifier_troll_warlord_whirling_axes_tracker:RecordDestroyEvent(params)
+if not IsServer() then return end
+if not self.records[params.record] then return end
+self.records[params.record] = nil
+end
+
+
+function modifier_troll_warlord_whirling_axes_tracker:UpdateUI()
 if not IsServer() then return end 
-if not self:GetParent():HasModifier("modifier_troll_axes_legendary") then return end 
-
-local ranged = self:GetParent():FindModifierByName("modifier_troll_warlord_whirling_axes_ranged_custom_stack")
-local melee = self:GetParent():FindModifierByName("modifier_troll_warlord_whirling_axes_melee_custom_stack")
-
-local max = self:GetCaster():GetTalentValue("modifier_troll_axes_legendary", "max")
-local duration = 0 
-local stack = 0
-local type = 0
-
-if ranged then 
-	type = 1
- 	duration = ranged:GetRemainingTime()
- 	stack = ranged:GetStackCount()
-elseif melee then
-	type = 2 
-	stack = melee:GetStackCount()
-	duration = melee:GetRemainingTime()
-end
-
-
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'troll_axes_change',  {type = type, max = max, damage = stack})
-	
-
-self:StartIntervalThink(0.1)
-end 
-
-
-
-
-function modifier_troll_warlord_whirling_axes_tracker:OnAbilityFullyCast(params)
-if not IsServer() then return end
-if params.unit~=self:GetParent() then return end
-if not params.ability then return end
-if params.ability:GetName() ~= "troll_warlord_whirling_axes_melee_custom" and params.ability:GetName() ~= "troll_warlord_whirling_axes_ranged_custom" then return end
-if not self:GetParent():HasModifier("modifier_troll_axes_legendary") then return end
-
-local name = "modifier_"..params.ability:GetName().."_stack"
-
-local mod = self:GetParent():FindModifierByName("modifier_troll_warlord_whirling_axes_melee_custom_stack")
-
-if not mod then 
-	mod = self:GetParent():FindModifierByName("modifier_troll_warlord_whirling_axes_ranged_custom_stack")
-end 
+if not self.parent:HasTalent("modifier_troll_axes_legendary") then return end 
 
 local stack = 0
+local active = self:GetStackCount()
+local max = self.legendary_max
+local mod = self.parent:FindModifierByName("modifier_troll_warlord_whirling_axes_legendary_stack")
 
-if mod then 
-	stack = mod:GetStackCount()
+if mod then
+	stack = mod.stack
+end
+
+self.parent:UpdateUIlong({max = max, stack = stack, no_min = 1, active = active, style = "TrollAxes"})
 end 
 
-if stack < self:GetCaster():GetTalentValue("modifier_troll_axes_legendary", "max") then 
-	stack = stack + 1
+function modifier_troll_warlord_whirling_axes_tracker:AttackEvent_out(params)
+if not self.parent:HasTalent("modifier_troll_axes_legendary") then return end
+if self.parent ~= params.attacker then return end
+if not self.records[params.record] then return end
+local target = params.target
+
+target:EmitSound("BB.Goo_stun")
+
+if self.parent:HasModifier("modifier_troll_warlord_ti7_immortal_weapon_custom") then
+	local immortal_particle = ParticleManager:CreateParticle("particles/econ/items/troll_warlord/troll_warlord_ti7_axe/troll_ti7_axe_bash_explosion.vpcf", PATTACH_OVERHEAD_FOLLOW, target)
+	ParticleManager:SetParticleControl(immortal_particle, 0, target:GetAbsOrigin())
+	ParticleManager:SetParticleControl(immortal_particle, 1, self.parent:GetAbsOrigin() )
+	ParticleManager:Delete(immortal_particle, 1)
+else
+	local hit_effect = ParticleManager:CreateParticle("particles/units/heroes/hero_monkey_king/monkey_king_quad_tap_hit.vpcf", PATTACH_CUSTOMORIGIN, target)
+	ParticleManager:SetParticleControlEnt(hit_effect, 0, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), false) 
+	ParticleManager:SetParticleControlEnt(hit_effect, 1, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), false) 
+	ParticleManager:Delete(hit_effect, 1)
 end
 
-print(stack)
+local particle = ParticleManager:CreateParticle("particles/troll_hit.vpcf", PATTACH_WORLDORIGIN, nil)	
+ParticleManager:SetParticleControl(particle, 0, target:GetAbsOrigin())
+ParticleManager:Delete(particle, 1)
 
-self:GetParent():AddNewModifier(self:GetParent(), params.ability, name, {stack = stack, duration = self:GetCaster():GetTalentValue("modifier_troll_axes_legendary", "duration")})
+local damage = self.ability:GetDamage()*self.legendary_damage
+
+for _,unit in pairs(self.parent:FindTargets(self.legendary_radius, target:GetAbsOrigin())) do
+	unit:ApplyStun(self, self.parent:HasScepter(), self.parent, (1 - unit:GetStatusResistance())*self.legendary_stun)
+	local real_damage = DoDamage({victim = unit, attacker = self.parent, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self.ability}, "modifier_troll_axes_legendary")
+	unit:SendNumber(6, real_damage)
+end
 
 end
 
 
-function modifier_troll_warlord_whirling_axes_tracker:OnAttackLanded(params)
+function modifier_troll_warlord_whirling_axes_tracker:AttackStartEvent_out(params)
 if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end 
-if not params.target:IsHero() and not params.target:IsCreep() then return end
+if self.parent ~= params.attacker then return end
+if not params.target:IsUnit() then return end
+if not self.parent:HasTalent("modifier_troll_axes_legendary") then return end
+if params.no_attack_cooldown then return end
 
+local mod = self.parent:FindModifierByName("modifier_troll_warlord_whirling_axes_legendary_stack")
+if not mod then return end
 
-
-local ability = self:GetAbility()
-local mod_name = "modifier_troll_warlord_whirling_axes_perma_melee"
-
-if params.ranged_attack then 
-	mod_name = "modifier_troll_warlord_whirling_axes_perma_ranged"
-	ability = self:GetCaster():FindAbilityByName("troll_warlord_whirling_axes_ranged_custom")
+if mod:GetStackCount() == 0 then
+	local tracker = self.parent:FindModifierByName("modifier_troll_warlord_berserkers_rage_tracker")
+ 	if not tracker or not tracker:AllowMelle() then
+ 		--return
+ 	end
 end
 
-if ability and params.target:IsRealHero() then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), ability, mod_name, {})
-end 
+if self:GetStackCount() == 1 and not self.parent:IsRangedAttacker() then 
+	--return 
+end
 
+mod.stack = mod.stack - 1
+mod:SetDuration(self.legendary_duration, true)
+mod:OnRefresh()
 
+if mod.stack <= 0 then
+	mod:Destroy()
 
+	self.records[params.record] = true
+	local ability = self.ability
+	local effect = "particles/sf_refresh_a.vpcf" 
 
-if not self:GetParent():HasModifier("modifier_troll_axes_legendary") then return end
-
-local name = self:GetAbility():GetName()
-local part = "particles/sf_refresh_a.vpcf" 
-local ability = self:GetParent():FindAbilityByName(name)
-
-if  ability and ability:GetCooldownTimeRemaining() > 0.1 then 
-	if self:GetCaster():CdAbility(ability, self:GetCaster():GetTalentValue("modifier_troll_axes_legendary", "cd")) then 
-		self:GetCaster():EmitSound("Troll.Axed_cd")
-		local particle = ParticleManager:CreateParticle(part, PATTACH_CUSTOMORIGIN, self:GetCaster())
-		ParticleManager:SetParticleControlEnt( particle, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetCaster():GetOrigin(), true )
-		ParticleManager:ReleaseParticleIndex(particle)
+	if self:GetStackCount() == 1 then
+		ability = self.parent:FindAbilityByName("troll_warlord_whirling_axes_ranged_custom")
+		effect = "particles/troll_warlord/refresh_ranged.vpcf"
+		self:SetStackCount(0)
+	else
+		self:SetStackCount(1)
 	end
-end 
 
-name = "troll_warlord_whirling_axes_ranged_custom"
-part = "particles/troll_warlord/refresh_ranged.vpcf"
-
-ability = self:GetParent():FindAbilityByName(name)
-
-if ability and ability:GetCooldownTimeRemaining() > 0.1 then 
-	if self:GetCaster():CdAbility(ability, self:GetCaster():GetTalentValue("modifier_troll_axes_legendary", "cd")) then 
-		self:GetCaster():EmitSound("Troll.Axed_cd")
-		local particle = ParticleManager:CreateParticle(part, PATTACH_CUSTOMORIGIN, self:GetCaster())
-		ParticleManager:SetParticleControlEnt( particle, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetCaster():GetOrigin(), true )
-		ParticleManager:ReleaseParticleIndex(particle)
+	if ability then
+		self.parent:CdAbility(ability, ability:GetCooldownTimeRemaining()*self.parent:GetTalentValue("modifier_troll_axes_legendary", "cd")/100)
+		self.parent:EmitSound("Troll.Axed_cd")
+		local particle = ParticleManager:CreateParticle(effect, PATTACH_CUSTOMORIGIN, self.parent)
+		ParticleManager:SetParticleControlEnt( particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetOrigin(), true )
+		ParticleManager:Delete(particle, 0)
 	end
-
 end
 
-end 
-
-
-
-
-
-
-
-
-
-
-
-modifier_troll_warlord_whirling_axes_melee_custom_stack = class({})
-function modifier_troll_warlord_whirling_axes_melee_custom_stack:IsHidden() return true end
-function modifier_troll_warlord_whirling_axes_melee_custom_stack:IsPurgable() return false end
-
-
-function modifier_troll_warlord_whirling_axes_melee_custom_stack:OnCreated(table)
-self.damage = self:GetCaster():GetTalentValue("modifier_troll_axes_legendary", "damage")
-
-if not IsServer() then return end
-
-self:GetParent():RemoveModifierByName("modifier_troll_warlord_whirling_axes_ranged_custom_stack")
-self:SetStackCount(table.stack)
-self.RemoveForDuel = true
-
-
-
-local particle_cast = "particles/units/heroes/hero_marci/marci_unleash_stack.vpcf"
-
-self.effect_cast = ParticleManager:CreateParticle( particle_cast, PATTACH_OVERHEAD_FOLLOW, self:GetParent() )
-ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( 0, self:GetStackCount(), 0 ) )
-
-
-end
-
-function modifier_troll_warlord_whirling_axes_melee_custom_stack:OnRefresh(table)
-if not IsServer() then return end
-self:Destroy()
+self:UpdateUI()
 end
 
 
-function modifier_troll_warlord_whirling_axes_melee_custom_stack:DeclareFunctions()
+function modifier_troll_warlord_whirling_axes_tracker:CheckState()
+local mod = self.parent:FindModifierByName("modifier_troll_warlord_whirling_axes_legendary_stack")
+if not mod or not mod.stack or mod.stack > 1 then return end
 return
 {
-	MODIFIER_PROPERTY_TOOLTIP
+	[MODIFIER_STATE_CANNOT_MISS] = true
 }
 end
-
-function modifier_troll_warlord_whirling_axes_melee_custom_stack:OnTooltip()
-return self:GetStackCount()*self.damage
-end
-
-
-function modifier_troll_warlord_whirling_axes_melee_custom_stack:OnDestroy()
-
-if self.effect_cast then 
-	ParticleManager:DestroyParticle(self.effect_cast, true)
-	ParticleManager:ReleaseParticleIndex(self.effect_cast)
-end
-
-end 
-
-
-
-
-
-modifier_troll_warlord_whirling_axes_ranged_custom_stack = class({})
-function modifier_troll_warlord_whirling_axes_ranged_custom_stack:IsHidden() return true end
-function modifier_troll_warlord_whirling_axes_ranged_custom_stack:IsPurgable() return false end
-
-
-function modifier_troll_warlord_whirling_axes_ranged_custom_stack:OnCreated(table)
-
-self.damage = self:GetCaster():GetTalentValue("modifier_troll_axes_legendary", "damage")
-
-if not IsServer() then return end
-
-self:GetParent():RemoveModifierByName("modifier_troll_warlord_whirling_axes_melee_custom_stack")
-
-self:SetStackCount(table.stack)
-
-self.RemoveForDuel = true
-
-local particle_cast = "particles/units/heroes/hero_marci/orb_damage_stack.vpcf"
-
-self.effect_cast = ParticleManager:CreateParticle( particle_cast, PATTACH_OVERHEAD_FOLLOW, self:GetParent() )
-ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( 0, self:GetStackCount(), 0 ) )
-self:AddParticle(self.effect_cast,false, false, -1, false, false)
-
-end
-
-function modifier_troll_warlord_whirling_axes_ranged_custom_stack:OnRefresh(table)
-if not IsServer() then return end
-self:Destroy()
-end
-
-
-function modifier_troll_warlord_whirling_axes_ranged_custom_stack:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_TOOLTIP
-}
-end
-
-function modifier_troll_warlord_whirling_axes_ranged_custom_stack:OnTooltip()
-return self:GetStackCount()*self.damage
-end
-
-
-
-function modifier_troll_warlord_whirling_axes_ranged_custom_stack:OnDestroy()
-
-if self.effect_cast then 
-	ParticleManager:DestroyParticle(self.effect_cast, true)
-	ParticleManager:ReleaseParticleIndex(self.effect_cast)
-end
-
-end 
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -726,222 +563,67 @@ function modifier_troll_warlord_whirling_axes_melee_quest:IsPurgable() return fa
 
 
 
-modifier_troll_warlord_whirling_axes_perma_melee = class({})
-function modifier_troll_warlord_whirling_axes_perma_melee:IsHidden() return not self:GetCaster():HasModifier("modifier_troll_axes_4") end
-function modifier_troll_warlord_whirling_axes_perma_melee:IsPurgable() return false end
-function modifier_troll_warlord_whirling_axes_perma_melee:RemoveOnDeath() return false end
-function modifier_troll_warlord_whirling_axes_perma_melee:OnCreated()
-if not IsServer() then return end 
-
-self.max = self:GetCaster():GetTalentValue("modifier_troll_axes_4", "max", true)
-self.attaks = self:GetCaster():GetTalentValue("modifier_troll_axes_4", "attacks", true)
-
-self.count = 1
-self:SetStackCount(0)
-self:StartIntervalThink(0.5)
-end
-
-
-function modifier_troll_warlord_whirling_axes_perma_melee:OnIntervalThink()
-if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_troll_axes_4") then return end 
-
-if self:GetStackCount() >= self.max then 
-
-
-	self:GetParent():EmitSound("BS.Thirst_legendary_active")
-	local particle_peffect = ParticleManager:CreateParticle("particles/brist_lowhp_.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-	ParticleManager:SetParticleControl(particle_peffect, 0, self:GetCaster():GetAbsOrigin())
-	ParticleManager:SetParticleControl(particle_peffect, 2, self:GetCaster():GetAbsOrigin())
-	ParticleManager:ReleaseParticleIndex(particle_peffect)
-	
-	self:StartIntervalThink(-1)
-end
-
-end 
-
-function modifier_troll_warlord_whirling_axes_perma_melee:OnRefresh()
-if not IsServer() then return end 
-if self:GetStackCount() >= self.max then return end 
-
-
-self.count = self.count + 1
-
-if self.count >= self.attaks then 
-	self.count = 0 
-	self:IncrementStackCount()
-end 
-
-end 
-
-
-function modifier_troll_warlord_whirling_axes_perma_melee:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_TOOLTIP
-}
-
-end 
-
-
-function modifier_troll_warlord_whirling_axes_perma_melee:OnTooltip()
-return self:GetStackCount()*self:GetCaster():GetTalentValue("modifier_troll_axes_4", "damage")
-end
-
-
-
-modifier_troll_warlord_whirling_axes_perma_ranged = class({})
-function modifier_troll_warlord_whirling_axes_perma_ranged:IsHidden() return not self:GetCaster():HasModifier("modifier_troll_axes_4") end
-function modifier_troll_warlord_whirling_axes_perma_ranged:IsPurgable() return false end
-function modifier_troll_warlord_whirling_axes_perma_ranged:RemoveOnDeath() return false end
-function modifier_troll_warlord_whirling_axes_perma_ranged:OnCreated()
-if not IsServer() then return end 
-
-self.max = self:GetCaster():GetTalentValue("modifier_troll_axes_4", "max", true)
-self.attaks = self:GetCaster():GetTalentValue("modifier_troll_axes_4", "attacks", true)
-
-self.count = 1
-self:SetStackCount(0)
-
-self:StartIntervalThink(0.5)
-end
-
-
-function modifier_troll_warlord_whirling_axes_perma_ranged:OnIntervalThink()
-if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_troll_axes_4") then return end 
-
-if self:GetStackCount() >= self.max then 
-
-
-	self:GetParent():EmitSound("BS.Thirst_legendary_active")
-	local particle_peffect = ParticleManager:CreateParticle("particles/rare_orb_patrol.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-	ParticleManager:SetParticleControl(particle_peffect, 0, self:GetCaster():GetAbsOrigin())
-	ParticleManager:SetParticleControl(particle_peffect, 2, self:GetCaster():GetAbsOrigin())
-	ParticleManager:ReleaseParticleIndex(particle_peffect)
-
-	self:StartIntervalThink(-1)
-end
-
-end
-
-
-function modifier_troll_warlord_whirling_axes_perma_ranged:OnRefresh()
-if not IsServer() then return end 
-if self:GetStackCount() >= self.max then return end 
-
-
-self.count = self.count + 1
-
-if self.count >= self.attaks then 
-	self.count = 0 
-	self:IncrementStackCount()
-end 
-
-end 
-
-
-function modifier_troll_warlord_whirling_axes_perma_ranged:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_TOOLTIP
-}
-
-end 
-
-
-function modifier_troll_warlord_whirling_axes_perma_ranged:OnTooltip()
-return self:GetStackCount()*self:GetCaster():GetTalentValue("modifier_troll_axes_4", "damage")
-end
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 modifier_troll_warlord_whirling_axes_buff = class({})
 function modifier_troll_warlord_whirling_axes_buff:IsHidden() return false end
 function modifier_troll_warlord_whirling_axes_buff:IsPurgable() return false end
 function modifier_troll_warlord_whirling_axes_buff:GetTexture() return "buffs/Crit_blood" end
-function modifier_troll_warlord_whirling_axes_buff:OnCreated()
+function modifier_troll_warlord_whirling_axes_buff:GetEffectName() return "particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf" end
+function modifier_troll_warlord_whirling_axes_buff:OnCreated(table)
 
---self.damage = self:GetCaster():GetTalentValue("modifier_troll_axes_6", "damage")
---self.status = self:GetCaster():GetTalentValue("modifier_troll_axes_6", "status")
-self.speed = self:GetCaster():GetTalentValue("modifier_troll_axes_6", "speed")
+self.parent = self:GetParent()
 
-self.heal = self:GetCaster():GetTalentValue("modifier_troll_axes_2", "heal")
-self.creeps = self:GetCaster():GetTalentValue("modifier_troll_axes_2", "creeps")
+self.shield_talent = "modifier_troll_axes_6"
+self.shield = self.parent:GetTalentValue("modifier_troll_axes_6", "shield")*(self.parent:GetMaxHealth() - self.parent:GetHealth())/100
+self.max_shield = math.max(1,self.shield)
+self.move = self.parent:GetTalentValue("modifier_troll_axes_6", "move")
+
+if not IsServer() then return end
+self:SetStackCount(self.shield)
 end
+
 
 function modifier_troll_warlord_whirling_axes_buff:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
---	MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
---	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
-  	MODIFIER_EVENT_ON_TAKEDAMAGE,
+	MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
+    MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
 }
 end
 
 function modifier_troll_warlord_whirling_axes_buff:GetModifierMoveSpeedBonus_Percentage()
-return self.speed
+return self.move
 end
 
-function modifier_troll_warlord_whirling_axes_buff:GetModifierStatusResistanceStacking()
-	return self.status
-end
-function modifier_troll_warlord_whirling_axes_buff:GetModifierIncomingDamage_Percentage()
+function modifier_troll_warlord_whirling_axes_buff:GetModifierIncomingDamageConstant( params )
+if self:GetStackCount() == 0 then return end
 
-if IsServer() then 
-
-	self:GetParent():EmitSound("Juggernaut.Parry")
-	local particle = ParticleManager:CreateParticle( "particles/jugg_parry.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-	ParticleManager:SetParticleControlEnt( particle, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_attack1", self:GetParent():GetAbsOrigin(), true )
-	ParticleManager:SetParticleControl( particle, 1, self:GetParent():GetAbsOrigin() )
+if IsClient() then 
+  if params.report_max then 
+  	return self.max_shield
+  else 
+	  return self:GetStackCount()
+	end 
 end
 
-	return self.damage
-end
-
-function modifier_troll_warlord_whirling_axes_buff:GetEffectName()
-if self:GetCaster():HasModifier("modifier_troll_axes_6") then 
-	--return "particles/items4_fx/ascetic_cap.vpcf"
-end
-
-end 
-
-
-
-
-
-
-function modifier_troll_warlord_whirling_axes_buff:OnTakeDamage(params)
 if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_troll_axes_2") then return end
-if self:GetParent() ~= params.attacker then return end
-if not params.unit:IsCreep() and not params.unit:IsHero() then return end
-if self:GetParent() == params.unit then return end
-if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end
 
-local heal = self.heal/100
-if params.unit:IsCreep() then 
-  heal = heal / self.creeps
+self.parent:EmitSound("Juggernaut.Parry")
+local particle = ParticleManager:CreateParticle( "particles/jugg_parry.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent )
+ParticleManager:SetParticleControlEnt( particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_attack1", self.parent:GetAbsOrigin(), true )
+ParticleManager:SetParticleControl( particle, 1, self.parent:GetAbsOrigin() )
+ParticleManager:ReleaseParticleIndex(particle)
+
+local damage = math.min(params.damage, self:GetStackCount())
+self.parent:AddShieldInfo({shield_mod = self, healing = damage, healing_type = "shield"})
+
+self:SetStackCount(self:GetStackCount() - damage)
+
+
+return -damage
 end
 
-heal = heal*params.damage
-
-self:GetParent():GenericHeal(heal, self:GetAbility(), true)
-
-end
 
 
 
@@ -949,94 +631,104 @@ end
 
 
 
+modifier_troll_warlord_whirling_axes_legendary_stack = class({})
+function modifier_troll_warlord_whirling_axes_legendary_stack:IsHidden() return true end
+function modifier_troll_warlord_whirling_axes_legendary_stack:IsPurgable() return false end
+function modifier_troll_warlord_whirling_axes_legendary_stack:OnCreated(params)
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+self.max = self.parent:GetTalentValue("modifier_troll_axes_legendary", "max")
 
-
-
-modifier_troll_warlord_whirling_axes_charge = class({})
-
-function modifier_troll_warlord_whirling_axes_charge:IsDebuff() return false end
-function modifier_troll_warlord_whirling_axes_charge:IsHidden() return true end
-function modifier_troll_warlord_whirling_axes_charge:IsPurgable() return true end
-
-function modifier_troll_warlord_whirling_axes_charge:OnCreated(kv)
 if not IsServer() then return end
-self.pfx = ParticleManager:CreateParticle("particles/items_fx/force_staff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
 
-local distance = self:GetCaster():GetTalentValue("modifier_troll_axes_6", "distance")
+self:SetStackCount(params.stack)
 
-self.point = self:GetParent():GetAbsOrigin() + self:GetParent():GetForwardVector()*distance
+local particle_cast = "particles/troll_warlord/axes_melle_stack.vpcf"
+if self:GetStackCount() == 1 then
+	particle_cast = "particles/troll_warlord/axes_ranged_stack.vpcf"
+end
+
+self.effect_cast = self.parent:GenericParticle(particle_cast, self, true)
+
+self.stack = self.max
+self:OnRefresh()
+end
+
+function modifier_troll_warlord_whirling_axes_legendary_stack:OnRefresh()
+if not IsServer() then return end
+
+if self.effect_cast then
+	for i = 1,self.max do 
+        if i <= self.stack then 
+            ParticleManager:SetParticleControl(self.effect_cast, i, Vector(1, 0, 0))   
+        else 
+            ParticleManager:SetParticleControl(self.effect_cast, i, Vector(0, 0, 0))   
+        end  
+    end
+end
+end
 
 
-self.angle = self:GetParent():GetForwardVector():Normalized()
 
-self.distance =  distance / ( self:GetDuration() / FrameTime())
+function modifier_troll_warlord_whirling_axes_legendary_stack:OnDestroy()
+if not IsServer() then return end
+self.stack = 0
+self.ability:UpdateUI()
+end
 
-self.targets = {}
 
-if self:ApplyHorizontalMotionController() == false then
-    self:Destroy()
+
+modifier_troll_warlord_whirling_axes_melee_custom_stack = class({})
+function modifier_troll_warlord_whirling_axes_melee_custom_stack:IsHidden() return false end
+function modifier_troll_warlord_whirling_axes_melee_custom_stack:IsPurgable() return false end
+function modifier_troll_warlord_whirling_axes_melee_custom_stack:GetTexture() return "buffs/axes_stack" end
+function modifier_troll_warlord_whirling_axes_melee_custom_stack:OnCreated()
+
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+
+self.max = self.caster:GetTalentValue("modifier_troll_axes_4", "max")
+self.damage = self.caster:GetTalentValue("modifier_troll_axes_4", "damage")
+self.heal = self.caster:GetTalentValue("modifier_troll_axes_4", "heal_reduce")
+
+self:SetStackCount(1)
+end
+
+function modifier_troll_warlord_whirling_axes_melee_custom_stack:OnRefresh(table)
+if not IsServer() then return end
+if self:GetStackCount() >= self.max then return end
+
+self:IncrementStackCount()
+
+if self:GetStackCount() >= self.max then
+	self.parent:GenericParticle("particles/items4_fx/spirit_vessel_damage.vpcf", self)
+	self.parent:EmitSound("Troll.Axes_stack_max")
 end
 
 end
 
-function modifier_troll_warlord_whirling_axes_charge:DeclareFunctions()
+function modifier_troll_warlord_whirling_axes_melee_custom_stack:DeclareFunctions()
 return
 {
-    MODIFIER_PROPERTY_DISABLE_TURNING
+	MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
+	MODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET,
+	MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE,
+	MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE,
 }
 end
 
-
-
-
-function modifier_troll_warlord_whirling_axes_charge:GetModifierDisableTurning() return 1 end
-
-function modifier_troll_warlord_whirling_axes_charge:GetEffectName() return "particles/muerta/muerta_gun_active.vpcf" end
-function modifier_troll_warlord_whirling_axes_charge:GetStatusEffectName() return "particles/status_fx/status_effect_forcestaff.vpcf" end
-function modifier_troll_warlord_whirling_axes_charge:StatusEffectPriority() return 100 end
-
-function modifier_troll_warlord_whirling_axes_charge:OnDestroy()
-    if not IsServer() then return end
-    self:GetParent():InterruptMotionControllers( true )
-    ParticleManager:DestroyParticle(self.pfx, false)
-    ParticleManager:ReleaseParticleIndex(self.pfx)
-
-
-
-	local dir = self:GetParent():GetForwardVector()
-    dir.z = 0
-    self:GetParent():SetForwardVector(dir)
-    self:GetParent():FaceTowards(self:GetParent():GetAbsOrigin() + dir*10)
-
-    ResolveNPCPositions(self:GetParent():GetAbsOrigin(), 128)
-
+function modifier_troll_warlord_whirling_axes_melee_custom_stack:GetModifierIncomingDamage_Percentage()
+return self:GetStackCount()*self.damage
 end
 
-
-function modifier_troll_warlord_whirling_axes_charge:UpdateHorizontalMotion( me, dt )
-    if not IsServer() then return end
-    local pos = self:GetParent():GetAbsOrigin()
-    GridNav:DestroyTreesAroundPoint(pos, 80, false)
-    local pos_p = self.angle * self.distance
-    local next_pos = GetGroundPosition(pos + pos_p,self:GetParent())
-    self:GetParent():SetAbsOrigin(next_pos)
-
-
+function modifier_troll_warlord_whirling_axes_melee_custom_stack:GetModifierLifestealRegenAmplify_Percentage() 
+return self:GetStackCount()*self.heal
 end
 
-function modifier_troll_warlord_whirling_axes_charge:OnHorizontalMotionInterrupted()
-    self:Destroy()
+function modifier_troll_warlord_whirling_axes_melee_custom_stack:GetModifierHealAmplify_PercentageTarget() 
+return self:GetStackCount()*self.heal
 end
 
-
-
-
-
-
-modifier_troll_warlord_whirling_axes_melee_cd = class({})
-function modifier_troll_warlord_whirling_axes_melee_cd:IsHidden() return true end
-function modifier_troll_warlord_whirling_axes_melee_cd:IsPurgable() return false end
-function modifier_troll_warlord_whirling_axes_melee_cd:RemoveOnDeath() return false end
-function modifier_troll_warlord_whirling_axes_melee_cd:OnCreated()
-self.RemoveForDuel = true
+function modifier_troll_warlord_whirling_axes_melee_custom_stack:GetModifierHPRegenAmplify_Percentage() 
+return self:GetStackCount()*self.heal
 end

@@ -15,51 +15,70 @@ LinkLuaModifier("modifier_muerta_gunslinger_custom_incoming_cd", "abilities/muer
 
 
 
-
 muerta_gunslinger_custom = class({})
 
-muerta_gunslinger_custom.chance_inc = {6, 9, 12}
 
-muerta_gunslinger_custom.passive_k = 2
-muerta_gunslinger_custom.passive_evasion = {8, 12, 16}
-muerta_gunslinger_custom.passive_move = {8, 12, 16}
-muerta_gunslinger_custom.passive_duration = 2
+function muerta_gunslinger_custom:CreateTalent()
 
-muerta_gunslinger_custom.speed_attack = {6, 9, 12}
-muerta_gunslinger_custom.speed_max = 5
-muerta_gunslinger_custom.speed_duration = 5
+local caster = self:GetCaster()
 
-muerta_gunslinger_custom.active_range = 300
-muerta_gunslinger_custom.active_duration = 0.25
-muerta_gunslinger_custom.active_buff_duration = 6
-muerta_gunslinger_custom.active_attacks = {2, 3}
-muerta_gunslinger_custom.active_cd = {14, 10}
+caster:EmitSound("Muerta.Quest_item2")
 
-muerta_gunslinger_custom.slow_attack = -6
-muerta_gunslinger_custom.slow_move = -4
-muerta_gunslinger_custom.slow_max = 10
-muerta_gunslinger_custom.slow_duration = 3
-muerta_gunslinger_custom.slow_range = 60
+if dota1x6.current_wave < upgrade_orange then 
 
-muerta_gunslinger_custom.lowhp_duration = 5
-muerta_gunslinger_custom.lowhp_health = 30
-muerta_gunslinger_custom.lowhp_heal = 0.02
-muerta_gunslinger_custom.lowhp_illusion_damage = 20
-muerta_gunslinger_custom.lowhp_illusion_health = 300
-muerta_gunslinger_custom.lowhp_incoming = -30
-muerta_gunslinger_custom.lowhp_cd = 40
+	dota1x6:MuertaQuestPhase(caster)
+	local item = CreateItem("item_muerta_shovel_custom", caster, caster)
+	caster:AddItem(item)
+	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(caster:GetPlayerOwnerID()), "muerta_quest_panel",  { max = 0, stack = 0, stage = 1})
+else 
+	local item = CreateItem("item_muerta_mercy_and_grace_custom", caster, caster)
+	caster:AddItem(item)	
+	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(caster:GetPlayerOwnerID()), "muerta_quest_panel",  { max = 0, stack = 0, stage = 3})
+end
+
+
+end
 
 
 
 function muerta_gunslinger_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-    
+
+PrecacheResource( "particle", "particles/units/heroes/hero_muerta/muerta_gunslinger.vpcf", context )
+PrecacheResource( "particle", "particles/muerta/magic_hit.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_muerta/muerta_ultimate_projectile_alternate.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_muerta/muerta_ultimate_projectile.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_muerta/muerta_base_attack_alt.vpcf", context )
 PrecacheResource( "particle", "particles/muerta_dig_ground.vpcf", context )
+PrecacheResource( "particle", "particles/status_fx/status_effect_wraithking_ghosts.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_muerta/muerta_ultimate_form_ethereal.vpcf", context )
+PrecacheResource( "particle", "particles/items_fx/force_staff.vpcf", context )
 PrecacheResource( "particle", "particles/muerta/muerta_gun_active.vpcf", context )
+PrecacheResource( "particle", "particles/status_fx/status_effect_forcestaff.vpcf", context )
 PrecacheResource( "particle", "particles/muerta/muerta_attack_slow.vpcf", context )
-PrecacheResource( "particle", "particles/muerta/gun_evasion.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_sniper/sniper_headshot_slow.vpcf", context )
+PrecacheResource( "particle", "particles/status_fx/status_effect_muerta_parting_shot.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_muerta/muerta_ultimate_form_ethereal.vpcf", context )
 PrecacheResource( "particle", "particles/blur_absorb.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_muerta/muerta_parting_shot_tether.vpcf", context )
+PrecacheResource( "particle", "particles/blur_absorb.vpcf", context )
+PrecacheResource( "particle", "particles/muerta/gun_evasion.vpcf", context )
 
+PrecacheResource( "particle","particles/econ/events/ti9/shovel_dig.vpcf", context )
+PrecacheResource( "particle","particles/econ/events/ti9/shovel_smoke_cloud.vpcf", context ) 
+PrecacheResource( "particle","particles/heroes/muerta/muerta_quest_kill.vpcf", context )
+PrecacheResource( "particle","particles/econ/events/ti9/muerta_dig_treasure.vpcf", context ) 
+PrecacheResource( "particle","particles/muerta_dig_drop.vpcf", context )
+PrecacheResource( "particle","particles/muerta/muerta_quest_item.vpcf", context )
+PrecacheResource( "particle","particles/econ/events/ti9/shovel_revealed_nothing.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_alchemist/alchemist_lasthit_coins.vpcf", context )
+
+PrecacheResource( "particle","particles/units/heroes/hero_skeletonking/wraith_king_vampiric_aura_lifesteal.vpcf", context )
+
+PrecacheResource( "particle","particles/units/heroes/hero_muerta/muerta_ultimate_projectile_alternate.vpcf", context )
+PrecacheResource( "particle","particles/muerta_item_active.vpcf", context )
+PrecacheResource( "particle","particles/muerta_item_heal.vpcf", context )
 end
 
 
@@ -70,30 +89,27 @@ end
 
 
 function muerta_gunslinger_custom:GetCooldown(iLevel)
-
-if self:GetCaster():HasModifier("modifier_muerta_gun_4") then 
-	return self.active_cd[self:GetCaster():GetUpgradeStack("modifier_muerta_gun_4")]
+if self:GetCaster():HasTalent("modifier_muerta_gun_5") then 
+	return self:GetCaster():GetTalentValue("modifier_muerta_gun_5", "cd")
 end
-
 return
 end
 
 
 
 function muerta_gunslinger_custom:GetBehavior()
-
-if self:GetCaster():HasModifier("modifier_muerta_gun_4") then 
-	return DOTA_ABILITY_BEHAVIOR_POINT
+if self:GetCaster():HasTalent("modifier_muerta_gun_5") then 
+	return DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES
 end
-
 return DOTA_ABILITY_BEHAVIOR_PASSIVE
 end
 
+
 function muerta_gunslinger_custom:GetCastRange(vLocation, hTarget)
 
-if self:GetCaster():HasModifier("modifier_muerta_gun_4") then 
+if self:GetCaster():HasTalent("modifier_muerta_gun_5") then 
 	if IsClient() then 
-		return self.active_range
+		return self:GetCaster():GetTalentValue("modifier_muerta_gun_5", "range")
 	else 
 		return 99999
 	end
@@ -106,30 +122,28 @@ end
 function muerta_gunslinger_custom:OnSpellStart()
 if not IsServer() then return end
 
+local caster = self:GetCaster()
+
 if test then 
-
-
- 	my_game:TestQuest(self:GetCaster())
+ 	dota1x6:TestQuest(caster)
 end
 
-self:GetCaster():RemoveGesture(ACT_DOTA_CAST_ABILITY_3)
+caster:RemoveGesture(ACT_DOTA_CAST_ABILITY_3)
 
-local point = self:GetCaster():GetCursorPosition()
-if point == self:GetCaster():GetAbsOrigin() then 
-    point = self:GetCaster():GetForwardVector()*10 + self:GetCaster():GetAbsOrigin()
+local point = caster:GetCursorPosition()
+if point == caster:GetAbsOrigin() then 
+    point = caster:GetForwardVector()*10 + caster:GetAbsOrigin()
 end
 
-local dir = (point - self:GetCaster():GetAbsOrigin()):Normalized()
+local dir = (point - caster:GetAbsOrigin()):Normalized()
 
-self:GetCaster():SetForwardVector(dir)
-self:GetCaster():FaceTowards(point)
-
-
-self:GetCaster():EmitSound("Muerta.Gun_active")
-self:GetCaster():EmitSound("Muerta.Gun_active2")
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_muerta_gunslinger_custom_active", {x = point.x, y = point.y, z = point.z, duration = self.active_duration})
+caster:SetForwardVector(dir)
+caster:FaceTowards(point)
 
 
+caster:EmitSound("Muerta.Gun_active")
+caster:EmitSound("Muerta.Gun_active2")
+caster:AddNewModifier(caster, self, "modifier_muerta_gunslinger_custom_active", {x = point.x, y = point.y, z = point.z, duration = caster:GetTalentValue("modifier_muerta_gun_5", "charge_duration")})
 end
 
 
@@ -140,192 +154,109 @@ function modifier_muerta_gunslinger_custom:IsHidden() return true end
 function modifier_muerta_gunslinger_custom:IsPurgable() return false end
 
 function modifier_muerta_gunslinger_custom:OnCreated()
-	if not IsServer() then return end
-	self.double_attack = false
-	self.proj = false
+
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.damage_aoe = self.parent:GetTalentValue("modifier_muerta_gun_1", "aoe", true)
+
+self.speed_k = self.parent:GetTalentValue("modifier_muerta_gun_2", "bonus", true)
+self.speed_duration = self.parent:GetTalentValue("modifier_muerta_gun_2", "duration", true)
+
+self.attack_duration = self.parent:GetTalentValue("modifier_muerta_gun_4", "duration", true)
+self.chance_bonus = self.parent:GetTalentValue("modifier_muerta_gun_4", "bonus", true)
+
+self.low_health = self.parent:GetTalentValue("modifier_muerta_gun_6", "health", true)
+self.low_duration = self.parent:GetTalentValue("modifier_muerta_gun_6", "duration", true)
+self.low_damage = self.parent:GetTalentValue("modifier_muerta_gun_6", "damage", true)
+self.low_incoming = self.parent:GetTalentValue("modifier_muerta_gun_6", "incoming", true)
+self.low_cd = self.parent:GetTalentValue("modifier_muerta_gun_6", "cd", true)
+self.low_heal = self.parent:GetTalentValue("modifier_muerta_gun_6", "heal", true)/100
+
+self.slow_duration = self.parent:GetTalentValue("modifier_muerta_gun_3", "duration", true)
+
+self.count = 0
+self.records = {}
+
+if not IsServer() then return end
+
+if self.parent:IsRealHero() then
+	self.parent:AddRecordDestroyEvent(self)
+	self.parent:AddAttackRecordEvent_out(self)
+	self.parent:AddDamageEvent_inc(self)
+	self.parent:AddAttackEvent_out(self)
+	self.parent:AddAttackStartEvent_out(self)
 end
+
+self.double_shot_chance  = self.ability:GetSpecialValueFor("double_shot_chance_custom")
+
+self.double_attack = false
+self.proj = false
+end
+
 
 function modifier_muerta_gunslinger_custom:OnRefresh()
-	if not IsServer() then return end
-	self.double_shot_chance = self:GetAbility():GetSpecialValueFor("double_shot_chance_custom")
-end
+if not IsServer() then return end
+
+self.double_shot_chance  = self.ability:GetSpecialValueFor("double_shot_chance_custom")
+end 
+
 
 function modifier_muerta_gunslinger_custom:DeclareFunctions()
-	return 
-	{
-		MODIFIER_EVENT_ON_ATTACK_START,
-		MODIFIER_EVENT_ON_ATTACK,
-		MODIFIER_EVENT_ON_ATTACK_LANDED,
-		MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
-		MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-		MODIFIER_PROPERTY_EVASION_CONSTANT,
-		MODIFIER_EVENT_ON_TAKEDAMAGE,
-		MODIFIER_PROPERTY_PROJECTILE_NAME
-	}
+return 
+{
+	MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT,
+	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
+	MODIFIER_PROPERTY_PROJECTILE_NAME
+}
 end
 
 
-function modifier_muerta_gunslinger_custom:OnTakeDamage(params)
+
+function modifier_muerta_gunslinger_custom:AttackRecordEvent_out(params)
 if not IsServer() then return end
-if self:GetParent():PassivesDisabled() then return end
-if not self:GetParent():HasModifier("modifier_muerta_gun_6") then return end
-if self:GetParent():HasModifier("modifier_muerta_gunslinger_custom_incoming_cd") then return end
-if self:GetParent():IsIllusion() then return end
-if self:GetParent():GetHealthPercent() > self:GetAbility().lowhp_health then return end
-if self:GetParent() ~= params.unit then return end
-
-self:GetParent():EmitSound("Muerta.Gun_lowhp")
-
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_muerta_gunslinger_custom_incoming_cd", {duration = self:GetAbility().lowhp_cd})
-
-local caster = self:GetParent()
-local damage = 100 - (self:GetAbility().lowhp_illusion_damage)
-local incoming = (self:GetAbility().lowhp_illusion_health)
-local target = nil
-
-if params.attacker then 
-	target = params.attacker:entindex()
-end
-
-local point = self:GetParent():GetAbsOrigin() + RandomVector(250)
-
-
-local illusion = CreateIllusions( caster, caster, {duration = self:GetAbility().lowhp_duration, outgoing_damage = -damage ,incoming_damage = incoming}, 1, 1, false, true )
-for _,i in pairs(illusion) do
-
-	i:SetAbsOrigin(point)
-	FindClearSpaceForUnit(i, point, true)
-
-	i:SetHealth(i:GetMaxHealth())
-
-	i.owner = caster
-
-	for _,mod in pairs(caster:FindAllModifiers()) do
-	  if mod.StackOnIllusion ~= nil and mod.StackOnIllusion == true then
-	      i:UpgradeIllusion(mod:GetName(), mod:GetStackCount() )
-	  end
-	end
-
-	i:AddNewModifier(caster, self:GetAbility(), "modifier_muerta_gunslinger_custom_illusion", {target = target, hero = self:GetParent():entindex(), duration = self:GetAbility().lowhp_duration } )
-end
-
-end
-
-
-
-
-
-
-function modifier_muerta_gunslinger_custom:GetModifierMoveSpeedBonus_Percentage()
-if not self:GetParent():HasModifier("modifier_muerta_gun_2") then return end
-
-local k = 1
-if self:GetParent():HasModifier("modifier_muerta_gunslinger_custom_evasion") then 
-	k = self:GetAbility().passive_k
-end
-
-return self:GetAbility().passive_move[self:GetCaster():GetUpgradeStack("modifier_muerta_gun_2")]*k
-end
-
-
-function modifier_muerta_gunslinger_custom:GetModifierEvasion_Constant()
-if not self:GetParent():HasModifier("modifier_muerta_gun_2") then return end
-
-local k = 1
-if self:GetParent():HasModifier("modifier_muerta_gunslinger_custom_evasion") then 
-	k = self:GetAbility().passive_k
-end
-
-return self:GetAbility().passive_evasion[self:GetCaster():GetUpgradeStack("modifier_muerta_gun_2")]*k
-end
-
-
-
-function modifier_muerta_gunslinger_custom:OnAttackLanded(params)
-if not IsServer() then return end
-if params.attacker ~= self:GetParent() then return end
-if params.target == self:GetParent() then return end
-
-
-if params.no_attack_cooldown then
-
-
-end
-
-if not self:GetParent():HasModifier("modifier_muerta_gun_5") then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end
-
-params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_muerta_gunslinger_custom_slow", {duration = self:GetAbility().slow_duration})
-end
-
-function modifier_muerta_gunslinger_custom:GetModifierAttackRangeBonus()
-if not self:GetParent():HasModifier("modifier_muerta_gun_5") then return end
-
-return self:GetAbility().slow_range
-end
-
-
-
-
-function modifier_muerta_gunslinger_custom:OnAttackStart(params)
-if not IsServer() then return end
-if params.attacker ~= self:GetParent() then return end
-if params.target == self:GetParent() then return end
+if self.parent:PassivesDisabled() then return end
+if params.attacker ~= self.parent then return end
+if params.target == self.parent then return end
 if params.no_attack_cooldown then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end
+if not params.target:IsUnit() then return end
 
-self:GetParent():RemoveModifierByName("modifier_muerta_gunslinger")
+self.parent:RemoveModifierByName("modifier_muerta_gunslinger")
 
 self.double_attack = false
 
-local chance =  self:GetAbility():GetSpecialValueFor("double_shot_chance_custom")
+local chance = self.double_shot_chance + self.parent:GetTalentValue("modifier_muerta_gun_1", "chance")
 
-if self:GetParent():HasModifier("modifier_muerta_gun_1") then 
-	chance = chance + self:GetAbility().chance_inc[self:GetParent():GetUpgradeStack("modifier_muerta_gun_1")]
-end
+if self.parent:HasTalent("modifier_muerta_gun_4") and params.target:GetHealthPercent() <= self.parent:GetTalentValue("modifier_muerta_gun_4", "health") then 
+	chance = chance + self.chance_bonus
+end 
 
-local proc = false
-local mod = self:GetParent():FindModifierByName("modifier_muerta_gunslinger_custom_active_buff")
+if not RollPseudoRandomPercentage(chance, 832,self.parent) then return end 
 
-if mod then 
-	proc = true
-else 
-	if RollPseudoRandomPercentage(chance, 832,self:GetCaster()) then 
-		proc = true
-	end
-end
-
-
-if proc == true then
-
-	local ult = self:GetParent():FindAbilityByName("muerta_pierce_the_veil_custom")
-	if ult and ult:GetLevel() > 0 and self:GetParent():HasModifier("modifier_muerta_veil_7") then 
-		--ult:LegendaryProc(3)
-	end
-
-	self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_muerta_gunslinger", {})
-	local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_muerta/muerta_gunslinger.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-	ParticleManager:ReleaseParticleIndex(particle)
-	self.double_attack = true
-end
-
+self.parent:AddNewModifier(self:GetCaster(), self.ability, "modifier_muerta_gunslinger", {})
+local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_muerta/muerta_gunslinger.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:ReleaseParticleIndex(particle)
+self.double_attack = true
 end
 
 
 
-function modifier_muerta_gunslinger_custom:OnAttack(params)
+function modifier_muerta_gunslinger_custom:AttackStartEvent_out(params)
 if not IsServer() then return end
-if params.attacker ~= self:GetParent() then return end
-if params.target == self:GetParent() then return end
-if self:GetParent():PassivesDisabled() then return end
-if params.no_attack_cooldown then return end
-
-
-self:GetParent():RemoveModifierByName("modifier_muerta_gunslinger")
-
+if params.attacker ~= self.parent then return end
+if params.target == self.parent then return end
+if self.parent:PassivesDisabled() then return end
 if not self.double_attack then return end
+if params.no_attack_cooldown then return end 
 
-self:GetParent():EmitSound("Hero_Muerta.Attack.DoubleShot")
+if self.parent:HasModifier("modifier_muerta_gunslinger") then 
+	self.records[params.record] = true
+end 
+
+self.parent:RemoveModifierByName("modifier_muerta_gunslinger")
+
+self.parent:EmitSound("Hero_Muerta.Attack.DoubleShot")
 
 self.proj = true
 
@@ -333,96 +264,178 @@ Timers:CreateTimer(0.1, function()
 	self.proj = false
 end)
 
-local mod = self:GetParent():FindModifierByName("modifier_muerta_gunslinger_custom_active_buff")
+if self.parent:HasTalent("modifier_muerta_gun_2") then 	
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_muerta_gunslinger_custom_evasion", {duration = self.speed_duration})
+end
 
-if mod then 
-	mod:DecrementStackCount()
+if self.parent:HasTalent("modifier_muerta_gun_4") then 
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_muerta_gunslinger_custom_speed", {duration = self.attack_duration})
+end
 
-	if mod:GetStackCount() <= 0 then 
-		mod:Destroy()
+end
+
+
+function modifier_muerta_gunslinger_custom:RecordDestroyEvent(params)
+if not IsServer() then return end 
+if not self.records[params.record] then return end 
+self.records[params.record] = nil
+end 
+
+
+function modifier_muerta_gunslinger_custom:AttackEvent_out(params)
+if not IsServer() then return end 
+if self.parent:GetTeamNumber() ~= params.attacker:GetTeamNumber() then return end
+
+local proc = false
+if self.records[params.record] then 
+	proc = true
+end
+
+if not params.target:IsUnit() then return end
+
+local attacker = params.attacker
+local target = params.target
+
+if attacker:IsIllusion() and attacker.owner and attacker.owner == self.parent and self.parent:HasTalent("modifier_muerta_gun_6") then 
+
+	local mod = attacker:FindModifierByName("modifier_muerta_gunslinger_custom_illusion")
+
+	if mod and mod.hero and not mod.hero:IsNull() and mod.hero:IsAlive() then 
+		mod.hero:GenericHeal(mod.hero:GetMaxHealth()*self.low_heal, self.ability, nil, nil, "modifier_muerta_gun_6")
 	end
 end
 
-if self:GetParent():HasModifier("modifier_muerta_gun_2") then 	
-	self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_muerta_gunslinger_custom_evasion", {duration = self:GetAbility().passive_duration})
+if self.parent ~= params.attacker then return end 
+if not params.target:IsUnit() then return end
+
+if self.parent:HasTalent("modifier_muerta_gun_3") and RollPseudoRandomPercentage(self.parent:GetTalentValue("modifier_muerta_gun_3", "chance"), 8302,self.parent) then 
+	params.target:AddNewModifier(self.parent, self.ability, "modifier_muerta_gunslinger_custom_slow", {duration = self.slow_duration*(1 - params.target:GetStatusResistance())})
+end 
+
+if not proc then return end 
+
+if self.parent:HasTalent("modifier_muerta_gun_1") then
+
+	local particle = ParticleManager:CreateParticle("particles/muerta/magic_hit.vpcf", PATTACH_WORLDORIGIN, nil)	
+	ParticleManager:SetParticleControl(particle, 0, params.target:GetAbsOrigin())
+	ParticleManager:ReleaseParticleIndex(particle)
+
+	local damage = self.parent:GetTalentValue("modifier_muerta_gun_1", "damage")
+
+	for _,unit in pairs(self.parent:FindTargets(self.damage_aoe, params.target:GetAbsOrigin())) do 
+		DoDamage({victim = unit, attacker = self.parent, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self.ability}, "modifier_muerta_gun_1")
+	end
+end
+
+end 
+
+
+
+function modifier_muerta_gunslinger_custom:DamageEvent_inc(params)
+if not IsServer() then return end
+if self.parent:PassivesDisabled() then return end
+if not self.parent:HasTalent("modifier_muerta_gun_6") then return end
+if self.parent ~= params.unit then return end
+if self.parent:HasModifier("modifier_death") then return end
+if self.parent:HasModifier("modifier_muerta_gunslinger_custom_incoming_cd") then return end
+if self.parent:IsIllusion() then return end
+if self.parent:GetHealthPercent() > self.low_health then return end
+
+self.parent:EmitSound("Muerta.Gun_lowhp")
+
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_muerta_gunslinger_custom_incoming_cd", {duration = self.low_cd})
+
+local damage = 100 - self.low_damage
+local incoming = self.low_incoming - 100
+local target = nil
+
+if params.attacker then 
+	target = params.attacker:entindex()
+end
+
+local point = self.parent:GetAbsOrigin() + RandomVector(250)
+
+local illusions = CreateIllusions( self.parent, self.parent, {duration = self.low_duration, outgoing_damage = -damage ,incoming_damage = incoming}, 1, 1, false, true )
+for _,illusion in pairs(illusions) do
+
+	illusion:SetAbsOrigin(point)
+	FindClearSpaceForUnit(illusion, point, true)
+
+	illusion:SetHealth(illusion:GetMaxHealth())
+
+	illusion.owner = self.parent
+
+	for _,mod in pairs(self.parent:FindAllModifiers()) do
+	  if mod.StackOnIllusion ~= nil and mod.StackOnIllusion == true then
+	      illusion:UpgradeIllusion(mod:GetName(), mod:GetStackCount() )
+	  end
+	end
+
+	illusion:AddNewModifier(self.parent, self.ability, "modifier_muerta_gunslinger_custom_illusion", {target = target, hero = self.parent:entindex(), duration = self.low_duration } )
+end
 
 end
 
-if self:GetParent():HasModifier("modifier_muerta_gun_3") then 
-	self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_muerta_gunslinger_custom_speed", {duration = self:GetAbility().speed_duration})
+
+
+
+
+
+function modifier_muerta_gunslinger_custom:GetModifierMoveSpeedBonus_Constant()
+if not self.parent:HasTalent("modifier_muerta_gun_2") then return end
+local k = 1
+if self.parent:HasModifier("modifier_muerta_gunslinger_custom_evasion") then 
+	k = self.speed_k
+end
+return self.parent:GetTalentValue("modifier_muerta_gun_2", "move")*k
 end
 
 
-if true then return end
-
-local heroes = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetCaster():GetOrigin(), nil, self:GetCaster():Script_GetAttackRange() + self:GetAbility():GetSpecialValueFor("target_search_bonus_range"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, 0, false)
-local creeps = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetCaster():GetOrigin(), nil, self:GetCaster():Script_GetAttackRange() + self:GetAbility():GetSpecialValueFor("target_search_bonus_range"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, 0, false)
-
-for i = #heroes, 1, -1 do
-    if heroes[i] ~= nil and (heroes[i] == params.target) then
-        table.remove(heroes, i)
-    end
+function modifier_muerta_gunslinger_custom:GetModifierPhysicalArmorBonus()
+if not self.parent:HasTalent("modifier_muerta_gun_2") then return end
+local k = 1
+if self.parent:HasModifier("modifier_muerta_gunslinger_custom_evasion") then 
+	k = self.speed_k
+end
+return self.parent:GetTalentValue("modifier_muerta_gun_2", "armor")*k
 end
 
-for i = #creeps, 1, -1 do
-    if creeps[i] ~= nil and (creeps[i] == params.target) then
-        table.remove(creeps, i)
-    end
+
+function modifier_muerta_gunslinger_custom:GetModifierAttackRangeBonus()
+if not self.parent:HasTalent("modifier_muerta_gun_3") then return end
+return self.parent:GetTalentValue("modifier_muerta_gun_3", "range")
 end
 
-local heroes_has = false
-local creep_has = false
 
-if #heroes > 0 then
-	heroes_has = true
-end
 
-if #creeps > 0 then
-	creep_has = true
-end
-
-if heroes_has then
-	self:AttackTarget(heroes[1])
-elseif creep_has then
-	self:AttackTarget(creeps[1])
-else
-	
-	self:GetParent():StartGestureWithPlaybackRate(ACT_DOTA_CAST_ABILITY_3, self:GetParent():GetAttackSpeed(true))
-
-	Timers:CreateTimer(0.1, function()
-		if params.target and not params.target:IsNull() and params.target:IsAlive() then 
-			self:AttackTarget(params.target)
-		end
-	end)
-end
-self.double_attack = false
-
-end
-
-function modifier_muerta_gunslinger_custom:AttackTarget(target)
-	if not IsServer() then return end
-	self.proj = true
-	self:GetCaster():PerformAttack(target, true, true, true, false, true, false, false)
-	self.proj = false
-end
 
 function modifier_muerta_gunslinger_custom:GetModifierProjectileName()
-	if not IsServer() then return end
+if not IsServer() then return end
 
-	if self:GetParent():HasModifier( "modifier_muerta_pierce_the_veil_custom" ) then
-		if not self.proj then
-			return "particles/units/heroes/hero_muerta/muerta_ultimate_projectile.vpcf"
-		else
-			return "particles/units/heroes/hero_muerta/muerta_ultimate_projectile_alternate.vpcf"
-		end
-	else
-		if self.proj then
-			return "particles/units/heroes/hero_muerta/muerta_base_attack_alt.vpcf"
-		end
-	end
+if self.parent:HasModifier("modifier_muerta_pierce_the_veil_custom_attack") then
+	return "particles/units/heroes/hero_muerta/muerta_ultimate_projectile_alternate.vpcf"
 end
 
 
+if self.parent:HasModifier( "modifier_muerta_pierce_the_veil_custom" ) then
+	if not self.proj then
+		return "particles/units/heroes/hero_muerta/muerta_ultimate_projectile.vpcf"
+	else
+		return "particles/units/heroes/hero_muerta/muerta_ultimate_projectile_alternate.vpcf"
+	end
+else
+	if self.proj then
+		return "particles/units/heroes/hero_muerta/muerta_base_attack_alt.vpcf"
+	end
+end
+
+end
+
+
+function modifier_muerta_gunslinger_custom:OnDestroy()
+if not IsServer() then return end
+self.parent:RemoveModifierByName("modifier_muerta_gunslinger")
+end
 
 
 
@@ -434,26 +447,23 @@ function modifier_muerta_gunslinger_custom_dig_area:IsPurgable() return false en
 function modifier_muerta_gunslinger_custom_dig_area:OnCreated(table)
 if not IsServer() then return end
 
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+
+self.icon = CreateUnitByName("npc_muerta_dig_icon", self.parent:GetAbsOrigin(), false, nil, nil, self.caster:GetTeamNumber())
+self.icon:AddNewModifier(self.caster, nil, "modifier_unselect", {}) 
 
 
 
-self.icon = CreateUnitByName("npc_muerta_dig_icon", self:GetParent():GetAbsOrigin(), false, nil, nil, self:GetCaster():GetTeamNumber())
-self.icon:AddNewModifier(self:GetCaster(), nil, "modifier_unselect", {}) 
-
-local particle_cast = "particles/muerta_dig_ground.vpcf"
-
-local parent = self:GetParent()
-
--- Create Particle
-local effect_cast = ParticleManager:CreateParticleForTeam( particle_cast, PATTACH_ABSORIGIN_FOLLOW, self:GetParent(), self:GetCaster():GetTeamNumber() )
-ParticleManager:SetParticleControl( effect_cast, 0, parent:GetOrigin() )
+local effect_cast = ParticleManager:CreateParticleForTeam( "particles/muerta_dig_ground.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent, self.caster:GetTeamNumber() )
+ParticleManager:SetParticleControl( effect_cast, 0, self.parent:GetOrigin() )
 ParticleManager:SetParticleControl( effect_cast, 1, Vector( 550, 1, 1 ) )
 ParticleManager:SetParticleControl( effect_cast, 2, Vector( 999999, 0, 0 ) )
 
 
 self:AddParticle(effect_cast, false, false, -1, false, false)
 
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), 'muerta_quest_alert',  {type = 1})
+CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self.caster:GetPlayerOwnerID()), "muerta_quest_alert",  {type = 1})
 
 self:StartIntervalThink(0.2)
 end
@@ -462,7 +472,7 @@ end
 function modifier_muerta_gunslinger_custom_dig_area:OnIntervalThink()
 if not IsServer() then return end
 
-AddFOWViewer(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), 800, 0.2, false)
+AddFOWViewer(self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), 800, 0.2, false)
 
 end
 
@@ -474,7 +484,7 @@ if self.icon and not self.icon:IsNull() then
 	UTIL_Remove(self.icon)
 end
 
-UTIL_Remove(self:GetParent())
+UTIL_Remove(self.parent)
 end
 
 
@@ -547,30 +557,24 @@ end
 
 
 modifier_muerta_creep = class({})
-
-
 function modifier_muerta_creep:IsHidden() return true end
 function modifier_muerta_creep:IsPurgable() return false end
 function modifier_muerta_creep:RemoveOnDeath() return false end
 
-
 function modifier_muerta_creep:GetStatusEffectName()
-    return "particles/status_fx/status_effect_wraithking_ghosts.vpcf"
+return "particles/status_fx/status_effect_wraithking_ghosts.vpcf"
 end
+
 function modifier_muerta_creep:StatusEffectPriority()
- return 99999 
+return MODIFIER_PRIORITY_ILLUSION 
 end
-
-
 
 function modifier_muerta_creep:CheckState()
 return
 {
 	[MODIFIER_STATE_NOT_ON_MINIMAP] = true,
-
 }
 end
-
 
 function modifier_muerta_creep:OnDestroy()
 if not IsServer() then return end
@@ -586,22 +590,25 @@ function modifier_muerta_creep:OnCreated(table)
 if not IsServer() then return end
 
 
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), 'muerta_quest_alert',  {type = 4})
+self.parent = self:GetParent()
+self.parent:AddDeathEvent(self)
 
-self.icon = CreateUnitByName("npc_muerta_creep_icon", self:GetParent():GetAbsOrigin(), false, nil, nil, self:GetCaster():GetTeamNumber())
-self.icon:AddNewModifier(self:GetCaster(), nil, "modifier_unselect", {}) 
+self.caster = self:GetCaster()
 
+CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self.caster:GetPlayerOwnerID()), "muerta_quest_alert",  {type = 4})
 
+self.icon = CreateUnitByName("npc_muerta_creep_icon", self.parent:GetAbsOrigin(), false, nil, nil, self.caster:GetTeamNumber())
+self.icon:AddNewModifier(self.caster, nil, "modifier_unselect", {}) 
 
-self.health = self:GetParent():GetBaseMaxHealth()
-self.damage = self:GetParent():GetBaseDamageMin()
+self.health = self.parent:GetBaseMaxHealth()
+self.damage = self.parent:GetBaseDamageMin()
 self.speed = 0
 
 self.change_health = 0
 self.change_damage = 0
 
 
-for i = 2, my_game.current_wave do
+for i = 2, dota1x6.current_wave do
 
 	self.up_health = 1.30
 	self.up_damage = 1.23
@@ -618,49 +625,40 @@ end
 self.health = self.health*1.2
 self.damage = self.damage*1.2
 
-
-self.change_health = self.health - self:GetParent():GetBaseMaxHealth()
-self.change_damage = self.damage - self:GetParent():GetBaseDamageMin()
+self.change_health = self.health - self.parent:GetBaseMaxHealth()
+self.change_damage = self.damage - self.parent:GetBaseDamageMin()
 
 self:StartIntervalThink(0.2)
-
 self:SetHasCustomTransmitterData(true)
 end
 
 
-
 function modifier_muerta_creep:DeclareFunctions()
-   return   {
-    MODIFIER_PROPERTY_EXTRA_HEALTH_BONUS,
-    MODIFIER_PROPERTY_BASEATTACK_BONUSDAMAGE,
-    MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-    MODIFIER_EVENT_ON_DEATH
-  }
-
+return   
+{
+	MODIFIER_PROPERTY_EXTRA_HEALTH_BONUS,
+	MODIFIER_PROPERTY_BASEATTACK_BONUSDAMAGE,
+	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+}
 end
 
-function modifier_muerta_creep:OnDeath(params)
+function modifier_muerta_creep:DeathEvent(params)
 if not IsServer() then return end
-if self:GetParent() ~= params.unit then return end
+if self.parent ~= params.unit then return end
 
-self:GetParent():EmitSound("Muerta.Quest_ghost_death")
+self.parent:EmitSound("Muerta.Quest_ghost_death")
 end
-
-
-
 
 function modifier_muerta_creep:OnIntervalThink()
 if not IsServer() then return end
-
-AddFOWViewer(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), 600, 0.2, false)
+AddFOWViewer(self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), 600, 0.2, false)
 end
 
-
-
-function modifier_muerta_creep:AddCustomTransmitterData() return 
+function modifier_muerta_creep:AddCustomTransmitterData() 
+return 
 {
-armor = self.armor,
-speed = self.speed
+	armor = self.armor,
+	speed = self.speed
 } 
 end
 
@@ -673,26 +671,20 @@ function modifier_muerta_creep:GetModifierAttackSpeedBonus_Constant()
 return self.speed
 end
 
-
-
 function modifier_muerta_creep:GetModifierBaseAttack_BonusDamage()
 return self.change_damage
 end
-
 
 function modifier_muerta_creep:GetModifierExtraHealthBonus()
 return self.change_health
 end
 
-
-
-
 function modifier_muerta_creep:GetEffectName()
-	return "particles/units/heroes/hero_muerta/muerta_ultimate_form_ethereal.vpcf"
+return "particles/units/heroes/hero_muerta/muerta_ultimate_form_ethereal.vpcf"
 end
 
 function modifier_muerta_creep:GetEffectAttachType()
-	return PATTACH_ABSORIGIN_FOLLOW
+return PATTACH_ABSORIGIN_FOLLOW
 end
 
 
@@ -706,8 +698,6 @@ function modifier_muerta_creep_gospawn:IsHidden() return true end
 function modifier_muerta_creep_gospawn:IsPurgable() return false end
 function modifier_muerta_creep_gospawn:OnCreated(table)
 if not IsServer() then return end
-
---self:GetParent():SetHealth(self:GetParent():GetMaxHealth())
 
 end
 
@@ -744,11 +734,12 @@ function modifier_muerta_gunslinger_custom_speed:IsPurgable() return false end
 function modifier_muerta_gunslinger_custom_speed:GetTexture() return "buffs/strike_armor" end
 
 function modifier_muerta_gunslinger_custom_speed:OnCreated(table)
+self.parent = self:GetParent()
 
-self.speed = self:GetAbility().speed_attack[self:GetCaster():GetUpgradeStack("modifier_muerta_gun_3")]
-self.max = self:GetAbility().speed_max
+self.speed = self.parent:GetTalentValue("modifier_muerta_gun_4", "speed")
+self.max = self.parent:GetTalentValue("modifier_muerta_gun_4", "max")
+
 if not IsServer() then return end
-
 self:SetStackCount(1)
 end
 
@@ -767,8 +758,6 @@ return
 }
 end
 
-
-
 function modifier_muerta_gunslinger_custom_speed:GetModifierAttackSpeedBonus_Constant()
 return self.speed*self:GetStackCount()
 end
@@ -781,27 +770,28 @@ end
 
 modifier_muerta_gunslinger_custom_active = class({})
 
-function modifier_muerta_gunslinger_custom_active:IsDebuff() return false end
 function modifier_muerta_gunslinger_custom_active:IsHidden() return true end
 function modifier_muerta_gunslinger_custom_active:IsPurgable() return true end
 
 function modifier_muerta_gunslinger_custom_active:OnCreated(kv)
-    if not IsServer() then return end
-    self.pfx = ParticleManager:CreateParticle("particles/items_fx/force_staff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-    self:GetParent():StartGesture(ACT_DOTA_FLAIL)
+if not IsServer() then return end
 
-    self.point = Vector(kv.x, kv.y, kv.z)
+self.parent = self:GetParent()
 
+ProjectileManager:ProjectileDodge(self.parent)
 
-    self.angle = self:GetParent():GetForwardVector():Normalized()--(self.point - self:GetParent():GetAbsOrigin()):Normalized() 
+self.pfx = ParticleManager:CreateParticle("particles/items_fx/force_staff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+self:AddParticle(self.pfx, false, false, -1, false, false)
 
-    self.distance = self:GetAbility().active_range / ( self:GetDuration() / FrameTime())
+self.parent:StartGesture(ACT_DOTA_FLAIL)
+self.point = Vector(kv.x, kv.y, kv.z)
+self.angle = self.parent:GetForwardVector():Normalized()
+self.distance = self.parent:GetTalentValue("modifier_muerta_gun_5", "range") / ( self:GetDuration() / FrameTime())
 
-    self.targets = {}
+if self:ApplyHorizontalMotionController() == false then
+    self:Destroy()
+end
 
-    if self:ApplyHorizontalMotionController() == false then
-        self:Destroy()
-    end
 end
 
 function modifier_muerta_gunslinger_custom_active:DeclareFunctions()
@@ -813,112 +803,78 @@ return
 end
 
 function modifier_muerta_gunslinger_custom_active:GetActivityTranslationModifiers()
-    return "forcestaff_friendly"
+return "forcestaff_friendly"
 end
 
-
 function modifier_muerta_gunslinger_custom_active:GetModifierDisableTurning() return 1 end
-
 function modifier_muerta_gunslinger_custom_active:GetEffectName() return "particles/muerta/muerta_gun_active.vpcf" end
 function modifier_muerta_gunslinger_custom_active:GetStatusEffectName() return "particles/status_fx/status_effect_forcestaff.vpcf" end
-function modifier_muerta_gunslinger_custom_active:StatusEffectPriority() return 100 end
+function modifier_muerta_gunslinger_custom_active:StatusEffectPriority() return MODIFIER_PRIORITY_NORMAL end
 
 function modifier_muerta_gunslinger_custom_active:OnDestroy()
-    if not IsServer() then return end
-    self:GetParent():InterruptMotionControllers( true )
-    ParticleManager:DestroyParticle(self.pfx, false)
-    ParticleManager:ReleaseParticleIndex(self.pfx)
+if not IsServer() then return end
+self.parent:InterruptMotionControllers( true )
 
-    self:GetParent():RemoveGesture(ACT_DOTA_FLAIL)
-	self:GetCaster():RemoveGesture(ACT_DOTA_CAST_ABILITY_3)
-    self:GetParent():StartGesture(ACT_DOTA_FORCESTAFF_END)
+self.parent:RemoveGesture(ACT_DOTA_FLAIL)
+self:GetCaster():RemoveGesture(ACT_DOTA_CAST_ABILITY_3)
+self.parent:StartGesture(ACT_DOTA_FORCESTAFF_END)
 
-    self:GetParent():Stop()
+self.parent:Stop()
 
-    self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_muerta_gunslinger_custom_active_buff", {duration = self:GetAbility().active_buff_duration})
+self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_muerta_gunslinger_custom_active_buff", {duration = self.parent:GetTalentValue("modifier_muerta_gun_5", "duration")})
 
-    local dir = self:GetParent():GetForwardVector()
-    dir.z = 0
-    self:GetParent():SetForwardVector(dir)
-    self:GetParent():FaceTowards(self:GetParent():GetAbsOrigin() + dir*10)
+local dir = self.parent:GetForwardVector()
+dir.z = 0
+self.parent:SetForwardVector(dir)
+self.parent:FaceTowards(self.parent:GetAbsOrigin() + dir*10)
 
-    ResolveNPCPositions(self:GetParent():GetAbsOrigin(), 128)
-
+ResolveNPCPositions(self.parent:GetAbsOrigin(), 128)
 end
 
 
 function modifier_muerta_gunslinger_custom_active:UpdateHorizontalMotion( me, dt )
-    if not IsServer() then return end
-    local pos = self:GetParent():GetAbsOrigin()
-    GridNav:DestroyTreesAroundPoint(pos, 80, false)
-    local pos_p = self.angle * self.distance
-    local next_pos = GetGroundPosition(pos + pos_p,self:GetParent())
-    self:GetParent():SetAbsOrigin(next_pos)
+if not IsServer() then return end
 
-
+local pos = self.parent:GetAbsOrigin()
+GridNav:DestroyTreesAroundPoint(pos, 80, false)
+local pos_p = self.angle * self.distance
+local next_pos = GetGroundPosition(pos + pos_p,self.parent)
+self.parent:SetAbsOrigin(next_pos)
 end
 
 function modifier_muerta_gunslinger_custom_active:OnHorizontalMotionInterrupted()
-    self:Destroy()
+self:Destroy()
 end
 
 
 
 
 
-
-
-modifier_muerta_gunslinger_custom_active_buff = class({})
-function modifier_muerta_gunslinger_custom_active_buff:IsHidden() return false end
-function modifier_muerta_gunslinger_custom_active_buff:IsPurgable() return false end
-function modifier_muerta_gunslinger_custom_active_buff:GetTexture() return "buffs/aim_speed" end
-function modifier_muerta_gunslinger_custom_active_buff:OnCreated(table)
-if not IsServer() then return end
-
-self:SetStackCount(self:GetAbility().active_attacks[self:GetCaster():GetUpgradeStack("modifier_muerta_gun_4")])
-end
-
-function modifier_muerta_gunslinger_custom_active_buff:OnRefresh(table)
-if not IsServer() then return end
-
-self:SetStackCount(self:GetAbility().active_attacks[self:GetCaster():GetUpgradeStack("modifier_muerta_gun_4")])
-end
 
 
 
 
 
 modifier_muerta_gunslinger_custom_slow = class({})
-function modifier_muerta_gunslinger_custom_slow:IsHidden() return false end
+function modifier_muerta_gunslinger_custom_slow:IsHidden() return true end
 function modifier_muerta_gunslinger_custom_slow:IsPurgable() return true end
-function modifier_muerta_gunslinger_custom_slow:GetTexture() return "buffs/gun_slow" end
-
 function modifier_muerta_gunslinger_custom_slow:OnCreated(table)
 
-self.speed = self:GetAbility().slow_attack
-self.move = self:GetAbility().slow_move
-self.max = self:GetAbility().slow_max
+self.caster = self:GetCaster()
+self.parent = self:GetParent()
+
+self.speed = self.caster:GetTalentValue("modifier_muerta_gun_3", "attack")
+self.move = self.caster:GetTalentValue("modifier_muerta_gun_3", "move")
 if not IsServer() then return end
 
-self:SetStackCount(1)
-end
+self.parent:EmitSound("Muerta.Gun_slow")
 
-function modifier_muerta_gunslinger_custom_slow:OnRefresh(table)
-if not IsServer() then return end
-if self:GetStackCount() >= self.max then return end
-
-self:IncrementStackCount()
-
-if self:GetStackCount() == self.max/2 or self:GetStackCount() == self.max then 
-
-	local effect_cast = ParticleManager:CreateParticle( "particles/muerta/muerta_attack_slow.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-	self:AddParticle(effect_cast, false, false, -1, false, false)
-	
-end
-
-
+local effect_cast = ParticleManager:CreateParticle( "particles/muerta/muerta_attack_slow.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
+self:AddParticle(effect_cast, false, false, -1, false, false)
 
 end
+
+
 
 function modifier_muerta_gunslinger_custom_slow:DeclareFunctions()
 return
@@ -929,9 +885,8 @@ return
 end
 
 function modifier_muerta_gunslinger_custom_slow:GetModifierMoveSpeedBonus_Percentage()
-return self.move*self:GetStackCount()
+return self.move
 end
-
 
 function modifier_muerta_gunslinger_custom_slow:GetModifierAttackSpeedBonus_Constant()
 if self:GetParent():GetUnitName() == "npc_muerta_ogre"
@@ -939,24 +894,24 @@ or self:GetParent():GetUnitName() ==  "npc_muerta_satyr"
 or self:GetParent():GetUnitName() ==  "npc_muerta_ursa"
 or self:GetParent():GetUnitName() ==  "npc_muerta_centaur" then return end
 
-return self.speed*self:GetStackCount()
+return self.speed
 end
 
+function modifier_muerta_gunslinger_custom_slow:GetEffectName()
+return "particles/units/heroes/hero_sniper/sniper_headshot_slow.vpcf"
+end
+
+
+function modifier_muerta_gunslinger_custom_slow:GetEffectAttachType()
+return PATTACH_OVERHEAD_FOLLOW
+end
 
 
 
 
 modifier_muerta_gunslinger_custom_evasion = class({})
-function modifier_muerta_gunslinger_custom_evasion:IsHidden() return false end
+function modifier_muerta_gunslinger_custom_evasion:IsHidden() return true end
 function modifier_muerta_gunslinger_custom_evasion:IsPurgable() return false end
-function modifier_muerta_gunslinger_custom_evasion:GetTexture() return "buffs/blast_speed" end
-
-function modifier_muerta_gunslinger_custom_evasion:GetEffectName() 
-  return "particles/muerta/gun_evasion.vpcf"
-end
-
-function modifier_muerta_gunslinger_custom_evasion:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-
 
 
 
@@ -968,52 +923,47 @@ modifier_muerta_gunslinger_custom_illusion = class({})
 function modifier_muerta_gunslinger_custom_illusion:IsHidden() return true end
 function modifier_muerta_gunslinger_custom_illusion:IsPurgable() return false end
 
-
 function modifier_muerta_gunslinger_custom_illusion:GetStatusEffectName()
-    return "particles/status_fx/status_effect_muerta_parting_shot.vpcf"
+return "particles/status_fx/status_effect_muerta_parting_shot.vpcf"
 end
 function modifier_muerta_gunslinger_custom_illusion:StatusEffectPriority()
- return 9999999
+return MODIFIER_PRIORITY_ILLUSION
 end
 
-
 function modifier_muerta_gunslinger_custom_illusion:GetEffectName()
-	return "particles/units/heroes/hero_muerta/muerta_ultimate_form_ethereal.vpcf"
+return "particles/units/heroes/hero_muerta/muerta_ultimate_form_ethereal.vpcf"
 end
 
 function modifier_muerta_gunslinger_custom_illusion:GetEffectAttachType()
-	return PATTACH_ABSORIGIN_FOLLOW
+return PATTACH_ABSORIGIN_FOLLOW
 end
-
-
-
 
 function modifier_muerta_gunslinger_custom_illusion:OnCreated(table)
 if not IsServer() then return end
 
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
 if table.hero then 
 	self.hero = EntIndexToHScript(table.hero)
-	self.mod = self.hero:AddNewModifier(self.hero, self:GetAbility(), "modifier_muerta_gunslinger_custom_incoming", {})
+	self.mod = self.hero:AddNewModifier(self.hero, self.ability, "modifier_muerta_gunslinger_custom_incoming", {})
 end
 
 if table.target then 
 	self.target = EntIndexToHScript(table.target)
 
-	if (self:GetParent():GetAbsOrigin() - self.target:GetAbsOrigin()):Length2D() < 1500 then 
-
-		self:GetParent():SetForceAttackTarget(self.target)
+	if (self.parent:GetAbsOrigin() - self.target:GetAbsOrigin()):Length2D() < 1500 then 
+		self.parent:SetForceAttackTarget(self.target)
 	end
-
-
 end
 
-self.particle_ally_fx = ParticleManager:CreateParticle("particles/blur_absorb.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-ParticleManager:SetParticleControl(self.particle_ally_fx, 0, self:GetParent():GetAbsOrigin())
+self.particle_ally_fx = ParticleManager:CreateParticle("particles/blur_absorb.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControl(self.particle_ally_fx, 0, self.parent:GetAbsOrigin())
 self:AddParticle(self.particle_ally_fx, false, false, -1, false, false)
 
 self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_muerta/muerta_parting_shot_tether.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.hero)
 ParticleManager:SetParticleControlEnt( self.particle, 0, self.hero, PATTACH_POINT_FOLLOW, "attach_hitloc", self.hero:GetOrigin(), true )
-ParticleManager:SetParticleControlEnt( self.particle, 1, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetOrigin(), true )
+ParticleManager:SetParticleControlEnt( self.particle, 1, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetOrigin(), true )
 self:AddParticle(self.particle, false, false, -1, false, false)
 
 self:StartIntervalThink(0.1)
@@ -1022,9 +972,10 @@ end
 
 function modifier_muerta_gunslinger_custom_illusion:OnIntervalThink()
 if not IsServer() then return end
+
 if self.target == nil or self.target:IsNull() or not self.target:IsAlive() then 
 	self.target = nil
-	self:GetParent():SetForceAttackTarget(nil)
+	self.parent:SetForceAttackTarget(nil)
 end
 
 end
@@ -1039,37 +990,14 @@ end
 
 end
 
-
-
-
-function modifier_muerta_gunslinger_custom_illusion:DeclareFunctions()
-return
-{
-	MODIFIER_EVENT_ON_ATTACK_LANDED
-}
-end
-
-
-function modifier_muerta_gunslinger_custom_illusion:OnAttackLanded(params)
-if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end
-if not self.hero then return end
-if self.hero:IsNull() then return end
-if not self.hero:IsAlive() then return end
-
-
-self.hero:GenericHeal(self.hero:GetMaxHealth()*self:GetAbility().lowhp_heal, self:GetAbility())
-
-end
-
-
-
 function modifier_muerta_gunslinger_custom_illusion:CheckState()
 return
 {
 	[MODIFIER_STATE_COMMAND_RESTRICTED] = true
 }
 end
+
+
 
 
 modifier_muerta_gunslinger_custom_incoming = class({})
@@ -1079,13 +1007,12 @@ function modifier_muerta_gunslinger_custom_incoming:GetTexture() return "buffs/g
 function modifier_muerta_gunslinger_custom_incoming:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_muerta_gunslinger_custom_incoming:OnCreated(table)
 if not IsServer() then return end
+self.parent = self:GetParent()
+self.damage_reduce = self.parent:GetTalentValue("modifier_muerta_gun_6", "damage_reduce")
 
-
-self.particle_ally_fx = ParticleManager:CreateParticle("particles/blur_absorb.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-ParticleManager:SetParticleControl(self.particle_ally_fx, 0, self:GetParent():GetAbsOrigin())
+self.particle_ally_fx = ParticleManager:CreateParticle("particles/blur_absorb.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControl(self.particle_ally_fx, 0, self.parent:GetAbsOrigin())
 self:AddParticle(self.particle_ally_fx, false, false, -1, false, false)
-
-
 end
 
 function modifier_muerta_gunslinger_custom_incoming:DeclareFunctions()
@@ -1097,7 +1024,7 @@ end
 
 
 function modifier_muerta_gunslinger_custom_incoming:GetModifierIncomingDamage_Percentage()
-return self:GetAbility().lowhp_incoming
+return self.damage_reduce
 end
 
 
@@ -1110,4 +1037,25 @@ function modifier_muerta_gunslinger_custom_incoming_cd:IsDebuff() return true en
 function modifier_muerta_gunslinger_custom_incoming_cd:GetTexture() return "buffs/gun_lowhp" end
 function modifier_muerta_gunslinger_custom_incoming_cd:OnCreated(table)
 self.RemoveForDuel = true
+end
+
+
+
+
+
+modifier_muerta_gunslinger_custom_active_buff = class({})
+function modifier_muerta_gunslinger_custom_active_buff:IsHidden() return true end
+function modifier_muerta_gunslinger_custom_active_buff:IsPurgable() return false end
+
+function modifier_muerta_gunslinger_custom_active_buff:GetEffectName() 
+return "particles/muerta/gun_evasion.vpcf"
+end
+
+
+
+function modifier_muerta_gunslinger_custom_active_buff:CheckState()
+return
+{
+	[MODIFIER_STATE_UNSLOWABLE] = true
+}
 end

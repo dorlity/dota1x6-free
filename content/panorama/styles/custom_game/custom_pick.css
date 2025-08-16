@@ -1,4 +1,4 @@
-/* Prettified by Source 2 Viewer 7.0.0.0 - https://valveresourceformat.github.io */
+/* Prettified by Source 2 Viewer 14.1.0.0 - https://valveresourceformat.github.io */
 
 .wall
 {
@@ -227,6 +227,38 @@
 	
 }
 
+@keyframes 'LabelAnimationOpenDown'
+{
+	0%
+	{
+		transform: translate3d(0, -30%, 0px);
+		opacity: 0;
+	}
+	
+	100%
+	{
+		transform: translate3d(0, 0, 0px);
+		opacity: 1;
+	}
+	
+}
+
+@keyframes 'LabelAnimationOpenUp'
+{
+	0%
+	{
+		transform: translate3d(0, 0, 0px);
+		opacity: 1;
+	}
+	
+	100%
+	{
+		transform: translate3d(0, -30%, 0px);
+		opacity: 0;
+	}
+	
+}
+
 @keyframes 'LabelAnimationOpenRight'
 {
 	0%
@@ -338,6 +370,48 @@
 	flow-children: down;
 }
 
+.tg_panel
+{
+	height: 60px;
+	ignore-parent-flow: true;
+	align: right top;
+	padding: 0px;
+	margin-top: 6px;
+	margin-right: 15px;
+	flow-children: right;
+}
+
+.tg_panel:hover
+{
+	brightness: 2.3;
+}
+
+#tg_panel_icon
+{
+	width: 36px;
+	height: 36px;
+	background-image: url("s2r://panorama/images/custom_game/telegram_png.vtex");
+	background-size: 100%;
+	background-repeat: no-repeat;
+	vertical-align: center;
+	border: 1px solid #5e6869;
+	box-shadow: 2px 2px 5px black;
+	margin-left: 7px;
+}
+
+#tg_panel_text
+{
+	font-size: 21px;
+	color: gradient( linear, 0% 100%, 0% 0%, from( #bbbbbb ), to( #dddddd ) );
+	font-family: Radiance;
+	align: left center;
+	text-shadow: 1px 1px 3px 2.0 black;
+	text-align: center;
+	font-style: italic;
+	text-overflow: shrink;
+	white-space: nowrap;
+}
+
 .hero_pick_blured
 {
 	wash-color: #444444;
@@ -412,119 +486,121 @@
 	animation-iteration-count: 1;
 }
 
-.base_pick_left
+#pick_base_main
 {
-	margin-left: 15%;
-}
-
-.base_pick_right
-{
-	margin-right: 15%;
-}
-
-.AspectRatio16x10 .base_pick_left
-{
-	margin-left: 11%;
-}
-
-.AspectRatio16x10 .base_pick_right
-{
-	margin-right: 11%;
-}
-
-.AspectRatio4x3 .base_pick_left
-{
-	margin-left: 4%;
-}
-
-.AspectRatio4x3 .base_pick_right
-{
-	margin-right: 4%;
+	height: 100%;
+	align: center center;
+	flow-children: right;
 }
 
 .pick_base_players_hidden
 {
-	height: 756px;
-	width: 650px;
 	opacity: 0;
-	align: left center;
-	flow-children: right;
-	background-color: rgba(10, 10, 10, 0.85);
-	border: 2px solid #807851;
-	border-radius: 10px;
 }
 
 .pick_base_players_visible
 {
-	animation-name: LabelAnimationOpenLeft;
-	animation-duration: 0.7s;
-	animation-timing-function: ease-in-out;
-	animation-iteration-count: 1;
 	height: 756px;
-	width: 650px;
-	opacity: 1;
+	width: 340px;
 	flow-children: right;
-	align: left center;
+	vertical-align: center;
 	background-color: rgba(10, 10, 10, 0.85);
 	border: 2px solid #807851;
 	border-radius: 10px;
 }
 
-.pick_base_mimimap_hidden
+.pick_base_players_visible_items
 {
 	height: 756px;
-	width: 650px;
-	opacity: 0;
-	align: right center;
-	flow-children: down;
+	width: 258px;
+	flow-children: right;
+	vertical-align: center;
 	background-color: rgba(10, 10, 10, 0.85);
 	border: 2px solid #807851;
 	border-radius: 10px;
 }
 
-.pick_base_mimimap_visible
+.pick_base_players_show
 {
-	animation-name: LabelAnimationOpenRight;
+	animation-name: LabelAnimationOpenDown;
 	animation-duration: 0.7s;
 	animation-timing-function: ease-in-out;
 	animation-iteration-count: 1;
-	height: 756px;
-	width: 650px;
-	opacity: 1;
-	align: right center;
-	flow-children: down;
-	background-color: rgba(10, 10, 10, 0.85);
-	border: 2px solid #807851;
-	border-radius: 10px;
-}
-
-.pick_base_mimimap_hide
-{
-	animation-name: LabelAnimationLeft;
-	animation-duration: 0.7s;
-	animation-timing-function: ease-in-out;
-	animation-iteration-count: 1;
-	height: 756px;
-	width: 650px;
-	opacity: 1;
-	align: right center;
-	flow-children: down;
-	background-color: rgba(10, 10, 10, 0.85);
-	border: 2px solid #807851;
-	border-radius: 10px;
 }
 
 .pick_base_players_hide
 {
-	animation-name: LabelAnimationRight;
+	animation-name: LabelAnimationOpenUp;
 	animation-duration: 0.7s;
 	animation-timing-function: ease-in-out;
 	animation-iteration-count: 1;
+}
+
+.player_base_pick
+{
+	width: 134.16px;
+	height: 96.768px;
+	margin-top: 3.3%;
+	horizontal-align: center;
+	background-color: black;
+	box-shadow: #ccc 0px 0px 4px -1px;
+}
+
+.player_base_pick_local
+{
+	box-shadow: #807851 0px 0px 11px 0px;
+}
+
+.player_base_icon
+{
+	width: 100%;
+	height: 75%;
+	horizontal-align: center;
+	background-color: black;
+}
+
+.player_base_text
+{
+	width: 100%;
+	height: 25%;
+	color: #ccc;
+	font-size: 18px;
+	text-align: center;
+	vertical-align: bottom;
+	font-weight: semi-bold;
+	font-family: Radiance;
+	border-top: 1px solid #ccc;
+	background-color: rgba(0, 0, 0, 0.99);
+}
+
+.pick_base_mimimap_hidden
+{
+	opacity: 0;
+}
+
+.pick_base_mimimap_show
+{
+	animation-name: LabelAnimationOpenDown;
+	animation-duration: 0.7s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: 1;
+}
+
+.pick_base_mimimap_hide
+{
+	animation-name: LabelAnimationOpenUp;
+	animation-duration: 0.7s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: 1;
+}
+
+.pick_base_mimimap_visible
+{
 	height: 756px;
 	width: 650px;
-	opacity: 1;
-	flow-children: right;
-	align: left center;
+	margin-left: 15px;
+	vertical-align: center;
+	flow-children: down;
 	background-color: rgba(10, 10, 10, 0.85);
 	border: 2px solid #807851;
 	border-radius: 10px;
@@ -533,7 +609,7 @@
 .pick_base_heroes
 {
 	height: 100%;
-	width: 60%;
+	width: 100%;
 	flow-children: down;
 }
 
@@ -635,88 +711,21 @@
 .timer_panel_base_time
 {
 	width: 100%;
-	color: #ccc;
+	color: white;
 	font-size: 26px;
 	text-align: center;
 	vertical-align: center;
 	font-weight: semi-bold;
 	font-family: Radiance;
+	text-shadow: 0px 0px 3px 4 black;
 }
 
 .timer_panel_base
 {
-	width: 40%;
-	height: 8%;
-	background-color: black;
-	box-shadow: #ccc 0px 0px 4px -1px;
-}
-
-.timer_panel_base_1
-{
-	margin-top: 4.5%;
-}
-
-.timer_panel_base_2
-{
-	margin-top: 21.5%;
-}
-
-.timer_panel_base_3
-{
-	margin-top: 37.5%;
-}
-
-.timer_panel_base_4
-{
-	margin-top: 53.5%;
-}
-
-.timer_panel_base_5
-{
-	margin-top: 70%;
-}
-
-.timer_panel_base_6
-{
-	margin-top: 86%;
-}
-
-.player_base_pick
-{
-	width: 33.1%;
-	height: 12.8%;
-	margin-top: 3.3%;
-	horizontal-align: right;
-	margin-right: 10%;
-	background-color: black;
-	box-shadow: #ccc 0px 0px 4px -1px;
-}
-
-.player_base_pick_local
-{
-	box-shadow: #807851 0px 0px 11px 0px;
-}
-
-.player_base_icon
-{
-	width: 100%;
-	height: 75%;
-	horizontal-align: center;
-	background-color: black;
-}
-
-.player_base_text
-{
-	width: 100%;
-	height: 25%;
-	color: #ccc;
-	font-size: 18px;
-	text-align: center;
-	vertical-align: bottom;
-	font-weight: semi-bold;
-	font-family: Radiance;
-	border-top: 1px solid #ccc;
-	background-color: rgba(0, 0, 0, 0.99);
+	width: 60px;
+	height: 40px;
+	align: center center;
+	color: white;
 }
 
 .lobby_rating
@@ -1499,7 +1508,7 @@
 
 .ButtonText_Hero
 {
-	font-size: 31px;
+	font-size: 29px;
 	text-overflow: shrink;
 	color: white;
 	align: left bottom;
@@ -1868,6 +1877,16 @@
 	background-size: 100%;
 	margin: 0.3%;
 	border: 1px solid gray;
+}
+
+.changes_icon_no_border
+{
+	width: 6.0%;
+	height: 100%;
+	background-size: 100%;
+	margin: 0.3%;
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
 }
 
 .changes_icon_general
@@ -2673,7 +2692,7 @@
 	border-top: 2px solid #807851;
 	border-left: 2px solid C;
 	align: left bottom;
-	margin-left: 250px;
+	margin-left: 150px;
 	flow-children: down;
 	border-top-left-radius: 8px;
 	border-top-right-radius: 8px;
@@ -2692,7 +2711,7 @@
 	border-top: 2px solid #807851;
 	border-left: 2px solid #807851;
 	align: left bottom;
-	margin-left: 250px;
+	margin-left: 150px;
 	flow-children: down;
 	border-top-left-radius: 8px;
 	border-top-right-radius: 8px;

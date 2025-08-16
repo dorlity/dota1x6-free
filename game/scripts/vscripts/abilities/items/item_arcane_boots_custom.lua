@@ -6,16 +6,36 @@ function item_arcane_boots_custom:GetIntrinsicModifierName()
 	return "modifier_item_arcane_boots_custom"
 end
 
+function item_arcane_boots_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/items_fx/arcane_boots.vpcf", context )
+PrecacheResource( "particle","particles/items_fx/arcane_boots_recipient.vpcf", context )
+end
+
 function item_arcane_boots_custom:OnSpellStart()
-	if not IsServer() then return end
-	local replenish_amount = self:GetSpecialValueFor("replenish_amount")
-	self:GetCaster():EmitSound("DOTA_Item.ArcaneBoots.Activate")
-	local particle_1 = ParticleManager:CreateParticle("particles/items_fx/arcane_boots.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-	ParticleManager:ReleaseParticleIndex(particle_1)
-	local particle_2 = ParticleManager:CreateParticle("particles/items_fx/arcane_boots_recipient.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
+
+local caster = self:GetCaster()
+local replenish_amount = self:GetSpecialValueFor("replenish_amount")
+local radius = self:GetSpecialValueFor("radius")
+
+caster:EmitSound("DOTA_Item.ArcaneBoots.Activate")
+
+local particle_1 = ParticleManager:CreateParticle("particles/items_fx/arcane_boots.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster)
+ParticleManager:ReleaseParticleIndex(particle_1)
+
+local friends = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_INVULNERABLE, FIND_CLOSEST, false)
+
+for _,friend in pairs(friends) do
+
+	local particle_2 = ParticleManager:CreateParticle("particles/items_fx/arcane_boots_recipient.vpcf", PATTACH_ABSORIGIN_FOLLOW, friend)
 	ParticleManager:ReleaseParticleIndex(particle_2)
-	self:GetCaster():GiveMana(replenish_amount)
-	SendOverheadEventMessage(nil, OVERHEAD_ALERT_MANA_ADD , self:GetCaster(), replenish_amount, nil)
+	friend:GiveMana(replenish_amount)
+
+	SendOverheadEventMessage(nil, OVERHEAD_ALERT_MANA_ADD , friend, replenish_amount, nil)
+end
+
+
+
 end
 
 modifier_item_arcane_boots_custom = class({})

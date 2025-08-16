@@ -15,80 +15,73 @@ function modifier_patrol_armor:IsHidden() return true end
 
 
 function modifier_patrol_armor:OnCreated(table)
+
+self.parent = self:GetParent()
+self.parent:AddDeathEvent(self)
+
+self.ability = self:GetAbility()
+self.radius = self.ability:GetSpecialValueFor("radius")
+
 if not IsServer() then return end
-	local ability = self:GetAbility()
-	if not IsValidEntity(ability) then return end
+if not IsValidEntity(self.ability) then return end
 
-	self.armor = ability:GetSpecialValueFor("armor_first")
+self.armor = self.ability:GetSpecialValueFor("armor_first")
 
-	if GameRules:GetDOTATime(false, false) < patrol_second_tier then 
-		--self.armor = ability:GetSpecialValueFor("armor_first")
-	end
+if not IsServer() then return end
 
-	self.radius = ability:GetSpecialValueFor("radius")
+self.interval = 0.2
 
-	if not IsServer() then return end
-	self:StartIntervalThink(0.1)
+self:OnIntervalThink()
+self:StartIntervalThink(self.interval)
 end
 
 
 function modifier_patrol_armor:OnIntervalThink()
-	if not IsServer() then return end
-	local parent = self:GetParent()
-	if not IsValidEntity(parent) then return end
+if not IsServer() then return end
+if not IsValidEntity(self.parent) then return end
 
-	local heroes = FindUnitsInRadius(parent:GetTeamNumber(), parent:GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD + DOTA_UNIT_TARGET_FLAG_NOT_CREEP_HERO, 0, false)
+local team_register = {}
+local count = 0
 
-	local count = 0
-	for _,hero in pairs(heroes) do 
-		if not hero:HasModifier("modifier_monkey_king_wukongs_command_custom_soldier") and not hero:IsTempestDouble() then 
-			count = count + 1
+for _,player in pairs(players) do
+
+ 	AddFOWViewer(player:GetTeamNumber(), self.parent:GetAbsOrigin(), 500, self.interval + 0.1, false)
+
+	if (player:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D() <= self.radius and not team_register[player:GetTeamNumber()] and player:IsAlive() then
+		team_register[player:GetTeamNumber()] = true
+		count = count + 1
+		if count > 1 then
+			break
 		end
 	end
+end
 
+if count > 1 and not self.parent:HasModifier("modifier_patrol_armor_buff") then 
+	self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_patrol_armor_buff", {})
+end
 
-	if count > 1 and not self:GetParent():HasModifier("modifier_patrol_armor_buff") then 
-		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_patrol_armor_buff", {})
-	end
-
-	if count <= 1 and self:GetParent():HasModifier("modifier_patrol_armor_buff") then
-		self:GetParent():RemoveModifierByName("modifier_patrol_armor_buff") 
-	end
+if count <= 1 and self.parent:HasModifier("modifier_patrol_armor_buff") then
+	self.parent:RemoveModifierByName("modifier_patrol_armor_buff") 
+end
 
 end
 
-
-function modifier_patrol_armor:CheckState()
-if not IsServer() then return end
-if true then return end
-if not self:GetParent():HasModifier("modifier_patrol_armor_buff") then return end
-if GameRules:GetDOTATime(false, false) > patrol_second_tier then 
-return
-{
-	[MODIFIER_STATE_INVULNERABLE] = true
-
-}
-end
-return
-end
 
 
 function modifier_patrol_armor:DeclareFunctions()
-	return {
-		MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
-		MODIFIER_EVENT_ON_DEATH
-	}
+return {
+	MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
+}
 end
 
 
-function modifier_patrol_armor:OnDeath(params)
+function modifier_patrol_armor:DeathEvent(params)
 if not IsServer() then return end
-if not  my_game:IsPatrol(params.unit:GetUnitName()) then return end
-if (self:GetParent():GetAbsOrigin() - params.unit:GetAbsOrigin()):Length2D() > self.radius then return end
+if not  dota1x6:IsPatrol(params.unit:GetUnitName()) then return end
+if (self.parent:GetAbsOrigin() - params.unit:GetAbsOrigin()):Length2D() > self.radius then return end
 if not params.attacker then return end
 
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_patrol_armor_death", {duration = self:GetAbility():GetSpecialValueFor("death_duration")})
-
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_patrol_armor_death", {duration = self:GetAbility():GetSpecialValueFor("death_duration")})
 
 end
 
@@ -96,19 +89,17 @@ end
 function modifier_patrol_armor:GetModifierIncomingDamage_Percentage(params)
 if not IsServer() then return end
 
-local hero = players[params.attacker:GetTeamNumber()]
+local hero = players[params.attacker:GetId()]
 
-if hero and (hero:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Length2D() > self.radius then
+if hero and (hero:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D() > self.radius then
 	return -200
 end
 
 if towers[params.attacker:GetTeamNumber()] then 
-	my_game:ActivatePushReduce(params.attacker:GetTeamNumber(), nil)
+	dota1x6:ActivatePushReduce(params.attacker:GetTeamNumber())
 end
 
-
-
-if self:GetParent():HasModifier("modifier_patrol_armor_buff") then 
+if self.parent:HasModifier("modifier_patrol_armor_buff") then 
 	return self.armor
 end
 

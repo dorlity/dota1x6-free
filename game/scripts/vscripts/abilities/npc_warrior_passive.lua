@@ -12,13 +12,13 @@ function modifier_warrior_passive:IsHidden() return true end
 
 function modifier_warrior_passive:DeclareFunctions() return {
 
-    MODIFIER_EVENT_ON_ATTACK_LANDED
+    MODIFIER_PROPERTY_PROCATTACK_FEEDBACK
 
 } end
 
 
 
-function modifier_warrior_passive:OnAttackLanded( param )
+function modifier_warrior_passive:GetModifierProcAttack_Feedback( param )
     if not IsServer() then end 
     if self:GetParent() == param.attacker and  not param.target:IsMagicImmune() then
             self:GetParent():EmitSound("Phantom_Assassin.LegendaryPosison")

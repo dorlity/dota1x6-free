@@ -1,0 +1,257 @@
+
+"DOTAAbilities"
+{
+
+"Version"		"1"
+
+"centaur_hoof_stomp_custom"
+{
+
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/centaur/centaur_hoof_stomp_custom"   
+    "AbilityTextureName"            "centaur_hoof_stomp"
+
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"
+    "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_NO"
+    "SpellDispellableType"          "SPELL_DISPELLABLE_YES_STRONG"
+    "FightRecapLevel"               "1"
+    "AbilitySound"                  "Hero_Centaur.HoofStomp"
+
+    // Stats
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCastPoint"              "0"
+    "AbilityCooldown"               "15 14 13 12"
+    "AbilityManaCost"               "100 110 120 130"
+    
+    // Special
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+        "radius"                        
+        {
+            "value"     "325"
+            "affected_by_aoe_increase"  "1"
+        }
+        "stomp_damage"                  "70 140 210 280"
+        "stun_duration"                 "1.6 1.8 2.0 2.2"
+        "windup_time"   "0.5"
+    }
+}
+
+//=================================================================================================================
+// Centaur Warchief: Double Edge
+//=================================================================================================================
+"centaur_double_edge_custom"
+{
+
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/centaur/centaur_double_edge_custom"   
+    "AbilityTextureName"            "centaur_double_edge"
+
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_AOE"
+    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
+    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"
+    "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_NO"
+    "FightRecapLevel"               "1"
+    "AbilitySound"                  "Hero_Centaur.DoubleEdge"
+    "LinkedAbility"                 "centaur_double_edge_custom_legendary"
+    
+
+    // Stats        
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCooldown"               "3.5"
+    "AbilityCastRange"              "175"
+    "AbilityCastPoint"              "0.25"
+
+    //------------------------------------------------------------------------------
+    "AbilityManaCost"               "0 0 0 0"
+
+    // Special  
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {           
+        "edge_damage"                    "120 180 240 300"       
+        "strength_damage"                "60 80 100 120" 
+        "shard_max"                     "5"
+        "shard_str"                     "5"
+        "shard_duration"                "8"
+        "radius"                        
+        {
+            "value"     "220"
+            "affected_by_aoe_increase"  "1"
+        }
+    }
+    "AbilityCastAnimation"      "ACT_DOTA_CAST_ABILITY_2"
+}
+
+"centaur_double_edge_custom_legendary"
+{
+
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/centaur/centaur_double_edge_custom"   
+    "AbilityTextureName"            "edge_legendary"
+    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"
+    "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_NO"
+
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+
+    "FightRecapLevel"               "1"
+    "AbilitySound"                  "Hero_Centaur.DoubleEdge"
+    "AbilityCooldown"               "1"
+    "MaxLevel"                      "1"
+
+
+    // Special  
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {           
+        "heal"      "100"
+        "duration"      "8"
+        "blood_damage"  "100"
+        "blood_duration"    "5"
+        "cd_inc"            "40"
+    }
+    "AbilityCastAnimation"      "ACT_DOTA_CAST_ABILITY_4"
+}
+
+
+//=================================================================================================================
+// Centaur Warchief: Return (Retaliate)
+//=================================================================================================================
+"centaur_return_custom"
+{
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/centaur/centaur_return_custom"   
+    "AbilityTextureName"            "centaur_return"
+
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_PASSIVE"
+    "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_YES"
+    "AbilityUnitDamageType"         "DAMAGE_TYPE_PHYSICAL"
+    "SpellDispellableType"          "SPELL_DISPELLABLE_NO"
+    "AbilityCastAnimation"      "0"
+    "AbilityCastGestureSlot"        "DEFAULT"
+    "IsBreakable"                   "1"
+    "HasShardUpgrade"             "1"
+
+    
+    // Special
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+        "return_damage"             "8 16 24 32"
+        "return_damage_str"         "5 10 15 20"
+        "shard_spell_cd"            "1"
+        "shard_chance"              "20"
+        "shard_stun"                "0.5"
+        "shard_cd"                  "3"      
+    }
+}
+
+//=================================================================================================================
+// Centaur: Stampede
+//=================================================================================================================
+"centaur_stampede_custom"
+{
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/centaur/centaur_stampede_custom"   
+    "AbilityTextureName"            "centaur_stampede"
+
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+    "AbilityType"                   "ABILITY_TYPE_ULTIMATE"
+    "SpellImmunityType"             "SPELL_IMMUNITY_ALLIES_YES_ENEMIES_NO"
+    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"
+    "SpellDispellableType"          "SPELL_DISPELLABLE_NO"
+    "FightRecapLevel"               "2"
+    "AbilitySound"                  "Hero_Centaur.Stampede"
+    "AbilityCastAnimation"          "ACT_DOTA_CAST_ABILITY_4"
+
+    "LinkedAbility"                 "centaur_stampede_custom_legendary"
+    "HasScepterUpgrade"             "1"
+
+    // Cost
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityManaCost"               "150 200 250"
+    "AbilityCooldown"               "28"
+
+
+    // Special
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+        "duration"           "3.5 4 4.5"
+        "strength_damage"    "1.4 1.8 2.2"   
+        "slow_duration"      "3"
+        "radius"            
+        {
+            "value" "105"
+            "affected_by_aoe_increase"  "1"
+        }
+        "slow_movement_speed"           "-100"
+        "scepter_stampede"          "40"
+    }
+}
+
+"centaur_stampede_custom_legendary"
+{
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/centaur/centaur_stampede_custom"   
+    "AbilityTextureName"            "centaur_work_horse"
+
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_AOE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_VECTOR_TARGETING"
+    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"
+    "AbilitySound"                  "Hero_Centaur.Stampede"
+    "AbilityCastAnimation"          "ACT_DOTA_CAST_ABILITY_4"
+    "MaxLevel"                        "1"
+
+    "AbilityCooldown"               "18"
+    "AbilityCastRange"              "1200"
+    "AbilityCastPoint"              "0.2"
+
+
+    // Special
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+        "duration"           "0.5"
+        "width"            "480"
+        "interval"          "0.5"
+        "speed"             "650"
+        "hit_radius"        "120"
+        "hit_damage"        "200"
+        "hit_stun"          "0.2"
+        "hit_knock"         "150"
+        "distance"          "2000"
+        "speed_bonus"       "50"
+        "silence"           "2"
+        "max"               "12"
+        "damage"            "80"
+    }
+}
+
+
+
+
+"centaur_innate_custom"
+{
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/centaur/centaur_innate_custom"   
+
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_HIDDEN"
+    "MaxLevel"                      "1"
+    "Innate"                        "1"
+    "HasScepterUpgrade"             "1"
+    "AbilityValues"
+    {
+        "str"                       "1"
+        "upgrade_rate"              "120"
+        "scepter_move"              "40"
+        "scepter_move_max"          "600"
+        "scepter_rate"              "60"
+        "attack_range"              "80"
+    }
+}
+
+
+}

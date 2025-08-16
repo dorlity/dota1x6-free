@@ -1,4 +1,4 @@
-<!-- xml reconstructed by Source 2 Viewer 7.0.0.0 - https://valveresourceformat.github.io -->
+<!-- xml reconstructed by Source 2 Viewer 14.1.0.0 - https://valveresourceformat.github.io -->
 <root>
 	<styles>
 		<include src="s2r://panorama/styles/custom_game/info_reports.vcss_c" />
@@ -13,6 +13,20 @@
 			</Panel>
 			<Panel class="info_button" id="info_button" />
 			<Panel class="report_button" id="report_button" />
+		</Panel>
+		<Panel class="new_promo_alert_hidden" id="new_promo_alert">
+			<Panel class="new_promo_alert_body" id="new_promo_alert_body">
+				<Panel class="new_promo_alert_content">
+					<Panel class="new_promo_alert_top">
+						<Label class="new_promo_alert_top_text" id="new_promo_alert_top_text" html="true" />
+					</Panel>
+					<Panel class="new_promo_alert_bot">
+						<Label class="new_promo_alert_bot_text" id="new_promo_alert_bot_text" html="true" />
+						<Panel class="new_promo_alert_icon" id="new_promo_alert_icon" />
+					</Panel>
+				</Panel>
+			</Panel>
+			<Panel class="new_promo_alert_arrow" id="new_promo_alert_arrow" />
 		</Panel>
 		<Panel class="active_vote_show_hidden" id="active_vote_show">
 			<Panel class="active_vote_body">
@@ -38,6 +52,9 @@
 			<Panel class="shop_window_main" id="shop_window_main">
 				<Panel class="shop_window_buttons" id="shop_window_buttons">
 					<Panel id="shop_items_new" />
+					<Panel id="shop_items_sale" class="hidden_panel">
+						<Label class="shop_items_sale_text" text="#global_sale_50" />
+					</Panel>
 					<Panel class="shop_window_buttons_content" id="shop_window_buttons_content">
 						<Panel class="shop_window_buttons_top">
 							<Panel class="CloseShop" onactivate="Shop_window_hide();" />
@@ -53,6 +70,9 @@
 							</Panel>
 							<Panel class="BonusCurrencyButton" id="BonusCurrencyButton" onactivate="OpenBonusShards();">
 								<Panel class="BonusCurrencyIcon" />
+							</Panel>
+							<Panel class="PromoButton" id="PromoButton" onactivate="OpenPromoWindow();">
+								<Label class="PromoButtonLabel" text="#promo_button" />
 							</Panel>
 						</Panel>
 						<Panel class="inshop_button activate inshop_button_first" id="inshop_button_sub">
@@ -97,7 +117,7 @@
 							<Label class="InfoHeader_bot_label" text="#pass_header_bot" />
 						</Panel>
 					</Panel>
-					<Panel class="pass_window_2">
+					<Panel class="pass_window_10">
 						<Label class="TextInfoPassLeft" html="true" text="#pass_1" />
 					</Panel>
 					<Panel class="pass_window_fill" />
@@ -105,24 +125,32 @@
 						<Label class="TextInfoPassRight" html="true" text="#pass_2" />
 					</Panel>
 					<Panel class="pass_window_fill2" />
-					<Panel class="pass_window_8">
+					<Panel class="pass_window_2">
 						<Label class="TextInfoPassLeft" html="true" text="#pass_3" />
 					</Panel>
-					<Panel class="pass_window_fill3" />
-					<Panel class="pass_window_5">
+					<Panel class="pass_window_fill" />
+					<Panel class="pass_window_11">
 						<Label class="TextInfoPassRight" html="true" text="#pass_4" />
 					</Panel>
 					<Panel class="pass_window_fill" />
-					<Panel class="pass_window_4">
+					<Panel class="pass_window_8">
 						<Label class="TextInfoPassLeft" html="true" text="#pass_5" />
 					</Panel>
 					<Panel class="pass_window_fill3" />
-					<Panel class="pass_window_9">
+					<Panel class="pass_window_5">
 						<Label class="TextInfoPassRight" html="true" text="#pass_6" />
+					</Panel>
+					<Panel class="pass_window_fill" />
+					<Panel class="pass_window_4">
+						<Label class="TextInfoPassLeft" html="true" text="#pass_7" />
+					</Panel>
+					<Panel class="pass_window_fill3" />
+					<Panel class="pass_window_9">
+						<Label class="TextInfoPassRight" html="true" text="#pass_8" />
 					</Panel>
 					<Panel class="pass_window_fill2" />
 					<Panel class="pass_window_6">
-						<Label class="TextInfoPassLeft" html="true" text="#pass_7" />
+						<Label class="TextInfoPassLeft" html="true" text="#pass_9" />
 					</Panel>
 					<Panel class="pass_window_7">
 						<Panel class="ButtonBuySubscribe_bot_not" id="ButtonBuySubscribe_bot" onactivate="CreatePlusWindow();">
@@ -150,8 +178,10 @@
 						</Panel>
 					</Panel>
 					<Panel id="ChooseCategory">
-						<Panel class="ChooseCategoryBlock ChooseCategoryBlock_new" id="ChooseCategoryItems_button" onactivate="OpenItemsContent(&apos;CategoryItems&apos;);">
-							<Panel id="ChooseCategoryBlockNew" />
+						<Panel class="ChooseCategoryBlock" id="ChooseCategoryItems_button" onactivate="OpenItemsContent(&apos;CategoryItems&apos;);">
+							<Panel id="ChooseCategoryBlockSale" class="hidden_panel">
+								<Label class="shop_items_sale_text" text="#global_sale_50" />
+							</Panel>
 							<Panel class="ChooseCategoryBlockIcon" id="ChooseCategoryBlockIconItems" />
 							<Label class="ChooseCategoryBlockLabel" text="#items" />
 						</Panel>
@@ -159,11 +189,19 @@
 							<Panel class="ChooseCategoryBlockIcon" id="ChooseCategoryBlockIconPets" />
 							<Label class="ChooseCategoryBlockLabel" text="#pets" />
 						</Panel>
+						<Panel class="ChooseCategoryBlock ChooseCategoryBlockCenter" id="ChooseCategoryCosmetics_button" onactivate="OpenItemsContent(&apos;CategoryCosmetics&apos;);">
+							<Panel class="ChooseCategoryBlockIcon" id="ChooseCategoryBlockIconCosmetics" />
+							<Label class="ChooseCategoryBlockLabel" text="#Cosmetics" />
+						</Panel>
 					</Panel>
 					<Panel id="CategoryPets" />
 					<Panel id="CategoryItems">
 						<Panel class="ItemsList" id="ItemsList" />
 						<Panel class="HeroListItems" id="HeroListItems" />
+					</Panel>
+					<Panel id="CategoryCosmetics">
+						<Panel id="CategoryCosmeticsContent" hittest="true" />
+						<Panel id="CategoryCosmeticsVideo" hittest="false" />
 					</Panel>
 				</Panel>
 				<Panel class="shop_window_content" id="shop_window_4">
@@ -171,6 +209,9 @@
 						<Panel class="ChatWheelSoundsListButtons">
 							<Label id="ButtonLabelDefault" class="TextButtonLabel" html="true" text="#chat_wheel_general" />
 							<Label id="ButtonLabelHero" class="TextButtonLabel" html="true" text="#chat_wheel_hero" />
+						</Panel>
+						<Panel class="SoundWheelSettingsButton" id="SoundWheelSettingsButton">
+							<Label class="SoundWheelSettingsLabel" text="#SoundWheelSettings" />
 						</Panel>
 						<Panel class="TopBottomFlow" id="ChatWheelWheelPanel">
 							<Panel id="TopChatWheelPanel">

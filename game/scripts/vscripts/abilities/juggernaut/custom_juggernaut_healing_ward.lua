@@ -5,6 +5,7 @@ LinkLuaModifier("modifier_custom_juggernaut_healing_ward_reduction", "abilities/
 LinkLuaModifier("modifier_custom_juggernaut_healing_ward_buff", "abilities/juggernaut/custom_juggernaut_healing_ward.lua", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_custom_juggernaut_healing_ward_invun", "abilities/juggernaut/custom_juggernaut_healing_ward.lua", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_custom_juggernaut_healing_ward_damage_aura", "abilities/juggernaut/custom_juggernaut_healing_ward.lua", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_juggernaut_healing_ward_tracker", "abilities/juggernaut/custom_juggernaut_healing_ward.lua", LUA_MODIFIER_MOTION_NONE)
 
  
 custom_juggernaut_healing_ward = class({})
@@ -13,18 +14,24 @@ custom_juggernaut_healing_ward = class({})
 
 
 function custom_juggernaut_healing_ward:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-  PrecacheResource( "particle", "particles/units/heroes/hero_juggernaut/juggernaut_healing_ward.vpcf", context )
-  PrecacheResource( "particle", "particles/jugg_ward_count.vpcf", context )
-  PrecacheResource( "particle", "particles/units/heroes/hero_zuus/zuus_arc_lightning.vpcf", context )
-  PrecacheResource( "particle", "particles/units/heroes/hero_oracle/oracle_false_promise_heal.vpcf", context )
-  PrecacheResource( "particle", "particles/jugger_ward_legend.vpcf", context )
-  PrecacheResource( "particle", "particles/jugg_ward_slow.vpcf", context )
-  PrecacheResource( "particle", "particles/jugg_ward_buff.vpcf", context )
-  PrecacheResource( "particle", "particles/items2_fx/heavens_halberd.vpcf", context )
-
+PrecacheResource( "particle", "particles/juggernaut/ward_legendary.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_juggernaut/juggernaut_healing_ward.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_zuus/zuus_arc_lightning.vpcf", context )
+PrecacheResource( "particle", "particles/juggernaut/ward_exlosion.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_oracle/oracle_false_promise_heal.vpcf", context )
+PrecacheResource( "particle", "particles/items2_fx/refresher.vpcf", context )
+PrecacheResource( "particle", "particles/juggernaut/ward_immune.vpcf", context )
+PrecacheResource( "particle", "particles/juggernaut/ward_burn.vpcf", context )
+PrecacheResource( "particle", "particles/jugger_ward_legend.vpcf", context )
+PrecacheResource( "particle", "particles/jugg_ward_buff.vpcf", context )
+PrecacheResource( "particle", "particles/status_fx/status_effect_mjollnir_shield.vpcf", context )
+PrecacheResource( "particle", "particles/juggernaut/ward_invun.vpcf", context )
 
 end
+
+
 
 function custom_juggernaut_healing_ward:GetAbilityTextureName()
 if self:GetCaster():HasModifier("modifier_juggernaut_fortunes_toat_golden_ward") then
@@ -47,6 +54,21 @@ return "juggernaut_healing_ward"
 
 end
 
+function custom_juggernaut_healing_ward:CreateTalent()
+local caster = self:GetCaster()
+local mod = caster:FindModifierByName("modifier_custom_juggernaut_healing_ward_tracker")
+if mod then
+  mod.PercentStr = caster:GetTalentValue("modifier_juggernaut_healingward_2", "str")/100
+end
+
+
+end
+
+function custom_juggernaut_healing_ward:GetIntrinsicModifierName()
+return "modifier_custom_juggernaut_healing_ward_tracker"
+end
+
+
 function custom_juggernaut_healing_ward:GetAOERadius()
 return self:GetSpecialValueFor("radius")
 end
@@ -54,7 +76,7 @@ end
 
 function custom_juggernaut_healing_ward:GetCastPoint()
 
-if self:GetCaster():HasModifier("modifier_juggernaut_healingward_purge") then 
+if self:GetCaster():HasTalent("modifier_juggernaut_healingward_5") then 
   return 0
 end
 return self:GetSpecialValueFor("AbilityCastPoint")
@@ -62,8 +84,7 @@ end
 
 
 function custom_juggernaut_healing_ward:GetManaCost(iLevel)
-
-if self:GetCaster():HasModifier("modifier_juggernaut_healingward_purge") then 
+if self:GetCaster():HasTalent("modifier_juggernaut_healingward_5") then 
   return 0
 end
 return self:GetSpecialValueFor("AbilityManaCost")
@@ -75,8 +96,8 @@ end
 function custom_juggernaut_healing_ward:GetCooldown(iLevel)
 local upgrade_cooldown = 0
 
-if self:GetCaster():HasModifier("modifier_juggernaut_healingward_heal") then 
-  upgrade_cooldown = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_heal", "cd")
+if self:GetCaster():HasTalent("modifier_juggernaut_healingward_1") then 
+  upgrade_cooldown = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_1", "cd")
 end 
 return self.BaseClass.GetCooldown(self, iLevel) + upgrade_cooldown 
 end
@@ -86,27 +107,28 @@ end
 
 
 function custom_juggernaut_healing_ward:OnSpellStart()
+local caster = self:GetCaster()
 self.duration = self:GetSpecialValueFor("duration")
 
 self:SetActivated(false)
 self:EndCooldown()
 
-self.ward = CreateUnitByName("juggernaut_healing_ward", self:GetCursorPosition(), true, self:GetCaster(), self:GetCaster(), self:GetCaster():GetTeamNumber())
-self.ward:AddNewModifier(self:GetCaster(), self, "modifier_kill", {duration = self.duration})
-self.ward:SetControllableByPlayer(self:GetCaster():GetPlayerOwnerID(), true)
+self.ward = CreateUnitByName("juggernaut_healing_ward", self:GetCursorPosition(), true, caster, caster, caster:GetTeamNumber())
+self.ward:AddNewModifier(caster, self, "modifier_kill", {duration = self.duration})
+self.ward:SetControllableByPlayer(caster:GetPlayerOwnerID(), true)
 
-self.ward.owner = self:GetCaster()
+self.ward.owner = caster
 
-Timers:CreateTimer(0.05, function()self.ward:MoveToNPC(self:GetCaster()) end)
+Timers:CreateTimer(0.05, function()self.ward:MoveToNPC(caster) end)
 
-self.ward:AddNewModifier(self:GetCaster(), self, "modifier_custom_juggernaut_healing_ward", {duration = self.duration})
+self.ward:AddNewModifier(caster, self, "modifier_custom_juggernaut_healing_ward", {duration = self.duration})
 
-if self:GetCaster():HasModifier("modifier_juggernaut_healingward_legendary") then
-  self.ward:AddNewModifier(self:GetCaster(), self, "modifier_custom_juggernaut_healing_ward_reduction", {})
+if caster:HasTalent("modifier_juggernaut_healingward_7") then
+  self.ward:AddNewModifier(caster, self, "modifier_custom_juggernaut_healing_ward_reduction", {})
 end
 
-if self:GetCaster():HasModifier("modifier_juggernaut_healingward_purge") then 
-  self.ward:AddNewModifier(self:GetCaster(), self, "modifier_custom_juggernaut_healing_ward_invun", {duration = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_purge", "duration")})
+if caster:HasTalent("modifier_juggernaut_healingward_5") then 
+  self.ward:AddNewModifier(caster, self, "modifier_custom_juggernaut_healing_ward_invun", {duration = caster:GetTalentValue("modifier_juggernaut_healingward_5", "duration")})
 end 
 
 end
@@ -119,26 +141,32 @@ modifier_custom_juggernaut_healing_ward = class({})
 
 function modifier_custom_juggernaut_healing_ward:OnCreated(table)
 
-self.base_move = self:GetAbility():GetSpecialValueFor("move") + self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_stun", "move")
-
-self.legendary_hits = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_legendary", "hits", true)
-self.legendary_damage = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_legendary", "damage", true)/100
-self.legendary_creeps = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_legendary", "creeps", true)
-self.health = self.legendary_hits
-
-self.radius = self:GetAbility():GetSpecialValueFor("radius")
-self.aura_duration = self:GetAbility():GetSpecialValueFor("aura_duration") + self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_purge", "aura")
-
-self.buff_duration = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_return", "duration", true)
-
 self.caster = self:GetCaster()
 self.parent = self:GetParent()
+self.parent:AddDeathEvent(self)
+
+self.ability = self:GetAbility()
+
+self.base_move = self.ability:GetSpecialValueFor("move") + self.caster:GetTalentValue("modifier_juggernaut_healingward_6", "move")
+
+self.legendary_hits = self.caster:GetTalentValue("modifier_juggernaut_healingward_7", "hits", true)
+self.legendary_damage = self.caster:GetTalentValue("modifier_juggernaut_healingward_7", "damage", true)/100
+self.legendary_creeps = self.caster:GetTalentValue("modifier_juggernaut_healingward_7", "creeps", true)
+self.health = self.legendary_hits
+
+self.radius = self.ability:GetSpecialValueFor("radius")
+self.aura_duration = self.ability:GetSpecialValueFor("aura_duration") + self.caster:GetTalentValue("modifier_juggernaut_healingward_5", "aura")
+
+self.buff_duration = self.caster:GetTalentValue("modifier_juggernaut_healingward_4", "duration", true)
 
 if not IsServer() then return end
 
-if self.caster:HasModifier("modifier_juggernaut_healingward_legendary") then 
-  local effect_cast = ParticleManager:CreateParticle( "particles/juggernaut/ward_legendary.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-  ParticleManager:SetParticleControl( effect_cast, 0, self:GetParent():GetAbsOrigin()) 
+self.caster:AddDamageEvent_out(self)
+self.parent:AddAttackEvent_inc(self)
+
+if self.caster:HasTalent("modifier_juggernaut_healingward_7") then 
+  local effect_cast = ParticleManager:CreateParticle( "particles/juggernaut/ward_legendary.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+  ParticleManager:SetParticleControl( effect_cast, 0, self.parent:GetAbsOrigin()) 
   ParticleManager:SetParticleControl( effect_cast, 1, Vector( self.radius, 0, 1 ) )
   ParticleManager:SetParticleControl( effect_cast, 2, Vector( self:GetRemainingTime(), 0, 1 ) )
   self:AddParticle( effect_cast, false, false, -1, false, false )
@@ -150,52 +178,51 @@ local sound_cast = "Hero_Juggernaut.HealingWard.Cast"
 self.sound_stop = "Hero_Juggernaut.HealingWard.Stop"
 
 local particle_fx = "particles/units/heroes/hero_juggernaut/juggernaut_healing_ward.vpcf"
-if self:GetCaster():HasModifier("modifier_juggernaut_fortunes_toat_ward") then
-
-    self:GetParent():SetModel("models/items/juggernaut/ward/fortunes_tout/fortunes_tout.vmdl")
-    self:GetParent():SetOriginalModel("models/items/juggernaut/ward/fortunes_tout/fortunes_tout.vmdl")
-    particle_fx = "particles/econ/items/juggernaut/jugg_fortunes_tout/jugg_healling_ward_fortunes_tout_ward.vpcf"
-    self.sound = "Hero_Juggernaut.FortunesTout.Loop"
-    sound_cast = "Hero_Juggernaut.FortunesTout.Cast"
-    self.sound_stop = "Hero_Juggernaut.FortunesTout.Stop"
-    self:GetParent():SetModelScale(0.85)
+if self.caster:HasModifier("modifier_juggernaut_fortunes_toat_ward") then
+  self.parent:SetModel("models/items/juggernaut/ward/fortunes_tout/fortunes_tout.vmdl")
+  self.parent:SetOriginalModel("models/items/juggernaut/ward/fortunes_tout/fortunes_tout.vmdl")
+  particle_fx = "particles/econ/items/juggernaut/jugg_fortunes_tout/jugg_healling_ward_fortunes_tout_ward.vpcf"
+  self.sound = "Hero_Juggernaut.FortunesTout.Loop"
+  sound_cast = "Hero_Juggernaut.FortunesTout.Cast"
+  self.sound_stop = "Hero_Juggernaut.FortunesTout.Stop"
+  self.parent:SetModelScale(0.85)
 end
 
-if self:GetCaster():HasModifier("modifier_juggernaut_fortunes_toat_golden_ward") then
-    self:GetParent():SetModel("models/items/juggernaut/ward/fortunes_tout/fortunes_tout.vmdl")
-    self:GetParent():SetOriginalModel("models/items/juggernaut/ward/fortunes_tout/fortunes_tout.vmdl")
-    self:GetParent():SetMaterialGroup("1")
-    particle_fx = "particles/econ/items/juggernaut/jugg_fortunes_tout/jugg_healing_ward_fortunes_tout_gold.vpcf"
-    self.sound = "Hero_Juggernaut.FortunesTout.Loop"
-    sound_cast = "Hero_Juggernaut.FortunesTout.Cast"
-    self.sound_stop = "Hero_Juggernaut.FortunesTout.Stop"
-    self:GetParent():SetModelScale(0.85)
+if self.caster:HasModifier("modifier_juggernaut_fortunes_toat_golden_ward") then
+  self.parent:SetModel("models/items/juggernaut/ward/fortunes_tout/fortunes_tout.vmdl")
+  self.parent:SetOriginalModel("models/items/juggernaut/ward/fortunes_tout/fortunes_tout.vmdl")
+  self.parent:SetMaterialGroup("1")
+  particle_fx = "particles/econ/items/juggernaut/jugg_fortunes_tout/jugg_healing_ward_fortunes_tout_gold.vpcf"
+  self.sound = "Hero_Juggernaut.FortunesTout.Loop"
+  sound_cast = "Hero_Juggernaut.FortunesTout.Cast"
+  self.sound_stop = "Hero_Juggernaut.FortunesTout.Stop"
+  self.parent:SetModelScale(0.85)
 end
-if self:GetCaster():HasModifier("modifier_juggernaut_fall_ward") then
-    self:GetParent():SetModel("models/items/juggernaut/ward/fall20_juggernaut_katz_ward/fall20_juggernaut_katz_ward.vmdl")
-    self:GetParent():SetOriginalModel("models/items/juggernaut/ward/fall20_juggernaut_katz_ward/fall20_juggernaut_katz_ward.vmdl")
-    particle_fx = "particles/econ/items/juggernaut/jugg_fall20_immortal/jugg_fall20_immortal_healing_ward.vpcf"
+if self.caster:HasModifier("modifier_juggernaut_fall_ward") then
+  self.parent:SetModel("models/items/juggernaut/ward/fall20_juggernaut_katz_ward/fall20_juggernaut_katz_ward.vmdl")
+  self.parent:SetOriginalModel("models/items/juggernaut/ward/fall20_juggernaut_katz_ward/fall20_juggernaut_katz_ward.vmdl")
+  particle_fx = "particles/econ/items/juggernaut/jugg_fall20_immortal/jugg_fall20_immortal_healing_ward.vpcf"
 
 end
-if self:GetCaster():HasModifier("modifier_juggernaut_isle_of_dragons_ward") then
-    self:GetParent():SetModel("models/items/juggernaut/ward/miyamoto_musash_ward/miyamoto_musash_ward.vmdl")
-    self:GetParent():SetOriginalModel("models/items/juggernaut/ward/miyamoto_musash_ward/miyamoto_musash_ward.vmdl")
-    self:GetParent():SetMaterialGroup("1")
+if self.caster:HasModifier("modifier_juggernaut_isle_of_dragons_ward") then
+  self.parent:SetModel("models/items/juggernaut/ward/miyamoto_musash_ward/miyamoto_musash_ward.vmdl")
+  self.parent:SetOriginalModel("models/items/juggernaut/ward/miyamoto_musash_ward/miyamoto_musash_ward.vmdl")
+  self.parent:SetMaterialGroup("1")
 end
 
-if self:GetCaster():HasModifier("modifier_juggernaut_isle_of_dragons_ward_2") then
-    self:GetParent():SetModel("models/items/juggernaut/ward/miyamoto_musash_ward/miyamoto_musash_ward.vmdl")
-    self:GetParent():SetOriginalModel("models/items/juggernaut/ward/miyamoto_musash_ward/miyamoto_musash_ward.vmdl")
-    self:GetParent():SetMaterialGroup("2")
+if self.caster:HasModifier("modifier_juggernaut_isle_of_dragons_ward_2") then
+  self.parent:SetModel("models/items/juggernaut/ward/miyamoto_musash_ward/miyamoto_musash_ward.vmdl")
+  self.parent:SetOriginalModel("models/items/juggernaut/ward/miyamoto_musash_ward/miyamoto_musash_ward.vmdl")
+  self.parent:SetMaterialGroup("2")
 end
 
 
-self.ward_particle = ParticleManager:CreateParticle(particle_fx, PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-ParticleManager:SetParticleControl(self.ward_particle, 0, self:GetParent():GetAbsOrigin())
-ParticleManager:SetParticleControl(self.ward_particle, 1, Vector(self:GetAbility().radius, 1, 1))
-ParticleManager:SetParticleControlEnt(self.ward_particle, 2, self:GetParent(), PATTACH_POINT_FOLLOW, "flame_attachment", self:GetParent():GetAbsOrigin(), true)
-self:GetParent():EmitSound(self.sound) 
-self:GetParent():EmitSound(sound_cast)
+self.ward_particle = ParticleManager:CreateParticle(particle_fx, PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControl(self.ward_particle, 0, self.parent:GetAbsOrigin())
+ParticleManager:SetParticleControl(self.ward_particle, 1, Vector(self.ability.radius, 1, 1))
+ParticleManager:SetParticleControlEnt(self.ward_particle, 2, self.parent, PATTACH_POINT_FOLLOW, "flame_attachment", self.parent:GetAbsOrigin(), true)
+self.parent:EmitSound(self.sound) 
+self.parent:EmitSound(sound_cast)
 
 self.interval = 0.05
 self.time = self:GetRemainingTime()
@@ -208,23 +235,23 @@ end
 
 function modifier_custom_juggernaut_healing_ward:OnIntervalThink()
 if not IsServer() then return end
-if not self:GetParent():IsAlive() then return end
-if not self.caster:HasModifier("modifier_juggernaut_healingward_legendary") and not self.caster:HasModifier("modifier_juggernaut_healingward_return") then return end
+if not self.parent:IsAlive() then return end
+if not self.caster:HasTalent("modifier_juggernaut_healingward_7") and not self.caster:HasTalent("modifier_juggernaut_healingward_4") then return end
 
 local targets = self.caster:FindTargets(self.radius*2, self.parent:GetAbsOrigin())
 
-if self.caster:HasModifier("modifier_juggernaut_healingward_legendary") then
-  CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self.caster:GetPlayerOwnerID()), 'jugger_ward_change',  {hide = 0, max_time = self.time, time = self:GetRemainingTime(), damage = self:GetStackCount()})
+if self.caster:HasTalent("modifier_juggernaut_healingward_7") then
+  self.caster:UpdateUIshort({max_time = self.time, time = self:GetRemainingTime(), stack = self:GetStackCount(), style = "JuggernautWard"})
 end
 
 local buff = false
 
 for _,target in pairs(targets) do 
-  if self.caster:HasModifier("modifier_juggernaut_healingward_legendary") and target:IsRealHero() then 
+  if self.caster:HasTalent("modifier_juggernaut_healingward_7") and target:IsRealHero() then 
     AddFOWViewer(target:GetTeamNumber(), self.parent:GetAbsOrigin(), 50, self.interval*2, false)
   end 
 
-  if self.caster:HasModifier("modifier_juggernaut_healingward_return")
+  if self.caster:HasTalent("modifier_juggernaut_healingward_4")
     and not buff 
     and (target:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D() <= self.radius
     and (self.caster:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D() <= self.radius then 
@@ -235,6 +262,7 @@ end
 
 
 if not buff then return end 
+if not self.caster:IsAlive() then return end
 
 if not self.caster:HasModifier("modifier_custom_juggernaut_healing_ward_buff") then 
   local item_effect = ParticleManager:CreateParticle( "particles/units/heroes/hero_zuus/zuus_arc_lightning.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.caster)
@@ -243,15 +271,15 @@ if not self.caster:HasModifier("modifier_custom_juggernaut_healing_ward_buff") t
   ParticleManager:ReleaseParticleIndex(item_effect)
 end 
 
-self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_custom_juggernaut_healing_ward_buff", {duration = self.buff_duration})
+self.caster:AddNewModifier(self.caster, self.ability, "modifier_custom_juggernaut_healing_ward_buff", {duration = self.buff_duration})
 
 end
 
 
 
-function modifier_custom_juggernaut_healing_ward:OnDeath( params )
+function modifier_custom_juggernaut_healing_ward:DeathEvent( params )
 if not IsServer() then return end
-if params.unit ~= self:GetParent() then return end
+if params.unit ~= self.parent then return end
 
 self.killer = params.attacker
 self:Destroy()
@@ -262,31 +290,30 @@ end
 function modifier_custom_juggernaut_healing_ward:OnDestroy()
 if not IsServer() then return end
 
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self.caster:GetPlayerOwnerID()), 'jugger_ward_change',  {hide = 1, max_time = self.time, time = self:GetRemainingTime(), damage = self:GetStackCount()})
+self.caster:UpdateUIshort({hide = 1, hide_full = 1, style = "JuggernautWard"})
 
-
-self:GetParent():EmitSound(self.sound_stop)
-self:GetParent():StopSound(self.sound)
+self.parent:EmitSound(self.sound_stop)
+self.parent:StopSound(self.sound)
 
 ParticleManager:DestroyParticle(self.ward_particle, true)
 ParticleManager:ReleaseParticleIndex(self.ward_particle)
 
-if self:GetCaster():HasModifier("modifier_juggernaut_fall_ward") then
-  local death_particle = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_fall20_immortal/jugg_fall20_immortal_healing_ward_death.vpcf", PATTACH_WORLDORIGIN, self:GetParent())
-  ParticleManager:SetParticleControl(death_particle, 0, self:GetParent():GetAbsOrigin())
+if self.caster:HasModifier("modifier_juggernaut_fall_ward") then
+  local death_particle = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_fall20_immortal/jugg_fall20_immortal_healing_ward_death.vpcf", PATTACH_WORLDORIGIN, self.parent)
+  ParticleManager:SetParticleControl(death_particle, 0, self.parent:GetAbsOrigin())
   ParticleManager:ReleaseParticleIndex(death_particle)
 end
 
-if self:GetAbility() then 
-  self:GetAbility():UseResources(false, false, false, true)
-  self:GetAbility():SetActivated(true)
+if self.ability then 
+  self.ability:UseResources(false, false, false, true)
+  self.ability:SetActivated(true)
 end
 
 
 
-local stun_duration = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_stun", "stun", true)
+local stun_duration = self.caster:GetTalentValue("modifier_juggernaut_healingward_6", "stun", true)
 
-local targets = self:GetCaster():FindTargets(self.radius, self:GetParent():GetAbsOrigin())
+local targets = self.caster:FindTargets(self.radius, self.parent:GetAbsOrigin())
 local damage = 0
 local stun = false
 
@@ -302,21 +329,21 @@ if self:GetStackCount() > 0 then
   damage = self:GetStackCount()
 end
 
-if self:GetCaster():HasModifier("modifier_juggernaut_healingward_cd") then 
+if self.caster:HasTalent("modifier_juggernaut_healingward_2") then 
 
-  self:GetCaster():GenericHeal(self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_cd", "heal")*self:GetCaster():GetMaxHealth()/100, self:GetAbility())
+  self.caster:GenericHeal(self.caster:GetTalentValue("modifier_juggernaut_healingward_2", "heal")*self.caster:GetMaxHealth()/100, self.ability, nil, nil, "modifier_juggernaut_healingward_2")
 
-  local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_oracle/oracle_false_promise_heal.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
+  local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_oracle/oracle_false_promise_heal.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.caster )
   ParticleManager:ReleaseParticleIndex( particle )
 end
 
-if self:GetCaster():HasModifier("modifier_juggernaut_healingward_stun") then 
+if self.caster:HasTalent("modifier_juggernaut_healingward_6") then 
   stun = true
 
-  local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_oracle/oracle_false_promise_heal.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
+  local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_oracle/oracle_false_promise_heal.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.caster )
   ParticleManager:ReleaseParticleIndex( particle )
 
-  self:GetCaster():Purge(false, true, false, true, false)
+  self.caster:Purge(false, true, false, true, false)
 
   if self.killer and not self.killer:IsNull() then 
     table.insert(targets, self.killer)
@@ -325,7 +352,7 @@ if self:GetCaster():HasModifier("modifier_juggernaut_healingward_stun") then
   --  ParticleManager:SetParticleControlEnt( particle, 0, self.caster, PATTACH_POINT_FOLLOW, "attach_hitloc", self.caster:GetOrigin(), true )
  --   ParticleManager:ReleaseParticleIndex(particle)
 
- --   self.caster:CdAbility(self:GetAbility(), self:GetAbility():GetCooldownTimeRemaining()*self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_stun", "cd")/100)
+ --   self.caster:CdAbility(self.ability, self.ability:GetCooldownTimeRemaining()*self.caster:GetTalentValue("modifier_juggernaut_healingward_6", "cd")/100)
   end 
 
 end
@@ -339,7 +366,7 @@ for _,target in pairs(targets) do
     local distance = 150
     local point = target:GetAbsOrigin() + dir*distance
 
-    target:AddNewModifier( self:GetCaster(), self:GetAbility(),  "modifier_generic_arc",  
+    target:AddNewModifier( self.caster, self.ability,  "modifier_generic_arc",  
     {
       target_x = point.x,
       target_y = point.y,
@@ -351,7 +378,7 @@ for _,target in pairs(targets) do
       activity = ACT_DOTA_FLAIL,
     })
 
-    local real_damage = ApplyDamage({victim = target, attacker = self:GetCaster(), damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility()})
+    local real_damage = DoDamage({victim = target, attacker = self.caster, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self.ability}, "modifier_juggernaut_healingward_7")
     target:SendNumber(6, real_damage)
 
     local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_oracle/oracle_false_promise_heal.vpcf", PATTACH_ABSORIGIN_FOLLOW, target)
@@ -359,7 +386,7 @@ for _,target in pairs(targets) do
   end
 
   if stun == true then 
-    target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_stunned", {duration = (1 - target:GetStatusResistance())*stun_duration})
+    target:AddNewModifier(self.caster, self.ability, "modifier_stunned", {duration = (1 - target:GetStatusResistance())*stun_duration})
 
     local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_oracle/oracle_false_promise_heal.vpcf", PATTACH_ABSORIGIN_FOLLOW, target)
     ParticleManager:ReleaseParticleIndex( particle )
@@ -367,16 +394,12 @@ for _,target in pairs(targets) do
 
 end 
 
-if self:GetCaster():HasModifier("modifier_juggernaut_healingward_cd") or self:GetCaster():HasModifier("modifier_juggernaut_healingward_stun") or self:GetStackCount() > 0 then 
+if self.caster:HasTalent("modifier_juggernaut_healingward_2") or self.caster:HasTalent("modifier_juggernaut_healingward_6") or self:GetStackCount() > 0 then 
   self.parent:EmitSound("Juggernaut.WardDeath")
 end 
 
 
 end
-
-
-
-
 
 
 function modifier_custom_juggernaut_healing_ward:IsHidden() return true end
@@ -391,13 +414,14 @@ function modifier_custom_juggernaut_healing_ward:GetModifierAura() return "modif
 function modifier_custom_juggernaut_healing_ward:CheckState() 
 return 
 {
-  [MODIFIER_STATE_NO_UNIT_COLLISION] = not self:GetCaster():HasModifier("modifier_juggernaut_healingward_legendary"),
-  [MODIFIER_STATE_MAGIC_IMMUNE] = true,
+  [MODIFIER_STATE_NO_UNIT_COLLISION] = not self.caster:HasTalent("modifier_juggernaut_healingward_7"),
   [MODIFIER_STATE_LOW_ATTACK_PRIORITY] = true,
-  [MODIFIER_STATE_INVULNERABLE] = self:GetParent():HasModifier("modifier_custom_juggernaut_healing_ward_invun"),
-  [MODIFIER_STATE_NO_HEALTH_BAR] = self:GetParent():HasModifier("modifier_custom_juggernaut_healing_ward_invun")
+  [MODIFIER_STATE_INVULNERABLE] = self.parent:HasModifier("modifier_custom_juggernaut_healing_ward_invun"),
+  [MODIFIER_STATE_NO_HEALTH_BAR] = self.parent:HasModifier("modifier_custom_juggernaut_healing_ward_invun")
 }
 end
+
+
 
 
 
@@ -406,9 +430,6 @@ function modifier_custom_juggernaut_healing_ward:DeclareFunctions() return
   MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_MAGICAL,
   MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PHYSICAL,
   MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PURE,
-  MODIFIER_EVENT_ON_ATTACK_LANDED,
-  MODIFIER_EVENT_ON_DEATH,
-  MODIFIER_EVENT_ON_TAKEDAMAGE,
   MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE,
   MODIFIER_PROPERTY_HEALTHBAR_PIPS 
 } 
@@ -421,10 +442,11 @@ end
 
 
 
-function modifier_custom_juggernaut_healing_ward:OnTakeDamage(params)
+function modifier_custom_juggernaut_healing_ward:DamageEvent_out(params)
 if not IsServer() then return end 
-if not self.caster:HasModifier("modifier_juggernaut_healingward_legendary") then return end 
+if not self.caster:HasTalent("modifier_juggernaut_healingward_7") then return end 
 if not params.attacker then return end
+if params.unit:IsIllusion() then return end
 
 local attacker = params.attacker
 if attacker.owner then 
@@ -433,7 +455,7 @@ end
 
 if attacker ~= self.caster then return end 
 if (self.caster:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D() > self.radius then return end
-if not params.unit:IsHero() and not params.unit:IsCreep() then return end 
+if not params.unit:IsUnit() then return end 
  
 local damage = params.damage*self.legendary_damage
 if params.unit:IsCreep() then 
@@ -446,7 +468,7 @@ end
 
 
 function modifier_custom_juggernaut_healing_ward:GetModifierHealthBarPips()
-if not self.caster:HasModifier("modifier_juggernaut_healingward_legendary") then return 1 end
+if not self.caster:HasTalent("modifier_juggernaut_healingward_7") then return 1 end
 return self.legendary_hits
 end
 
@@ -455,12 +477,13 @@ function modifier_custom_juggernaut_healing_ward:GetAbsoluteNoDamageMagical() re
 function modifier_custom_juggernaut_healing_ward:GetAbsoluteNoDamagePhysical() return 1 end
 function modifier_custom_juggernaut_healing_ward:GetAbsoluteNoDamagePure() return 1 end
 
-function modifier_custom_juggernaut_healing_ward:OnAttackLanded( params )
+function modifier_custom_juggernaut_healing_ward:AttackEvent_inc( params )
 if not IsServer() then return end
 if self:GetParent() ~= params.target then return end
 if params.attacker:IsIllusion() then return end
+if params.attacker:IsCreep() and params.attacker.owner and params.attacker:GetTeamNumber() ~= DOTA_TEAM_CUSTOM_5 then return end
 
-if self.caster:HasModifier("modifier_juggernaut_healingward_legendary") and (params.attacker:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D() > self.radius then 
+if self.caster:HasTalent("modifier_juggernaut_healingward_7") and (params.attacker:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D() > self.radius then 
 
   self.parent:EmitSound("Juggernaut.Ward_immune")
   self.effect_cast = ParticleManager:CreateParticle("particles/juggernaut/ward_immune.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
@@ -470,7 +493,7 @@ if self.caster:HasModifier("modifier_juggernaut_healingward_legendary") and (par
   return
 end 
 
-if self:GetAbility():GetCaster():HasModifier("modifier_juggernaut_healingward_legendary") then
+if self.ability:GetCaster():HasTalent("modifier_juggernaut_healingward_7") then
   self.health = self.health - 1
 else 
   self.health = 0
@@ -487,14 +510,8 @@ end
 
 
 
-
-
-
-
 modifier_custom_juggernaut_healing_ward_aura = class({})
-
 function modifier_custom_juggernaut_healing_ward_aura:IsPurgable() return false end
-
 function modifier_custom_juggernaut_healing_ward_aura:DeclareFunctions()
 return 
 {
@@ -505,13 +522,10 @@ return
 end 
 
 function modifier_custom_juggernaut_healing_ward_aura:GetModifierStatusResistanceStacking()
-if not self:GetCaster():HasModifier("modifier_juggernaut_healingward_move") then return end 
 return self.status
 end
 
-
 function modifier_custom_juggernaut_healing_ward_aura:GetModifierMoveSpeedBonus_Percentage()
-if not self:GetCaster():HasModifier("modifier_juggernaut_healingward_move") then return end 
 return self.move
 end
 
@@ -520,33 +534,57 @@ return self.health_regen
 end
 
 function modifier_custom_juggernaut_healing_ward_aura:OnCreated(table)
-self.health_regen = self:GetAbility():GetSpecialValueFor("health_regen") + self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_cd", "regen")
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
 
-self.move = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_move", "move_status")
-self.status = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_move", "move_status")
+if self.caster.owner then
+  self.caster = self.caster.owner
+end
 
-self.radius = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_heal", "radius", true)
+self.health_regen = self:GetAbility():GetSpecialValueFor("health_regen")
+
+if not IsServer() then return end
+self.move = self.caster:GetTalentValue("modifier_juggernaut_healingward_3", "move_status")
+self.status = self.caster:GetTalentValue("modifier_juggernaut_healingward_3", "move_status")
+
+self.radius = self.caster:GetTalentValue("modifier_juggernaut_healingward_1", "radius", true)
+self:SetHasCustomTransmitterData(true)
+self:SendBuffRefreshToClients()
+end
+
+
+function modifier_custom_juggernaut_healing_ward_aura:AddCustomTransmitterData() 
+return 
+{
+  move = self.move,
+  status = self.status
+} 
+end
+
+function modifier_custom_juggernaut_healing_ward_aura:HandleCustomTransmitterData(data)
+self.move = data.move
+self.status = data.status
 end
 
 
 function modifier_custom_juggernaut_healing_ward_aura:GetAuraRadius()
-  return self.radius
+return self.radius
 end
 
 function modifier_custom_juggernaut_healing_ward_aura:GetAuraSearchTeam()
-  return DOTA_UNIT_TARGET_TEAM_ENEMY
+return DOTA_UNIT_TARGET_TEAM_ENEMY
 end
 
 function modifier_custom_juggernaut_healing_ward_aura:GetAuraSearchType() 
-  return DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO
+return DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO
 end
 
 function modifier_custom_juggernaut_healing_ward_aura:GetModifierAura()
-  return "modifier_custom_juggernaut_healing_ward_damage_aura"
+return "modifier_custom_juggernaut_healing_ward_damage_aura"
 end
 
 function modifier_custom_juggernaut_healing_ward_aura:IsAura()
-  return self:GetParent():HasModifier("modifier_juggernaut_healingward_heal")
+return self.parent:HasTalent("modifier_juggernaut_healingward_1")
 end
 
 
@@ -560,8 +598,8 @@ function modifier_custom_juggernaut_healing_ward_damage_aura:IsHidden() return t
 function modifier_custom_juggernaut_healing_ward_damage_aura:IsPurgable() return false end
 function modifier_custom_juggernaut_healing_ward_damage_aura:OnCreated()
 
-self.damage = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_heal", "damage")
-self.interval = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_heal", "interval")
+self.damage = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_1", "damage")
+self.interval = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_1", "interval")
 self.damageTable = {victim = self:GetParent(), attacker = self:GetCaster(), damage = self.damage*self.interval, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility()}
 
 self:OnIntervalThink()
@@ -571,7 +609,7 @@ end
 function modifier_custom_juggernaut_healing_ward_damage_aura:OnIntervalThink()
 if not IsServer() then return end 
 
-ApplyDamage(self.damageTable)
+DoDamage(self.damageTable, "modifier_juggernaut_healingward_1")
 end 
 
 
@@ -597,10 +635,12 @@ function modifier_custom_juggernaut_healing_ward_reduction:GetAuraSearchType() r
 function modifier_custom_juggernaut_healing_ward_reduction:GetModifierAura() return "modifier_custom_juggernaut_healing_ward_reduction_aura" end
 
 function modifier_custom_juggernaut_healing_ward_reduction:GetAuraEntityReject(hEntity)
+if hEntity ~= self.caster and (not hEntity.owner or hEntity.owner ~= self.caster) then return true end
+
 
 local mod = hEntity:FindModifierByName("modifier_backdoor_knock_aura_damage")
 
-if mod and mod:GetCaster():GetTeamNumber() ~= self:GetParent():GetTeamNumber() and mod.radius then 
+if mod and mod:GetCaster():GetTeamNumber() ~= self.parent:GetTeamNumber() and mod.radius then 
 
   local point = mod:GetCaster():GetAbsOrigin()
 
@@ -615,6 +655,8 @@ end
 
 
 function modifier_custom_juggernaut_healing_ward_reduction:OnCreated()
+self.caster = self:GetCaster()
+self.parent = self:GetParent()
 self.radius = self:GetAbility():GetSpecialValueFor("radius")
 end
 
@@ -674,8 +716,8 @@ return "buffs/Healing_ward_buff"
 end
 
 function modifier_custom_juggernaut_healing_ward_buff:OnCreated(table)
-self.speed = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_return", "speed")
-self.spell = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_return", "spell")
+self.speed = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_4", "speed")
+self.spell = self:GetCaster():GetTalentValue("modifier_juggernaut_healingward_4", "spell")
 
 if not IsServer() then return end 
 
@@ -705,7 +747,7 @@ end
 
 
 function modifier_custom_juggernaut_healing_ward_buff:StatusEffectPriority()
-return 9999999
+return MODIFIER_PRIORITY_HIGH
 end
 
 
@@ -718,3 +760,8 @@ function modifier_custom_juggernaut_healing_ward_invun:IsPurgable() return false
 function modifier_custom_juggernaut_healing_ward_invun:GetEffectName()
 return "particles/juggernaut/ward_invun.vpcf"
 end
+
+
+modifier_custom_juggernaut_healing_ward_tracker = class({})
+function modifier_custom_juggernaut_healing_ward_tracker:IsHidden() return true end
+function modifier_custom_juggernaut_healing_ward_tracker:IsPurgable() return false end

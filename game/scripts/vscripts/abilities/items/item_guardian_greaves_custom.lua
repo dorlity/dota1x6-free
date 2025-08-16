@@ -2,28 +2,48 @@ item_guardian_greaves_custom = class({})
 
 LinkLuaModifier( "modifier_item_guardian_greaves_custom", "abilities/items/item_guardian_greaves_custom", LUA_MODIFIER_MOTION_NONE )
 
+
+function item_guardian_greaves_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/items3_fx/warmage.vpcf", context )
+PrecacheResource( "particle","particles/items3_fx/warmage_recipient.vpcf", context )
+end
+
+
 function item_guardian_greaves_custom:GetIntrinsicModifierName()
 	return "modifier_item_guardian_greaves_custom"
 end
 
 function item_guardian_greaves_custom:OnSpellStart()
-	if not IsServer() then return end
-	local heal_amount = self:GetSpecialValueFor("replenish_health")*self:GetCaster():GetMaxHealth()/100
-	local mana_amount = self:GetSpecialValueFor("replenish_mana")*self:GetCaster():GetMaxMana()/100
-	self:GetCaster():EmitSound("Item.GuardianGreaves.Activate")
 
-	local particle_1 = ParticleManager:CreateParticle("particles/items3_fx/warmage.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-	ParticleManager:ReleaseParticleIndex(particle_1)
+local caster = self:GetCaster()
+local heal = self:GetSpecialValueFor("replenish_health")/100
+local mana = self:GetSpecialValueFor("replenish_mana")/100
+local radius = self:GetSpecialValueFor("radius")
+caster:EmitSound("Item.GuardianGreaves.Activate")
 
-	self:GetCaster():GiveMana(mana_amount)
-	SendOverheadEventMessage(nil, OVERHEAD_ALERT_MANA_ADD, self:GetCaster(), mana_amount, nil)
-	self:GetCaster():Purge(false, true, false, false, false)
-	self:GetCaster():Heal(heal_amount, self:GetCaster())
-	SendOverheadEventMessage(nil, OVERHEAD_ALERT_HEAL, self:GetCaster(), heal_amount, nil)
-	self:GetCaster():EmitSound("Item.GuardianGreaves.Target")
+local particle_1 = ParticleManager:CreateParticle("particles/items3_fx/warmage.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster)
+ParticleManager:ReleaseParticleIndex(particle_1)
 
-	local particle_2 = ParticleManager:CreateParticle("particles/items3_fx/warmage_recipient.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-	ParticleManager:SetParticleControl(particle_2, 0, self:GetCaster():GetAbsOrigin())
+caster:Purge(false, true, false, false, false)
+
+local friends = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_INVULNERABLE, FIND_CLOSEST, false)
+
+for _,friend in pairs(friends) do
+
+	local heal_amount = heal*friend:GetMaxHealth()
+	local mana_amount = mana*friend:GetMaxMana()
+
+	friend:GiveMana(mana_amount)
+	SendOverheadEventMessage(nil, OVERHEAD_ALERT_MANA_ADD, friend, mana_amount, nil)
+	friend:GenericHeal(heal_amount, self)
+
+	friend:EmitSound("Item.GuardianGreaves.Target")
+	local particle_2 = ParticleManager:CreateParticle("particles/items3_fx/warmage_recipient.vpcf", PATTACH_ABSORIGIN_FOLLOW, friend)
+	ParticleManager:SetParticleControl(particle_2, 0, friend:GetAbsOrigin())
+	ParticleManager:ReleaseParticleIndex(particle_2)
+end
+
 end
 
 
@@ -48,12 +68,20 @@ function modifier_item_guardian_greaves_custom:DeclareFunctions()
 		MODIFIER_PROPERTY_MOVESPEED_BONUS_UNIQUE,
 		MODIFIER_PROPERTY_MANA_REGEN_CONSTANT,
 		MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT,
-		MODIFIER_EVENT_ON_TAKEDAMAGE,
 		MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE
 	}
 end
 
-function modifier_item_guardian_greaves_custom:OnTakeDamage(params)
+
+function modifier_item_guardian_greaves_custom:OnCreated(table)
+self.parent = self:GetParent()
+if self.parent:IsRealHero() then 
+	self.parent:AddDamageEvent_inc(self, true)
+end 
+
+end
+
+function modifier_item_guardian_greaves_custom:DamageEvent_inc(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.unit then return end
 if not self:GetParent():IsRealHero() then return end

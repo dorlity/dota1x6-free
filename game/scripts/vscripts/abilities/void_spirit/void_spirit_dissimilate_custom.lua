@@ -1,12 +1,12 @@
 LinkLuaModifier("modifier_custom_void_dissimilate", "abilities/void_spirit/void_spirit_dissimilate_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_void_dissimilate_speed_thinker", "abilities/void_spirit/void_spirit_dissimilate_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_void_dissimilate_slow_thinker", "abilities/void_spirit/void_spirit_dissimilate_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_custom_void_dissimilate_slow", "abilities/void_spirit/void_spirit_dissimilate_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_void_dissimilate_resist_tracker", "abilities/void_spirit/void_spirit_dissimilate_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_custom_void_dissimilate_resist", "abilities/void_spirit/void_spirit_dissimilate_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_void_dissimilate_exit", "abilities/void_spirit/void_spirit_dissimilate_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_void_dissimilate_root", "abilities/void_spirit/void_spirit_dissimilate_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_custom_void_dissimilate_heal", "abilities/void_spirit/void_spirit_dissimilate_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_custom_void_dissimilate_speed", "abilities/void_spirit/void_spirit_dissimilate_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_void_dissimilate_tracker", "abilities/void_spirit/void_spirit_dissimilate_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_void_dissimilate_legendary", "abilities/void_spirit/void_spirit_dissimilate_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_void_dissimilate_spell", "abilities/void_spirit/void_spirit_dissimilate_custom", LUA_MODIFIER_MOTION_NONE)
 
 
 
@@ -14,74 +14,68 @@ void_spirit_dissimilate_custom = class({})
 
 
 
-
-
-
 function void_spirit_dissimilate_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-PrecacheResource( "particle", "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_2.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_dmg.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_exit.vpcf", context )
-PrecacheResource( "particle", "particles/void_astral_slow.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_52.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_vengeful/void_astral_resist.vpcf", context )
+PrecacheResource( "particle","particles/items3_fx/blink_arcane_start.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_2.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_dmg.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_exit.vpcf", context )
+PrecacheResource( "particle","particles/void_astral_slow.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf", context )
+PrecacheResource( "particle","particles/void_step_speed.vpcf", context )
+PrecacheResource( "particle","particles/void_spirit/dissimilate_stack.vpcf", context )
 
 end
 
+function void_spirit_dissimilate_custom:GetIntrinsicModifierName()
+if not self:GetCaster():IsRealHero() then return end
+return "modifier_custom_void_dissimilate_tracker"
+end
 
+function void_spirit_dissimilate_custom:GetBehavior()
+local bonus = DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES
+if self:GetCaster():HasTalent("modifier_void_astral_5") then 
+  bonus = 0
+end 
+return DOTA_ABILITY_BEHAVIOR_NO_TARGET + bonus
+end
 
 function void_spirit_dissimilate_custom:GetCastPoint(iLevel)
-if self:GetCaster():HasModifier('modifier_void_astral_5') then 
-    return self:GetCaster():GetTalentValue("modifier_void_astral_5", "cast")
+local k = 1
+if self:GetCaster():HasTalent("modifier_void_astral_3") then 
+    k = k + self:GetCaster():GetTalentValue("modifier_void_astral_3", "cast")/100
 end
-
-return self.BaseClass.GetCastPoint(self)
+return self.BaseClass.GetCastPoint(self)*k
 end
-
-
 
 function void_spirit_dissimilate_custom:GetCooldown(iLevel)
+return self.BaseClass.GetCooldown(self, iLevel)
+end
 
-local upgrade_cooldown = 0
-
-
- return self.BaseClass.GetCooldown(self, iLevel) + upgrade_cooldown
-
+function void_spirit_dissimilate_custom:GetDamage()
+local caster = self:GetCaster()
+return self:GetSpecialValueFor("AbilityDamage") + caster:GetTalentValue("modifier_void_astral_1", "damage")*caster:GetIntellect(false)/100
 end
 
 
 function void_spirit_dissimilate_custom:OnSpellStart()
 
 local caster = self:GetCaster()
-
 local duration = self:GetSpecialValueFor( "phase_duration" )
 
-if self:GetCaster():HasModifier("modifier_void_astral_legendary") then 
-	duration = self:GetCaster():GetTalentValue("modifier_void_astral_legendary", "duration")
+if caster:HasTalent("modifier_void_astral_legendary") then 
+	duration = caster:GetTalentValue("modifier_void_astral_legendary", "duration")
 end
 
-caster:AddNewModifier(
-	caster, -- player source
-	self, -- ability source
-	"modifier_custom_void_dissimilate", -- modifier name
-	{ duration = duration } -- kv
-)
+caster:AddNewModifier(caster, self, "modifier_custom_void_dissimilate",{ duration = duration })
+caster:EmitSound("Hero_VoidSpirit.Dissimilate.Cast")
 
-
-
-local sound_cast = "Hero_VoidSpirit.Dissimilate.Cast"
-self:GetCaster():EmitSound("sound_cast")
-
-
-
-
-if not IsServer() then end
-
-if self:GetCaster():HasModifier("modifier_void_astral_5") then 
-
+if caster:HasTalent("modifier_void_astral_3") then 
 	local effect = ParticleManager:CreateParticle("particles/items3_fx/blink_arcane_start.vpcf", PATTACH_WORLDORIGIN, nil)
-	ParticleManager:SetParticleControl(effect, 0, self:GetCaster():GetAbsOrigin())
+	ParticleManager:SetParticleControl(effect, 0, caster:GetAbsOrigin())
+	ParticleManager:Delete(effect, 1)
 end
 
 self:EndCooldown()
@@ -91,47 +85,35 @@ end
 
 
 modifier_custom_void_dissimilate = class({})
-
---------------------------------------------------------------------------------
--- Classifications
-function modifier_custom_void_dissimilate:IsHidden()
-	return false
-end
-
-function modifier_custom_void_dissimilate:IsDebuff()
-	return false
-end
-
-function modifier_custom_void_dissimilate:IsPurgable()
-	return false
-end
-
---------------------------------------------------------------------------------
--- Initializations
+function modifier_custom_void_dissimilate:IsHidden() return false end
+function modifier_custom_void_dissimilate:IsPurgable() return false end
 function modifier_custom_void_dissimilate:OnCreated( kv )
 
-self.portals = self:GetAbility():GetSpecialValueFor( "portals_per_ring" )
-self.angle = self:GetAbility():GetSpecialValueFor( "angle_per_ring_portal" )
-self.radius = self:GetAbility():GetSpecialValueFor( "damage_radius" )
-self.distance = self:GetAbility():GetSpecialValueFor( "first_ring_distance_offset" )
-self.target_radius = self:GetAbility():GetSpecialValueFor( "destination_fx_radius" )
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.portals = self.ability:GetSpecialValueFor( "portals_per_ring" )
+self.angle = self.ability:GetSpecialValueFor( "angle_per_ring_portal" )
+self.radius = self.ability:GetSpecialValueFor( "damage_radius" )
+self.distance = self.ability:GetSpecialValueFor( "first_ring_distance_offset" )
+self.target_radius = self.ability:GetSpecialValueFor( "destination_fx_radius" )
 
 self.RemoveForDuel = true
 
 if not IsServer() then return end
 
-if self:GetCaster():HasModifier("modifier_void_astral_legendary") and not self:GetAbility():IsHidden() then 
-	self:GetCaster():SwapAbilities("void_spirit_dissimilate_custom_cancel", "void_spirit_dissimilate_custom", true, false)
+self.parent:AddOrderEvent(self)
 
-	local ability = self:GetCaster():FindAbilityByName("void_spirit_dissimilate_custom_cancel")
-
+if self.parent:HasTalent("modifier_void_astral_legendary") and not self.ability:IsHidden() then 
+	self.parent:SwapAbilities("void_spirit_dissimilate_custom_cancel", "void_spirit_dissimilate_custom", true, false)
+	local ability = self.parent:FindAbilityByName("void_spirit_dissimilate_custom_cancel")
 	if ability then 
 		ability:StartCooldown(0.3)
 	end
 end
 
-local origin = self:GetParent():GetOrigin()
-local direction = self:GetParent():GetForwardVector()
+local origin = self.parent:GetOrigin()
+local direction = self.parent:GetForwardVector()
 local zero = Vector(0,0,0)
 
 self.selected = 1
@@ -143,8 +125,8 @@ self.thinkers = {}
 table.insert( self.points, origin )
 table.insert( self.effects, self:PlayEffects1( origin, true ) )
 
-if self:GetParent():HasModifier("modifier_void_astral_3") then 
-	local thinker = CreateModifierThinker(self:GetCaster(), self:GetAbility(), "modifier_custom_void_dissimilate_speed_thinker", {radius = self.radius}, origin, self:GetCaster():GetTeamNumber(), false)
+if self.parent:HasTalent("modifier_void_astral_5") then 
+	local thinker = CreateModifierThinker(self.parent, self.ability, "modifier_custom_void_dissimilate_slow_thinker", {radius = self.radius}, origin, self.parent:GetTeamNumber(), false)
 	table.insert( self.thinkers, thinker )	
 end
 
@@ -155,15 +137,15 @@ for i=1,self.portals do
 
 	table.insert( self.points, point )
 	table.insert( self.effects, self:PlayEffects1( point, false ) )
+	AddFOWViewer(self.parent:GetTeamNumber(), point, self.radius, self:GetRemainingTime(), false)
 
-	if self:GetParent():HasModifier("modifier_void_astral_3") then 
-		local thinker = CreateModifierThinker(self:GetCaster(), self:GetAbility(), "modifier_custom_void_dissimilate_speed_thinker", {radius = self.radius}, point, self:GetCaster():GetTeamNumber(), false)
+	if self.parent:HasTalent("modifier_void_astral_5") then 
+		local thinker = CreateModifierThinker(self.parent, self.ability, "modifier_custom_void_dissimilate_slow_thinker", {radius = self.radius}, point, self.parent:GetTeamNumber(), false)
 		table.insert( self.thinkers, thinker )	
 	end
-
 end
 
-if self:GetParent():HasModifier("modifier_void_astral_legendary") then 
+if self.parent:HasTalent("modifier_void_astral_5") then 
 	for i=1,self.portals do
 		local new_direction = RotatePosition( zero, QAngle( 0, self.angle*i, 0 ), direction )
 
@@ -171,16 +153,19 @@ if self:GetParent():HasModifier("modifier_void_astral_legendary") then
 
 		table.insert( self.points, point )
 		table.insert( self.effects, self:PlayEffects1( point, false ) )
+		AddFOWViewer(self.parent:GetTeamNumber(), point, self.radius, self:GetRemainingTime(), false)
+
+		local thinker = CreateModifierThinker(self.parent, self.ability, "modifier_custom_void_dissimilate_slow_thinker", {radius = self.radius}, point, self.parent:GetTeamNumber(), false)
+		table.insert( self.thinkers, thinker )	
 	end
 end
 
 
-self.NoDraw = true
+self.parent:NoDraw(self)
+self.parent:AddNoDraw()
 
-self:GetParent():AddNoDraw()
-
-if self:GetParent():HasModifier("modifier_void_astral_legendary") then 
-	self:StartIntervalThink(self:GetRemainingTime()/(10) - FrameTime())
+if self.parent:HasTalent("modifier_void_astral_legendary") then
+	self:StartIntervalThink(self.parent:GetTalentValue("modifier_void_astral_legendary", "interval")  - FrameTime())
 end
 
 end
@@ -191,216 +176,160 @@ self:IncrementStackCount()
 end
 
 
-function modifier_custom_void_dissimilate:OnRefresh( kv )
-	
-end
-
-function modifier_custom_void_dissimilate:OnRemoved()
-end
-
 function modifier_custom_void_dissimilate:OnDestroy()
 if not IsServer() then return end
 
-self:GetParent():RemoveNoDraw()
+self.parent:RemoveNoDraw()
 
-if self:GetCaster():HasModifier("modifier_void_astral_legendary") and self:GetAbility():IsHidden() then 
-	self:GetCaster():SwapAbilities("void_spirit_dissimilate_custom_cancel", "void_spirit_dissimilate_custom", false, true)
+if self.parent:HasTalent("modifier_void_astral_legendary") and self.ability:IsHidden() then 
+	self.parent:SwapAbilities("void_spirit_dissimilate_custom_cancel", "void_spirit_dissimilate_custom", false, true)
 end
 
 for _,effect in pairs(self.effects) do 
-	ParticleManager:DestroyParticle(effect, true)
-	ParticleManager:ReleaseParticleIndex(effect)
+	local insta = 1
+	if self:GetRemainingTime() > 0.1 then
+		insta = 2
+	end
+	ParticleManager:Delete(effect, insta)
 end
 
+local stun_duration = self.parent:GetTalentValue("modifier_void_astral_4", "stun")
 local point = self.points[self.selected]
+local damage = self.ability:GetDamage()
+local old_pos = self.parent:GetAbsOrigin()
 
-local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), point, nil, self.radius,DOTA_UNIT_TARGET_TEAM_ENEMY,DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,0,0,false)
-
-local damage = self:GetAbility():GetAbilityDamage()
-
-if self:GetParent():HasModifier("modifier_void_astral_1") then 
-	damage = damage + self:GetCaster():GetTalentValue("modifier_void_astral_1", "damage")*self:GetCaster():GetIntellect()/100
-end
-
-local old_pos = self:GetCaster():GetAbsOrigin()
-
-FindClearSpaceForUnit( self:GetCaster(), point, true )
-
-if self:GetStackCount() > 0 then 
-	damage = damage*(1 + ((self:GetCaster():GetTalentValue("modifier_void_astral_legendary", "damage")/10)*self:GetStackCount())/100)
-end
+FindClearSpaceForUnit(self.parent, point, true )
 
 for _,thinker in pairs(self.thinkers) do 
-	if thinker and thinker:GetAbsOrigin() == point and self:GetParent():HasModifier("modifier_void_astral_6") then 
-		local mod = thinker:FindModifierByName("modifier_custom_void_dissimilate_speed_thinker")
-		if mod then 
-			mod:SetDuration(self:GetCaster():GetTalentValue("modifier_void_astral_6", "duration"), true)
-		end
-	else 
-		UTIL_Remove( thinker )
-	end
+	UTIL_Remove( thinker )
 end
 
-if self:GetParent():HasModifier("modifier_void_astral_6") then 
-	CreateModifierThinker(self:GetCaster(), self:GetAbility(), "modifier_custom_void_dissimilate_resist_tracker", {duration = self:GetCaster():GetTalentValue("modifier_void_astral_6", "duration"), radius = self.radius}, point, self:GetCaster():GetTeamNumber(), false)
-end	
+local legendary_duration = self.parent:GetTalentValue("modifier_void_astral_legendary", "effect_duration")
+local hit_heroes = false
 
-
-local root_duration = self:GetCaster():GetTalentValue("modifier_void_astral_5", "root")
-
+local enemies = self.parent:FindTargets(self.radius, point)
 for _,enemy in pairs(enemies) do
 
-	local deal_damage = damage
-
-	local damageTable = { victim = enemy, attacker = self:GetCaster(), damage = deal_damage, damage_type = self:GetAbility():GetAbilityDamageType(), ability = self:GetAbility(), }
-
-	if enemy:IsRealHero() and self:GetCaster():GetQuest() == "Void.Quest_6" and point == old_pos then 
-		self:GetCaster():UpdateQuest(1)
-	end
-
-	if self:GetCaster():HasModifier("modifier_void_step_4") and not enemy:HasModifier("modifier_void_spirit_astral_step_spells_max") then 
-		enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_void_spirit_astral_step_spells", {duration = self:GetCaster():GetTalentValue("modifier_void_step_4", "duration")})
-	end
-
-
-	if self:GetParent():HasModifier("modifier_void_astral_5") then 
-		enemy:EmitSound("Lc.Press_Root")
-		enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_custom_void_dissimilate_root", {duration = (1 - enemy:GetStatusResistance())*root_duration})
-	end		
-
-	ApplyDamage(damageTable)
-end
-
-if self:GetParent():HasModifier("modifier_void_astral_4") then 
-
-	CreateModifierThinker(self:GetCaster(), self:GetAbility(), "modifier_custom_void_dissimilate_exit", {duration = self:GetCaster():GetTalentValue("modifier_void_astral_4", "delay"), radius = self.radius}, self:GetCaster():GetAbsOrigin(), self:GetCaster():GetTeamNumber(), false)
-end
-
-if #enemies > 0 and self:GetCaster():HasModifier("modifier_void_astral_2") then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_custom_void_dissimilate_heal", {duration = self:GetCaster():GetTalentValue("modifier_void_astral_2", "duration")})
-end
-
-if self:GetCaster():HasModifier("modifier_void_astral_3") then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_custom_void_dissimilate_speed", {duration = self:GetCaster():GetTalentValue("modifier_void_astral_3", "duration")})
-end
-
-self:GetAbility():UseResources(false, false, false, true)
-
-
-self:PlayEffects2( point, #enemies )
-end
-
---------------------------------------------------------------------------------
--- Modifier Effects
-function modifier_custom_void_dissimilate:DeclareFunctions()
-	local funcs = {
-		MODIFIER_EVENT_ON_ORDER,
-
-		MODIFIER_PROPERTY_MOVESPEED_LIMIT,
-	}
-
-	return funcs
-end
-
-function modifier_custom_void_dissimilate:OnOrder( params )
-	if params.unit~=self:GetParent() then return end
-
-
-	if 	params.order_type==DOTA_UNIT_ORDER_MOVE_TO_POSITION then
-		self:SetValidTarget( params.new_pos )
-	elseif 
-		params.order_type==DOTA_UNIT_ORDER_MOVE_TO_TARGET or
-		params.order_type==DOTA_UNIT_ORDER_ATTACK_TARGET
-	then
-		self:SetValidTarget( params.target:GetOrigin() )
-	end
-
-	if self:GetParent():HasModifier("modifier_void_astral_legendary") then 
-		--self:Destroy()
-	end
-end
-
-function modifier_custom_void_dissimilate:GetModifierMoveSpeed_Limit()
-	return 0.1
-end
-
---------------------------------------------------------------------------------
--- Status Effects
-function modifier_custom_void_dissimilate:CheckState()
-local state = {}
-
- 
-	state = 
-	{
-		[MODIFIER_STATE_DISARMED] = true,
-		[MODIFIER_STATE_SILENCED] = true,
-		[MODIFIER_STATE_MUTED] = true,
-		[MODIFIER_STATE_OUT_OF_GAME] = true,
-		[MODIFIER_STATE_INVULNERABLE] = true,
-		[MODIFIER_STATE_NO_UNIT_COLLISION] = true
-	}
-
-	return state
-end
-
---------------------------------------------------------------------------------
--- Helper
-function modifier_custom_void_dissimilate:SetValidTarget( location )
-	-- find max
-	local max_dist = (location-self.points[1]):Length2D()
-	local max_point = 1
-	for i,point in ipairs(self.points) do
-		local dist = (location-point):Length2D()
-		if dist<max_dist then
-			max_dist = dist
-			max_point = i
+	if enemy:IsRealHero() then
+		hit_heroes = true
+		self.parent:AddNewModifier(self.parent, self.ability, "modifier_custom_void_dissimilate_spell", {})
+		if self.parent:GetQuest() == "Void.Quest_6" and point == old_pos then 
+			self.parent:UpdateQuest(1)
 		end
 	end
 
-	-- select
-	local old_select = self.selected
-	self.selected = max_point
+	local step = self.parent:FindAbilityByName("void_spirit_astral_step_custom")
+	if step then
+		step:AutoStack(enemy)
+	end
 
-	-- change effects
-	self:ChangeEffects( old_select, self.selected )
+	if self:GetStackCount() > 0 then
+		enemy:AddNewModifier(self.parent, self.ability, "modifier_custom_void_dissimilate_legendary", {duration = legendary_duration, stack = self:GetStackCount()})
+	end
+
+	if self.parent:HasTalent("modifier_void_astral_4") then 
+		enemy:AddNewModifier(self.parent, self.ability, "modifier_stunned", {duration = (1 - enemy:GetStatusResistance())*stun_duration})
+	end
+
+	DoDamage({ victim = enemy, attacker = self.parent, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self.ability, })
 end
 
---------------------------------------------------------------------------------
--- Graphics & Animations
+
+if #enemies > 0 then
+	local shield = self.parent:FindAbilityByName("void_spirit_resonant_pulse_custom")
+	if shield then
+		shield:LegendaryStack()
+	end
+
+	if self.parent:HasTalent("modifier_void_astral_6") then
+		self.parent:CdItems(self.parent:GetTalentValue("modifier_void_astral_6", "cd_items"))
+	end
+end
+
+if self.parent:HasTalent("modifier_void_astral_3") then 
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_custom_void_dissimilate_speed", {duration = self.parent:GetTalentValue("modifier_void_astral_3", "duration")})
+end
+
+self.ability:StartCd()
+self:PlayEffects2( point, #enemies )
+
+
+if hit_heroes == false and self.parent:HasTalent("modifier_void_astral_6") then
+	self.parent:CdAbility(self.ability, self.parent:GetTalentValue("modifier_void_astral_6", "cd_self"))
+end
+
+end
+
+
+
+function modifier_custom_void_dissimilate:OrderEvent( params)
+
+if params.order_type==DOTA_UNIT_ORDER_MOVE_TO_POSITION then
+	self:SetValidTarget( params.pos )
+elseif 
+	(params.order_type==DOTA_UNIT_ORDER_MOVE_TO_TARGET or
+	params.order_type==DOTA_UNIT_ORDER_ATTACK_TARGET) and params.target
+then
+	self:SetValidTarget( params.target:GetOrigin() )
+end
+
+end
+
+
+function modifier_custom_void_dissimilate:CheckState()
+local state = 
+{
+	[MODIFIER_STATE_DISARMED] = true,
+	[MODIFIER_STATE_ROOTED] = true,
+	[MODIFIER_STATE_OUT_OF_GAME] = true,
+	[MODIFIER_STATE_INVULNERABLE] = true,
+	[MODIFIER_STATE_NO_UNIT_COLLISION] = true
+}
+
+if not self.parent:HasTalent("modifier_void_astral_legendary") then
+	state[MODIFIER_STATE_MUTED] = true
+	state[MODIFIER_STATE_SILENCED] = true
+end
+
+return state
+end
+
+function modifier_custom_void_dissimilate:SetValidTarget( location )
+local max_dist = (location-self.points[1]):Length2D()
+local max_point = 1
+for i,point in pairs(self.points) do
+	local dist = (location-point):Length2D()
+	if dist<max_dist then
+		max_dist = dist
+		max_point = i
+	end
+end
+
+local old_select = self.selected
+self.selected = max_point
+self:ChangeEffects( old_select, self.selected )
+end
+
+
 function modifier_custom_void_dissimilate:PlayEffects1( point, main )
-	-- Get Resources
-	local particle_cast = "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate.vpcf"
-	local sound_cast = "Hero_VoidSpirit.Dissimilate.Portals"
+local particle_cast = "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate.vpcf"
+if self.parent:HasTalent("modifier_void_astral_legendary") then 
+	particle_cast = "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_2.vpcf"
+end
+local radius = self.radius + 25
 
-	if self:GetParent():HasModifier("modifier_void_astral_legendary") then 
-		particle_cast = "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_2.vpcf"
-	end
-	-- adjustments
-	local radius = self.radius + 25
+local effect_cast = ParticleManager:CreateParticle(particle_cast, PATTACH_WORLDORIGIN, self.parent)
+ParticleManager:SetParticleControl( effect_cast, 0, point )
+ParticleManager:SetParticleControl( effect_cast, 1, Vector( radius, 0, 1 ) )
 
-	-- Create Particle for this team
-	local effect_cast = ParticleManager:CreateParticle( particle_cast, PATTACH_WORLDORIGIN, self:GetParent())
-	ParticleManager:SetParticleControl( effect_cast, 0, point )
-	ParticleManager:SetParticleControl( effect_cast, 1, Vector( radius, 0, 1 ) )
+if main then
+	ParticleManager:SetParticleControl( effect_cast, 2, Vector( 1, 0, 0 ) )
+end
 
-	if main then
-		ParticleManager:SetParticleControl( effect_cast, 2, Vector( 1, 0, 0 ) )
-	end
+self:AddParticle(effect_cast, false, false, -1,false, false )
+EmitSoundOnLocationWithCaster( point, "Hero_VoidSpirit.Dissimilate.Portals", self.parent )
 
-	-- buff particle
-	self:AddParticle(
-		effect_cast,
-		false, -- bDestroyImmediately
-		false, -- bStatusEffect
-		-1, -- iPriority
-		false, -- bHeroEffect
-		false -- bOverheadEffect
-	)
-
-	-- Play Sound
-	EmitSoundOnLocationWithCaster( point, sound_cast, self:GetCaster() )
-
-	return effect_cast
+return effect_cast
 end
 
 function modifier_custom_void_dissimilate:ChangeEffects( old, new )
@@ -408,190 +337,176 @@ function modifier_custom_void_dissimilate:ChangeEffects( old, new )
 	ParticleManager:SetParticleControl( self.effects[new], 2, Vector( 1, 0, 0 ) )
 end
 
+
 function modifier_custom_void_dissimilate:PlayEffects2( point, hit )
-	
+local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_dmg.vpcf", PATTACH_WORLDORIGIN, self.parent )
+ParticleManager:SetParticleControl( effect_cast, 0, point )
+ParticleManager:SetParticleControl( effect_cast, 1, Vector( self.target_radius, 0, 0 ) )
+ParticleManager:Delete( effect_cast, 0 )
+
+effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_exit.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent )
+ParticleManager:Delete( effect_cast, 0 )
+
+self.parent:StartGesture(ACT_DOTA_CAST_ABILITY_3_END)
+self.parent:EmitSound("Hero_VoidSpirit.Dissimilate.TeleportIn")
+
+if hit>0 then
+	self.parent:EmitSound("Hero_VoidSpirit.Dissimilate.Stun")
+end
+
+end
 
 
-	local particle_cast = "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_dmg.vpcf"
-	local particle_cast2 = "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_exit.vpcf"
-	local sound_cast = "Hero_VoidSpirit.Dissimilate.TeleportIn"
-	local sound_hit = "Hero_VoidSpirit.Dissimilate.Stun"
 
-	-- Create Particle
-	local effect_cast = ParticleManager:CreateParticle( particle_cast, PATTACH_WORLDORIGIN, self:GetParent() )
-	ParticleManager:SetParticleControl( effect_cast, 0, point )
-	ParticleManager:SetParticleControl( effect_cast, 1, Vector( self.target_radius, 0, 0 ) )
-	ParticleManager:ReleaseParticleIndex( effect_cast )
 
-	local effect_cast = ParticleManager:CreateParticle( particle_cast2, PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-	ParticleManager:ReleaseParticleIndex( effect_cast )
 
-	self:GetParent():StartGesture(ACT_DOTA_CAST_ABILITY_3_END)
-	self:GetParent():EmitSound(sound_cast)
-	
-	if hit>0 then
-		self:GetParent():EmitSound(sound_hit)
+
+
+modifier_custom_void_dissimilate_tracker = class({})
+function modifier_custom_void_dissimilate_tracker:IsHidden() return true end
+function modifier_custom_void_dissimilate_tracker:IsPurgable() return false end
+function modifier_custom_void_dissimilate_tracker:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.resist_duration = self.parent:GetTalentValue("modifier_void_astral_1", "duration", true)
+
+self.heal_duration = self.parent:GetTalentValue("modifier_void_astral_2", "duration", true)
+
+self.legendary_damage = self.parent:GetTalentValue("modifier_void_astral_legendary", "damage", true)/100
+self.legendary_radius = self.parent:GetTalentValue("modifier_void_astral_legendary", "radius", true)
+
+self.cdr = self.parent:GetTalentValue("modifier_void_astral_6", "cdr", true)
+if not IsServer() then return end
+self:UpdateTalent()
+end
+
+function modifier_custom_void_dissimilate_tracker:DeclareFunctions()
+return
+{
+  MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE,
+}
+end
+
+function modifier_custom_void_dissimilate_tracker:GetModifierPercentageCooldown()
+if not self.parent:HasTalent("modifier_void_astral_6") then return end 
+return self.cdr
+end
+
+
+function modifier_custom_void_dissimilate_tracker:UpdateTalent(name)
+
+if name == "modifier_void_astral_1" or self.parent:HasTalent("modifier_void_astral_1") then
+	self.parent:AddAttackEvent_out(self)
+end
+
+if name == "modifier_void_astral_legendary" or self.parent:HasTalent("modifier_void_astral_legendary") then
+	self.parent:AddAttackEvent_out(self)
+end
+
+if name == "modifier_void_astral_2" or self.parent:HasTalent("modifier_void_astral_2") then
+	self.parent:AddSpellEvent(self)
+end
+
+end
+
+
+function modifier_custom_void_dissimilate_tracker:SpellEvent(params)
+if not IsServer() then return end
+if not self.parent:HasTalent("modifier_void_astral_2") then return end
+if params.unit~=self.parent then return end
+if params.ability:IsItem() then return end
+
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_custom_void_dissimilate_heal", {duration = self.heal_duration})
+end
+
+
+function modifier_custom_void_dissimilate_tracker:AttackEvent_out(params)
+if not IsServer() then return end
+if self.parent ~= params.attacker then return end
+if not params.target:IsUnit() then return end
+
+local target = params.target
+
+if self.parent:HasTalent("modifier_void_astral_1") then
+	target:AddNewModifier(self.parent, self.ability, "modifier_custom_void_dissimilate_resist", {duration = self.resist_duration})
+end
+
+if self.parent:HasTalent("modifier_void_astral_legendary") and target:HasModifier("modifier_custom_void_dissimilate_legendary") then	
+	target:EmitSound("Hero_VoidSpirit.Dissimilate.Stun")
+	if params.no_attack_cooldown then
+		self:LegendaryProc(target)
+	else
+		for _,unit in pairs(self.parent:FindTargets(self.legendary_radius, target:GetAbsOrigin())) do
+			self:LegendaryProc(unit)
+		end
 	end
 end
 
 
-
-
-
-
-
-modifier_custom_void_dissimilate_speed_thinker = class({})
-
-function modifier_custom_void_dissimilate_speed_thinker:IsHidden() return true end
-
-function modifier_custom_void_dissimilate_speed_thinker:IsPurgable() return false end
-
-function modifier_custom_void_dissimilate_speed_thinker:IsAura() return true end
-
-function modifier_custom_void_dissimilate_speed_thinker:GetAuraDuration() return 0.2 end
-
-
-function modifier_custom_void_dissimilate_speed_thinker:GetAuraRadius() return self.radius
 end
 
-function modifier_custom_void_dissimilate_speed_thinker:OnCreated(table)
+function modifier_custom_void_dissimilate_tracker:LegendaryProc(target)
+if not IsServer() then return end
+
+local mod = target:FindModifierByName("modifier_custom_void_dissimilate_legendary")
+if mod then
+	mod:DecrementStackCount()
+	if mod:GetStackCount() <= 0 then
+		mod:Destroy()
+	end
+
+	local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_dmg.vpcf", PATTACH_WORLDORIGIN, target )
+	ParticleManager:SetParticleControl( effect_cast, 0, target:GetAbsOrigin() )
+	ParticleManager:SetParticleControl( effect_cast, 1, Vector( 100, 0, 0 ) )
+	ParticleManager:Delete( effect_cast, 0 )
+
+	effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_exit.vpcf", PATTACH_ABSORIGIN_FOLLOW, target )
+	ParticleManager:Delete( effect_cast, 0 )
+
+	
+	local real_damage = DoDamage({victim = target, attacker = self.parent, ability = self.ability, damage = self.ability:GetDamage()*self.legendary_damage, damage_type = DAMAGE_TYPE_MAGICAL}, "modifier_void_astral_legendary")
+	target:SendNumber(24, real_damage)
+end
+
+end
+
+
+
+modifier_custom_void_dissimilate_slow_thinker = class({})
+function modifier_custom_void_dissimilate_slow_thinker:IsHidden() return true end
+function modifier_custom_void_dissimilate_slow_thinker:IsPurgable() return false end
+function modifier_custom_void_dissimilate_slow_thinker:IsAura() return true end
+function modifier_custom_void_dissimilate_slow_thinker:GetAuraDuration() return 0.2 end
+function modifier_custom_void_dissimilate_slow_thinker:GetAuraRadius() return self.radius end
+function modifier_custom_void_dissimilate_slow_thinker:OnCreated(table)
 self.radius = table.radius
 end
 
-
-function modifier_custom_void_dissimilate_speed_thinker:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_ENEMY end
-
-function modifier_custom_void_dissimilate_speed_thinker:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO +  DOTA_UNIT_TARGET_BASIC end
-
-function modifier_custom_void_dissimilate_speed_thinker:GetModifierAura() return "modifier_custom_void_dissimilate_slow" end
+function modifier_custom_void_dissimilate_slow_thinker:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_ENEMY end
+function modifier_custom_void_dissimilate_slow_thinker:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO +  DOTA_UNIT_TARGET_BASIC end
+function modifier_custom_void_dissimilate_slow_thinker:GetModifierAura() return "modifier_custom_void_dissimilate_slow" end
 
 
 
 modifier_custom_void_dissimilate_slow = class({})
-
-function modifier_custom_void_dissimilate_slow:IsPurgable() return false end
-
+function modifier_custom_void_dissimilate_slow:IsPurgable() return true end
 function modifier_custom_void_dissimilate_slow:IsHidden() return false end 
-function modifier_custom_void_dissimilate_slow:IsDebuff() return true end
-function modifier_custom_void_dissimilate_slow:GetTexture() return "buffs/astral_slow" end
-
-
 function modifier_custom_void_dissimilate_slow:GetEffectName() return "particles/void_astral_slow.vpcf" end
-
 function modifier_custom_void_dissimilate_slow:DeclareFunctions()
 return
 {
  MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
 }
-
 end
 
-
 function modifier_custom_void_dissimilate_slow:OnCreated()
-
-self.slow = self:GetCaster():GetTalentValue("modifier_void_astral_3", "slow")
+self.slow = self:GetCaster():GetTalentValue("modifier_void_astral_5", "slow")
 end
 
 function modifier_custom_void_dissimilate_slow:GetModifierMoveSpeedBonus_Percentage() 
 return self.slow
 end
-
-
-
-
-modifier_custom_void_dissimilate_resist_tracker = class({})
-
-function modifier_custom_void_dissimilate_resist_tracker:IsHidden() return true end
-
-function modifier_custom_void_dissimilate_resist_tracker:IsPurgable() return false end
-
-function modifier_custom_void_dissimilate_resist_tracker:IsAura() return true end
-
-function modifier_custom_void_dissimilate_resist_tracker:GetAuraDuration() return 0.1 end
-
-
-function modifier_custom_void_dissimilate_resist_tracker:GetAuraRadius() return self.radius
-end
-
-function modifier_custom_void_dissimilate_resist_tracker:OnCreated(table)
-self.radius = table.radius
-
-if not IsServer() then return end
-particle_cast = "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_52.vpcf"
-
-local radius = self.radius + 25
-
-
-local effect_cast = ParticleManager:CreateParticle( particle_cast, PATTACH_WORLDORIGIN, nil)
-ParticleManager:SetParticleControl( effect_cast, 0, self:GetParent():GetAbsOrigin() )
-ParticleManager:SetParticleControl( effect_cast, 1, Vector( radius, 0, 1 ) )
-
-
-self:AddParticle(
-		effect_cast,
-		false, -- bDestroyImmediately
-		false, -- bStatusEffect
-		-1, -- iPriority
-		false, -- bHeroEffect
-		false -- bOverheadEffect
-	)
-end
-
-
-function modifier_custom_void_dissimilate_resist_tracker:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_FRIENDLY
- end
-
-function modifier_custom_void_dissimilate_resist_tracker:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO end
-
-function modifier_custom_void_dissimilate_resist_tracker:GetModifierAura() return "modifier_custom_void_dissimilate_resist" end
-
-
-
-
-
-modifier_custom_void_dissimilate_resist = class({})
-
-function modifier_custom_void_dissimilate_resist:IsPurgable() return false end
-
-function modifier_custom_void_dissimilate_resist:IsHidden() return false end 
-function modifier_custom_void_dissimilate_resist:GetTexture() return "buffs/astral_resist" end
-function modifier_custom_void_dissimilate_resist:GetEffectName()
-	return "particles/units/heroes/hero_vengeful/void_astral_resist.vpcf"
-end
-
-function modifier_custom_void_dissimilate_resist:GetEffectAttachType()
-	return PATTACH_OVERHEAD_FOLLOW
-end
-
-function modifier_custom_void_dissimilate_resist:OnCreated()
-self.damage = self:GetCaster():GetTalentValue("modifier_void_astral_6", "damage_reduce")
-
-self.interval = 0.5
-
-self.cd = self.interval* self:GetCaster():GetTalentValue("modifier_void_astral_6", "cd_items")/100
-
-if not IsServer() then return end 
-
-self:StartIntervalThink(self.interval - FrameTime())
-end
-
-function modifier_custom_void_dissimilate_resist:OnIntervalThink()
-if not IsServer() then return end 
-
-self:GetCaster():CdItems(self.cd)
-end 
-
-function modifier_custom_void_dissimilate_resist:DeclareFunctions()
-return
-{
- MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
-}
-
-end
-function modifier_custom_void_dissimilate_resist:GetModifierIncomingDamage_Percentage()
-return self.damage
-end
-
 
 
 
@@ -614,100 +529,15 @@ end
 
 
 
-modifier_custom_void_dissimilate_exit = class({})
-function modifier_custom_void_dissimilate_exit:IsHidden() return false end
-function modifier_custom_void_dissimilate_exit:IsPurgable() return false end
-function modifier_custom_void_dissimilate_exit:OnCreated(table)
-if not IsServer() then return end
-self.radius = self:GetAbility():GetSpecialValueFor( "damage_radius" )
-self.visual_radius = self:GetAbility():GetSpecialValueFor( "destination_fx_radius" )
-
-self.damage_creeps = self:GetCaster():GetTalentValue("modifier_void_astral_4", "damage_creeps")
-self.stun = self:GetCaster():GetTalentValue("modifier_void_astral_4", "stun")
-self.damage = self:GetCaster():GetTalentValue("modifier_void_astral_4", "damage")/100
-end
-
-
-function modifier_custom_void_dissimilate_exit:OnDestroy()
-if not IsServer() then return end
-
-local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self.radius, 	DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC , 0, 0, false )
-
-for _,enemy in pairs(enemies) do 
-
-	local damage = self.damage*(enemy:GetMaxHealth() - enemy:GetHealth())
-
-	if enemy:IsCreep() then 
-		damage = damage*self.damage_creeps
-	end
-
-	self.damageTable = {
-		victim = enemy,
-		attacker = self:GetCaster(),
-		damage = damage,
-		damage_type = self:GetAbility():GetAbilityDamageType(),
-		ability = self:GetAbility(), --Optional.
-	}
-
-	local real_damage = ApplyDamage(self.damageTable)
-
-	enemy:SendNumber(6, real_damage)
-	enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_stunned", {duration = (1 - enemy:GetStatusResistance())*self.stun})
-		
-end
-
-
-
-
-local particle_cast = "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_dmg.vpcf"
-local particle_cast2 = "particles/units/heroes/hero_void_spirit/dissimilate/void_spirit_dissimilate_exit.vpcf"
-local sound_cast = "Hero_VoidSpirit.Dissimilate.TeleportIn"
-
-local effect_cast = ParticleManager:CreateParticle( particle_cast, PATTACH_WORLDORIGIN,  nil)
-ParticleManager:SetParticleControl( effect_cast, 0, self:GetParent():GetAbsOrigin() )
-ParticleManager:SetParticleControl( effect_cast, 1, Vector( self.visual_radius, 0, 0 ) )
-ParticleManager:ReleaseParticleIndex( effect_cast )
-
-local effect_cast = ParticleManager:CreateParticle( particle_cast2, PATTACH_WORLDORIGIN,nil )
-ParticleManager:SetParticleControl( effect_cast, 0, self:GetParent():GetAbsOrigin() )
-ParticleManager:ReleaseParticleIndex( effect_cast )
-
-self:GetParent():EmitSound(sound_cast)
-	
-
-end
-
-
-
-
-
-modifier_custom_void_dissimilate_root = class({})
-function modifier_custom_void_dissimilate_root:IsHidden() return true end
-function modifier_custom_void_dissimilate_root:IsPurgable() return true end
-function modifier_custom_void_dissimilate_root:CheckState()
-return
-{
-	[MODIFIER_STATE_ROOTED] = true
-}
-end
-function modifier_custom_void_dissimilate_root:GetEffectName() return "particles/ta_shield_roots.vpcf" end
-
-
-
-
-
-
-
 
 modifier_custom_void_dissimilate_heal = class({})
 function modifier_custom_void_dissimilate_heal:IsHidden() return false end
 function modifier_custom_void_dissimilate_heal:IsPurgable() return false end
 function modifier_custom_void_dissimilate_heal:GetTexture() return "buffs/arcane_regen" end
-
+function modifier_custom_void_dissimilate_heal:GetEffectName() return "particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf" end
 function modifier_custom_void_dissimilate_heal:OnCreated(table)
-
-self.heal = self:GetParent():GetMaxMana()*(self:GetCaster():GetTalentValue("modifier_void_astral_2", "mana")/100)/self:GetCaster():GetTalentValue("modifier_void_astral_2", "duration")
-
+self.parent = self:GetParent()
+self.heal = self.parent:GetMaxMana()*(self.parent:GetTalentValue("modifier_void_astral_2", "mana")/100)/self.parent:GetTalentValue("modifier_void_astral_2", "duration")
 end
 
 function modifier_custom_void_dissimilate_heal:OnRefresh(table)
@@ -723,16 +553,9 @@ return
 }
 end
 
-
-function modifier_custom_void_dissimilate_heal:GetEffectName() return "particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf" end
-
-function modifier_custom_void_dissimilate_heal:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
-
 function modifier_custom_void_dissimilate_heal:GetModifierConstantManaRegen()
 return self.heal
 end
-
-
 function modifier_custom_void_dissimilate_heal:GetModifierConstantHealthRegen()
 return self.heal
 end
@@ -741,10 +564,10 @@ end
 
 
 modifier_custom_void_dissimilate_speed = class({})
-function modifier_custom_void_dissimilate_speed:IsHidden() return true end
+function modifier_custom_void_dissimilate_speed:IsHidden() return false end
 function modifier_custom_void_dissimilate_speed:IsPurgable() return false end
-function modifier_custom_void_dissimilate_speed:GetEffectName() return "particles/void_step_speed.vpcf" end
 function modifier_custom_void_dissimilate_speed:GetTexture() return "buffs/remnant_speed" end
+function modifier_custom_void_dissimilate_speed:GetEffectName() return "particles/void_step_speed.vpcf" end
 
 function modifier_custom_void_dissimilate_speed:DeclareFunctions()
 return
@@ -757,10 +580,126 @@ function modifier_custom_void_dissimilate_speed:GetModifierMoveSpeedBonus_Percen
 return self.speed
 end
 
-
 function modifier_custom_void_dissimilate_speed:OnCreated()
-
 self.speed = self:GetCaster():GetTalentValue("modifier_void_astral_3", "speed")
 end
 
 
+
+modifier_custom_void_dissimilate_resist = class({})
+function modifier_custom_void_dissimilate_resist:IsHidden() return false end
+function modifier_custom_void_dissimilate_resist:IsPurgable() return true end
+function modifier_custom_void_dissimilate_resist:GetTexture() return "buffs/remnant_lowhp" end
+function modifier_custom_void_dissimilate_resist:OnCreated()
+self.max = self:GetCaster():GetTalentValue("modifier_void_astral_1", "max")
+self.magic = self:GetCaster():GetTalentValue("modifier_void_astral_1", "resist")
+if not IsServer() then return end 
+self:SetStackCount(1)
+end 
+
+function modifier_custom_void_dissimilate_resist:OnRefresh()
+if not IsServer() then return end
+if self:GetStackCount() >= self.max then return end 
+self:IncrementStackCount()
+end 
+
+function modifier_custom_void_dissimilate_resist:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS
+}
+end
+
+function modifier_custom_void_dissimilate_resist:GetModifierMagicalResistanceBonus()
+return self:GetStackCount()*self.magic
+end
+
+
+
+
+
+modifier_custom_void_dissimilate_legendary = class({})
+function modifier_custom_void_dissimilate_legendary:IsHidden() return true end
+function modifier_custom_void_dissimilate_legendary:IsPurgable() return false end
+function modifier_custom_void_dissimilate_legendary:OnCreated(table)
+
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+self.caster = self:GetCaster()
+
+if not IsServer() then return end 
+self.effect = self.parent:GenericParticle("particles/void_spirit/dissimilate_stack.vpcf", self, true)
+self:SetStackCount(table.stack)
+end
+
+function modifier_custom_void_dissimilate_legendary:OnStackCountChanged(iStackCount)
+if not self.effect then return end
+ParticleManager:SetParticleControl( self.effect, 1, Vector( 0, self:GetStackCount(), 0 ) )
+end
+
+
+
+
+modifier_custom_void_dissimilate_spell = class({})
+function modifier_custom_void_dissimilate_spell:IsHidden() return not self:GetCaster():HasTalent("modifier_void_astral_4") end
+function modifier_custom_void_dissimilate_spell:IsPurgable() return false end
+function modifier_custom_void_dissimilate_spell:RemoveOnDeath() return false end
+function modifier_custom_void_dissimilate_spell:GetTexture() return "buffs/void_speed" end
+function modifier_custom_void_dissimilate_spell:OnCreated()
+self.parent = self:GetParent()
+self.max = self.parent:GetTalentValue("modifier_void_astral_4", "max", true)
+self.damage = self.parent:GetTalentValue("modifier_void_astral_4", "damage")
+
+if not IsServer() then return end
+self:SetStackCount(1)
+self:StartIntervalThink(0.5)
+
+self:SetHasCustomTransmitterData(true)
+self:UpdateTalent()
+end
+
+function modifier_custom_void_dissimilate_spell:UpdateTalent(name)
+self.damage = self.parent:GetTalentValue("modifier_void_astral_4", "damage")
+self:SendBuffRefreshToClients()
+end
+
+function modifier_custom_void_dissimilate_spell:AddCustomTransmitterData() 
+return 
+{
+  damage = self.damage,
+} 
+end
+
+function modifier_custom_void_dissimilate_spell:HandleCustomTransmitterData(data)
+self.damage = data.damage
+end
+
+function modifier_custom_void_dissimilate_spell:OnRefresh()
+if not IsServer() then return end
+if self:GetStackCount() >= self.max then return end 
+self:IncrementStackCount()
+end
+
+function modifier_custom_void_dissimilate_spell:OnIntervalThink()
+if not IsServer() then return end 
+if self:GetStackCount() < self.max then return end
+if not self.parent:HasTalent("modifier_void_astral_4") then return end
+
+self.parent:GenericParticle("particles/void_buf2.vpcf")
+
+self.parent:EmitSound("BS.Thirst_legendary_active")
+self:StartIntervalThink(-1)
+end 
+
+
+function modifier_custom_void_dissimilate_spell:DeclareFunctions()
+return
+{
+  MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
+}
+end
+
+function modifier_custom_void_dissimilate_spell:GetModifierSpellAmplify_Percentage()
+if not self.parent:HasTalent("modifier_void_astral_4") then return end
+return self:GetStackCount()*self.damage/self.max
+end

@@ -1,0 +1,20 @@
+
+
+modifier_tower_no_owner = class({})
+function modifier_tower_no_owner:IsHidden() return true end
+function modifier_tower_no_owner:IsPurgable() return false end
+function modifier_tower_no_owner:RemoveOnDeath() return false end
+function modifier_tower_no_owner:CheckState()
+return 
+{
+    [MODIFIER_STATE_INVULNERABLE] = true,
+    [MODIFIER_STATE_DISARMED] = true,
+    [MODIFIER_STATE_NO_HEALTH_BAR] = true,
+    [MODIFIER_STATE_NOT_ON_MINIMAP] = true,
+    [MODIFIER_STATE_UNTARGETABLE] = true,
+    [MODIFIER_STATE_UNSELECTABLE] = true,
+    [MODIFIER_STATE_OUT_OF_GAME] = true,
+}
+end 
+
+

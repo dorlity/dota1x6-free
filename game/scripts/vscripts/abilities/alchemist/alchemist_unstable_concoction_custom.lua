@@ -1,304 +1,311 @@
 LinkLuaModifier( "modifier_alchemist_unstable_concoction_custom", "abilities/alchemist/alchemist_unstable_concoction_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_alchemist_unstable_concoction_custom_damage", "abilities/alchemist/alchemist_unstable_concoction_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_alchemist_unstable_concoction_custom_damage_aura", "abilities/alchemist/alchemist_unstable_concoction_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_alchemist_unstable_concoction_custom_bonus", "abilities/alchemist/alchemist_unstable_concoction_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_alchemist_unstable_concoction_custom_shield", "abilities/alchemist/alchemist_unstable_concoction_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_alchemist_unstable_concoction_custom_root", "abilities/alchemist/alchemist_unstable_concoction_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_alchemist_unstable_concoction_custom_charge", "abilities/alchemist/alchemist_unstable_concoction_custom", LUA_MODIFIER_MOTION_HORIZONTAL )
 LinkLuaModifier( "modifier_alchemist_unstable_concoction_custom_charge_effect", "abilities/alchemist/alchemist_unstable_concoction_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier( "modifier_alchemist_unstable_concoction_custom_mirror", "abilities/alchemist/alchemist_unstable_concoction_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier( "modifier_alchemist_unstable_concoction_custom_tracker", "abilities/alchemist/alchemist_unstable_concoction_custom", LUA_MODIFIER_MOTION_NONE)
+
 
 alchemist_unstable_concoction_custom = class({})
-alchemist_unstable_concoction_throw_custom = class({})
 
 
+function alchemist_unstable_concoction_custom:CreateTalent()
+self:ToggleAutoCast()
+end
 
-
-
-function alchemist_unstable_concoction_throw_custom:Precache(context)
-
-    
-PrecacheResource( "particle", "particles/units/heroes/hero_meepo/meepo_ransack.vpcf", context )
+function alchemist_unstable_concoction_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_projectile.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_explosion.vpcf", context )
 PrecacheResource( "particle", "particles/alch_stun_legendary.vpcf", context )
-PrecacheResource( "particle", "particles/alch_root.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_oracle/oracle_false_promise_heal.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_brewmaster/brewmaster_dispel_magic.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_timer.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_acid_spray_debuff.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf" , context )
+PrecacheResource( "particle", "particles/econ/events/fall_2022/radiance/radiance_owner_fall2022.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_brewmaster/brewmaster_fire_immolation_child.vpcf", context )
+PrecacheResource( "particle", "particles/lc_odd_proc_.vpcf", context )
+PrecacheResource( "particle", "particles/lc_lowhp.vpcf", context )
+PrecacheResource( "particle", "particles/items2_fx/vindicators_axe_armor.vpcf", context )
+PrecacheResource( "particle", "particles/alch_root.vpcf", context )
+PrecacheResource( "particle", "particles/status_fx/status_effect_forcestaff.vpcf", context )
+PrecacheResource( "particle", "particles/econ/events/ti10/phase_boots_ti10.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_unstableconc_bottles.vpcf", context )
 
+end
+
+function alchemist_unstable_concoction_custom:GetIntrinsicModifierName()
+if not self:GetCaster():IsRealHero() then return end
+return "modifier_alchemist_unstable_concoction_custom_tracker"
+end
+
+function alchemist_unstable_concoction_custom:GetManaCost(level)
+local bonus = 0
+if self:GetCaster():HasModifier("modifier_alchemist_unstable_concoction_custom") then
+	return 0
+end
+return self.BaseClass.GetManaCost(self,level) + bonus
+end
+
+function alchemist_unstable_concoction_custom:GetCooldown(level)
+local bonus = 0
+if self:GetCaster():HasTalent("modifier_alchemist_unstable_2") then
+	bonus = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_2", "cd")
+end
+return self.BaseClass.GetCooldown( self, level ) + bonus
 end
 
 function alchemist_unstable_concoction_custom:GetBehavior()
-local bonus = 0
+local caster = self:GetCaster()
 
-if self:GetCaster():HasModifier("modifier_alchemist_unstable_5") then
-	bonus = DOTA_ABILITY_BEHAVIOR_AUTOCAST
+if caster:HasModifier("modifier_alchemist_unstable_concoction_custom") then
+	return DOTA_ABILITY_BEHAVIOR_UNIT_TARGET + DOTA_ABILITY_BEHAVIOR_AOE
 end
+
+local bonus = caster:HasTalent("modifier_alchemist_hero_6") and DOTA_ABILITY_BEHAVIOR_AUTOCAST or 0
 return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IMMEDIATE + bonus
 end
 
-
-
-
-function alchemist_unstable_concoction_custom:OnSpellStart()
-if not IsServer() then return end
-
-local duration = self:GetSpecialValueFor( "brew_explosion" )
-self:GetCaster():StartGesture(ACT_DOTA_ALCHEMIST_CONCOCTION)
-local ability = self:GetCaster():FindAbilityByName("alchemist_unstable_concoction_throw_custom")
-
-self:EndCooldown()
-
-if self:GetCaster():HasModifier("modifier_alchemist_unstable_5") and self:GetAutoCastState() == true then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_alchemist_unstable_concoction_custom_charge", {duration = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_5", "duration")})
-end 
-
-self:GetCaster():AddNewModifier( self:GetCaster(), ability, "modifier_alchemist_unstable_concoction_custom", { duration = duration } )
+function alchemist_unstable_concoction_custom:GetCastRange(vLocation, hTarget)
+return self:GetSpecialValueFor( "throw_distance" )
 end
 
-
-
-function alchemist_unstable_concoction_throw_custom:GetCastPoint()
-
-if self:GetCaster():HasModifier("modifier_alchemist_unstable_6") then 
+function alchemist_unstable_concoction_custom:GetCastPoint()
+local caster = self:GetCaster()
+if not caster:HasModifier("modifier_alchemist_unstable_concoction_custom") or caster:HasTalent("modifier_alchemist_unstable_4") then 
   return 0
 end
+return self:GetSpecialValueFor("throw_cast_point")
+end
 
-return self:GetSpecialValueFor("AbilityCastPoint")
+function alchemist_unstable_concoction_custom:GetAOERadius()
+return self:GetSpecialValueFor( "radius" )
+end
+
+function alchemist_unstable_concoction_custom:GetAbilityTextureName()
+local caster = self:GetCaster()
+return caster:HasModifier("modifier_alchemist_unstable_concoction_custom") and "alchemist_unstable_concoction_throw" or "alchemist_unstable_concoction"
 end
 
 
-
-function alchemist_unstable_concoction_throw_custom:GetAOERadius()
-return self:GetSpecialValueFor( "midair_explosion_radius" )
-end
-
-
-
-
-function alchemist_unstable_concoction_throw_custom:GetBehavior()
-if self:GetCaster():HasModifier("modifier_alchemist_unstable_legendary") then
-	return DOTA_ABILITY_BEHAVIOR_UNIT_TARGET + DOTA_ABILITY_BEHAVIOR_AOE + DOTA_ABILITY_BEHAVIOR_HIDDEN + DOTA_ABILITY_BEHAVIOR_POINT 
-end
-return DOTA_ABILITY_BEHAVIOR_UNIT_TARGET + DOTA_ABILITY_BEHAVIOR_AOE + DOTA_ABILITY_BEHAVIOR_HIDDEN 
-end
-
-
-
-function alchemist_unstable_concoction_throw_custom:GetCastRange(vLocation, hTarget)
-local max_dist = self:GetSpecialValueFor( "throw_distance" )
-
-return max_dist
-end
-
-
-
-function alchemist_unstable_concoction_throw_custom:OnSpellStart(new_target)
-if not IsServer() then return end
-
+function alchemist_unstable_concoction_custom:DealDamage(target, time, legendary_bonus, self_stun)
 local caster = self:GetCaster()
 
-local target
-local brew_time = 0
+local passive = caster:FindAbilityByName("alchemist_corrosive_weaponry_custom")
 
-local max_brew = self:GetSpecialValueFor( "brew_time" )
-local projectile_speed = self:GetSpecialValueFor( "movement_speed" )
-local projectile_vision = self:GetSpecialValueFor( "vision_range" )
-
-if self:GetCursorTarget() ~= nil then 
-	target = self:GetCursorTarget()
-
-	if new_target ~= nil then 
-		target = new_target
-	end
-
-else 
-	local unit = CreateUnitByName("npc_dota_companion", self:GetCursorPosition(), false, nil, nil, 0)
-	unit:AddNewModifier(unit, nil, "modifier_phased", {})
-	unit:AddNewModifier(unit, nil, "modifier_invulnerable", {})
-	target = unit
-end
-
-self:GetCaster():FadeGesture(ACT_DOTA_ALCHEMIST_CONCOCTION)
-self:GetCaster():StartGesture(ACT_DOTA_ALCHEMIST_CONCOCTION_THROW)
-
-local legendary_damage = 0
-
-local modifier = caster:FindModifierByName( "modifier_alchemist_unstable_concoction_custom" )
-if modifier then
-
-	if modifier.legendary_damage ~= 0 then 
-		legendary_damage = modifier.legendary_damage
-	end
-
-	brew_time = math.min( GameRules:GetGameTime()-modifier:GetCreationTime(), max_brew )
-	modifier.explode = true
-	modifier:Destroy()
-end
-
-
-
-
-if target:IsRealHero() and caster:GetQuest() == "Alch.Quest_6" and brew_time >= caster.quest.number then 
-	caster:UpdateQuest(1)
-end
-
-local info = {
-	Target = target,
-	Source = caster,
-	Ability = self,	
-	iSourceAttachment = self:GetCaster():ScriptLookupAttachment("attach_attack3"),
-	EffectName = "particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_projectile.vpcf",
-	iMoveSpeed = projectile_speed,
-	bDodgeable = false,                         
-	bVisibleToEnemies = true,                   
-	bProvidesVision = true,                     
-	iVisionRadius = projectile_vision,          
-	iVisionTeamNumber = caster:GetTeamNumber(), 
-	ExtraData = {
-		brew_time = brew_time,
-		legendary_damage = legendary_damage,
-	}
-}
-ProjectileManager:CreateTrackingProjectile(info)
-self:GetCaster():EmitSound("Hero_Alchemist.UnstableConcoction.Throw")
-end
-
-
-function alchemist_unstable_concoction_throw_custom:OnProjectileHit_ExtraData( target, location, ExtraData )
-if not target then return end
-
-self:GetCaster():FadeGesture(ACT_DOTA_ALCHEMIST_CONCOCTION_THROW)
-
-local brew_time = ExtraData.brew_time
-
-if target:TriggerSpellAbsorb( self ) then return end
-
-local max_brew = self:GetSpecialValueFor( "brew_time" )
+local damage_type = caster:HasTalent("modifier_alchemist_unstable_legendary") and DAMAGE_TYPE_MAGICAL or DAMAGE_TYPE_PHYSICAL
+local radius = self:GetSpecialValueFor("radius")
 local min_stun = self:GetSpecialValueFor( "min_stun" )
 local max_stun = self:GetSpecialValueFor( "max_stun" )
 local min_damage = self:GetSpecialValueFor( "min_damage" )
 local max_damage = self:GetSpecialValueFor( "max_damage" )
-local radius = self:GetSpecialValueFor( "midair_explosion_radius" )
+local shard_stun = self:GetSpecialValueFor("shard_stun")
 
+local max_brew = self:GetSpecialValueFor( "brew_time" )
+local time_k = math.min(1, time/max_brew)
 
-local stun = (brew_time/max_brew)*(max_stun-min_stun) + min_stun
-local damage = (brew_time/max_brew)*(max_damage-min_damage) + min_damage
+local stun = time_k*(max_stun-min_stun) + min_stun
+local damage = time_k*(max_damage-min_damage) + min_damage
 
+damage = legendary_bonus and legendary_bonus + damage or damage
+local damage_table = { attacker = caster, damage = damage, damage_type = damage_type, ability = self, }
 
-if ExtraData.legendary_damage ~= nil then 
-	damage = damage + ExtraData.legendary_damage
+local targets = caster:FindTargets(radius, target:GetAbsOrigin())
+if self_stun then
+	table.insert(targets, caster)
 end
 
-
-local damageTable = { attacker = self:GetCaster(), damage = damage, damage_type = DAMAGE_TYPE_PHYSICAL, ability = self, }
-local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), target:GetOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false )
-
-for _,enemy in pairs(enemies) do
-	damageTable.victim = enemy
+for _,target in pairs(targets) do
+	damage_table.victim = target
+	local real_damage = DoDamage(damage_table)
 	
-	if self:GetCaster():HasModifier("modifier_alchemist_unstable_6") then 
-		enemy:Purge(true, false, false, false, false)
+	if caster:HasTalent("modifier_alchemist_unstable_legendary") then
+		target:SendNumber(24, real_damage)
 	end
 
-	local duration = stun*(1 - enemy:GetStatusResistance())
+	if target:GetTeamNumber() ~= caster:GetTeamNumber() and passive and not passive:IsNull() then
+		passive:AddStack(target, math.floor(time))
+	end
 
-	ApplyDamage( damageTable )
-	enemy:AddNewModifier( self:GetCaster(), self, "modifier_stunned", { duration = duration } )
+	local stun_duration = stun*(1 - target:GetStatusResistance())
+	if target == caster and caster:HasShard() then
+		stun_duration = shard_stun
+	end
 
+	target:AddNewModifier( caster, self, "modifier_stunned", { duration = stun_duration})
 end
 
-target:EmitSound("Hero_Alchemist.UnstableConcoction.Stun")
+local name = caster:HasModifier("modifier_alchemist_concoction_darkbrew_custom") and "particles/econ/items/alchemist/alchemist_smooth_criminal/alchemist_smooth_criminal_unstable_concoction_explosion.vpcf" or "particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_explosion.vpcf"
 
-if target:GetName() == "npc_dota_companion" then 
-	local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_explosion.vpcf", PATTACH_WORLDORIGIN, nil )
-	ParticleManager:SetParticleControl( effect_cast, 0, target:GetAbsOrigin() )
-	ParticleManager:ReleaseParticleIndex( effect_cast )
-	UTIL_Remove(target)
-else 
-	local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_explosion.vpcf", PATTACH_ABSORIGIN_FOLLOW, target )
-	ParticleManager:SetParticleControlEnt( effect_cast, 0, target, PATTACH_POINT_FOLLOW, "attach_hitloc", Vector(0,0,0), true )
-	ParticleManager:ReleaseParticleIndex( effect_cast )
-end
+local effect_cast = ParticleManager:CreateParticle( name, PATTACH_ABSORIGIN_FOLLOW, target )
+ParticleManager:SetParticleControlEnt( effect_cast, 0, target, PATTACH_POINT_FOLLOW, "attach_hitloc", Vector(0,0,0), true )
+ParticleManager:ReleaseParticleIndex( effect_cast )
 
+EmitSoundOnLocationWithCaster(target:GetAbsOrigin(), "Hero_Alchemist.UnstableConcoction.Stun", caster)
 end
 
 
 
-
-
-modifier_alchemist_unstable_concoction_custom = class({})
-
-function modifier_alchemist_unstable_concoction_custom:IsHidden()
-	return true
+function alchemist_unstable_concoction_custom:OnSpellStart()
+local caster = self:GetCaster()
+local mod = caster:FindModifierByName("modifier_alchemist_unstable_concoction_custom")
+if not mod then
+	mod = caster:FindModifierByName("modifier_alchemist_unstable_concoction_custom_mirror")
 end
 
-function modifier_alchemist_unstable_concoction_custom:IsPurgable()
-	return false
+if mod then
+	local target = self:GetCursorTarget()
+
+	local max_brew = self:GetSpecialValueFor( "brew_time" )
+	local projectile_speed = self:GetSpecialValueFor( "projectile_speed" )
+	local projectile_vision = self:GetSpecialValueFor( "vision_range" )
+
+	caster:FadeGesture(ACT_DOTA_ALCHEMIST_CONCOCTION)
+	caster:StartGesture(ACT_DOTA_ALCHEMIST_CONCOCTION_THROW)
+
+	local legendary_damage = mod.legendary_damage and mod.legendary_damage or 0
+	local brew_time = mod.mirror_time and mod.mirror_time or mod:GetElapsedTime()
+
+	mod.explode = true
+
+	if target:IsRealHero() and caster:GetQuest() == "Alch.Quest_6" and brew_time >= caster.quest.number then 
+		caster:UpdateQuest(1)
+	end
+
+	if caster:HasTalent("modifier_alchemist_unstable_4") then
+		caster:CdItems(caster:GetTalentValue("modifier_alchemist_unstable_4", "cd_items")* math.min(1, brew_time/max_brew))
+	end
+
+	local proj = caster:HasModifier("modifier_alchemist_concoction_darkbrew_custom") and "particles/econ/items/alchemist/alchemist_smooth_criminal/alchemist_smooth_criminal_unstable_concoction_projectile.vpcf" or "particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_projectile.vpcf"
+
+	local info = 
+	{
+		Target = target,
+		Source = caster,
+		Ability = self,	
+		iSourceAttachment = caster:ScriptLookupAttachment("attach_attack3"),
+		EffectName = proj,
+		iMoveSpeed = projectile_speed,
+		bDodgeable = false,                         
+		bVisibleToEnemies = true,                   
+		bProvidesVision = true,                     
+		iVisionRadius = projectile_vision,          
+		iVisionTeamNumber = caster:GetTeamNumber(), 
+		ExtraData = 
+		{
+			brew_time = brew_time,
+			legendary_damage = legendary_damage,
+			is_mirror = mod:GetName() == "modifier_alchemist_unstable_concoction_custom_mirror"
+		}
+	}
+	ProjectileManager:CreateTrackingProjectile(info)
+	caster:EmitSound("Hero_Alchemist.UnstableConcoction.Throw")
+	
+	mod:Destroy()
+	return
 end
 
+local duration = self:GetSpecialValueFor( "brew_explosion" ) + caster:GetTalentValue("modifier_alchemist_unstable_legendary", "duration")
+caster:StartGesture(ACT_DOTA_ALCHEMIST_CONCOCTION)
+
+self:EndCooldown()
+
+if caster:HasTalent("modifier_alchemist_hero_6") then
+	if self:GetAutoCastState() == true and not caster:IsRooted() and not caster:IsLeashed() then 
+		caster:AddNewModifier(caster, self, "modifier_alchemist_unstable_concoction_custom_charge", {duration = caster:GetTalentValue("modifier_alchemist_hero_6", "duration")})
+	end
+	caster:AddNewModifier(caster, self, "modifier_alchemist_unstable_concoction_custom_charge_effect", {duration = caster:GetTalentValue("modifier_alchemist_hero_6", "unslow")})
+end 
+
+caster:AddNewModifier( caster, self, "modifier_alchemist_unstable_concoction_custom", { duration = duration } )
+end
+
+
+
+function alchemist_unstable_concoction_custom:OnProjectileHit_ExtraData( target, location, ExtraData )
+if not target then return end
+local caster = self:GetCaster()
+
+caster:FadeGesture(ACT_DOTA_ALCHEMIST_CONCOCTION_THROW)
+
+local brew_time = ExtraData.brew_time
+
+if ExtraData.is_mirror == 0 then
+	target:AddNewModifier(caster, self, "modifier_alchemist_unstable_concoction_custom_mirror", {duration = 3, brew_time = brew_time})
+	if target:TriggerSpellAbsorb( self ) then return end
+end
+
+self:DealDamage(target, brew_time, ExtraData.legendary_damage)
+end
+
+
+
+
+modifier_alchemist_unstable_concoction_custom = class(mod_hidden)
 function modifier_alchemist_unstable_concoction_custom:OnCreated( kv )
 
-self.max_stun = self:GetAbility():GetSpecialValueFor( "max_stun" )
-self.max_damage = self:GetAbility():GetSpecialValueFor( "max_damage" )
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-self.move_speed = self:GetAbility():GetSpecialValueFor("movespeed") + self:GetCaster():GetTalentValue("modifier_alchemist_unstable_1", "speed")
-self.status = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_1", "status")
-
-self.radius = self:GetAbility():GetSpecialValueFor( "radius" )
+self.move_speed = self.ability:GetSpecialValueFor("movespeed") + self.parent:GetTalentValue("modifier_alchemist_hero_6", "move")
+self.max_brew = self.ability:GetSpecialValueFor("brew_time")
+self.dispel_delay = self.ability:GetSpecialValueFor("shard_delay")
 
 self.legendary_damage = 0
-self.legendary_k = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_legendary", "damage")/100
-self.legendary_creeps = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_legendary", "damage_creeps")
-self.legendary_shield = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_legendary", "shield")/100
-self.legendary_duration = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_legendary", "duration")
+self.legendary_bonus = self.parent:GetTalentValue("modifier_alchemist_unstable_legendary", "damage", true)/100
+self.legendary_bonus_creeps = self.parent:GetTalentValue("modifier_alchemist_unstable_legendary", "creeps", true)
 
+self.regen = self.parent:GetTalentValue("modifier_alchemist_hero_5", "heal")
 
-if self:GetParent():HasModifier("modifier_alchemist_unstable_legendary") then
-
-	self.particle_ally_fx = ParticleManager:CreateParticle("particles/alch_stun_legendary.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-	ParticleManager:SetParticleControl(self.particle_ally_fx, 0, self:GetParent():GetAbsOrigin())
-	self:AddParticle(self.particle_ally_fx, false, false, -1, false, false) 
-
+if self.parent:HasTalent("modifier_alchemist_unstable_legendary") then
+	self.parent:AddDamageEvent_out(self, true)
 end
 
-self.heal_health = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_2", "heal")
-self.heal_mana = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_2", "mana")/100
+self.max_shield = self.parent:GetTalentValue("modifier_alchemist_hero_2", "shield", true)*self.parent:GetMaxHealth()/100
+self:SetStackCount(self.max_shield)
 
-self.damage_delay = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_4", "delay")
-self.damage_duration = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_4", "duration")
-self.damage_cd = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_4", "cd")
+self.damage_duration = self.parent:GetTalentValue("modifier_alchemist_unstable_3", "duration", true)
 
 self.dispel = false
-self.dispel_delay = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_6", "delay")
-
-self.root_targets = {}
-self.root_radius = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_5", "radius")
-self.root_duration = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_5", "root")
 
 if not IsServer() then return end
-self:SetStackCount(1)
+
+local bottle_name = self.parent:HasModifier("modifier_alchemist_concoction_darkbrew_custom") and "particles/econ/items/alchemist/alchemist_smooth_criminal/alchemist_smooth_unstableconc_bottles.vpcf" or "particles/units/heroes/hero_alchemist/alchemist_unstableconc_bottles.vpcf"
+
+self.particle_bottle = ParticleManager:CreateParticle(bottle_name, PATTACH_CUSTOMORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt(self.particle_bottle, 1, self.parent, PATTACH_POINT_FOLLOW, "alchem_wl", self.parent:GetAbsOrigin(), true)
+ParticleManager:SetParticleControlEnt(self.particle_bottle, 2, self.parent, PATTACH_POINT_FOLLOW, "alchem_wr", self.parent:GetAbsOrigin(), true)
+self:AddParticle(self.particle_bottle, false, false, -1, false, false ) 
+
+if self.parent:HasTalent("modifier_alchemist_hero_2") then
+	self.shield_effect = self.parent:GenericParticle( "particles/alch_stun_legendary.vpcf", self )
+	self.shield_talent = "modifier_alchemist_hero_2"
+end
+
+if self.parent:HasTalent("modifier_alchemist_unstable_1") then
+	self.parent:GenericParticle("particles/econ/events/fall_2022/radiance/radiance_owner_fall2022.vpcf", self)
+end
+
+self.parent:RemoveModifierByName("modifier_alchemist_unstable_concoction_custom_bonus")
 
 self.max_duration = self:GetRemainingTime()
 
-if self:GetCaster():HasModifier("modifier_alchemist_unstable_3") then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_alchemist_unstable_concoction_custom_damage", {})
-end 
-
-self:GetParent():SwapAbilities( "alchemist_unstable_concoction_custom", "alchemist_unstable_concoction_throw_custom", false, true )
 self.tick_interval = 0.1
 self.time = self:GetRemainingTime()
 self.count = 0
 
-if self:GetCaster():HasModifier("modifier_alchemist_unstable_legendary") then 
-	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'alchemist_stun_change',  {hide = 0, max_time = self.time, time = self:GetRemainingTime(), damage = self.legendary_damage})
+if self.parent:HasTalent("modifier_alchemist_unstable_legendary") then 
+	self.parent:UpdateUIshort({time = self:GetRemainingTime(), max_time = self.time, stack = self.legendary_damage, style = "AlchemistUnstable"})
 end 
 
 self.tick = self:GetRemainingTime()
 self.tick_halfway = true
 self.explode = false
+
 self:StartIntervalThink( self.tick_interval )
-self:GetParent():EmitSound("Hero_Alchemist.UnstableConcoction.Fuse")
+
+self.sound_name = self.parent:HasTalent("modifier_alchemist_unstable_legendary") and "Alch.Long_brew" or "Hero_Alchemist.UnstableConcoction.Fuse"
+self.parent:EmitSound(self.sound_name)
 end
 
 
@@ -306,39 +313,22 @@ end
 function modifier_alchemist_unstable_concoction_custom:OnIntervalThink()
 if not IsServer() then return end
 
-if self:GetCaster():HasModifier("modifier_alchemist_unstable_legendary") then 
-	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'alchemist_stun_change',  {hide = 0, max_time = self.time, time = self:GetRemainingTime(), damage = self.legendary_damage})
+if self.parent:HasTalent("modifier_alchemist_unstable_legendary") then 
+	self.parent:UpdateUIshort({time = self:GetRemainingTime(), max_time = self.time, stack = self.legendary_damage, active = self:GetElapsedTime() >= self.max_brew, style = "AlchemistUnstable"})
 end 
 
 self.count = self.count + self.tick_interval
 
-if self:GetCaster():HasModifier("modifier_alchemist_unstable_5") then 
-	local targets = self:GetCaster():FindTargets(self.root_radius)
-
-	for _,target in pairs(targets) do 
-		if not self.root_targets[target] then 
-			self.root_targets[target] = target
-			target:EmitSound("Alch.Root_target")
-			target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_alchemist_unstable_concoction_custom_root", {duration = (1 - target:GetStatusResistance())*self.root_duration})
-		end 
-	end
+if self.parent:HasTalent("modifier_alchemist_unstable_3") then 
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_alchemist_unstable_concoction_custom_bonus", {duration = self.damage_duration})
 end 
 
-if self:GetCaster():HasModifier("modifier_alchemist_unstable_4") and self.damage_delay ~= 0 and self:GetElapsedTime() >= self.damage_delay and not self:GetCaster():HasModifier("modifier_alchemist_unstable_concoction_custom_bonus") then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_alchemist_unstable_concoction_custom_bonus", {duration = self.damage_duration})
-end 
-
-
-if self:GetParent():HasModifier("modifier_alchemist_unstable_6") and self:GetElapsedTime() >= self.dispel_delay and self.dispel == false then
-
+if self.parent:HasShard() and self:GetElapsedTime() >= self.dispel_delay and self.dispel == false then
 	self.dispel = true
-
-	self:GetParent():Purge(false, true, false, true, false)
-	local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_brewmaster/brewmaster_dispel_magic.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-	ParticleManager:ReleaseParticleIndex( particle )
+	self.parent:Purge(false, true, false, true, false)
+	self.parent:EmitSound("Alch.Stun_purge")
+	self.parent:GenericParticle("particles/units/heroes/hero_brewmaster/brewmaster_dispel_magic.vpcf")
 end
-
-
 
 if self.count >= 0.5 then 
 	self.count = 0
@@ -348,317 +338,149 @@ end
 
 self.tick = self.tick - 0.5
 
-if self:GetStackCount() < 10 then
-	self:IncrementStackCount()
-end
-
 if self.tick>0 then
-
 	self.tick_halfway = not self.tick_halfway
 	local time = math.floor( self.tick )
 	local mid = 1
 	if self.tick_halfway then mid = 8 end
-	
-	local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_timer.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent() )
+
+	local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_timer.vpcf", PATTACH_OVERHEAD_FOLLOW, self.parent )
 	ParticleManager:SetParticleControl( effect_cast, 1, Vector( 1, time, mid ) )
 	ParticleManager:SetParticleControl( effect_cast, 2, Vector( 2, 0, 0 ) )
-
 	if time<1 then
 		ParticleManager:SetParticleControl( effect_cast, 2, Vector( 1, 0, 0 ) )
 	end
-
 	ParticleManager:ReleaseParticleIndex( effect_cast )
 	return
 end
 
 end
 
-function modifier_alchemist_unstable_concoction_custom:Concoction_Explode()
-if not IsServer() then return end
-
-self.explode = true
-
-local damage_type = DAMAGE_TYPE_PHYSICAL
-
-local damageTable = { attacker = self:GetCaster(), damage = self.max_damage, damage_type = damage_type, ability = self:GetAbility(), }
-
-local flag_units = DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC
-local flag_bonus = 0
-
-local radius =  self:GetAbility():GetSpecialValueFor( "midair_explosion_radius" )
-
-local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetParent():GetOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, flag_units, flag_bonus, 0, false )
-
-for _,enemy in pairs(enemies) do
-	damageTable.victim = enemy
-	local duration = self.max_stun*(1 - enemy:GetStatusResistance())
-
-	ApplyDamage( damageTable )
-	enemy:AddNewModifier( self:GetCaster(), self:GetAbility(), "modifier_stunned", { duration = duration } )
-end
-
-if not self:GetParent():IsInvulnerable() and self:GetParent():IsAlive() and not self:GetParent():IsMagicImmune() then
-	damageTable.victim = self:GetParent()
-	ApplyDamage( damageTable )
-	local duration = self.max_stun*(1 - self:GetParent():GetStatusResistance())
-	self:GetParent():AddNewModifier( self:GetParent(), self:GetAbility(), "modifier_stunned", { duration = duration } )
-end
-
-
-local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_explosion.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-ParticleManager:SetParticleControlEnt( effect_cast, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", Vector(0,0,0), true )
-ParticleManager:ReleaseParticleIndex( effect_cast )
-self:GetParent():EmitSound("Hero_Alchemist.UnstableConcoction.Stun")
-end
-
-
-
-
 
 
 function modifier_alchemist_unstable_concoction_custom:OnDestroy()
 if not IsServer() then return end
 
-local mod = self:GetCaster():FindModifierByName("modifier_alchemist_unstable_concoction_custom_damage")
+self.ability:StartCd()
 
-if mod then 
-	mod:SetDuration(self:GetCaster():GetTalentValue("modifier_alchemist_unstable_3", "duration")*(self:GetElapsedTime()/self.max_duration), true)
+if self.parent:HasTalent("modifier_alchemist_unstable_legendary") then 
+	self.parent:UpdateUIshort({hide = 1, hide_full = 1, style = "AlchemistUnstable"})
 end 
 
+self.parent:FadeGesture(ACT_DOTA_ALCHEMIST_CONCOCTION)
+self.parent:FadeGesture(ACT_DOTA_ALCHEMIST_CONCOCTION_THROW)
 
-local ability = self:GetCaster():FindAbilityByName("alchemist_unstable_concoction_custom")
-
-if ability then 
-	ability:UseResources(false, false, false, true)
-
-	if self:GetCaster():HasModifier("modifier_alchemist_unstable_concoction_custom_bonus") then 
-		self:GetCaster():CdAbility(ability, self.damage_cd)
-	end 
-
-end 
-
-
-if self:GetCaster():HasModifier("modifier_alchemist_unstable_legendary") then 
-
-	if self.legendary_damage > 0 then 
-		self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_alchemist_unstable_concoction_custom_shield", {duration = self.legendary_duration, shield = self.legendary_damage*self.legendary_shield})
-	end 
-
-	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'alchemist_stun_change',  {hide = 1, max_time = self.time, time = self:GetRemainingTime(), damage = self.legendary_damage})
-end 
-
-self:GetCaster():FadeGesture(ACT_DOTA_ALCHEMIST_CONCOCTION)
-self:GetCaster():FadeGesture(ACT_DOTA_ALCHEMIST_CONCOCTION_THROW)
-
-self:GetParent():StopSound("Hero_Alchemist.UnstableConcoction.Fuse")
-self:GetParent():SwapAbilities( "alchemist_unstable_concoction_throw_custom", "alchemist_unstable_concoction_custom", false, true )
+self.parent:StopSound(self.sound_name)
 
 if self.explode == false then
-	self:Concoction_Explode()
+	self.explode = true
+	self.ability:DealDamage(self.parent, self:GetElapsedTime(), nil, true)
 end
 
 end
 
+
+function modifier_alchemist_unstable_concoction_custom:DamageEvent_out(params)
+if not IsServer() then return end
+if not self.parent:HasTalent("modifier_alchemist_unstable_legendary") then return end
+if self.parent ~= params.attacker then return end
+if not params.unit:IsUnit() then return end
+if not params.inflictor then return end
+if params.unit:IsIllusion() then return end
+
+local damage = params.damage*self.legendary_bonus
+damage = params.unit:IsCreep() and damage/self.legendary_bonus_creeps or damage
+
+self.legendary_damage = self.legendary_damage + damage
+end
 
 
 function modifier_alchemist_unstable_concoction_custom:DeclareFunctions()
-local decFuncs = {
+return
+{
 	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
 	MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE,
-	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
-	MODIFIER_PROPERTY_MANA_REGEN_CONSTANT,
-	MODIFIER_EVENT_ON_TAKEDAMAGE,
+	MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
 }
-
-return decFuncs
 end
-
-function modifier_alchemist_unstable_concoction_custom:GetModifierStatusResistanceStacking()
-if not self:GetCaster():HasModifier("modifier_alchemist_unstable_1") then return end
-return self.status
-end
-
-
-
-function modifier_alchemist_unstable_concoction_custom:OnTakeDamage(params)
-if not IsServer() then return end
-if not self:GetCaster():HasModifier("modifier_alchemist_unstable_legendary") then return end
-if not params.attacker then return end
-if not params.unit:IsHero() and not params.unit:IsCreep() then return end 
-if params.attacker ~= self:GetParent() and params.unit ~= self:GetParent() then return end
-if params.original_damage < 0 then return end
-
-local damage = params.damage*self.legendary_k
-
-if params.unit:IsCreep() then 
-	damage = damage*self.legendary_creeps
-end 
-
-self.legendary_damage = self.legendary_damage + damage
-
-end
-
-
 
 function modifier_alchemist_unstable_concoction_custom:GetModifierHealthRegenPercentage()
-if not self:GetCaster():HasModifier("modifier_alchemist_unstable_2") then return end 
-return self.heal_health
+return self.regen
 end
-
-function modifier_alchemist_unstable_concoction_custom:GetModifierConstantManaRegen()
-if not self:GetCaster():HasModifier("modifier_alchemist_unstable_2") then return end 
-return self.heal_mana*self:GetCaster():GetMaxMana()
-end
-
-
-
-function modifier_alchemist_unstable_concoction_custom:GetEffectName() 
-if not self:GetCaster():HasModifier("modifier_alchemist_unstable_2") then return end 
-	return "particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf" 
-end
-
-
 
 function modifier_alchemist_unstable_concoction_custom:GetModifierMoveSpeedBonus_Percentage()
-	return self.move_speed
+return self.move_speed
 end
 
+function modifier_alchemist_unstable_concoction_custom:GetModifierIncomingDamageConstant( params )
+if not self.parent:HasTalent("modifier_alchemist_hero_2") then return end
 
-
-
-
-
-
-
-
-
-
-
-
-
-modifier_alchemist_unstable_concoction_custom_damage = class({})
-
-function modifier_alchemist_unstable_concoction_custom_damage:IsHidden() return false end
-function modifier_alchemist_unstable_concoction_custom_damage:IsPurgable() return false end
-function modifier_alchemist_unstable_concoction_custom_damage:GetTexture() return "buffs/unstable_damage" end
-
-
-function modifier_alchemist_unstable_concoction_custom_damage:OnCreated(table)
-
-self.parent = self:GetParent()
-self.caster = self:GetCaster()
-
-self.damage = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_3", "damage")/100
-self.aura_radius = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_3", "radius")
-self.burn_interval = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_3", "interval")
-
-
-self.burn_particle = ParticleManager:CreateParticle( "particles/econ/events/fall_2022/radiance/radiance_owner_fall2022.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-self:AddParticle(self.burn_particle,false, false, -1, false, false)
-
-self:OnIntervalThink()
-self:StartIntervalThink(self.burn_interval)
+if IsClient() then 
+	if params.report_max then 
+		return self.max_shield
+	else 
+    return self:GetStackCount()
+  end 
 end
 
-
-
-
-
-
-function modifier_alchemist_unstable_concoction_custom_damage:OnIntervalThink()
 if not IsServer() then return end
-if not self:GetCaster():IsAlive() then return end
+if self:GetStackCount() <= 0 then return end
 
-local enemies = self.parent:FindTargets(self.aura_radius)
+local damage = math.min(params.damage, self:GetStackCount())
+self.parent:AddShieldInfo({shield_mod = self, healing = damage, healing_type = "shield"})
 
-local damage = self.parent:GetMaxHealth()*self.damage*self.burn_interval
-
-for _,enemy in pairs(enemies) do 
-	local real_damage = ApplyDamage({victim = enemy,  damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, attacker = self.caster, ability = self:GetAbility()})
+self:SetStackCount(self:GetStackCount() - damage)
+if self:GetStackCount() <= 0 then
+  if self.shield_effect then
+  	ParticleManager:Delete(self.shield_effect, 1)
+  	self.shield_effect = nil
+  end
 end
 
-end
-
-
-
-function modifier_alchemist_unstable_concoction_custom_damage:IsAura() return true end
-
-function modifier_alchemist_unstable_concoction_custom_damage:GetAuraSearchTeam()
-	return DOTA_UNIT_TARGET_TEAM_ENEMY end
-
-function modifier_alchemist_unstable_concoction_custom_damage:GetAuraSearchType()
-	return DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO
-end
-
-function modifier_alchemist_unstable_concoction_custom_damage:GetModifierAura()
-	return "modifier_alchemist_unstable_concoction_custom_damage_aura"
-end
-
-function modifier_alchemist_unstable_concoction_custom_damage:GetAuraRadius()
-	return self.aura_radius
-end
-
-
-function modifier_alchemist_unstable_concoction_custom_damage:GetAuraDuration()
-return 0
+return -damage
 end
 
 
 
 
 
-
-
-
-modifier_alchemist_unstable_concoction_custom_damage_aura = class({})
-
-function modifier_alchemist_unstable_concoction_custom_damage_aura:IsHidden() return true end
-function modifier_alchemist_unstable_concoction_custom_damage_aura:IsPurgable() return false end
-
-
-
-function modifier_alchemist_unstable_concoction_custom_damage_aura:OnCreated()
-if not IsServer() then return end
-self.particle = ParticleManager:CreateParticle("particles/econ/events/fall_2022/radiance_target_fall2022.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-ParticleManager:SetParticleControl(self.particle, 1, self:GetCaster():GetAbsOrigin())
-self:AddParticle(self.particle,false, false, -1, false, false)
-
-self:StartIntervalThink(0.5)
-end
-
-function modifier_alchemist_unstable_concoction_custom_damage_aura:OnIntervalThink()
-if not IsServer() then return end 
-if not self.particle then return end
-
-
-ParticleManager:SetParticleControl(self.particle, 1, self:GetCaster():GetAbsOrigin())
-end 
-
-
-
-
-modifier_alchemist_unstable_concoction_custom_bonus = class({})
-function modifier_alchemist_unstable_concoction_custom_bonus:IsHidden() return false end
-function modifier_alchemist_unstable_concoction_custom_bonus:IsPurgable() return false end
-function modifier_alchemist_unstable_concoction_custom_bonus:GetTexture() return "buffs/unstable_bonus" end
+modifier_alchemist_unstable_concoction_custom_bonus = class(mod_visible)
+function modifier_alchemist_unstable_concoction_custom_bonus:GetTexture() return "buffs/alchemist/unstable_3" end
 function modifier_alchemist_unstable_concoction_custom_bonus:OnCreated()
 
-self.damage = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_4", "damage")
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.interval = 1
+self.max = self.parent:GetTalentValue("modifier_alchemist_unstable_3", "max")/self.interval
+self.health = self.parent:GetTalentValue("modifier_alchemist_unstable_3", "health")*self.interval
+self.damage = self.parent:GetTalentValue("modifier_alchemist_unstable_3", "damage")*self.interval
 
 if not IsServer() then return end 
-
-local particle_peffect = ParticleManager:CreateParticle("particles/lc_odd_proc_.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-ParticleManager:SetParticleControl(particle_peffect, 0, self:GetCaster():GetAbsOrigin())
-ParticleManager:SetParticleControl(particle_peffect, 2, self:GetCaster():GetAbsOrigin())
-ParticleManager:ReleaseParticleIndex(particle_peffect)
-
-self:GetParent():EmitSound("Lc.Moment_Lowhp")
-self.particle = ParticleManager:CreateParticle( "particles/lc_lowhp.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-ParticleManager:SetParticleControl( self.particle, 0, self:GetParent():GetAbsOrigin() )
-ParticleManager:SetParticleControl( self.particle, 1, self:GetParent():GetAbsOrigin() )
-ParticleManager:SetParticleControl( self.particle, 2, self:GetParent():GetAbsOrigin() )
-self:AddParticle(self.particle, false, false, 0, true, false)
+self:StartIntervalThink(self.interval)
 end 
+
+
+function modifier_alchemist_unstable_concoction_custom_bonus:OnIntervalThink()
+if not IsServer() then return end
+if self:GetStackCount() >= self.max then return end
+
+if not self.parent:HasModifier("modifier_alchemist_unstable_concoction_custom") then 
+	self:StartIntervalThink(-1)
+	return
+end
+
+self:IncrementStackCount()
+self.parent:CalculateStatBonus(true)
+
+if self:GetStackCount() >= self.max then
+
+	self.parent:GenericParticle("particles/lc_odd_proc_.vpcf")
+	self.parent:EmitSound("Lc.Moment_Lowhp")
+	self.parent:GenericParticle("particles/lc_lowhp.vpcf", self)
+end
+
+end
 
 
 function modifier_alchemist_unstable_concoction_custom_bonus:DeclareFunctions()
@@ -666,21 +488,25 @@ return
 {
 	MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
 	MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
-
+	MODIFIER_PROPERTY_MODEL_SCALE,
+	MODIFIER_PROPERTY_HEALTH_BONUS
 }
 end
-
-
-
 
 function modifier_alchemist_unstable_concoction_custom_bonus:GetModifierSpellAmplify_Percentage()
-return self.damage
+return self.damage*self:GetStackCount()
 end
-
-
 
 function modifier_alchemist_unstable_concoction_custom_bonus:GetModifierDamageOutgoing_Percentage()
-return self.damage
+return self.damage*self:GetStackCount()
+end
+
+function modifier_alchemist_unstable_concoction_custom_bonus:GetModifierHealthBonus()
+return self.health*self:GetStackCount()
+end
+
+function modifier_alchemist_unstable_concoction_custom_bonus:GetModifierModelScale()
+return self:GetStackCount() >= self.max and 20 or 0
 end
 
 
@@ -690,105 +516,17 @@ end
 
 
 
-modifier_alchemist_unstable_concoction_custom_shield = class({})
-function modifier_alchemist_unstable_concoction_custom_shield:IsHidden() return false end
-function modifier_alchemist_unstable_concoction_custom_shield:IsPurgable() return false end
-function modifier_alchemist_unstable_concoction_custom_shield:OnCreated(table)
-
-
-if not IsServer() then return end
-self.RemoveForDuel = true
-
-self.max_shield = table.shield
-self:SetHasCustomTransmitterData(true)
-self.effect = ParticleManager:CreateParticle( "particles/items2_fx/vindicators_axe_armor.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-self:AddParticle(self.effect,false, false, -1, false, false)
-self:SetStackCount(self.max_shield)
-
-end
-
-
-
-function modifier_alchemist_unstable_concoction_custom_shield:AddCustomTransmitterData() return {
-shield = self.max_shield,
-
-} end
-
-function modifier_alchemist_unstable_concoction_custom_shield:HandleCustomTransmitterData(data)
-self.max_shield = data.shield
-end
-
-
-
-
-function modifier_alchemist_unstable_concoction_custom_shield:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
-}
-end
-
-function modifier_alchemist_unstable_concoction_custom_shield:GetModifierIncomingDamageConstant( params )
-
-if IsClient() then 
-	if params.report_max then 
-		return self.max_shield
-	else 
-     	return self:GetStackCount()
-    end 
-end
-
-if not IsServer() then return end
-
-if self:GetStackCount() > params.damage then
-    self:SetStackCount(self:GetStackCount() - params.damage)
-    local i = params.damage
-    return -i
-else
-    
-    local i = self:GetStackCount()
-    self:SetStackCount(0)
-    self:Destroy()
-    return -i
-end
-
-end
-
-
-
-
-modifier_alchemist_unstable_concoction_custom_root = class({})
-function modifier_alchemist_unstable_concoction_custom_root:IsHidden() return true end
-function modifier_alchemist_unstable_concoction_custom_root:IsPurgable() return true end
-function modifier_alchemist_unstable_concoction_custom_root:GetTexture() return "buffs/press_root" end
-function modifier_alchemist_unstable_concoction_custom_root:CheckState() return {[MODIFIER_STATE_ROOTED] = true} end
-function modifier_alchemist_unstable_concoction_custom_root:GetEffectName() return "particles/alch_root.vpcf" end
-
-
-
-
-
-
-modifier_alchemist_unstable_concoction_custom_charge = class({})
-
-function modifier_alchemist_unstable_concoction_custom_charge:IsDebuff() return false end
-function modifier_alchemist_unstable_concoction_custom_charge:IsHidden() return true end
-function modifier_alchemist_unstable_concoction_custom_charge:IsPurgable() return true end
-
+modifier_alchemist_unstable_concoction_custom_charge = class(mod_hidden)
 function modifier_alchemist_unstable_concoction_custom_charge:OnCreated(kv)
 if not IsServer() then return end
-self:GetParent():StartGesture(ACT_DOTA_RUN)
+self.parent = self:GetParent()
 
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_alchemist_unstable_concoction_custom_charge_effect", {duration = 1.4})
-
-self:GetParent():EmitSound("Alch.Unstable_charge")
-
-self.angle = self:GetParent():GetForwardVector():Normalized()
-
-self.distance = self:GetCaster():GetTalentValue("modifier_alchemist_unstable_5", "range") / ( self:GetDuration() / FrameTime())
+self.parent:EmitSound("Alch.Unstable_charge")
+self.angle = self.parent:GetForwardVector():Normalized()
+self.speed = self.parent:GetTalentValue("modifier_alchemist_hero_6", "range") / self:GetDuration()
 
 if self:ApplyHorizontalMotionController() == false then
-    self:Destroy()
+  self:Destroy()
 end
 
 end
@@ -797,52 +535,151 @@ function modifier_alchemist_unstable_concoction_custom_charge:DeclareFunctions()
 return
 {
  	MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
+ 	MODIFIER_PROPERTY_OVERRIDE_ANIMATION,
   MODIFIER_PROPERTY_DISABLE_TURNING
 }
 end
 
-function modifier_alchemist_unstable_concoction_custom_charge:GetActivityTranslationModifiers()
-    return "haste"
-end
-
-
+function modifier_alchemist_unstable_concoction_custom_charge:GetActivityTranslationModifiers() return "haste" end
+function modifier_alchemist_unstable_concoction_custom_charge:GetOverrideAnimation() return ACT_DOTA_RUN end
 function modifier_alchemist_unstable_concoction_custom_charge:GetModifierDisableTurning() return 1 end
-
-function modifier_alchemist_unstable_concoction_custom_charge:GetStatusEffectName() return "particles/status_fx/status_effect_forcestaff.vpcf" end
-function modifier_alchemist_unstable_concoction_custom_charge:StatusEffectPriority() return 100 end
 
 function modifier_alchemist_unstable_concoction_custom_charge:OnDestroy()
 if not IsServer() then return end
-self:GetParent():InterruptMotionControllers( true )
+self.parent:InterruptMotionControllers( true )
 
-self:GetParent():FadeGesture(ACT_DOTA_RUN)
-
-local dir = self:GetParent():GetForwardVector()
+local dir = self.parent:GetForwardVector()
 dir.z = 0
-self:GetParent():SetForwardVector(dir)
-self:GetParent():FaceTowards(self:GetParent():GetAbsOrigin() + dir*10)
-
-ResolveNPCPositions(self:GetParent():GetAbsOrigin(), 128)
-
+self.parent:SetForwardVector(dir)
+self.parent:FaceTowards(self.parent:GetAbsOrigin() + dir*10)
+ResolveNPCPositions(self.parent:GetAbsOrigin(), 128)
 end
 
 
 function modifier_alchemist_unstable_concoction_custom_charge:UpdateHorizontalMotion( me, dt )
 if not IsServer() then return end
-local pos = self:GetParent():GetAbsOrigin()
+local pos = self.parent:GetAbsOrigin()
 GridNav:DestroyTreesAroundPoint(pos, 80, false)
-local pos_p = self.angle * self.distance
-local next_pos = GetGroundPosition(pos + pos_p,self:GetParent())
-self:GetParent():SetAbsOrigin(next_pos)
 
-
+local pos_p = self.angle * self.speed * dt
+local next_pos = GetGroundPosition(pos + pos_p, self.parent)
+self.parent:SetAbsOrigin(next_pos)
 end
 
 function modifier_alchemist_unstable_concoction_custom_charge:OnHorizontalMotionInterrupted()
-    self:Destroy()
+self:Destroy()
 end
 
-modifier_alchemist_unstable_concoction_custom_charge_effect = class({})
-function modifier_alchemist_unstable_concoction_custom_charge_effect:IsPurgable() return false end
-function modifier_alchemist_unstable_concoction_custom_charge_effect:IsHidden() return true end
+
+
+modifier_alchemist_unstable_concoction_custom_charge_effect = class(mod_hidden)
 function modifier_alchemist_unstable_concoction_custom_charge_effect:GetEffectName() return "particles/econ/events/ti10/phase_boots_ti10.vpcf" end
+function modifier_alchemist_unstable_concoction_custom_charge_effect:GetStatusEffectName() return "particles/status_fx/status_effect_forcestaff.vpcf" end
+function modifier_alchemist_unstable_concoction_custom_charge_effect:StatusEffectPriority() return MODIFIER_PRIORITY_NORMAL end
+function modifier_alchemist_unstable_concoction_custom_charge_effect:CheckState()
+return
+{
+	[MODIFIER_STATE_UNSLOWABLE] = true
+}
+end
+
+
+
+
+modifier_alchemist_unstable_concoction_custom_tracker = class(mod_hidden)
+function modifier_alchemist_unstable_concoction_custom_tracker:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.aura_radius = self.parent:GetTalentValue("modifier_alchemist_unstable_1", "radius", true)
+
+self.cast_range = self.parent:GetTalentValue("modifier_alchemist_unstable_4", "range")
+
+if not IsServer() then return end
+self:SetHasCustomTransmitterData(true)
+self:UpdateTalent()
+end
+
+function modifier_alchemist_unstable_concoction_custom_tracker:UpdateTalent(name)
+if not IsServer() then return end
+
+if name == "modifier_alchemist_unstable_4" or self.parent:HasTalent("modifier_alchemist_unstable_4") then
+	self.cast_range = self.parent:GetTalentValue("modifier_alchemist_unstable_4", "range")
+end
+
+self:SendBuffRefreshToClients()
+end
+
+function modifier_alchemist_unstable_concoction_custom_tracker:AddCustomTransmitterData() 
+return 
+{
+  cast_range = self.cast_range,
+} 
+end
+
+function modifier_alchemist_unstable_concoction_custom_tracker:HandleCustomTransmitterData(data)
+self.cast_range = data.cast_range
+end
+
+function modifier_alchemist_unstable_concoction_custom_tracker:DeclareFunctions()
+return
+{
+  MODIFIER_PROPERTY_CAST_RANGE_BONUS_STACKING,
+}
+end
+
+function modifier_alchemist_unstable_concoction_custom_tracker:GetModifierCastRangeBonusStacking()
+return self.cast_range
+end
+
+function modifier_alchemist_unstable_concoction_custom_tracker:IsAura() return self.parent:HasTalent("modifier_alchemist_unstable_1") end
+function modifier_alchemist_unstable_concoction_custom_tracker:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_ENEMY end
+function modifier_alchemist_unstable_concoction_custom_tracker:GetAuraSearchType() return DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO end
+function modifier_alchemist_unstable_concoction_custom_tracker:GetModifierAura() return "modifier_alchemist_unstable_concoction_custom_damage_aura" end
+function modifier_alchemist_unstable_concoction_custom_tracker:GetAuraRadius() return self.aura_radius end
+function modifier_alchemist_unstable_concoction_custom_tracker:GetAuraDuration() return 0 end
+
+
+
+
+
+modifier_alchemist_unstable_concoction_custom_damage_aura = class(mod_hidden)
+function modifier_alchemist_unstable_concoction_custom_damage_aura:OnCreated()
+if not IsServer() then return end
+
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+
+self.interval = self.caster:GetTalentValue("modifier_alchemist_unstable_1", "interval")
+self.damage = self.caster:GetTalentValue("modifier_alchemist_unstable_1", "damage")*self.interval
+self.bonus = self.caster:GetTalentValue("modifier_alchemist_unstable_1", "bonus")
+
+self.damageTable = {victim = self.parent, attacker = self.caster, ability = self.ability, damage_type = DAMAGE_TYPE_MAGICAL}
+
+self.particle_index = ParticleManager:CreateParticle("particles/units/heroes/hero_brewmaster/brewmaster_fire_immolation_child.vpcf", PATTACH_CUSTOMORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt(self.particle_index, 0, self.parent, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true)
+ParticleManager:SetParticleControlEnt(self.particle_index, 1, self.caster, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self.caster:GetAbsOrigin(), true)
+self:AddParticle(self.particle_index, false, false, -1, false, false ) 
+
+self:OnIntervalThink()
+self:StartIntervalThink(self.interval)
+end
+
+function modifier_alchemist_unstable_concoction_custom_damage_aura:OnIntervalThink()
+if not IsServer() then return end 
+
+self.damageTable.damage = self.caster:HasModifier("modifier_alchemist_unstable_concoction_custom") and self.damage*self.bonus or self.damage
+DoDamage(self.damageTable, "modifier_alchemist_unstable_1")
+end
+
+
+
+
+
+
+modifier_alchemist_unstable_concoction_custom_mirror = class(mod_hidden)
+function modifier_alchemist_unstable_concoction_custom_mirror:OnCreated(table)
+if not IsServer() then return end
+self.mirror_time = table.brew_time
+end

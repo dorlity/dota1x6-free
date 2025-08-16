@@ -3,6 +3,12 @@ LinkLuaModifier("modifier_item_crimson_guard_custom_active", "abilities/items/it
 
 item_crimson_guard_custom = class({})
 
+function item_crimson_guard_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/items2_fx/vanguard_active.vpcf", context )
+PrecacheResource( "particle","particles/items/crimson_guard_hit.vpcf", context )
+end
+
 function item_crimson_guard_custom:GetIntrinsicModifierName()
 	return "modifier_item_crimson_guard_custom"
 end
@@ -30,12 +36,13 @@ function modifier_item_crimson_guard_custom:GetAttributes() return MODIFIER_ATTR
 
 
 function modifier_item_crimson_guard_custom:OnCreated(table)
-	self.health = self:GetAbility():GetSpecialValueFor("bonus_health")
-	self.armor = self:GetAbility():GetSpecialValueFor("bonus_armor")
-	self.regen = self:GetAbility():GetSpecialValueFor("bonus_health_regen")
-	self.chance = self:GetAbility():GetSpecialValueFor("block_chance")
-	self.block = self:GetAbility():GetSpecialValueFor("block_damage_melee")
-	--self.range_block = self:GetAbility():GetSpecialValueFor("block_damage_ranged")
+self.parent = self:GetParent()
+self.health = self:GetAbility():GetSpecialValueFor("bonus_health")
+self.armor = self:GetAbility():GetSpecialValueFor("bonus_armor")
+self.regen = self:GetAbility():GetSpecialValueFor("bonus_health_regen")
+self.chance = self:GetAbility():GetSpecialValueFor("block_chance")
+self.block = self:GetAbility():GetSpecialValueFor("block_damage_melee")
+--self.range_block = self:GetAbility():GetSpecialValueFor("block_damage_ranged")
 
 end
 

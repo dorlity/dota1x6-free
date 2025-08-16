@@ -12,15 +12,16 @@ modifier_lich_frostbite = class({})
 function modifier_lich_frostbite:IsHidden() return true end
 function modifier_lich_frostbite:IsPurgable() return true end
 
-function modifier_lich_frostbite:DeclareFunctions()
-return
-{
-  MODIFIER_EVENT_ON_TAKEDAMAGE,
-  MODIFIER_EVENT_ON_DEATH
-}
+
+
+function modifier_lich_frostbite:OnCreated()
+self.parent = self:GetParent()
+self.parent:AddDeathEvent(self)
+self.parent:AddDamageEvent_out(self, true)
 end
 
-function modifier_lich_frostbite:OnTakeDamage(params)
+
+function modifier_lich_frostbite:DamageEvent_out(params)
 if not IsServer() then return end
 if not params.attacker then return end
 if (not params.attacker:IsAlive()) then return end
@@ -29,17 +30,14 @@ if (params.attacker ~= self:GetParent()) then return end
 local blast = self:GetParent():FindAbilityByName("npc_lich_blast") 
 local ulti = self:GetParent():FindAbilityByName("npc_lich_ulti") 
 
-if params.inflictor == blast or params.inflictor == ulti and params.unit:GetTeamNumber() ~= params.attacker:GetTeamNumber() 
-then 
-
+if params.inflictor == blast or params.inflictor == ulti and params.unit:GetTeamNumber() ~= params.attacker:GetTeamNumber() then 
   local duration = self:GetAbility():GetSpecialValueFor("duration") + (self:GetCaster():GetUpgradeStack("modifier_waveupgrade_boss") - 1)*self:GetAbility():GetSpecialValueFor("duration_inc")
-
 	params.unit:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_lich_blast", {duration = duration})
 end
 
 end
 
-function modifier_lich_frostbite:OnDeath(params)
+function modifier_lich_frostbite:DeathEvent(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.unit then return end
 
@@ -54,6 +52,9 @@ modifier_lich_blast = class({})
 function modifier_lich_blast:IsHidden() return false end
 function modifier_lich_blast:IsPurgable() return false end
 function modifier_lich_blast:OnCreated(table)
+
+self.parent = self:GetParent()
+
 self.heal = -1*self:GetAbility():GetSpecialValueFor("heal")
 self.slow = -1*self:GetAbility():GetSpecialValueFor("slow")
 self.max = self:GetAbility():GetSpecialValueFor("max")
@@ -71,24 +72,15 @@ end
 function modifier_lich_blast:DeclareFunctions()
 return
 {
-  MODIFIER_EVENT_ON_TAKEDAMAGE,
   MODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET,
   MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE,
   MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
   MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
-    MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE
+  MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE
 }
-
 end
 
-function modifier_lich_blast:OnTakeDamage(params)
-if not IsServer() then return end
-if not params.attacker then return end
-if self:GetCaster() ~= params.attacker then return end
-if not params.inflictor then return end
 
-SendOverheadEventMessage(params.unit, 4, params.unit, params.damage, nil)
-end
 
 
 

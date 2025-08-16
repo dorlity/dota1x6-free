@@ -2,165 +2,172 @@ LinkLuaModifier( "modifier_ogre_magi_ignite_custom", "abilities/ogre_magi/ogre_m
 LinkLuaModifier( "modifier_ogre_magi_ignite_custom_count", "abilities/ogre_magi/ogre_magi_ignite", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_ogre_magi_ignite_tracker", "abilities/ogre_magi/ogre_magi_ignite", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_ogre_magi_ignite_fire", "abilities/ogre_magi/ogre_magi_ignite", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_ogre_magi_ignite_fire_stack", "abilities/ogre_magi/ogre_magi_ignite", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_ogre_magi_ignite_fire_resist", "abilities/ogre_magi/ogre_magi_ignite", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_ogre_magi_ignite_fire_attacks", "abilities/ogre_magi/ogre_magi_ignite", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_ogre_magi_ignite_fire_healing", "abilities/ogre_magi/ogre_magi_ignite", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_ogre_magi_ignite_fire_legendary_proc", "abilities/ogre_magi/ogre_magi_ignite", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_ogre_magi_ignite_fire", "abilities/ogre_magi/ogre_magi_ignite", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_ogre_magi_ignite_fire_slow", "abilities/ogre_magi/ogre_magi_ignite", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_ogre_magi_ignite_fire_magic", "abilities/ogre_magi/ogre_magi_ignite", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_ogre_magi_ignite_fire_status", "abilities/ogre_magi/ogre_magi_ignite", LUA_MODIFIER_MOTION_NONE )
 
 ogre_magi_ignite_custom = class({})
 
-ogre_magi_ignite_custom.damage_bonus = {20,30,40}
-
-ogre_magi_ignite_custom.armor_armor = {-0.5, -1, -1.5}
-ogre_magi_ignite_custom.armor_magic = {-2, -3, -4}
-ogre_magi_ignite_custom.armor_max = 8
-ogre_magi_ignite_custom.armor_duration = 3
-
-ogre_magi_ignite_custom.attack_tick_interval = 0.05
-ogre_magi_ignite_custom.attack_tick_max = {4,8}
-ogre_magi_ignite_custom.attack_tick_slow = -5
-
-ogre_magi_ignite_custom.legendary_chance = 25
-
-ogre_magi_ignite_custom.stun_duration = 1.5
-ogre_magi_ignite_custom.burn_duration = 2
-
-ogre_magi_ignite_custom.tick_range = 60
-ogre_magi_ignite_custom.tick_heal_max = 8
-ogre_magi_ignite_custom.tick_heal = -5
-ogre_magi_ignite_custom.tick_cd = 1
-
-ogre_magi_ignite_custom.heal_chance = {30, 45, 60}
-ogre_magi_ignite_custom.heal_heal = 0.02
-ogre_magi_ignite_custom.heal_heal_creeps = 0.33
 
 
+function ogre_magi_ignite_custom:GetAbilityTextureName()
+if self:GetCaster() then 
+	if self:GetCaster():HasModifier("modifier_ogre_magi_arcana_custom") then
+	    return "ogre_magi/arcana/ogre_magi_ignite_arcana"
+	end
+	if self:GetCaster():HasModifier("modifier_ogre_magi_arcana_custom_2") then
+	    return "ogre_magi/arcana/ogre_magi_ignite_arcana_alt1"
+	end
+end
+return "ogre_magi_ignite"
+end
 
 
 function ogre_magi_ignite_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-PrecacheResource( "particle", 'particles/units/heroes/hero_ogre_magi/ogre_magi_ignite.vpcf', context )
-PrecacheResource( "particle", 'particles/orange_heal.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_ogre_magi/ogre_magi_ignite_debuff.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_ogre_magi/ogre_magi_fireblast.vpcf', context )
-PrecacheResource( "particle", 'particles/econ/items/ogre_magi/ogre_magi_arcana/ogre_magi_arcana_ignite_debuff_explosion.vpcf', context )
-
+PrecacheResource( "particle","particles/units/heroes/hero_ogre_magi/ogre_magi_ignite.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_ogre_magi/ogre_magi_ignite_debuff.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_ogre_magi/ogre_magi_fireblast.vpcf", context )
+PrecacheResource( "particle", "particles/status_fx/status_effect_huskar_lifebreak.vpcf", context )  
+PrecacheResource( "particle", "particles/ogre_magi/ignite_heal.vpcf", context ) 
 end
 
+
+function ogre_magi_ignite_custom:GetCooldown(iLevel)
+local bonus = 0 
+if self:GetCaster():HasTalent("modifier_ogremagi_ignite_1") then 
+  bonus = self:GetCaster():GetTalentValue("modifier_ogremagi_ignite_1", "cd")
+end
+return self.BaseClass.GetCooldown(self, iLevel) + bonus
+end
+
+
+function ogre_magi_ignite_custom:GetCastPoint(iLevel)
+local bonus = 0
+if self:GetCaster():HasTalent("modifier_ogremagi_ignite_6") then 
+    bonus = self:GetCaster():GetTalentValue("modifier_ogremagi_ignite_6", "cast")
+end
+return self.BaseClass.GetCastPoint(self) + bonus
+end
 
 
 function ogre_magi_ignite_custom:GetAOERadius()
-	return self:GetSpecialValueFor( "aoe_radius" )
+return self:GetSpecialValueFor( "aoe_radius" )
 end
-
-
 
 function ogre_magi_ignite_custom:GetIntrinsicModifierName()
 return "modifier_ogre_magi_ignite_tracker"
 end
 
 function ogre_magi_ignite_custom:OnSpellStart(new_target)
-	if not IsServer() then return end
-	local caster = self:GetCaster()
-	local target = self:GetCursorTarget()
+local caster = self:GetCaster()
+local target = self:GetCursorTarget()
 
-	if new_target ~= nil then 
-		target = new_target
-	end
-
-	local silence = false
-
-	if self:GetCaster():HasModifier("modifier_ogre_magi_bloodlust_custom_legendary_5") then 
-		local ability = self:GetCaster():FindAbilityByName("ogre_magi_bloodlust_custom")
-		self:GetCaster():AddNewModifier(self:GetCaster(), ability, "modifier_ogre_magi_bloodlust_custom_legendary_resist", {duration = ability.legendary_resist_duration})
-	end
-
-	if self:GetCaster():HasModifier("modifier_ogremagi_multi_2") then 
-		local ability = self:GetCaster():FindAbilityByName("ogre_magi_multicast_custom")
-		self:GetCaster():AddNewModifier(self:GetCaster(), ability, "modifier_ogre_magi_multicast_custom_spell", {duration = ability.spell_duration[self:GetCaster():GetUpgradeStack("modifier_ogremagi_multi_2")]})
-		self:GetCaster():AddNewModifier(self:GetCaster(), ability, "modifier_ogre_magi_multicast_custom_spell_count", {duration = ability.spell_duration[self:GetCaster():GetUpgradeStack("modifier_ogremagi_multi_2")]})
-	end
-
-
-	if self:GetCaster():HasModifier("modifier_ogremagi_multi_5") then 
-		local ability = self:GetCaster():FindAbilityByName("ogre_magi_multicast_custom")
-
-		if RollPseudoRandomPercentage(ability.proc_chance, 526, self:GetCaster()) then 
-			silence = true
-		end
-
-	end
-
-	local info = {
-		Target = target,
-		Source = self:GetCaster(),
-		Ability = self,	
-		EffectName = "particles/units/heroes/hero_ogre_magi/ogre_magi_ignite.vpcf",
-		iMoveSpeed = self:GetSpecialValueFor( "projectile_speed" ),
-		bDodgeable = true,
-		ExtraData = {silence = silence}
-	}
-
-	local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), target:GetAbsOrigin(), nil, self:GetSpecialValueFor("aoe_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false )
-	
-	for _,enemy in pairs(enemies) do 
-		info.Target = enemy
-		ProjectileManager:CreateTrackingProjectile(info)
-	end
-
-
-	self:GetCaster():EmitSound("Hero_OgreMagi.Ignite.Cast")
-
-
+if new_target ~= nil then 
+	target = new_target
 end
+
+if caster:HasTalent("modifier_ogremagi_ignite_3") and not new_target then 
+	caster:AddNewModifier(caster, self, "modifier_ogre_magi_ignite_fire_status", {duration = caster:GetTalentValue("modifier_ogremagi_ignite_3", "duration")})
+end
+
+if caster:HasTalent("modifier_ogremagi_ignite_6") then 
+	local heal = caster:GetMaxHealth()*caster:GetTalentValue("modifier_ogremagi_ignite_6", "cast_heal")/100
+	caster:GenericHeal(heal, self, nil, nil, "modifier_ogremagi_ignite_6")
+end
+
+local particle_name = "particles/units/heroes/hero_ogre_magi/ogre_magi_ignite.vpcf"
+if self:GetCaster():HasModifier("modifier_ogre_magi_arcana_custom") then
+    particle_name = "particles/econ/items/ogre_magi/ogre_magi_arcana/ogre_magi_arcana_ignite.vpcf"
+elseif self:GetCaster():HasModifier("modifier_ogre_magi_arcana_custom_2") then
+    particle_name = "particles/econ/items/ogre_magi/ogre_magi_arcana/ogre_magi_arcana_ignite_secondstyle.vpcf"
+end
+
+local info = {
+	Target = target,
+	Source = caster,
+	Ability = self,	
+	EffectName = particle_name,
+	iMoveSpeed = self:GetSpecialValueFor( "projectile_speed" ),
+	bDodgeable = true,
+	ExtraData = {}
+}
+
+for _,enemy in pairs(caster:FindTargets(self:GetSpecialValueFor("aoe_radius"), target:GetAbsOrigin())) do 
+	info.Target = enemy
+	ProjectileManager:CreateTrackingProjectile(info)
+end
+
+caster:EmitSound("Hero_OgreMagi.Ignite.Cast")
+end
+
+
 
 function ogre_magi_ignite_custom:OnProjectileHit_ExtraData( target, location, data)
 if not target then return end
 if target:TriggerSpellAbsorb( self ) then return end
-if target:IsMagicImmune() then return end
 
-	local duration = self:GetSpecialValueFor( "duration" )
-
-	if self:GetCaster():HasModifier("modifier_ogremagi_ignite_5") then 
-		duration = duration + self.burn_duration
-	end
+local caster = self:GetCaster()
+local duration = self:GetSpecialValueFor("duration")
+local duration_inc = self:GetSpecialValueFor("duration_inc")
+local duration_max = self:GetSpecialValueFor("duration_max")
 
 
+if caster:HasTalent("modifier_ogremagi_ignite_4") then 
+	target:AddNewModifier(caster, self, "modifier_ogre_magi_ignite_fire_magic", {duration = caster:GetTalentValue("modifier_ogremagi_ignite_4", "duration")})
+end
+		
 
-	if self:GetCaster():HasModifier("modifier_ogremagi_ignite_7") then 
+if caster:HasTalent("modifier_ogremagi_ignite_5") and not target:IsDebuffImmune() and not target:IsInvulnerable() then
+	target:Purge(true, false, false, false, false)
+end
+ 
+if caster:HasTalent("modifier_ogremagi_ignite_7") then 
+	target:AddNewModifier( caster, self, "modifier_ogre_magi_ignite_custom", { duration = duration } )
+	target:AddNewModifier( caster, self, "modifier_ogre_magi_ignite_custom_count", { duration = duration } )
+else 
+	local mod = target:FindModifierByName("modifier_ogre_magi_ignite_custom")
 
-		target:AddNewModifier( self:GetCaster(), self, "modifier_ogre_magi_ignite_custom", { duration = duration } )
-		target:AddNewModifier( self:GetCaster(), self, "modifier_ogre_magi_ignite_custom_count", { duration = duration } )
+	if mod then 
+		mod:SetDuration(math.min(duration_max, mod:GetRemainingTime() + duration_inc), true)
 	else 
-		if target:HasModifier("modifier_ogre_magi_ignite_custom") then
-			local mod = target:FindModifierByName("modifier_ogre_magi_ignite_custom")
-			if mod then
-				mod:SetDuration(mod:GetRemainingTime() + duration, true)
-			end
-		else
-			target:AddNewModifier( self:GetCaster(), self, "modifier_ogre_magi_ignite_custom", { duration = duration } )
-		end
-
+		target:AddNewModifier(caster, self, "modifier_ogre_magi_ignite_custom", {duration = duration})
 	end
-
-	if data.silence == 1 then 
-		local ability = self:GetCaster():FindAbilityByName("ogre_magi_multicast_custom")
-		if ability then 
-			target:EmitSound("Sf.Raze_Silence")
-			target:AddNewModifier(self:GetCaster(), self, "modifier_ogre_magi_multicast_custom_proc_silence", {duration = (1 - target:GetStatusResistance())*ability.proc_silence})
-		end
-	end
+end
 
 
-	self:GetCaster():EmitSound("Hero_OgreMagi.Ignite.Target")
-
-
-
-
+target:EmitSound("Hero_OgreMagi.Ignite.Target")
 end
 
 
 
+function ogre_magi_ignite_custom:EndEffect(target, dispelled)
+local caster = self:GetCaster()
+
+if not dispelled then return end 
+
+if caster:HasTalent("modifier_ogremagi_ignite_4") then 
+	local damage = caster:GetTalentValue("modifier_ogremagi_ignite_4", "damage")*caster:GetMaxHealth()/100
+
+	local real_damage = DoDamage({victim = target, ability = self, attacker = caster, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL}, "modifier_ogremagi_ignite_4")
+	target:SendNumber(6, real_damage)
+
+	local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_ogre_magi/ogre_magi_fireblast.vpcf", PATTACH_ABSORIGIN_FOLLOW, target)
+	ParticleManager:SetParticleControlEnt( particle, 0, target, PATTACH_POINT_FOLLOW, "attach_hitloc", Vector(0,0,0), true )
+	ParticleManager:SetParticleControl( particle, 1, target:GetOrigin() )
+	ParticleManager:ReleaseParticleIndex( particle )
+	target:EmitSound("Hero_OgreMagi.Fireblast.Target")
+end
+
+if caster:HasTalent("modifier_ogremagi_ignite_5") then 
+	target:EmitSound("Sf.Raze_Silence")
+	target:AddNewModifier(caster, self, "modifier_ogre_magi_ignite_fire_slow", {duration = (1 - target:GetStatusResistance())*caster:GetTalentValue("modifier_ogremagi_ignite_5", "silence")})
+end
+
+end
 
 
 
@@ -170,183 +177,176 @@ modifier_ogre_magi_ignite_custom = class({})
 function modifier_ogre_magi_ignite_custom:IsPurgable() return true end
 
 function modifier_ogre_magi_ignite_custom:GetAttributes()
-if self:GetCaster():HasModifier("modifier_ogremagi_ignite_7") then 
+if not self.caster or self.caster:IsNull() then return end
+if self.caster:HasTalent("modifier_ogremagi_ignite_7") then 
 	return MODIFIER_ATTRIBUTE_MULTIPLE
 end
 	return
 end
 
 function modifier_ogre_magi_ignite_custom:IsHidden()
-	return self:GetCaster():HasModifier("modifier_ogremagi_ignite_7")
+if not self.caster or self.caster:IsNull() then return end
+return self.caster:HasTalent("modifier_ogremagi_ignite_7")
 end
 
 function modifier_ogre_magi_ignite_custom:OnCreated( kv )
-if not self:GetAbility() then 
+self.caster = self:GetCaster()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+if self.caster.owner then 
+	self.caster = self.caster.owner
+end 
+
+if not self.ability then 
 	self:Destroy()
 	return
 end
 
-	self.slow = self:GetAbility():GetSpecialValueFor( "slow_movement_speed_pct" )
-	self.damage = self:GetAbility():GetSpecialValueFor( "burn_damage" )
-	self.ability = self:GetAbility()
+self.damage_reduce = self.caster:GetTalentValue("modifier_ogremagi_ignite_2", "damage_reduce")
 
-
-	if not IsServer() then return end
-
-	local damage = self.damage
-	if self:GetCaster():HasModifier("modifier_ogremagi_ignite_1") then 
-		damage = damage + self.ability.damage_bonus[self:GetCaster():GetUpgradeStack("modifier_ogremagi_ignite_1")]
-	end
-
-
-	self.damageTable = { victim = self:GetParent(), attacker = self:GetCaster(), damage = damage, damage_type = self.ability:GetAbilityDamageType(), ability = self.ability, }
-	
-	self.max_armor = self.ability.armor_max
-
-	local tick = 1
-
-
-	self:StartIntervalThink( tick )
-end
-
-function modifier_ogre_magi_ignite_custom:OnRefresh( kv )	
-	self:OnCreated(kv)
-end
-
-function modifier_ogre_magi_ignite_custom:DeclareFunctions()
-	local funcs = {
-		MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-	}
-
-	return funcs
-end
-
-
-
-
-function modifier_ogre_magi_ignite_custom:GetModifierMoveSpeedBonus_Percentage()
-if self:GetCaster():HasModifier("modifier_ogremagi_ignite_7") then return end
-local bonus = 0
-if self:GetParent():HasModifier("modifier_ogre_magi_ignite_fire_attacks") then 
-	bonus = self:GetAbility().attack_tick_slow*self:GetParent():GetModifierStackCount("modifier_ogre_magi_ignite_fire_attacks", self:GetCaster())
-end
-	return self.slow + bonus
-end
-
-
-
-
-
-function modifier_ogre_magi_ignite_custom:OnIntervalThink()
-
-
+self.slow = self.ability:GetSpecialValueFor( "slow_movement_speed_pct" ) + self.caster:GetTalentValue("modifier_ogremagi_ignite_2", "slow")
+self.damage = self.ability:GetSpecialValueFor( "burn_damage" ) + self.caster:GetTalentValue("modifier_ogremagi_ignite_1", "damage")
+self.interval = 1
 
 if not IsServer() then return end
 
-
-local tick = 1
-
-local mod = self:GetParent():FindModifierByName("modifier_ogre_magi_ignite_fire_attacks")
-
-if mod and self:GetAbility() and not self:GetAbility():IsNull() then 
-	tick = tick - self:GetAbility().attack_tick_interval*mod:GetStackCount()
+local effect_name = "particles/units/heroes/hero_ogre_magi/ogre_magi_ignite_debuff.vpcf"
+if self.caster:HasModifier("modifier_ogre_magi_arcana_custom") then
+    effect_name = "particles/econ/items/ogre_magi/ogre_magi_arcana/ogre_magi_arcana_ignite_debuff.vpcf"
+elseif self.caster:HasModifier("modifier_ogre_magi_arcana_custom_2") then
+    effect_name = "particles/econ/items/ogre_magi/ogre_magi_arcana/ogre_magi_arcana_ignite_secondstyle_debuff.vpcf"
 end
 
-if self:GetCaster():HasModifier("modifier_ogremagi_ignite_6")  then 
-	self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_ogre_magi_ignite_fire_healing", {})
-end
+local particle = ParticleManager:CreateParticle(effect_name, PATTACH_ABSORIGIN_FOLLOW, self.parent)
+self:AddParticle(particle, false, false, -1, false, false)
 
-if self:GetCaster():HasModifier("modifier_ogremagi_ignite_3") then 
-
-	if RollPseudoRandomPercentage(self:GetAbility().heal_chance[self:GetCaster():GetUpgradeStack("modifier_ogremagi_ignite_3")], 84, self:GetCaster()) then
-
-
-		local k = self:GetAbility().heal_heal
-		if self:GetParent():IsCreep() then 
-			k = k*self:GetAbility().heal_heal_creeps
-		end
-
-		local heal = k*self:GetCaster():GetMaxHealth()
-
-		self:GetCaster():GenericHeal(heal, self:GetAbility())
-
-		self:GetCaster():EmitSound("WK.skelet_heal")
-
-
-	end 
-end
-
-if self:GetParent():HasModifier("modifier_ogre_magi_ignite_fire_attacks") and self:GetAbility() and not self:GetAbility():IsNull() then 
-
-	local damage = self:GetAbility():GetSpecialValueFor( "burn_damage" )
-
-	if self:GetCaster():HasModifier("modifier_ogremagi_ignite_1") then 
-		damage = damage + self:GetAbility().damage_bonus[self:GetCaster():GetUpgradeStack("modifier_ogremagi_ignite_1")]
-	end
-
-	local damageTable = self.damageTable
-	damageTable.damage = damage
-	ApplyDamage( damageTable )
-else 
-
-	ApplyDamage( self.damageTable )
-
-end 
-
-self:GetParent():EmitSound("Hero_OgreMagi.Ignite.Damage")
-
-if self:GetCaster():HasModifier("modifier_ogremagi_ignite_2") and self.ability and not self.ability:IsNull() then 
-	self:GetParent():AddNewModifier(self:GetCaster(), self.ability, "modifier_ogre_magi_ignite_fire_resist", {duration = self.ability.armor_duration})
+self.damageTable = {victim = self.parent, attacker = self.caster, damage_type = self.ability:GetAbilityDamageType(), ability = self.ability}
+self:StartIntervalThink(self.interval - FrameTime())
 end
 
 
 
-self:StartIntervalThink(tick)
+function modifier_ogre_magi_ignite_custom:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+	MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
+	MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE
+}
+end
 
+function modifier_ogre_magi_ignite_custom:GetModifierDamageOutgoing_Percentage()
+if self.caster:HasTalent("modifier_ogremagi_ignite_7") then return end
+if not self.caster:HasTalent("modifier_ogremagi_ignite_2") then return end 
+return self.damage_reduce
+end
+
+function modifier_ogre_magi_ignite_custom:GetModifierSpellAmplify_Percentage()
+if self.caster:HasTalent("modifier_ogremagi_ignite_7") then return end
+if not self.caster:HasTalent("modifier_ogremagi_ignite_2") then return end 
+return self.damage_reduce
+end
+
+
+function modifier_ogre_magi_ignite_custom:GetModifierMoveSpeedBonus_Percentage()
+if self.caster:HasTalent("modifier_ogremagi_ignite_7") then return end
+return self.slow
+end
+
+
+function modifier_ogre_magi_ignite_custom:OnIntervalThink()
+if not IsServer() then return end
+
+self.damageTable.damage = self.damage
+DoDamage( self.damageTable )
+
+self.parent:EmitSound("Hero_OgreMagi.Ignite.Damage")
+
+if not self.caster or self.caster:IsNull() then 
+	return
 end
 
 
 
-
-function modifier_ogre_magi_ignite_custom:GetEffectName()
-	return "particles/units/heroes/hero_ogre_magi/ogre_magi_ignite_debuff.vpcf"
 end
 
-function modifier_ogre_magi_ignite_custom:GetEffectAttachType()
-	return PATTACH_ABSORIGIN_FOLLOW
-end
+
 
 
 function modifier_ogre_magi_ignite_custom:OnDestroy()
 if not IsServer() then return end
 
-if self:GetRemainingTime() > 0.2 and self:GetCaster():HasModifier("modifier_ogremagi_ignite_5") then 
-
-
-	local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_ogre_magi/ogre_magi_fireblast.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-	ParticleManager:SetParticleControlEnt( particle, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", Vector(0,0,0), true )
-	ParticleManager:SetParticleControl( particle, 1, self:GetParent():GetOrigin() )
-	ParticleManager:ReleaseParticleIndex( particle )
-	self:GetParent():EmitSound("Hero_OgreMagi.Fireblast.Target")
-
-	self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_stunned", {duration = (1 - self:GetParent():GetStatusResistance())*self:GetAbility().stun_duration})
+if not self.caster:HasTalent("modifier_ogremagi_ignite_7") then 
+	self.ability:EndEffect(self.parent, self:GetRemainingTime() > 0.1)
 end
 
-if self:GetCaster():HasModifier("modifier_ogremagi_ignite_7") then 
-	local mod = self:GetParent():FindModifierByName("modifier_ogre_magi_ignite_custom_count")
+if self.caster:HasTalent("modifier_ogremagi_ignite_7") then 
+	local mod = self.parent:FindModifierByName("modifier_ogre_magi_ignite_custom_count")
 	if mod then 
 		mod:DecrementStackCount()
 		if mod:GetStackCount() == 0 then 
 			mod:Destroy()
 		end
 	end
+end
 
-else 
-	self:GetParent():RemoveModifierByName("modifier_ogre_magi_ignite_fire_attacks")
-	self:GetParent():RemoveModifierByName("modifier_ogre_magi_ignite_fire_healing")
 end
 
 
+
+
+
+
+
+
+
+modifier_ogre_magi_ignite_custom_count = class({})
+function modifier_ogre_magi_ignite_custom_count:IsHidden() return false end
+function modifier_ogre_magi_ignite_custom_count:IsPurgable() return true end
+function modifier_ogre_magi_ignite_custom_count:OnCreated(table)
+
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+self.slow = self.ability:GetSpecialValueFor( "slow_movement_speed_pct" ) + self.caster:GetTalentValue("modifier_ogremagi_ignite_2", "slow")
+
+self.damage_reduce = self.caster:GetTalentValue("modifier_ogremagi_ignite_2", "damage_reduce")
+if not IsServer() then return end
+self:SetStackCount(1)
+end
+
+function modifier_ogre_magi_ignite_custom_count:OnRefresh(table)
+if not IsServer() then return end
+self:SetStackCount(self:GetStackCount() + 1)
+end
+
+function modifier_ogre_magi_ignite_custom_count:DeclareFunctions()
+return 
+{
+	MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+	MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE
+}
+end
+
+function modifier_ogre_magi_ignite_custom_count:GetModifierDamageOutgoing_Percentage()
+if not self.caster:HasTalent("modifier_ogremagi_ignite_2") then return end 
+return self.damage_reduce
+end
+
+function modifier_ogre_magi_ignite_custom_count:GetModifierSpellAmplify_Percentage()
+if not self.caster:HasTalent("modifier_ogremagi_ignite_2") then return end 
+return self.damage_reduce
+end
+
+function modifier_ogre_magi_ignite_custom_count:GetModifierMoveSpeedBonus_Percentage()
+return self.slow
+end
+
+function modifier_ogre_magi_ignite_custom_count:OnDestroy()
+if not IsServer() then return end
+self.ability:EndEffect(self.parent, self:GetRemainingTime() > 0.1)
 end
 
 
@@ -362,241 +362,239 @@ function modifier_ogre_magi_ignite_tracker:IsPurgable() return false end
 function modifier_ogre_magi_ignite_tracker:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_ATTACK_LANDED,
-	MODIFIER_PROPERTY_ATTACK_RANGE_BONUS
+	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
 }
 end
 
 
-function modifier_ogre_magi_ignite_tracker:GetModifierAttackRangeBonus()
-if not self:GetParent():HasModifier("modifier_ogremagi_ignite_6") then return end 
+function modifier_ogre_magi_ignite_tracker:GetModifierStatusResistanceStacking()
+if not self.parent:HasTalent("modifier_ogremagi_ignite_3") then return end 
+local status = self.parent:GetTalentValue("modifier_ogremagi_ignite_3", "status")
+if self.parent:HasModifier("modifier_ogre_magi_ignite_fire_status") then 
+	return status * self.bonus 
+end
+return status
+end
 
-return self:GetAbility().tick_range
+
+function modifier_ogre_magi_ignite_tracker:GetModifierAttackSpeedBonus_Constant()
+if not self.parent:HasTalent("modifier_ogremagi_ignite_3") then return end 
+local speed = self.parent:GetTalentValue("modifier_ogremagi_ignite_3", "speed")
+if self.parent:HasModifier("modifier_ogre_magi_ignite_fire_status") then 
+	return speed * self.bonus 
+end
+return speed
+end
+
+
+function modifier_ogre_magi_ignite_tracker:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.bonus = self.parent:GetTalentValue("modifier_ogremagi_ignite_3", "bonus", true)
+self.legendary_chance = self.parent:GetTalentValue("modifier_ogremagi_ignite_7", "chance", true)
+
+self.heal = self.parent:GetTalentValue("modifier_ogremagi_ignite_6", "heal", true)/100
+self.heal_creeps = self.parent:GetTalentValue("modifier_ogremagi_ignite_6", "creeps", true)
+
+if self.parent:IsRealHero() then 
+  	self.parent:AddRecordDestroyEvent(self)
+	self.parent:AddAttackRecordEvent_out(self)
+	self.parent:AddAttackEvent_out(self)
+	self.parent:AddDamageEvent_out(self)
+	self.parent:AddAttackStartEvent_out(self)
+end
+self.records = {}
+end
+
+
+function modifier_ogre_magi_ignite_tracker:DamageEvent_out(params)
+if not IsServer() then return end
+if not self.parent:HasTalent("modifier_ogremagi_ignite_6") then return end
+if not params.unit:IsUnit() then return end
+if params.attacker ~= self.parent then return end
+if not params.unit:HasModifier("modifier_ogre_magi_ignite_custom") then return end 
+
+local heal = params.damage*self.heal
+if params.unit:IsCreep() then 
+	heal = heal/self.heal_creeps
+end
+
+self.parent:GenericHeal(heal, self.ability, true, "particles/ogre_magi/ignite_heal.vpcf", "modifier_ogremagi_ignite_6")
+end
+
+
+function modifier_ogre_magi_ignite_tracker:AttackEvent_out(params)
+if not IsServer() then return end
+if not self.parent:HasTalent("modifier_ogremagi_ignite_7") then return end
+if not self.records[params.record] then return end 
+if params.attacker ~= self.parent then return end
+if not params.target:IsUnit() then return end
+
+params.target:EmitSound("Ogre.Ignite_hit")
+self.ability:OnSpellStart(params.target)
+end
+
+function modifier_ogre_magi_ignite_tracker:AttackRecordEvent_out(params)
+if not IsServer() then return end
+if not self.parent:HasTalent("modifier_ogremagi_ignite_7") then return end
+if not params.target:IsUnit() then return end 
+if self.parent ~= params.attacker then return end 
+
+self.parent:RemoveModifierByName("modifier_ogre_magi_ignite_fire_legendary_proc")
+
+local proc = RollPseudoRandomPercentage(self.legendary_chance,3159,self.parent)
+if not proc then return end 
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_ogre_magi_ignite_fire_legendary_proc", {})
 end 
 
-function modifier_ogre_magi_ignite_tracker:OnAttackLanded(params)
-if not IsServer() then return end
-if params.attacker ~= self:GetCaster() then return end
-if params.target:IsBuilding() then return end
+function modifier_ogre_magi_ignite_tracker:AttackStartEvent_out(params)
+if not IsServer() then return end 
+if not params.target:IsUnit() then return end 
+if self.parent ~= params.attacker then return end 
+if not self.parent:HasModifier("modifier_ogre_magi_ignite_fire_legendary_proc") then return end
 
-
-if self:GetCaster():HasModifier("modifier_ogremagi_ignite_6") then 
-	local cd = self:GetAbility():GetCooldownTimeRemaining()
-	if cd > 0 then 
-		self:GetAbility():EndCooldown()
-		cd = cd - self:GetAbility().tick_cd
-		self:GetAbility():StartCooldown(cd)
-	end
-
+self.records[params.record] = true
+self.parent:RemoveModifierByName("modifier_ogre_magi_ignite_fire_legendary_proc")
 end
 
-
-if self:GetCaster():HasModifier("modifier_ogremagi_ignite_7") and (params.target:IsHero() or params.target:IsCreep()) and params.target:IsAlive() then 
-
-	if RollPseudoRandomPercentage(self:GetAbility().legendary_chance, 89, self:GetCaster()) then
-		self:GetAbility():OnSpellStart(params.target)
-	end
+function modifier_ogre_magi_ignite_tracker:RecordDestroyEvent( params )
+self.records[params.record] = nil
 end
 
-
-
-
-
-
-if not params.target:HasModifier("modifier_ogre_magi_ignite_custom") then return end
-if not self:GetCaster():HasModifier("modifier_ogremagi_ignite_4") then return end
-
-params.target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_ogre_magi_ignite_fire_attacks", {})
-end
-
-
-
-
-
-modifier_ogre_magi_ignite_custom_count = class({})
-function modifier_ogre_magi_ignite_custom_count:IsHidden() return false end
-function modifier_ogre_magi_ignite_custom_count:IsPurgable() return true end
-function modifier_ogre_magi_ignite_custom_count:OnCreated(table)
-
-self.slow = self:GetAbility():GetSpecialValueFor( "slow_movement_speed_pct" )
-if not IsServer() then return end
-self:SetStackCount(1)
-end
-
-function modifier_ogre_magi_ignite_custom_count:OnRefresh(table)
-if not IsServer() then return end
-self:SetStackCount(self:GetStackCount() + 1)
-end
-
-function modifier_ogre_magi_ignite_custom_count:DeclareFunctions()
-	local funcs = {
-		MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-	}
-
-	return funcs
-end
-
-function modifier_ogre_magi_ignite_custom_count:GetModifierMoveSpeedBonus_Percentage()
-
-local bonus = 0
-if self:GetParent():HasModifier("modifier_ogre_magi_ignite_fire_attacks") then 
-	bonus = self:GetAbility().attack_tick_slow*self:GetParent():GetModifierStackCount("modifier_ogre_magi_ignite_fire_attacks", self:GetCaster())
-end
-	return self.slow + bonus
-end
-
-function modifier_ogre_magi_ignite_custom_count:OnDestroy()
-if not IsServer() then return end
-
-self:GetParent():RemoveModifierByName("modifier_ogre_magi_ignite_fire_healing")
-self:GetParent():RemoveModifierByName("modifier_ogre_magi_ignite_fire_attacks")
-end
-
-
-
-modifier_ogre_magi_ignite_fire_resist = class({})
-function modifier_ogre_magi_ignite_fire_resist:IsHidden() return false end
-function modifier_ogre_magi_ignite_fire_resist:IsPurgable() return false end
-function modifier_ogre_magi_ignite_fire_resist:GetTexture() return "buffs/ignite_armor" end
-function modifier_ogre_magi_ignite_fire_resist:DeclareFunctions()
-	local funcs = {
-		MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
-		MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS,
-	}
-
-	return funcs
-end
-
-
-function modifier_ogre_magi_ignite_fire_resist:OnCreated(table)
-if not IsServer() then return end
-self:SetStackCount(1)
-end
-
-
-function modifier_ogre_magi_ignite_fire_resist:OnRefresh(table)
-if not IsServer() then return end
-if self:GetStackCount() >= self:GetAbility().armor_max then return end
-self:IncrementStackCount()
-end
-
-
-
-function modifier_ogre_magi_ignite_fire_resist:GetModifierPhysicalArmorBonus()
-local bonus = 0
-if self:GetCaster():HasModifier("modifier_ogremagi_ignite_2") then 
-	bonus = self:GetStackCount()*self:GetAbility().armor_armor[self:GetCaster():GetUpgradeStack("modifier_ogremagi_ignite_2")]
-end
-
-	return bonus
-end
-
-function modifier_ogre_magi_ignite_fire_resist:GetModifierMagicalResistanceBonus()
-local bonus = 0
-if self:GetCaster():HasModifier("modifier_ogremagi_ignite_2") then 
-	bonus = self:GetStackCount()*self:GetAbility().armor_magic[self:GetCaster():GetUpgradeStack("modifier_ogremagi_ignite_2")]
-end
-
-	return bonus
-end
-
-
-
-modifier_ogre_magi_ignite_fire_attacks = class({})
-function modifier_ogre_magi_ignite_fire_attacks:IsHidden() return false end
-function modifier_ogre_magi_ignite_fire_attacks:IsPurgable() return false end
-function modifier_ogre_magi_ignite_fire_attacks:GetTexture() return "buffs/ignite_tick" end
-
-
-function modifier_ogre_magi_ignite_fire_attacks:OnCreated(table)
-if not IsServer() then return end
-self:AddStack()
-end
-
-function modifier_ogre_magi_ignite_fire_attacks:OnRefresh(table)
-if not IsServer() then return end
-if self:GetStackCount() >= self:GetAbility().attack_tick_max[self:GetCaster():GetUpgradeStack("modifier_ogremagi_ignite_4")] then return end
-self:AddStack()
-
-end
-
-function modifier_ogre_magi_ignite_fire_attacks:AddStack()
-if not IsServer() then return end
-
-
-local particle = ParticleManager:CreateParticle("particles/econ/items/ogre_magi/ogre_magi_arcana/ogre_magi_arcana_ignite_debuff_explosion.vpcf", PATTACH_POINT, self:GetParent())
-ParticleManager:SetParticleControlEnt( particle, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true )
-ParticleManager:SetParticleControlEnt( particle, 3, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true )
-ParticleManager:ReleaseParticleIndex( particle )
-
-self:GetParent():EmitSound("Ogre.Ignite_hit")
-self:IncrementStackCount()
-end
-
-
-function modifier_ogre_magi_ignite_fire_attacks:DeclareFunctions()
+function modifier_ogre_magi_ignite_tracker:CheckState()
+if not self.parent:HasModifier("modifier_ogre_magi_ignite_fire_legendary_proc") then return end 
 return
 {
-	MODIFIER_PROPERTY_TOOLTIP,
-	MODIFIER_PROPERTY_TOOLTIP2
-}
-end
-
-
-function modifier_ogre_magi_ignite_fire_attacks:OnTooltip()
-return self:GetStackCount()*self:GetAbility().attack_tick_interval
-end 
-
-
-function modifier_ogre_magi_ignite_fire_attacks:OnTooltip2()
-return self:GetStackCount()*self:GetAbility().attack_tick_slow
-end
-
-
-
-
-
-modifier_ogre_magi_ignite_fire_healing = class({})
-function modifier_ogre_magi_ignite_fire_healing:IsHidden() return false end
-function modifier_ogre_magi_ignite_fire_healing:IsPurgable() return false end
-function modifier_ogre_magi_ignite_fire_healing:GetTexture() return "buffs/ignite_speed" end
-
-
-function modifier_ogre_magi_ignite_fire_healing:OnCreated(table)
-if not IsServer() then return end
-self:SetStackCount(1)
-end
-
-function modifier_ogre_magi_ignite_fire_healing:OnRefresh(table)
-if not IsServer() then return end
-if self:GetStackCount() >= self:GetAbility().tick_heal_max then return end
-
-self:IncrementStackCount()
-end
-
-
-function modifier_ogre_magi_ignite_fire_healing:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET,
-	MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE,
-	MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE,
+	[MODIFIER_STATE_CANNOT_MISS] = true
 }
 end
 
 
 
-function modifier_ogre_magi_ignite_fire_healing:GetModifierLifestealRegenAmplify_Percentage() 
 
-return self:GetAbility().tick_heal*self:GetStackCount()
+
+
+
+
+
+
+
+
+
+
+
+modifier_ogre_magi_ignite_fire_slow = class({})
+function modifier_ogre_magi_ignite_fire_slow:IsHidden() return true end
+function modifier_ogre_magi_ignite_fire_slow:IsPurgable() return self:GetElapsedTime() > 0.1 end
+function modifier_ogre_magi_ignite_fire_slow:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
+}
 end
 
-function modifier_ogre_magi_ignite_fire_healing:GetModifierHealAmplify_PercentageTarget()
-
-return self:GetAbility().tick_heal*self:GetStackCount()
+function modifier_ogre_magi_ignite_fire_slow:OnCreated()
+self.attack = self:GetCaster():GetTalentValue("modifier_ogremagi_ignite_5", "attack_slow")
+self.slow = self:GetCaster():GetTalentValue("modifier_ogremagi_ignite_5", "slow")
 end
 
-function modifier_ogre_magi_ignite_fire_healing:GetModifierHPRegenAmplify_Percentage() 
+function modifier_ogre_magi_ignite_fire_slow:GetModifierMoveSpeedBonus_Percentage()
+return self.slow
+end
 
-return self:GetAbility().tick_heal*self:GetStackCount()
+function modifier_ogre_magi_ignite_fire_slow:GetModifierAttackSpeedBonus_Constant()
+return self.attack
+end
+
+function modifier_ogre_magi_ignite_fire_slow:GetStatusEffectName()
+return "particles/status_fx/status_effect_huskar_lifebreak.vpcf"
+end
+
+function modifier_ogre_magi_ignite_fire_slow:StatusEffectPriority()
+return MODIFIER_PRIORITY_HIGH 
+end
+
+function modifier_ogre_magi_ignite_fire_slow:GetEffectName() return "particles/generic_gameplay/generic_silenced.vpcf" end
+function modifier_ogre_magi_ignite_fire_slow:ShouldUseOverheadOffset() return true end
+function modifier_ogre_magi_ignite_fire_slow:GetEffectAttachType() return PATTACH_OVERHEAD_FOLLOW end
+function modifier_ogre_magi_ignite_fire_slow:CheckState()
+return
+{
+	[MODIFIER_STATE_SILENCED] = true,
+}
+end
+
+
+
+
+
+modifier_ogre_magi_ignite_fire_magic = class({})
+function modifier_ogre_magi_ignite_fire_magic:IsHidden() return false end
+function modifier_ogre_magi_ignite_fire_magic:IsPurgable() return false end
+function modifier_ogre_magi_ignite_fire_magic:GetTexture() return "buffs/ignite_magic" end
+function modifier_ogre_magi_ignite_fire_magic:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS,
+}
+end
+
+
+function modifier_ogre_magi_ignite_fire_magic:GetModifierMagicalResistanceBonus()
+return self.magic*self:GetStackCount()
+end
+
+function modifier_ogre_magi_ignite_fire_magic:OnCreated()
+self.caster = self:GetCaster()
+self.parent = self:GetParent()
+
+self.magic = self.caster:GetTalentValue("modifier_ogremagi_ignite_4", "magic")
+self.max = self.caster:GetTalentValue("modifier_ogremagi_ignite_4", "max")
+if not IsServer() then return end 
+self.RemoveForDuel = true 
+self:SetStackCount(1)
+end
+
+
+
+function modifier_ogre_magi_ignite_fire_magic:OnRefresh()
+if not IsServer() then return end 
+if self:GetStackCount() >= self.max then return end 
+self:IncrementStackCount()
+
+if self:GetStackCount() >= self.max then 
+
+	local particle = ParticleManager:CreateParticle("particles/econ/items/ogre_magi/ogre_magi_arcana/ogre_magi_arcana_ignite_debuff_explosion.vpcf", PATTACH_CUSTOMORIGIN_FOLLOW, self.parent)
+	ParticleManager:SetParticleControlEnt( particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true )
+	ParticleManager:SetParticleControlEnt( particle, 3, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true )
+	ParticleManager:ReleaseParticleIndex( particle )
+
+	self.parent:EmitSound("Hoodwink.Acorn_armor")
+
+ 	self.particle_peffect = ParticleManager:CreateParticle("particles/general/generic_armor_reduction.vpcf", PATTACH_OVERHEAD_FOLLOW, self.parent)	
+	ParticleManager:SetParticleControl(self.particle_peffect, 0, self.parent:GetAbsOrigin())
+	self:AddParticle(self.particle_peffect, false, false, -1, false, true)
+
+end
+
+end
+
+
+
+modifier_ogre_magi_ignite_fire_legendary_proc = class({})
+function modifier_ogre_magi_ignite_fire_legendary_proc:IsHidden() return true end
+function modifier_ogre_magi_ignite_fire_legendary_proc:IsPurgable() return false end
+
+
+
+modifier_ogre_magi_ignite_fire_status = class({})
+function modifier_ogre_magi_ignite_fire_status:IsHidden() return false end
+function modifier_ogre_magi_ignite_fire_status:IsPurgable() return false end
+function modifier_ogre_magi_ignite_fire_status:GetTexture() return "buffs/ignite_tick" end
+
+function modifier_ogre_magi_ignite_fire_status:GetEffectName()
+return "particles/items4_fx/ascetic_cap.vpcf" 
 end

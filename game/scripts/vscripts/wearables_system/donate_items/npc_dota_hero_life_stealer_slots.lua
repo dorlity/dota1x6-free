@@ -1,0 +1,62 @@
+return
+{
+    ["arms"] =
+    {
+        "models/items/lifestealer/ravenous_arms/ravenous_arms.vmdl",
+		"models/items/lifestealer/bloody_ripper_arms/bloody_ripper_arms.vmdl",
+		"models/items/lifestealer/redrage_bracers/redrage_bracers.vmdl",
+		"models/items/lifestealer/mad_naix_of_the_fury_dungeon_arms/mad_naix_of_the_fury_dungeon_arms.vmdl",
+		"models/items/lifestealer/lavastealer_arms/lavastealer_arms.vmdl",
+		"models/items/lifestealer/cursed_decay_inhibitor_arms/cursed_decay_inhibitor_arms.vmdl",
+		"models/items/lifestealer/ls_ti9_immortal_arms/ls_ti9_immortal_arms.vmdl",
+		"models/items/lifestealer/icestealer_arms/icestealer_arms.vmdl",
+		"models/items/lifestealer/transmuted_armaments_arms/transmuted_armaments_arms.vmdl",
+		"models/items/lifestealer/promo_bloody_ripper_arms/promo_bloody_ripper_arms.vmdl",
+		"models/heroes/life_stealer/life_stealer_chains.vmdl",
+		"models/items/lifestealer/gauntlets_of_madness/gauntlets_of_madness.vmdl",
+    },
+    ["back"] =
+    {
+        "models/items/lifestealer/ravenous_back/ravenous_back.vmdl",
+        "models/items/lifestealer/redrage_battlewings/redrage_battlewings.vmdl",
+        "models/items/lifestealer/immortal_back/lifestealer_immortal_back.vmdl",
+        "models/items/lifestealer/cursed_decay_inhibitor_back/cursed_decay_inhibitor_back.vmdl",
+        "models/items/lifestealer/icestealer_back/icestealer_back.vmdl",
+        "models/items/lifestealer/bonds_of_madness/bonds_of_madness.vmdl",
+        "models/items/lifestealer/lavastealer_back/lavastealer_back.vmdl",
+        "models/items/lifestealer/transmuted_armaments_back/transmuted_armaments_back.vmdl",
+        "models/items/lifestealer/promo_bloody_ripper_back/promo_bloody_ripper_back.vmdl",
+        "models/items/lifestealer/mad_naix_of_the_fury_dungeon_back/mad_naix_of_the_fury_dungeon_back.vmdl",
+        "models/items/lifestealer/immortal_back/lifestealer_immortal_back_golden.vmdl",
+        "models/items/lifestealer/bloody_ripper_back/bloody_ripper_back.vmdl",
+    },
+    ["belt"] =
+    {
+        "models/items/lifestealer/bloody_ripper_belt/bloody_ripper_belt.vmdl",
+        "models/items/lifestealer/redrage_belt/redrage_belt.vmdl",
+        "models/items/lifestealer/mad_naix_of_the_fury_dungeon_belt/mad_naix_of_the_fury_dungeon_belt.vmdl",
+        "models/items/lifestealer/lavastealer_belt/lavastealer_belt.vmdl",
+        "models/items/lifestealer/icestealer_belt/icestealer_belt.vmdl",
+        "models/heroes/life_stealer/life_stealer_loincloth.vmdl",
+        "models/items/lifestealer/leg_talons_of_madness/leg_talons_of_madness.vmdl",
+        "models/items/lifestealer/transmuted_armaments_belt/transmuted_armaments_belt.vmdl",
+        "models/items/lifestealer/promo_bloody_ripper_belt/promo_bloody_ripper_belt.vmdl",
+        "models/items/lifestealer/ravenous_belt/ravenous_belt.vmdl",
+        "models/items/lifestealer/cursed_decay_inhibitor_belt/cursed_decay_inhibitor_belt.vmdl",
+    },
+    ["head"] =
+    {
+        "models/items/lifestealer/ravenous_head/ravenous_head.vmdl",
+        "models/items/lifestealer/bloody_ripper_head/bloody_ripper_head.vmdl",
+        "models/items/lifestealer/redrage_head/redrage_head.vmdl",
+        "models/items/lifestealer/mad_naix_of_the_fury_dungeon_head/mad_naix_of_the_fury_dungeon_head.vmdl",
+        "models/items/lifestealer/icestealer_head/icestealer_head.vmdl",
+        "models/items/lifestealer/lavastealer_head/lavastealer_head.vmdl",
+        "models/items/lifestealer/esl_lifestealer_helm/esl_lifestealer_helm.vmdl",
+        "models/items/lifestealer/ls_ti10_immortal_head/ls_ti10_immortal_head.vmdl",
+        "models/items/lifestealer/transmuted_armaments_head/transmuted_armaments_head.vmdl",
+        "models/items/lifestealer/promo_bloody_ripper_head/promo_bloody_ripper_head.vmdl",
+        "models/items/lifestealer/ls_ti10_immortal_head/ls_ti10_immortal_head_gold.vmdl",
+        "models/items/lifestealer/cursed_decay_inhibitor_head/cursed_decay_inhibitor_head.vmdl",
+    },
+}

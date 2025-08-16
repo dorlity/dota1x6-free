@@ -15,28 +15,37 @@ custom_juggernaut_omnislash = class({})
 
 
 function custom_juggernaut_omnislash:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-PrecacheResource( "particle", "particles/units/heroes/hero_juggernaut/juggernaut_omni_slash_trail.vpcf", context )
-PrecacheResource( "particle", "particles/status_fx/status_effect_omnislash.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_juggernaut/juggernaut_omni_slash_tgt.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_juggernaut/juggernaut_omni_slash_tgt_scepter.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_juggernaut/juggernaut_omni_slash_trail_scepter.vpcf", context )
-PrecacheResource( "particle", "particles/jugg_omni_aoe.vpcf", context )
-PrecacheResource( "particle", "particles/jugger_stack.vpcf", context )
-PrecacheResource( "particle", "particles/jugg_omni_proc.vpcf", context )
-PrecacheResource( "particle", "particles/beast_root.vpcf", context )
-PrecacheResource( "particle", "particles/status_fx/status_effect_huskar_lifebreak.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_juggernaut/juggernaut_omni_slash_trail.vpcf", context )
 
+PrecacheResource( "particle", "particles/units/heroes/hero_juggernaut/juggernaut_omni_slash_tgt_scepter.vpcf", context ) 
+PrecacheResource( "particle", "particles/units/heroes/hero_juggernaut/juggernaut_omni_slash_trail_scepter.vpcf", context )
+PrecacheResource( "particle", "particles/status_fx/status_effect_omnislash.vpcf", context )
+PrecacheResource( "particle", "particles/status_fx/status_effect_swiftslash.vpcf", context )
+PrecacheResource( "particle", "particles/jugger_stack.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_juggernaut/juggernaut_omni_slash_trail_scepter.vpcf", context ) 
+PrecacheResource( "particle", "particles/beast_root.vpcf", context )
+PrecacheResource( "particle", "particles/jugg_legendary_proc_.vpcf", context )
+PrecacheResource( "particle", "particles/items3_fx/iron_talon_active.vpcf", context )
+PrecacheResource( "particle", "particles/juggernaut/crit_speed.vpcf", context )
+PrecacheResource( "particle", "particles/bristleback/armor_buff.vpcf", context )
+PrecacheResource( "particle", "particles/jugg_parry.vpcf", context )
+end
+
+function custom_juggernaut_omnislash:IsArcana()
+return self:GetCaster():GetModelName() == "models/heroes/juggernaut/juggernaut_arcana.vmdl"
 end
 
 
 function custom_juggernaut_omnislash:TgtParticle()
 local part = "particles/units/heroes/hero_juggernaut/juggernaut_omni_slash_tgt.vpcf"
 
-if self:GetCaster():HasModifier("modifier_juggernaut_arcana_v2") then
-  part = "particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_omni_slash_tgt.vpcf"
-elseif self:GetCaster():HasModifier("modifier_juggernaut_arcana") then
+if self:GetCaster():HasModifier("modifier_juggernaut_arcana")then
   part = "particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_omni_slash_tgt.vpcf"
+elseif self:GetCaster():HasModifier("modifier_juggernaut_arcana_v2") or self:IsArcana()  then
+  part = "particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_omni_slash_tgt.vpcf"
 elseif self:GetCaster():HasModifier("modifier_juggernaut_bladekeeper_weapon") then
   part = "particles/econ/items/juggernaut/bladekeeper_omnislash/_dc_juggernaut_omni_slash_tgt.vpcf"
 elseif self:GetCaster():HasModifier("modifier_juggernaut_item_custom_serrakura") then
@@ -51,10 +60,10 @@ end
 function custom_juggernaut_omnislash:TrailParticle()
 local part = "particles/units/heroes/hero_juggernaut/juggernaut_omni_slash_trail.vpcf"
 
-if self:GetCaster():HasModifier("modifier_juggernaut_arcana_v2") then
-  part = "particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_omni_slash_trail.vpcf"
-elseif self:GetCaster():HasModifier("modifier_juggernaut_arcana") then
+if self:GetCaster():HasModifier("modifier_juggernaut_arcana") then
   part = "particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_omni_slash_trail.vpcf"
+elseif self:GetCaster():HasModifier("modifier_juggernaut_arcana_v2") or self:IsArcana() then
+  part = "particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_omni_slash_trail.vpcf"
 elseif self:GetCaster():HasModifier("modifier_juggernaut_bladekeeper_weapon") then
   part = "particles/econ/items/juggernaut/bladekeeper_omnislash/_dc_juggernaut_omni_slash_trail.vpcf"
 elseif self:GetCaster():HasModifier("modifier_juggernaut_item_custom_serrakura") then
@@ -75,7 +84,7 @@ if scepter == 1 then
   effect = "particles/units/heroes/hero_juggernaut/juggernaut_omni_slash_tgt_scepter.vpcf" 
 end
 
-if (self:GetCaster():HasModifier("modifier_juggernaut_arcana_v2") or self:GetCaster():HasModifier("modifier_juggernaut_arcana")) and scepter == 0 then 
+if (self:IsArcana()) and scepter == 0 then 
   local particle = ParticleManager:CreateParticle( effect, PATTACH_ABSORIGIN_FOLLOW, enemy )
   ParticleManager:SetParticleControlEnt( particle, 0, enemy, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), true )
   ParticleManager:SetParticleControlEnt( particle, 1, enemy, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), true )
@@ -110,8 +119,8 @@ end
 
 function custom_juggernaut_omnislash:GetCastPoint()
 
-if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_aoe_attack") then 
-  return self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_aoe_attack", "cast")
+if self:GetCaster():HasTalent("modifier_juggernaut_omnislash_6") then 
+  return self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_6", "cast")
 end
 
 return self:GetSpecialValueFor("AbilityCastPoint")
@@ -122,12 +131,12 @@ function custom_juggernaut_omnislash:GetCooldown(iLevel)
 local k = 1 
 local bonus = 0 
 
-if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_stack") then 
-  bonus = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_stack", "cd")
+if self:GetCaster():HasTalent("modifier_juggernaut_omnislash_1") then 
+  bonus = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_1", "cd")
 end
 
-if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_legendary") then 
-  k = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_legendary", "cd")/100
+if self:GetCaster():HasTalent("modifier_juggernaut_omnislash_7") then 
+  k = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_7", "cd")/100
 end
 
 return (self.BaseClass.GetCooldown(self, iLevel) + bonus) * k
@@ -136,7 +145,7 @@ end
 
 
 function custom_juggernaut_omnislash:GetBehavior()
-if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_legendary") then
+if self:GetCaster():HasTalent("modifier_juggernaut_omnislash_7") then
   return DOTA_ABILITY_BEHAVIOR_UNIT_TARGET + DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK  
 end
 
@@ -147,7 +156,7 @@ end
 
 function custom_juggernaut_omnislash:GetCastRange(vLocation, hTarget)
 
-if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_legendary") then 
+if self:GetCaster():HasTalent("modifier_juggernaut_omnislash_7") then 
   if IsClient() or hTarget ~= nil then 
     return self:GetRange()
   end
@@ -168,8 +177,8 @@ end
 
 
 function custom_juggernaut_omnislash:GetRange()
-if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_aoe_attack") then 
-  return self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_aoe_attack", "range")
+if self:GetCaster():HasTalent("modifier_juggernaut_omnislash_6") then 
+  return self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_6", "range")
 end
 
 return self:GetSpecialValueFor("AbilityCastRange")
@@ -184,8 +193,6 @@ local target = self:GetCursorTarget()
 if new_target then 
   target = new_target
 end
-
-
 self:Cast(self, target, self:GetCursorPosition())
 end
 
@@ -195,9 +202,10 @@ end
 
 function custom_juggernaut_omnislash:Cast(ability, target, point)
 
-self:GetCaster():EmitSound("Hero_Juggernaut.OmniSlash")
+local caster = self:GetCaster()
+caster:EmitSound("Hero_Juggernaut.OmniSlash")
 
-self:GetCaster():RemoveModifierByName("modifier_custom_juggernaut_omnislash")
+caster:RemoveModifierByName("modifier_custom_juggernaut_omnislash")
 
 local scepter = 0
 local trail = self:TrailParticle()
@@ -207,14 +215,14 @@ if ability:GetName() == "custom_juggernaut_swift_slash" then
 end   
 
 
-if scepter == 0 and (self:GetCaster():HasModifier("modifier_juggernaut_arcana") or self:GetCaster():HasModifier("modifier_juggernaut_arcana_v2")) then 
+if scepter == 0 and (self:IsArcana()) then 
 
   local name = "particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_omni_dash.vpcf"
-  if self:GetCaster():HasModifier("modifier_juggernaut_arcana") then 
+  if caster:HasModifier("modifier_juggernaut_arcana") then 
     name = "particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_omni_dash.vpcf"
   end 
 
-  local hParent = self:GetCaster()
+  local hParent = caster
 
   local point
   if target then
@@ -245,52 +253,50 @@ end
 
 
 
-if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_legendary") and not target then 
+if caster:HasTalent("modifier_juggernaut_omnislash_7") and not target then 
     
   local point = self:GetCursorPosition()
-  local distance = (point - self:GetCaster():GetAbsOrigin())
-  local range = ability:GetRange()  + self:GetCaster():GetCastRangeBonus()
+  local distance = (point - caster:GetAbsOrigin())
+  local range = ability:GetRange()  + caster:GetCastRangeBonus()
 
   if distance:Length2D() > range then 
-    point = self:GetCaster():GetAbsOrigin() + distance:Normalized()*range
+    point = caster:GetAbsOrigin() + distance:Normalized()*range
   end 
 
   local particle = ParticleManager:CreateParticle(trail, PATTACH_WORLDORIGIN, nil)
-  ParticleManager:SetParticleControl(particle, 0, self:GetCaster():GetAbsOrigin())
+  ParticleManager:SetParticleControl(particle, 0, caster:GetAbsOrigin())
   ParticleManager:SetParticleControl(particle, 1, point)
   ParticleManager:ReleaseParticleIndex(particle)
 
-  FindClearSpaceForUnit(self:GetCaster(), point, false)
+  FindClearSpaceForUnit(caster, point, false)
 
-  self:GetCaster():GiveMana(ability:GetManaCost(ability:GetLevel()))
+  caster:GiveMana(ability:GetManaCost(ability:GetLevel()))
 
-  self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_custom_juggernaut_omnislash_effect", {duration = 0.5})
+  caster:AddNewModifier(caster, self, "modifier_custom_juggernaut_omnislash_effect", {duration = 0.5})
   return
 end
 
-
-self:GetCaster():Purge(false, true, false, false, false)
+caster:InterruptMotionControllers(false)
+caster:Purge(false, true, false, false, false)
 self.duration = ability:GetSpecialValueFor("duration")
 
 if scepter == 0 then 
 
-  self.duration = self.duration + self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_stack", "duration")
+  caster:RemoveModifierByName("modifier_custom_juggernaut_omnislash_shield")
+  caster:RemoveModifierByName("modifier_custom_juggernaut_omnislash_shield_timer")
+  
+  self.duration = self.duration + caster:GetTalentValue("modifier_juggernaut_omnislash_1", "duration")
 
-  if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_legendary") then 
-    self.duration = self.duration * self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_legendary", "cd")/100
+  if caster:HasTalent("modifier_juggernaut_omnislash_7") then 
+    self.duration = self.duration * caster:GetTalentValue("modifier_juggernaut_omnislash_7", "cd")/100
   end 
 end
 
-if self:GetCaster():IsIllusion() then 
+if caster:IsIllusion() then 
   self.duration = 1
 end 
 
-
-self:GetCaster():RemoveModifierByName("modifier_custom_juggernaut_omnislash_shield")
-self:GetCaster():RemoveModifierByName("modifier_custom_juggernaut_omnislash_shield_timer")
-
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_custom_juggernaut_omnislash", {duration = self.duration, target = target:entindex(), scepter = scepter})
-
+caster:AddNewModifier(caster, self, "modifier_custom_juggernaut_omnislash", {duration = self.duration, target = target:entindex(), scepter = scepter})
 end
 
 
@@ -316,7 +322,7 @@ self.count = 0
 
 self.parent = self:GetParent()
 
-self.root = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_aoe_attack", "root", true)
+self.root = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_6", "root", true)
 
 if not IsServer() then return end 
 
@@ -324,12 +330,12 @@ self.scepter = table.scepter
 self:SetStackCount(self.scepter)
 self.target = EntIndexToHScript(table.target)
 
-if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_cd") then 
+if self:GetCaster():HasTalent("modifier_juggernaut_omnislash_4") then 
   self.target:RemoveModifierByName("modifier_custom_juggernaut_omnislash_mark")
-  self.target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_custom_juggernaut_omnislash_mark", {duration = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_cd", "duration")})
+  self.target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_custom_juggernaut_omnislash_mark", {duration = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_4", "duration")})
 end
 
-if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_speed") then 
+if self:GetCaster():HasTalent("modifier_juggernaut_omnislash_3") then 
   self.target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_custom_juggernaut_omnislash_attacks", {scepter = self.scepter, duration = 1})
 end  
 
@@ -352,13 +358,15 @@ end
 
 self.crit = self:GetParent():FindAbilityByName("custom_juggernaut_blade_dance")
 
-if self.crit and self:GetParent():HasModifier("modifier_juggernaut_bladedance_legendary") then  
+if self.crit and self:GetParent():HasTalent("modifier_juggernaut_bladedance_7") then  
   self.crit:SetActivated(false) 
 end 
 
 self.end_interval = 0.15
 
 self.rate = (1/self:GetParent():GetAttacksPerSecond(true))/self.bonusrate
+
+
 self:OnIntervalThink()
 self:StartIntervalThink(self.rate)    
 end
@@ -370,7 +378,6 @@ local state = {
   [MODIFIER_STATE_NO_UNIT_COLLISION] = true,
   [MODIFIER_STATE_INVULNERABLE] = true,
   [MODIFIER_STATE_NO_HEALTH_BAR] = true,
-  [MODIFIER_STATE_MAGIC_IMMUNE] = true,
   [MODIFIER_STATE_DISARMED] = true,
   [MODIFIER_STATE_ROOTED] = true,
 }
@@ -404,7 +411,7 @@ end
 
 
 function modifier_custom_juggernaut_omnislash:StatusEffectPriority()
-return 999999
+return MODIFIER_PRIORITY_SUPER_ULTRA 
 end
 
 
@@ -442,7 +449,8 @@ self.count = self.count + 1
 local enemy = nil
 local final = self.target == nil
 
-if self.target and not self.target:IsNull() and self.target:IsAlive() and not self.target:IsOutOfGame() and ((self.target:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D() <= self.radius or self.count == 1) then 
+if self.target and not self.target:IsNull() and self.target:IsAlive() and not self.target:IsOutOfGame() and 
+  (not self.target:IsInvisible() or self.parent:CanEntityBeSeenByMyTeam(self.target)) and ((self.target:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D() <= self.radius or self.count == 1) then 
   enemy = self.target
 end 
 
@@ -468,7 +476,7 @@ if enemy ~= nil then
     end
   end
 
-  if self.count == 1 and self.scepter == 0 and self.parent:HasModifier("modifier_juggernaut_omnislash_aoe_attack") then 
+  if self.count == 1 and self.scepter == 0 and self.parent:HasTalent("modifier_juggernaut_omnislash_6") then 
     local particle = ParticleManager:CreateParticle("particles/jugger_stack.vpcf", PATTACH_ABSORIGIN_FOLLOW, enemy )
     ParticleManager:SetParticleControl( particle, 2, enemy:GetAbsOrigin() + Vector(0,0,-100))
     ParticleManager:SetParticleControl( particle, 3, enemy:GetAbsOrigin() )
@@ -584,7 +592,7 @@ function modifier_custom_juggernaut_omnislash_tracker:IsPurgable() return false 
 function modifier_custom_juggernaut_omnislash_tracker:DeclareFunctions()
 return 
 {
-    MODIFIER_EVENT_ON_ATTACK_LANDED,
+    MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
     MODIFIER_PROPERTY_MOVESPEED_LIMIT,
     MODIFIER_PROPERTY_MOVESPEED_MAX,
     MODIFIER_PROPERTY_IGNORE_MOVESPEED_LIMIT,
@@ -593,14 +601,14 @@ return
 end
 
 function modifier_custom_juggernaut_omnislash_tracker:GetModifierIgnoreMovespeedLimit( params )
-if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_clone") then 
+if self:GetCaster():HasTalent("modifier_juggernaut_omnislash_5") then 
   return 1
 end
   return 0
 end
 
 function modifier_custom_juggernaut_omnislash_tracker:GetModifierMoveSpeed_Max( params )
-if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_clone") then 
+if self:GetCaster():HasTalent("modifier_juggernaut_omnislash_5") then 
   return self.max_move
 end
 
@@ -608,7 +616,7 @@ return
 end
 
 function modifier_custom_juggernaut_omnislash_tracker:GetModifierMoveSpeed_Limit()
-if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_clone") then 
+if self:GetCaster():HasTalent("modifier_juggernaut_omnislash_5") then 
   return self.max_move
 end
 
@@ -617,17 +625,25 @@ end
 
 
 
-function modifier_custom_juggernaut_omnislash_tracker:OnAttackLanded(params)
+
+
+function modifier_custom_juggernaut_omnislash_tracker:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.attacker then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end
+if not params.target:IsUnit() then return end
 
-if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_clone") then 
+if self:GetCaster():HasTalent("modifier_juggernaut_omnislash_5") then 
   self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_juggernaut_omnislash_move", {duration = self.speed_duration})
 end 
 
+local mod = params.target:FindModifierByName("modifier_custom_juggernaut_omnislash_mark")
+if mod and mod:GetCaster() == self:GetParent() then 
+  mod:IncrementStackCount()
+end 
+
+
 if not self:GetParent():HasScepter() then return end
-if not self:GetParent():HasModifier("modifier_juggernaut_omnislash_legendary") then return end
+if not self:GetParent():HasTalent("modifier_juggernaut_omnislash_7") then return end
 
 self:GetCaster():CdAbility(self:GetAbility(), self.cd_inc)
 
@@ -641,10 +657,10 @@ end
 
 function modifier_custom_juggernaut_omnislash_tracker:OnCreated()
 
-self.speed_duration = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_clone", "duration", true)
-self.max_move = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_clone", "max_move", true)
+self.speed_duration = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_5", "duration", true)
+self.max_move = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_5", "max_move", true)
 
-self.shield_timer = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_heal", "timer", true)
+self.shield_timer = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_2", "timer", true)
 
 self.scepter_ability = self:GetCaster():FindAbilityByName("custom_juggernaut_swift_slash")
 self.cd_inc = self:GetAbility():GetSpecialValueFor("scepter_cd")
@@ -657,7 +673,7 @@ end
 
 function modifier_custom_juggernaut_omnislash_tracker:OnIntervalThink()
 if not IsServer() then return end 
-if not self.parent:HasModifier("modifier_juggernaut_omnislash_heal") then return end 
+if not self.parent:HasTalent("modifier_juggernaut_omnislash_2") then return end 
 if self.parent:HasModifier("modifier_custom_juggernaut_omnislash_shield") then return end 
 if self.parent:HasModifier("modifier_custom_juggernaut_omnislash_shield_timer") then return end 
 
@@ -673,8 +689,8 @@ custom_juggernaut_swift_slash = class({})
 
 function custom_juggernaut_swift_slash:GetCastPoint()
 
-if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_aoe_attack") then 
-  return self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_aoe_attack", "cast")
+if self:GetCaster():HasTalent("modifier_juggernaut_omnislash_6") then 
+  return self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_6", "cast")
 end
 
 return self:GetSpecialValueFor("AbilityCastPoint")
@@ -682,7 +698,7 @@ end
 
 
 function custom_juggernaut_swift_slash:GetBehavior()
-if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_legendary") then
+if self:GetCaster():HasTalent("modifier_juggernaut_omnislash_7") then
   return DOTA_ABILITY_BEHAVIOR_UNIT_TARGET + DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK  
 end
 
@@ -690,8 +706,8 @@ return DOTA_ABILITY_BEHAVIOR_UNIT_TARGET + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATT
 end
 
 function custom_juggernaut_swift_slash:GetRange()
-if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_aoe_attack") then 
-  return self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_aoe_attack", "range")
+if self:GetCaster():HasTalent("modifier_juggernaut_omnislash_6") then 
+  return self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_6", "range")
 end
 
 return self:GetSpecialValueFor("AbilityCastRange")
@@ -700,7 +716,7 @@ end
 
 function custom_juggernaut_swift_slash:GetCastRange(vLocation, hTarget)
 
-if self:GetCaster():HasModifier("modifier_juggernaut_omnislash_legendary") then 
+if self:GetCaster():HasTalent("modifier_juggernaut_omnislash_7") then 
   if IsClient() or hTarget ~= nil then 
     return self:GetRange()
   end
@@ -712,7 +728,7 @@ end
 
 
 function custom_juggernaut_swift_slash:OnInventoryContentsChanged()
-if (self:GetCaster():HasScepter() or self:GetCaster():HasModifier("modifier_juggernaut_omnislash_legendary")) and self:GetCaster():GetUnitName() == "npc_dota_hero_juggernaut" then
+if (self:GetCaster():HasScepter() or self:GetCaster():HasTalent("modifier_juggernaut_omnislash_7")) and self:GetCaster():GetUnitName() == "npc_dota_hero_juggernaut" then
   self:SetHidden(false)        
 else
   self:SetHidden(true)
@@ -763,7 +779,7 @@ function modifier_custom_juggernaut_omnislash_effect:IsHidden() return true end
 function modifier_custom_juggernaut_omnislash_effect:IsPurgable() return false end
 
 function modifier_custom_juggernaut_omnislash_effect:StatusEffectPriority()
-return 20
+return MODIFIER_PRIORITY_SUPER_ULTRA 
 end
 
 function modifier_custom_juggernaut_omnislash_effect:GetStatusEffectName()
@@ -827,9 +843,9 @@ function modifier_custom_juggernaut_omnislash_mark:IsPurgable() return false end
 function modifier_custom_juggernaut_omnislash_mark:GetTexture() return  "buffs/Blade_dance_mortal" end
 
 function modifier_custom_juggernaut_omnislash_mark:OnCreated(table)
-self.damage = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_cd", "damage")
-self.max = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_cd", "max")
-self.heal = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_cd", "heal")/100
+self.damage = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_4", "damage")
+self.max = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_4", "max")
+self.heal = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_4", "heal")/100
 
 if not IsServer() then return end
 self:SetStackCount(0)
@@ -848,9 +864,9 @@ ParticleManager:SetParticleControlEnt( trail_pfx, 1, self:GetParent(), PATTACH_A
 ParticleManager:ReleaseParticleIndex(trail_pfx)
 
 self:GetParent():EmitSound("DOTA_Item.Daedelus.Crit")
-local real_damage = ApplyDamage({ victim = self:GetParent(), attacker = self:GetCaster(), ability = self:GetAbility(), damage = self.damage*self:GetStackCount(), damage_type = DAMAGE_TYPE_PURE})
+local real_damage = DoDamage({ victim = self:GetParent(), attacker = self:GetCaster(), ability = self:GetAbility(), damage = self.damage*self:GetStackCount(), damage_type = DAMAGE_TYPE_PURE}, "modifier_juggernaut_omnislash_4")
 
-self:GetCaster():GenericHeal(self.damage*self.heal*self:GetStackCount(), self:GetAbility())
+self:GetCaster():GenericHeal(self.damage*self.heal*self:GetStackCount(), self:GetAbility(), nil, nil, "modifier_juggernaut_omnislash_4")
 end
 
 
@@ -858,20 +874,12 @@ function modifier_custom_juggernaut_omnislash_mark:DeclareFunctions()
 return 
 {
   MODIFIER_PROPERTY_TOOLTIP,
-  MODIFIER_EVENT_ON_ATTACK_LANDED
 } 
 end
 
 function modifier_custom_juggernaut_omnislash_mark:OnTooltip()
 return self.damage*self:GetStackCount()
 end
-
-function modifier_custom_juggernaut_omnislash_mark:OnAttackLanded(params)
-if not IsServer() then return end 
-if self:GetParent() ~= params.target or self:GetCaster() ~= params.attacker then return end 
-
-self:IncrementStackCount()
-end 
 
 
 
@@ -882,8 +890,8 @@ function modifier_custom_juggernaut_omnislash_attacks:IsHidden() return true end
 function modifier_custom_juggernaut_omnislash_attacks:IsPurgable() return false end
 function modifier_custom_juggernaut_omnislash_attacks:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_custom_juggernaut_omnislash_attacks:OnCreated(table)
-self.max = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_speed", "max")
-self.interval = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_speed", "interval")
+self.max = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_3", "max")
+self.interval = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_3", "interval")
 
 if not IsServer() then return end 
 self.scepter = table.scepter
@@ -898,7 +906,7 @@ if not IsServer() then return end
 self:DecrementStackCount()
 
 if not self:GetParent():IsNull() and self:GetParent():IsAlive() and not self:GetCaster():IsNull() and self:GetCaster():IsAlive() then 
-  self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), 'modifier_custom_juggernaut_omnislash_attacks_damage', {})
+  self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_custom_juggernaut_omnislash_attacks_damage", {})
   self:GetCaster():PerformAttack(self:GetParent(), true, true, true, true, false, false, true)
   self:GetAbility():HitEffect(self:GetParent(), self.scepter)
 
@@ -917,7 +925,7 @@ function modifier_custom_juggernaut_omnislash_attacks_damage:IsHidden() return t
 function modifier_custom_juggernaut_omnislash_attacks_damage:IsPurgable() return false end
 function modifier_custom_juggernaut_omnislash_attacks_damage:OnCreated()
 
-self.damage = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_speed", "damage") - 100
+self.damage = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_3", "damage") - 100
 end
 
 function modifier_custom_juggernaut_omnislash_attacks_damage:DeclareFunctions()
@@ -939,9 +947,9 @@ function modifier_custom_juggernaut_omnislash_move:IsPurgable() return false end
 function modifier_custom_juggernaut_omnislash_move:GetTexture() return "buffs/omni_speed" end
 function modifier_custom_juggernaut_omnislash_move:OnCreated()
 
-self.move = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_clone", "move")
-self.max = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_clone", "max")
-self.cdr = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_clone", "cdr")
+self.move = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_5", "move")
+self.max = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_5", "max")
+self.cdr = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_5", "cdr")
 self:SetStackCount(1)
 end 
 
@@ -990,8 +998,10 @@ function modifier_custom_juggernaut_omnislash_shield:IsHidden() return true end
 function modifier_custom_juggernaut_omnislash_shield:IsPurgable() return false end
 function modifier_custom_juggernaut_omnislash_shield:OnCreated(table)
 
-self.max_shield = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_heal", "shield")*self:GetCaster():GetMaxHealth()/100
-self.timer = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_heal", "timer")
+self.parent = self:GetParent()
+self.shield_talent = "modifier_juggernaut_omnislash_2"
+self.max_shield = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_2", "shield")*self:GetCaster():GetMaxHealth()/100
+self.timer = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_2", "timer")
 
 if not IsServer() then return end
 self.RemoveForDuel = true
@@ -1033,21 +1043,17 @@ ParticleManager:SetParticleControl( particle, 1, self:GetParent():GetAbsOrigin()
 
 self:StartIntervalThink(self.timer)
 
-if self:GetStackCount() > params.damage then
-    self:SetStackCount(self:GetStackCount() - params.damage)
-    local i = params.damage
+local damage = math.min(params.damage, self:GetStackCount())
+self.parent:AddShieldInfo({shield_mod = self, healing = damage, healing_type = "shield"})
 
-    return -i
-else
-    
-    local i = self:GetStackCount()
-
-    self:SetStackCount(0)
-    self:Destroy()
-    return -i
+self:SetStackCount(self:GetStackCount() - damage)
+if self:GetStackCount() <= 0 then
+  self:Destroy()
 end
 
+return -damage
 end
+
 
 
 
@@ -1063,14 +1069,8 @@ if not IsServer() then return end
 self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_juggernaut_omnislash_shield", {})
 end 
 
-function modifier_custom_juggernaut_omnislash_shield_timer:DeclareFunctions()
-return
-{
-  MODIFIER_EVENT_ON_TAKEDAMAGE
-}
-end
 
-function modifier_custom_juggernaut_omnislash_shield_timer:OnTakeDamage(params)
+function modifier_custom_juggernaut_omnislash_shield_timer:DamageEvent_inc(params)
 if not IsServer() then return end 
 if self:GetParent() ~= params.unit then return end 
 if not params.attacker then return end 
@@ -1082,5 +1082,11 @@ end
 
 function modifier_custom_juggernaut_omnislash_shield_timer:OnCreated()
 
-self.shield_timer = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_heal", "timer", true)
+self.parent = self:GetParent()
+
+if self.parent:IsRealHero() then
+  self.parent:AddDamageEvent_inc(self)
+end
+
+self.shield_timer = self:GetCaster():GetTalentValue("modifier_juggernaut_omnislash_2", "timer", true)
 end

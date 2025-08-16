@@ -34,9 +34,9 @@ function npc_slardar_stun:OnSpellStart()
     local enemy = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, self.radius,
         DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, FIND_CLOSEST, false)
     if #enemy > 0 then
-        for _, i in ipairs(enemy) do
+        for _, i in pairs(enemy) do
             if IsValidEntity(i) and not i:IsMagicImmune() then
-                ApplyDamage({
+                DoDamage({
                     victim = i,
                     attacker = caster,
                     ability = self,

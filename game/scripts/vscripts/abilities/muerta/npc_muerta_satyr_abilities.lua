@@ -4,6 +4,15 @@ LinkLuaModifier("modifier_npc_muerta_satyr_passive", "abilities/muerta/npc_muert
 npc_muerta_satyr_silence = class({})
 
 
+function npc_muerta_satyr_silence:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+
+PrecacheResource( "particle", "particles/generic_gameplay/generic_has_quest.vpcf", context )
+PrecacheResource( "particle", "particles/neutral_fx/satyr_hellcaller.vpcf", context )
+PrecacheResource( "particle", "particles/items_fx/black_king_bar_avatar.vpcf", context )
+
+
+end
 
 function npc_muerta_satyr_silence:OnAbilityPhaseStart()
     self.sign = ParticleManager:CreateParticle( "particles/generic_gameplay/generic_has_quest.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetCaster())
@@ -83,7 +92,7 @@ local damage = self.damage*hTarget:GetMaxHealth()/100
 SendOverheadEventMessage(hTarget, 4, hTarget, damage, nil)
 
 hTarget:AddNewModifier(self:GetCaster(), self, "modifier_generic_silence", {duration = self.silence*(1 - hTarget:GetStatusResistance())})     
-ApplyDamage({victim = hTarget, attacker = self:GetCaster(), damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self})
+DoDamage({victim = hTarget, attacker = self:GetCaster(), damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self})
 hTarget:EmitSound("n_creep_SatyrHellcaller.Shockwave.Damage")
 
 end
@@ -112,19 +121,16 @@ function modifier_npc_muerta_satyr_bkb:GetEffectName() return "particles/items_f
 
 
 function modifier_npc_muerta_satyr_bkb:OnCreated(table)
+
+self.parent = self:GetParent()
+self.parent:AddDamageEvent_out(self)
+
 self.heal = self:GetAbility():GetSpecialValueFor("lifesteal")/100
 end
 
-function modifier_npc_muerta_satyr_bkb:DeclareFunctions()
-return
-{
-    MODIFIER_EVENT_ON_TAKEDAMAGE
-}
-
-end
 
 
-function modifier_npc_muerta_satyr_bkb:OnTakeDamage( params )
+function modifier_npc_muerta_satyr_bkb:DamageEvent_out( params )
 if not IsServer() then return end
 if self:GetParent() == params.unit and self:GetParent():IsIllusion() then return end
 if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end

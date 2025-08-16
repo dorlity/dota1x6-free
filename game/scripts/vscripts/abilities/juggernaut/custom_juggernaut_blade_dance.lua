@@ -15,16 +15,30 @@ LinkLuaModifier("modifier_custom_juggernaut_blade_dance_speed", "abilities/jugge
 custom_juggernaut_blade_dance = class({})
 
 
+function custom_juggernaut_blade_dance:CreateTalent()
+
+self:ToggleAutoCast()
+self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_custom_juggernaut_blade_dance_blink_cd", {})
+end
 
 function custom_juggernaut_blade_dance:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
+PrecacheResource( "particle", "particles/units/heroes/hero_mars/mars_shield_bash_crit_strike.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_mars/mars_shield_bash_crit_strike.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_mars/mars_shield_bash.vpcf", context )
 PrecacheResource( "particle", "particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_trigger.vpcf", context )
-PrecacheResource( "particle", "particles/jugg_legendary_proc_.vpcf", context )
-PrecacheResource( "particle", "particles/items3_fx/iron_talon_active.vpcf", context )
 PrecacheResource( "particle", "particles/jugger_legendary.vpcf", context )
-PrecacheResource( "particle", "particles/jugg_parry.vpcf", context )
+PrecacheResource( "particle", "particles/lc_lowhp.vpcf", context )
+
+PrecacheResource( "particle", "particles/bloodseeker/thirst_cleave.vpcf", context )
+PrecacheResource( "particle", "particles/status_fx/status_effect_huskar_lifebreak.vpcf", context )
+PrecacheResource( "particle", "particles/jugg_omni_proc.vpcf", context )
+PrecacheResource( "particle", "particles/jugger_stack.vpcf", context )
+PrecacheResource( "particle", "particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_omni_slash_trail.vpcf", context )
+PrecacheResource( "particle", "particles/econ/events/ti10/blink_dagger_start_ti10_lvl2_sparkles.vpcf", context )
+PrecacheResource( "particle", "particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_omni_dash.vpcf", context )
+PrecacheResource( "particle", "particles/items2_fx/sange_maim.vpcf", context )
 
 end
 
@@ -50,11 +64,11 @@ end
 function custom_juggernaut_blade_dance:GetBehavior()
 local auto = 0
 
-if self:GetCaster():HasModifier("modifier_juggernaut_bladedance_double") then 
+if self:GetCaster():HasTalent("modifier_juggernaut_bladedance_5") then 
   auto = DOTA_ABILITY_BEHAVIOR_AUTOCAST
 end 
 
-if self:GetCaster():HasModifier("modifier_juggernaut_bladedance_legendary") then
+if self:GetCaster():HasTalent("modifier_juggernaut_bladedance_7") then
   return DOTA_ABILITY_BEHAVIOR_NO_TARGET + auto
 end
 
@@ -63,8 +77,8 @@ end
 
 
 function custom_juggernaut_blade_dance:GetCooldown(iLevel)
-if self:GetCaster():HasModifier("modifier_juggernaut_bladedance_legendary") then 
-  return self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_legendary", "cd")
+if self:GetCaster():HasTalent("modifier_juggernaut_bladedance_7") then 
+  return self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_7", "cd")
 end 
 
 end
@@ -91,8 +105,8 @@ self:GetCaster():EmitSound("Hero_Juggernaut.ArcanaTrigger")
 local sound_cast = "Juggernaut.ShockWave"
 self:GetCaster():EmitSound(sound_cast)
 
-local range = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_legendary", "range")
-local stun = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_legendary", "stun")
+local range = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_7", "range")
+local stun = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_7", "stun")
 
 local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(),self:GetCaster():GetOrigin(), nil, range, DOTA_UNIT_TARGET_TEAM_ENEMY,  DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES,   0,  false )
 
@@ -126,7 +140,7 @@ ParticleManager:SetParticleControl( effect_cast, 1, Vector(range,range,range) )
 ParticleManager:SetParticleControlForward( effect_cast, 0, cast_direction )
 ParticleManager:ReleaseParticleIndex( effect_cast )
 
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_custom_juggernaut_blade_dance_legendary", {duration = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_legendary", "duration")})
+self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_custom_juggernaut_blade_dance_legendary", {duration = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_7", "duration")})
 end
 
 
@@ -153,7 +167,7 @@ function modifier_custom_juggernaut_blade_dance_legendary:OnCreated(table)
 self.anim = "ti8"
 self.RemoveForDuel = true
 
-self.status = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_legendary", "status")
+self.status = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_7", "status")
 if not IsServer() then return end
 
 local trail_pfx = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/juggernaut_arcana_v2_trigger.vpcf", PATTACH_ABSORIGIN, self:GetParent())
@@ -166,7 +180,7 @@ function modifier_custom_juggernaut_blade_dance_legendary:DeclareFunctions()
 return
 { 
   MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
-  MODIFIER_EVENT_ON_ATTACK_LANDED,
+  MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
   MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING
 }
 end
@@ -175,10 +189,10 @@ function modifier_custom_juggernaut_blade_dance_legendary:GetModifierStatusResis
 return self.status
 end
 
-function modifier_custom_juggernaut_blade_dance_legendary:OnAttackLanded(params)
+function modifier_custom_juggernaut_blade_dance_legendary:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end 
 if self:GetParent() ~= params.attacker then return end 
-if not params.target:IsHero() and not params.target:IsCreep() then return end 
+if not params.target:IsUnit() then return end 
 
 if self.anim == "ti8" then 
   self.anim = "favor"
@@ -225,7 +239,7 @@ function modifier_custom_juggernaut_blade_dance:IsHidden() return true end
 function modifier_custom_juggernaut_blade_dance:IsPurgable() return false end
 
 function modifier_custom_juggernaut_blade_dance:GetCritDamage()
-return self:GetAbility():GetSpecialValueFor("damage") + self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_chance","damage")
+return self:GetAbility():GetSpecialValueFor("damage") + self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_2","damage")
 end
  
 function modifier_custom_juggernaut_blade_dance:DeclareFunctions() 
@@ -234,14 +248,13 @@ return
   MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE,
   MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
   MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
-  MODIFIER_EVENT_ON_ATTACK_LANDED,
 } 
 end
 
 
 function modifier_custom_juggernaut_blade_dance:GetModifierAttackRangeBonus()
-if not self:GetParent():HasModifier("modifier_juggernaut_bladedance_speed") then return end 
-return self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_speed", "range")
+if not self:GetParent():HasTalent("modifier_juggernaut_bladedance_3") then return end 
+return self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_3", "range")
 end 
 
 
@@ -255,18 +268,22 @@ self.record = nil
 
 self.caster = self:GetCaster()
     
-self.speed_duration = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_chance", "duration", true)
+self.speed_duration = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_2", "duration", true)
 
-self.slow_duration = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_lowhp", "duration", true)
+self.slow_duration = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_1", "duration", true)
 
-self.blink_cd = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_double", "cd_inc", true)
+self.blink_cd = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_5", "cd_inc", true)
 
-self.bonus_chance = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_parry", "chance", true)
-self.heal = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_parry", "heal", true)/100
-self.heal_health = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_parry", "health", true)
-self.heal_bonus = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_parry", "bonus", true)
+self.bonus_chance = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_6", "chance", true)
+self.heal = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_6", "heal", true)/100
+self.heal_health = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_6", "health", true)
+self.heal_bonus = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_6", "bonus", true)
 
-self.agi_duration = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_stack", "duration", true)
+self.agi_duration = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_4", "duration", true)
+
+if self.caster:IsRealHero() then 
+  self.caster:AddDamageEvent_out(self)
+end 
 
 self:StartIntervalThink(1)
 end
@@ -281,7 +298,7 @@ end
 
 function modifier_custom_juggernaut_blade_dance:OnIntervalThink()
 if not IsServer() then return end 
-if not self.caster:HasModifier("modifier_juggernaut_bladedance_parry") then return end 
+if not self.caster:HasTalent("modifier_juggernaut_bladedance_6") then return end 
 
 if not self.particle and self.caster:GetHealthPercent() <= self.heal_health then 
 
@@ -312,7 +329,7 @@ if params.target:GetTeamNumber()==self.caster:GetTeamNumber() then return end
 self.record = nil
 local chance = self.chance
 
-if self.caster:HasModifier("modifier_juggernaut_bladedance_parry") then 
+if self.caster:HasTalent("modifier_juggernaut_bladedance_6") then 
   local bonus = self.bonus_chance
 
   if self.caster:GetHealthPercent() <= self.heal_health then 
@@ -324,7 +341,7 @@ end
   
 if self.caster:HasModifier("modifier_custom_juggernaut_blade_dance_legendary") or RollPseudoRandomPercentage(chance,1392,self.caster) then
   self.record = params.record
-  return self.damage + self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_chance","damage")
+  return self.damage + self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_2","damage")
 end
 
 end
@@ -332,9 +349,15 @@ end
 
 function modifier_custom_juggernaut_blade_dance:GetModifierProcAttack_Feedback( params )
 if not IsServer() then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end
-if not self.record or self.record ~= params.record then return end
+if not params.target:IsUnit() then return end
 if not params.target or params.target:IsNull() then return end  
+
+
+if self.caster:HasTalent("modifier_juggernaut_bladedance_4") then 
+  self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_custom_juggernaut_blade_dance_agi", { duration = self.agi_duration})
+end
+
+if not self.record or self.record ~= params.record then return end
 
 params.target:EmitSound("Hero_Juggernaut.BladeDance")
 
@@ -355,20 +378,13 @@ elseif self.caster:HasModifier("modifier_juggernaut_arcana_v2") then
   params.target:EmitSound("Hero_Juggernaut.BladeDance.Arcana")
 end
 
-if self.caster:HasModifier("modifier_juggernaut_bladedance_stack") then 
+if self.caster:HasTalent("modifier_juggernaut_bladedance_4") then 
   self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_custom_juggernaut_blade_dance_agi", { duration = self.agi_duration})
 end
 
-if self.caster:HasModifier("modifier_juggernaut_bladedance_parry") then 
-  local heal = self.caster:GetMaxHealth()*self.heal
-  if self.caster:GetHealthPercent() <= self.heal_health then 
-    heal = heal*self.heal_bonus
-  end 
-  self.caster:GenericHeal(heal, self:GetAbility())
-end 
 
-if self.caster:HasModifier("modifier_juggernaut_bladedance_speed") then 
-  DoCleaveAttack(self.caster, params.target, nil, params.damage * self.caster:GetTalentValue("modifier_juggernaut_bladedance_speed", "cleave")/100 , 150, 360, 650, "particles/bloodseeker/thirst_cleave.vpcf" )
+if self.caster:HasTalent("modifier_juggernaut_bladedance_3") then 
+  DoCleaveAttack(self.caster, params.target, nil, params.damage * self.caster:GetTalentValue("modifier_juggernaut_bladedance_3", "cleave")/100 , 150, 360, 650, "particles/bloodseeker/thirst_cleave.vpcf" )
 end
 
 local mod = self.caster:FindModifierByName("modifier_custom_juggernaut_blade_dance_blink_cd")
@@ -381,28 +397,33 @@ if (self.caster:GetQuest() == "Jugg.Quest_6") and params.target:IsRealHero() the
   self.caster:UpdateQuest(1)
 end
 
-if self.caster:HasModifier("modifier_juggernaut_bladedance_chance") then 
+if self.caster:HasTalent("modifier_juggernaut_bladedance_2") then 
   self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_custom_juggernaut_blade_dance_speed", { duration = self.speed_duration})
 end
 
-if self.caster:HasModifier("modifier_juggernaut_bladedance_lowhp") then 
+if self.caster:HasTalent("modifier_juggernaut_bladedance_1") then 
   params.target:AddNewModifier(self.caster, self:GetAbility(), "modifier_custom_juggernaut_blade_dance_damage_reduce", { duration = self.slow_duration})
 end
        
       
 end
 
-
-
-function modifier_custom_juggernaut_blade_dance:OnAttackLanded(params)
+function modifier_custom_juggernaut_blade_dance:DamageEvent_out(params)
 if not IsServer() then return end 
-if params.attacker ~= self.caster then return end 
-if not params.target:IsHero() and not params.target:IsCreep() then return end 
-if not self.caster:HasModifier("modifier_juggernaut_bladedance_stack") then return end 
+if not self.caster:HasTalent("modifier_juggernaut_bladedance_6") then return end 
+if self.caster ~= params.attacker then return end 
+if not params.unit:IsUnit() then return end
+if not params.record then return end 
+if params.record ~= self.record then return end
+if params.inflictor then return end
 
-self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_custom_juggernaut_blade_dance_agi", { duration = self.agi_duration})
+local heal = params.damage*self.heal
+if self.caster:GetHealthPercent() <= self.heal_health then 
+  heal = heal*self.heal_bonus
 end 
 
+self.caster:GenericHeal(heal, self:GetAbility(), nil, nil, "modifier_juggernaut_bladedance_6")
+end 
 
 
 
@@ -413,12 +434,12 @@ end
 modifier_custom_juggernaut_blade_dance_agi = class({})
 
 function modifier_custom_juggernaut_blade_dance_agi:IsHidden() return false end
-function modifier_custom_juggernaut_blade_dance_agi:IsPurgable() return true end
+function modifier_custom_juggernaut_blade_dance_agi:IsPurgable() return false end
 function modifier_custom_juggernaut_blade_dance_agi:GetTexture() return  "buffs/Omnislash_cd" end
 function modifier_custom_juggernaut_blade_dance_agi:OnCreated(table)
 
-self.agi =  self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_stack", "agi")
-self.max =  self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_stack", "max")
+self.agi =  self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_4", "agi")
+self.max =  self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_4", "max")
 
 if not IsServer() then return end
 self:SetStackCount(1)
@@ -467,7 +488,7 @@ return "particles/status_fx/status_effect_huskar_lifebreak.vpcf"
 end
 
 function modifier_custom_juggernaut_blade_dance_blink_slow:OnCreated()
-self.slow = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_double", "slow")
+self.slow = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_5", "slow")
 end
 
 
@@ -498,9 +519,9 @@ function modifier_custom_juggernaut_blade_dance_blink_attack:GetTexture() return
 
 function modifier_custom_juggernaut_blade_dance_blink_attack:OnCreated(table)
 
-self.duration = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_double", "duration", true)
-self.range = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_double", "range", true)
-self.cd = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_double", "cd", true)
+self.duration = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_5", "duration", true)
+self.range = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_5", "range", true)
+self.cd = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_5", "cd", true)
 
 if not IsServer() then return end
 
@@ -511,6 +532,8 @@ ParticleManager:ReleaseParticleIndex( effect_cast )
 self:GetParent():EmitSound("Juggernaut.Omni_cd")
 
 self.parent = self:GetParent()
+self.parent:AddAttackRecordEvent_out(self)
+self.parent:AddAttackFailEvent_out(self)
 end
 
 function modifier_custom_juggernaut_blade_dance_blink_attack:GetModifierAttackRangeBonus()
@@ -527,14 +550,12 @@ end
 function modifier_custom_juggernaut_blade_dance_blink_attack:DeclareFunctions()
 return
 {
-  MODIFIER_EVENT_ON_ATTACK_LANDED,
-  MODIFIER_EVENT_ON_ATTACK_RECORD,
-  MODIFIER_EVENT_ON_ATTACK_FAIL,
+  MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
   MODIFIER_PROPERTY_ATTACK_RANGE_BONUS
 }
 end
 
-function modifier_custom_juggernaut_blade_dance_blink_attack:OnAttackRecord(params)
+function modifier_custom_juggernaut_blade_dance_blink_attack:AttackRecordEvent_out(params)
 if not self:GetParent():IsRealHero() then return end
 if self:GetParent():HasModifier("modifier_custom_juggernaut_blade_fury") then return end
 if self:GetAbility():GetAutoCastState() == false then return end
@@ -544,7 +565,7 @@ self:GetCaster():StartGestureWithPlaybackRate(ACT_DOTA_ATTACK_EVENT, self:GetPar
 end 
 
 
-function modifier_custom_juggernaut_blade_dance_blink_attack:OnAttackLanded(params)
+function modifier_custom_juggernaut_blade_dance_blink_attack:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end
 if self:GetParent():HasModifier("modifier_custom_juggernaut_blade_fury") then return end
 if self:GetAbility():GetAutoCastState() == false then return end
@@ -554,7 +575,7 @@ if params.no_attack_cooldown then return end
 self:Blink(params.target)
 end
 
-function modifier_custom_juggernaut_blade_dance_blink_attack:OnAttackFail(params)
+function modifier_custom_juggernaut_blade_dance_blink_attack:AttackFailEvent_out(params)
 if not IsServer() then return end
 if self:GetParent():HasModifier("modifier_custom_juggernaut_blade_fury") then return end
 if self:GetAbility():GetAutoCastState() == false then return end
@@ -567,6 +588,9 @@ end
 
 function modifier_custom_juggernaut_blade_dance_blink_attack:Blink(target)
 if not IsServer() then return end
+if self.blinked then return end
+
+self.blinked = true
 
 target:AddNewModifier(self.parent, self:GetAbility(), "modifier_custom_juggernaut_blade_dance_blink_slow", {duration = (1 - target:GetStatusResistance())*self.duration})
 
@@ -612,18 +636,16 @@ self:GetParent():SetAbsOrigin(position2)
 FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), false)
 
 local new_dir = (target:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized()
-
+new_dir.z = 0
 self:GetParent():SetForwardVector(new_dir)
 self:GetParent():FaceTowards(self:GetParent():GetAbsOrigin() + new_dir*10)
 
-local mod = self:GetParent():FindModifierByName('modifier_custom_juggernaut_blade_dance_blink_cd')
+local mod = self:GetParent():FindModifierByName("modifier_custom_juggernaut_blade_dance_blink_cd")
 if mod then 
   mod:SetStackCount(self.cd)
 end 
 
 self:Destroy()
-
-
 end 
 
 
@@ -635,8 +657,8 @@ function modifier_custom_juggernaut_blade_dance_blink_cd:IsDebuff() return true 
 function modifier_custom_juggernaut_blade_dance_blink_cd:RemoveOnDeath() return false end
 function modifier_custom_juggernaut_blade_dance_blink_cd:GetTexture() return "buffs/back_taunt" end
 function modifier_custom_juggernaut_blade_dance_blink_cd:OnCreated(table)
-
-self.max = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_double", "cd")
+self.parent = self:GetParent()
+self.max = self.parent:GetTalentValue("modifier_juggernaut_bladedance_5", "cd")
 if not IsServer() then return end
 
 self:SetStackCount(0)
@@ -649,8 +671,8 @@ function modifier_custom_juggernaut_blade_dance_blink_cd:OnIntervalThink()
 if not IsServer() then return end 
 
 if self:GetStackCount() <= 0 then 
-  if not self:GetParent():HasModifier("modifier_custom_juggernaut_blade_dance_blink_attack") then 
-    self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_juggernaut_blade_dance_blink_attack", {})
+  if not self.parent:HasModifier("modifier_custom_juggernaut_blade_dance_blink_attack") then 
+    self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_custom_juggernaut_blade_dance_blink_attack", {})
   end 
 else 
   self:DecrementStackCount()
@@ -664,7 +686,8 @@ end
 function modifier_custom_juggernaut_blade_dance_blink_cd:OnStackCountChanged(iStackCount)
 if not IsServer() then return end 
 
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'jugger_blink_change',  {max = self.max, damage = self.max - self:GetStackCount()})
+local stack = self.max - self:GetStackCount()
+self.parent:UpdateUIlong({max = self.max, stack = stack, style = "JuggernautDance", override_stack = self:GetStackCount(), hide_number = stack >= self.max, no_min = true})
 
 if self:GetStackCount() <= 0 then 
   self:StartIntervalThink(FrameTime())
@@ -682,8 +705,8 @@ modifier_custom_juggernaut_blade_dance_damage_reduce = class({})
 function modifier_custom_juggernaut_blade_dance_damage_reduce:IsHidden() return true end
 function modifier_custom_juggernaut_blade_dance_damage_reduce:IsPurgable() return true end
 function modifier_custom_juggernaut_blade_dance_damage_reduce:OnCreated()
-self.slow = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_lowhp", "slow")
-self.damage = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_lowhp", "damage")
+self.slow = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_1", "slow")
+self.damage = self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_1", "damage")
 
 if not IsServer() then return end 
 self:GetParent():EmitSound("DOTA_Item.Maim")
@@ -723,8 +746,8 @@ function modifier_custom_juggernaut_blade_dance_speed:IsHidden() return false en
 function modifier_custom_juggernaut_blade_dance_speed:IsPurgable() return false end
 function modifier_custom_juggernaut_blade_dance_speed:GetTexture() return "buffs/Blade_dance_speed" end
 function modifier_custom_juggernaut_blade_dance_speed:OnCreated()
-self.speed =  self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_chance", "speed")
-self.max =  self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_chance", "max")
+self.damage =  self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_2", "bonus_damage")
+self.max =  self:GetCaster():GetTalentValue("modifier_juggernaut_bladedance_2", "max")
 
 if not IsServer() then return end
 self:SetStackCount(1)
@@ -740,13 +763,13 @@ end
 function modifier_custom_juggernaut_blade_dance_speed:DeclareFunctions()
 return
 {
-  MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
+  MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE
 }
 end
 
 
-function modifier_custom_juggernaut_blade_dance_speed:GetModifierAttackSpeedBonus_Constant() 
-return self:GetStackCount()*self.speed
+function modifier_custom_juggernaut_blade_dance_speed:GetModifierPreAttack_BonusDamage() 
+return self:GetStackCount()*self.damage
 end
 
 

@@ -26,11 +26,11 @@ end
 
 function modifier_generic_debuff_immune:GetModifierIncomingDamage_Percentage(params)
 if not IsServer() then return end
-if self ~= self:GetParent():FindAllModifiersByName(self:GetName())[1] then return end
+if self ~= self.parent:FindAllModifiersByName(self:GetName())[1] then return end
 if not params.attacker then return end
 if not params.inflictor then return end
 
-if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then 
+if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION and params.inflictor:GetName() ~= "abaddon_borrowed_time_custom_legendary" then 
 	return -100 
 end
 
@@ -72,17 +72,22 @@ end
 function modifier_generic_debuff_immune:OnCreated(table)
 if not IsServer() then return end
 
+self.parent = self:GetParent()
 self.RemoveForDuel = true
 
-if table.effect and table.effect == 1 then 
-    local iParticleID = ParticleManager:CreateParticle("particles/items_fx/black_king_bar_avatar.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-    ParticleManager:SetParticleControl(iParticleID, 0, self:GetParent():GetAbsOrigin())
-    self:AddParticle(iParticleID, true, false, -1, false, false)
+if table.effect then
+    local effect 
+    if table.effect == 1 then 
+       effect = "particles/items_fx/black_king_bar_avatar.vpcf"
+    elseif table.effect == 2 then
+        effect = "particles/items5_fx/minotaur_horn.vpcf"
+    end 
+    self.parent:GenericParticle(effect, self)
 end
 
 self.magic_damage = -60
 
-if table.magic_damage and table.magic_damage < self.magic_damage then 
+if (table.magic_damage and table.magic_damage < self.magic_damage) or table.magic_damage == 0 then 
     self.magic_damage = table.magic_damage
 end
 

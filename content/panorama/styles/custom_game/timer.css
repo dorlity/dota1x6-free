@@ -1,4 +1,4 @@
-/* Prettified by Source 2 Viewer 7.0.0.0 - https://valveresourceformat.github.io */
+/* Prettified by Source 2 Viewer 14.1.0.0 - https://valveresourceformat.github.io */
 
 @keyframes 'TimerAnimationClose'
 {
@@ -270,18 +270,6 @@
 	text-align: center;
 }
 
-.RewardText
-{
-	font-family: defaultFont;
-	color: #e7e7e7;
-	text-shadow: 1px 1px 2px 3 black;
-	z-index: 8;
-	margin-top: 10%;
-	align: left center;
-	font-size: 22px;
-	text-align: center;
-}
-
 .SkillIcons
 {
 	height: 100%;
@@ -498,46 +486,70 @@
 
 .FinalDuelBot
 {
-	width: 100%;
 	height: 100%;
-	margin-left: 0%;
 	visibility: visible;
 	z-index: 5;
 	flow-children: right;
+	align: center center;
 }
 
 .NormalDuelBot
 {
 	width: 100%;
 	height: 100%;
-	margin-left: 0%;
 	visibility: visible;
 	z-index: 5;
+	flow-children: left;
+}
+
+.Duel_HeroesLeft
+{
+	height: 43px;
+	flow-children: left;
+}
+
+.Duel_HeroesRight
+{
+	height: 43px;
 	flow-children: right;
 }
 
-.NormalDuelHero
+.DuelHero_icon_hidden
 {
-	width: 71.6px;
-	height: 43px;
+	opacity: 0;
+	visibility: collapse;
+}
+
+.DuelHero_icon
+{
+	width: 70px;
+	height: 40px;
 	background-size: 100%;
-	margin-left: 0%;
-	visibility: visible;
-	margin-left: 11%;
+	margin-left: 2.2%;
+	vertical-align: center;
 	border: 1.5px solid #ccc;
 	border-radius: 2px;
 }
 
-.NormalDuelHeroRight
+.HeroesContainer
 {
-	width: 71.6px;
-	height: 43px;
-	background-size: 100%;
-	margin-left: 0%;
-	visibility: visible;
-	margin-left: 2.2%;
-	border: 1.5px solid #ccc;
-	border-radius: 2px;
+	height: 100%;
+	width: 376px;
+	horizontal-align: center;
+}
+
+.HeroesContainerDinamic
+{
+	height: 100%;
+	align: center center;
+	flow-children: right;
+}
+
+.RewardContainer
+{
+	height: 100%;
+	width: 200px;
+	flow-children: left;
 }
 
 .RewardText
@@ -547,24 +559,24 @@
 	color: #e7e7e7;
 	text-shadow: 1px 1px 2px 3 black;
 	z-index: 8;
-	align: center top;
-	margin-top: 19%;
-	margin-left: 15%;
 	font-size: 20px;
-	text-align: center;
+	text-align: left;
+	vertical-align: center;
+	margin-right: 10px;
+	margin-bottom: 3px;
 }
 
 .RewardIconRazor
 {
 	width: 48px;
 	height: 35px;
-	margin-left: 1%;
 	background-size: 100%;
 	visibility: visible;
-	vertical-align: center;
-	margin-bottom: 9%;
 	border: 1.5px solid #ccc;
 	border-radius: 2px;
+	vertical-align: center;
+	margin-right: 18px;
+	margin-bottom: 3px;
 }
 
 .RewardIconGray
@@ -582,25 +594,21 @@
 
 .DuelScorePanel
 {
-	width: 7.5%;
-	height: 90%;
+	width: 44px;
+	height: 44px;
 	background-image: url("s2r://panorama/images/custom_game/duel_count_png.vtex");
 	background-size: 100%;
-	margin-left: 22%;
 	visibility: visible;
-	z-index: 5;
+}
+
+.DuelScorePanelLeft
+{
+	margin-right: 15px;
 }
 
 .DuelScorePanelRight
 {
-	width: 7.5%;
-	height: 90%;
-	background-image: url("s2r://panorama/images/custom_game/duel_count_png.vtex");
-	background-size: 100%;
-	visibility: visible;
-	margin-left: 2%;
-	z-index: 5;
-	flow-children: right;
+	margin-left: 15px;
 }
 
 .DuelScoreText
@@ -641,14 +649,14 @@
 
 .DuelVS
 {
-	width: 10%;
-	height: 95%;
+	width: 48.1px;
+	height: 40px;
 	background-image: url("s2r://panorama/images/custom_game/duel_vs_png.vtex");
-	background-size: 98% 98%;
+	background-size: 100% 100%;
 	background-repeat: no-repeat;
-	margin-bottom: 5%;
+	vertical-align: center;
+	margin-bottom: 8px;
 	visibility: visible;
-	margin-left: 1.3%;
 	z-index: 5;
 }
 

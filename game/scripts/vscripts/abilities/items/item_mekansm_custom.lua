@@ -2,27 +2,42 @@ LinkLuaModifier( "modifier_item_mekansm_custom", "abilities/items/item_mekansm_c
 
 item_mekansm_custom = class({})
 
+function item_mekansm_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/items2_fx/mekanism.vpcf", context )
+PrecacheResource( "particle","particles/items2_fx/mekanism_recipient.vpcf", context )
+end
 
 function item_mekansm_custom:GetIntrinsicModifierName()
 	return "modifier_item_mekansm_custom"
 end
 
 function item_mekansm_custom:OnSpellStart()
-	if not IsServer() then return end
-	local heal_amount = self:GetSpecialValueFor("heal_amount")*self:GetCaster():GetMaxHealth()/100
-	local heal_cooldown = self:GetSpecialValueFor("heal_cooldown")
-	self:GetCaster():EmitSound("DOTA_Item.Mekansm.Activate")
-	local particle_1 = ParticleManager:CreateParticle("particles/items2_fx/mekanism.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-	ParticleManager:ReleaseParticleIndex(particle_1)
 
-	self:GetCaster():Heal(heal_amount, self)
-	SendOverheadEventMessage(nil, OVERHEAD_ALERT_HEAL, self:GetCaster(), heal_amount, nil)
-	self:GetCaster():EmitSound("DOTA_Item.Mekansm.Target")
-	local particle_2 = ParticleManager:CreateParticle("particles/items2_fx/mekanism_recipient.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-	ParticleManager:SetParticleControl(particle_2, 0, self:GetCaster():GetAbsOrigin())
-	ParticleManager:SetParticleControl(particle_2, 1, self:GetCaster():GetAbsOrigin())
+local caster = self:GetCaster()
+local heal = self:GetSpecialValueFor("heal_amount")/100
+local radius = self:GetSpecialValueFor("radius")
+caster:EmitSound("DOTA_Item.Mekansm.Activate")
+
+local particle_1 = ParticleManager:CreateParticle("particles/items2_fx/mekanism.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster)
+ParticleManager:ReleaseParticleIndex(particle_1)
+
+local friends = FindUnitsInRadius(caster:GetTeamNumber(), caster:GetAbsOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_INVULNERABLE, FIND_CLOSEST, false)
+
+for _,friend in pairs(friends) do
+
+	local heal_amount = heal*friend:GetMaxHealth()
+
+	friend:GenericHeal(heal_amount, self)
+
+	friend:EmitSound("DOTA_Item.Mekansm.Target")
+	local particle_2 = ParticleManager:CreateParticle("particles/items2_fx/mekanism_recipient.vpcf", PATTACH_ABSORIGIN_FOLLOW, friend)
+	ParticleManager:SetParticleControl(particle_2, 0, friend:GetAbsOrigin())
+	ParticleManager:SetParticleControl(particle_2, 1, friend:GetAbsOrigin())
 	ParticleManager:ReleaseParticleIndex(particle_2)
-	
+end
+
+
 end
 
 modifier_item_mekansm_custom = class({})

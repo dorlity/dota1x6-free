@@ -59,7 +59,7 @@ function modifier_strike_debuff:OnCreated(table)
         local damage = self:GetAbility():GetSpecialValueFor("damage")
         local duration = self:GetAbility():GetSpecialValueFor("duration")
         self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_stunned", {duration = duration*(1 - self:GetParent():GetStatusResistance())})
-        ApplyDamage({ victim = self:GetParent(), attacker = self:GetAbility():GetCaster(), ability = self:GetAbility(), damage = damage, damage_type = DAMAGE_TYPE_MAGICAL})
+        DoDamage({ victim = self:GetParent(), attacker = self:GetAbility():GetCaster(), ability = self:GetAbility(), damage = damage, damage_type = DAMAGE_TYPE_MAGICAL})
 end
 
 modifier_ogre_stun_cd = class({})

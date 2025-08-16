@@ -1,4 +1,4 @@
-<!-- xml reconstructed by Source 2 Viewer 7.0.0.0 - https://valveresourceformat.github.io -->
+<!-- xml reconstructed by Source 2 Viewer 14.1.0.0 - https://valveresourceformat.github.io -->
 <root>
 	<styles>
 		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
@@ -13,9 +13,7 @@
 	<Panel hittest="false" class="CustomHudRoot">
 		<Panel hittest="false" id="TopBarScoreboard" class="TopBarScoreboard_hidden">
 			<Panel hittest="false" id="ScoreboardContainer">
-				<Panel hittest="false" id="LeftInjectXMLFile" />
 				<Panel hittest="false" id="MultiteamScoreboard" />
-				<Panel hittest="false" id="RightInjectXMLFile" />
 			</Panel>
 		</Panel>
 	</Panel>

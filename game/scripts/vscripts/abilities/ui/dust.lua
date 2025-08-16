@@ -13,6 +13,7 @@ end
 
 
 function custom_ability_dust:GetIntrinsicModifierName()
+if not self:GetCaster():IsRealHero() then return end
     return "modifier_item_custom_dust_charges"
 end
 
@@ -97,7 +98,7 @@ local targets = self.caster:FindTargets(self.radius, self.parent:GetAbsOrigin())
 
 for _, unit in pairs(targets) do
     if not self.targets[unit] then 
-        ApplyDamage({ victim = unit, attacker = self:GetCaster(), damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility(), }) 
+        DoDamage({ victim = unit, attacker = self:GetCaster(), damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility(), }) 
         self.targets[unit] = true
     end 
 
@@ -117,9 +118,7 @@ function modifier_item_custom_dust_charges:DestroyOnExpire() return false end
 function modifier_item_custom_dust_charges:IsPurgable() return false end
 
 function modifier_item_custom_dust_charges:OnCreated()
-    self:SetStackCount(0)
-    self.cooldown = 180
-    self.duration = self.cooldown
+self:SetStackCount(0)
 end
 
 

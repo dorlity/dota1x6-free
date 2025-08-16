@@ -1,395 +1,291 @@
-LinkLuaModifier( "modifier_waveupgrade", "modifiers/modifier_waveupgrade", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_waveupgrade_boss", "modifiers/modifier_waveupgrade_boss", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_unselect", "modifiers/modifier_unselect", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_creeps_trap", "modifiers/modifier_creeps_trap", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier( "modifier_creeps_movespeed", "modifiers/modifier_creeps_trap", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier( "modifier_necro_creeps", "abilities/items/item_roshan_necro", LUA_MODIFIER_MOTION_NONE)
 
+function dota1x6:shuffle(tbl)
+for i = #tbl, 2, -1 do
+  local j = RandomInt(1, i)
+  tbl[i], tbl[j] = tbl[j], tbl[i]
+end
 
-wave_types = {
-	{1,0,"npc_kobold","npc_kobold","npc_kobold","npc_kobold_t","npc_kobold_t","npc_kobold_m"},
-	{2,1,"npc_treant","npc_treant","npc_treant","npc_treant_b"},
-	{3,1,"npc_skelet","npc_skelet","npc_skelet","npc_skelet_a"},
-	{4,1,"npc_wolf","npc_wolf","npc_wolf_a","npc_wolf"},
-	{5,0,"npc_boar_a","npc_boar2","npc_boar"},
-	{6,0,"npc_megacreep_good","npc_megacreep_good","npc_megacreep_good","npc_megacreep_good","npc_megacreep_good","npc_megacreep_good_a"},
-	{7,0,"npc_megacreep_bad","npc_megacreep_bad","npc_megacreep_bad","npc_megacreep_bad","npc_megacreep_bad","npc_megacreep_bad_a"},
-	{8,0,"npc_golem_large"},
-	{9,1,"npc_troll"},
-	{10,1,"npc_rogue","npc_warrior","npc_archer"},
-	{11,0,"npc_tusk","npc_tusk","npc_tusk","npc_tusk_a","npc_tusk_a","npc_tusk_a"},
-	{12,0,"npc_ogre","npc_ogre_a","npc_ogre_a","npc_ogre_a","npc_ogre_b"},
- 	{13,1,"npc_werewolf","npc_werewolf","npc_werewolf_a","npc_werewolf_a"},
-	{14,1,"npc_cone","npc_cone","npc_cone","npc_cone"},
-	{15,1,"npc_satyr","npc_satyr_a","npc_satyr_b","npc_satyr_b"},
-	{16,1,"npc_spider","npc_spider_a","npc_spider_a"},	
-	{17,1,"npc_badsiege","npc_badsiege","npc_badsiege_a","npc_badsiege_a"},
-	{18,1,"npc_goodsiege","npc_goodsiege","npc_goodsiege_a","npc_goodsiege_a"},
-	{19,1,"npc_slardar","npc_slardar","npc_slardar","npc_slardar_a"},
-	{20,0,"npc_tombgolem","npc_tombgolem"},
-	{21,1,"npc_ancient_satyr","npc_ancient_satyr","npc_ancient_satyr_a","npc_ancient_satyr_a"},
-	{22,1,"npc_arc","npc_arc","npc_arc_a"},
-	{23,1,"npc_techies","npc_techies","npc_techies"},
-	{24,1,"npc_huskar","npc_huskar","npc_dazzle","npc_dazzle"},
-	{25,1,"npc_abbadon","npc_abbadon_a","npc_abbadon_a","npc_abbadon_a"},
-	{26,2,"npc_warlock"},
-	{27,2,"npc_lich"},
-	--{27,2,"npc_lina"},
-	{28,1,"npc_centaur","npc_centaur","npc_centaur","npc_centaur_a"},
-	{29,1,"npc_silencer","npc_silencer","npc_antimage","npc_antimage"},
-	{30,0,"npc_frostbitten","npc_frostbitten","npc_frostbitten_a","npc_frostbitten_a"}
-
-
-}
-
-
-
-info_skills = {
-	{1,0,""},
-	{0,2,"npc_treant_passive","npc_treant_seed"},
-	{0,2,"npc_skelet_aura","npc_skelet_tomb"},
-	{1,2,"npc_wolf_howl","npc_wolf_feral"},
-	{1,2,"npc_boar_spit", "npc_boar_slow"},
-	{1,1,"npc_megacreep_upgrade"},
-	{1,1,"npc_megacreep_debuf"},
-	{0,2,"golem_double", "npc_golem_passive"},
-	{1,2,"npc_troll_summon", "npc_troll_skelet_heal"},
-	{0,3,"npc_rogue_passive", "npc_warrior_passive", "npc_archer_silence"},
-	{1,2,"npc_tusk_passive","npc_tusk_ghost_passive"},
-	{0,2,"npc_ogre_root", "npc_ogre_stun"},
- 	{0,2,"npc_werewolf_bloodrage", "npc_werewolf_rupture"},
-	{0,1,"npc_cone_armor"},
-	{0,3,"npc_satyr_aura","npc_satyr_purge","npc_satyr_manaburn"},
-	{0,3,"npc_spider_toxin","npc_spider_passive","npc_spider_poison"},
-	{0,2,"npc_siege_passive","npc_siege_melting"},
-	{0,2,"npc_siege_passive","npc_siege_armor"},
-	{1,2,"npc_slardar_armor","npc_slardar_stun"},
-	{0,2,"npc_golem_decay","npc_zombie_attack"},
-	{0,2,"npc_satyr_stomp","npc_satyr_root"},
-	{0,2,"npc_arc_field","npc_arc_knockback"},
-	{0,2,"npc_techies_bomb","npc_techies_death"},
-	{1,2,"npc_huskar_lowhp","npc_dazzle_grave"},
-	{1,3,"npc_abbadon_ulti","npc_abbadon_silence","npc_abbadon_proc"},
-	{1,4,"warlock_boss_golem_fists_passive","warlock_boss_rain_of_chaos","warlock_boss_shadow_word","warlock_boss_upheaval"},
-	{1,4,"npc_lich_blast","npc_lich_ice","npc_lich_ulti","npc_lich_frostbite"},
-	--{1,3,"npc_lina_stun","npc_lina_ulti","npc_lina_fiery"},
-	{1,2,"npc_centaur_stun","npc_centaur_double"},
-	{0,3,"npc_silencer_lastword","npc_antimage_burn","npc_antimage_resist"},
-	{0,2,"npc_frostbitten_spam","npc_frostbitten_heal"}
-}
-
-
-necro_wave_info =
-{"npc_necro_melle","npc_necro_range"}
-
-
-
-my_game.current_wave = start_wave
-my_game.go_wave = start_wave
-my_game.go_boss_number = 0
-
-
+return tbl
+end
 
 
 ---
-function my_game:initiate_waves()
+function dota1x6:initiate_waves()
 local first = {}
 local second = {}
 local boss = {}
 local used_numbers = {}
-local r = 0
-local n = 0
-local b = 0
+local random_factor = 0
 
 
-for i = 1,#wave_types do
-	if wave_types[i][2] == 0 then
-		first[#first+1] = wave_types[i]
-	end
-	if wave_types[i][2] == 1 then
-		second[#second+1] = wave_types[i]
-	end
-	if wave_types[i][2] == 2 then
-		boss[#boss+1] = wave_types[i]
+for i = 2,#wave_types do
+	local data = wave_types[i]
+	if data then
+		local creeps_type = data.creeps_type
+		if creeps_type == 0 then
+			first[#first+1] = i
+		elseif creeps_type == 1 then
+			second[#second+1] = i
+		elseif creeps_type == 2 then
+			boss[#boss+1] = i
+		end
 	end
 end
 
 
+first = dota1x6:shuffle(first)
+second = dota1x6:shuffle(second)
+boss = dota1x6:shuffle(boss)
+
+first[1] = 1
 
 for i = 1,7 do
-	repeat r = RandomInt(1, #first)
-	until not self:check_used(used_numbers,r)
-
-	if i == 1 then 
-		r = 1
-	end
-
-	used_numbers[#used_numbers+1] = r
-	n = n + 1
-
-	waves[n] = first[r]
+	waves[#waves + 1] = first[i]
 end
-
-used_numbers = {}
 
 for i = 1,#second do
-	repeat r = RandomInt(1, #second)
-	until not self:check_used(used_numbers,r)
-	used_numbers[#used_numbers+1] = r
-	n = n + 1
-
-	waves[n] = second[r]
+	waves[#waves + 1] = second[i]
 end
 
-used_numbers = {}
+for i = 1,#waves do
+	local data = wave_types[waves[i]]
+	if data then
+		if data.creeps[1] == "npc_goodsiege" and i ~= 16 then
+			local buffer = waves[16]
+			waves[16] = waves[i]
+			waves[i] = buffer
+		end
+		if data.creeps[1] == "npc_badsiege" and i ~= 18 then
+			local buffer = waves[18]
+			waves[18] = waves[i]
+			waves[i] = buffer
+		end
+	end
+end
+
+
 
 for i = 1,2 do
-	repeat r = RandomInt(1, #boss)
-	until not self:check_used(used_numbers,r)
-	used_numbers[#used_numbers+1] = r
-	b = b + 1
-
-	boss_waves[b] = boss[r]
+	repeat random_factor = RandomInt(1, #boss)
+  until not self:check_used(used_numbers,random_factor)
+	used_numbers[#used_numbers + 1] = random_factor
+	boss_waves[#boss_waves + 1] = boss[random_factor]
 end
 
-for i = 1,#waves do
-	if waves[i][3] == "npc_goodsiege" then 
-		local changed_creep = waves[17]
-		waves[17] = waves[i]
-		waves[i] = changed_creep
-	end
-end
-
-for i = 1,#waves do
-	if waves[i][3] == "npc_badsiege" then 
-		local changed_creep = waves[19]
-		waves[19] = waves[i]
-		waves[i] = changed_creep
-	end
-end
-
-
-
-for i = 1,#waves do
-	--print(i,' ',waves[i][3])
-end
 
 
 if test_wave ~= 0 then 
-  for i = 1,n do  waves[i] = wave_types[test_wave] end
+  for i = 1,#waves do  
+  	waves[i] = test_wave
+  end
+  for i = 1,#boss_waves do  
+  	boss_waves[i] = test_wave 
+  end
+end
+
+if test then
+	for i = 1,#waves do
+		local data = wave_types[waves[i]]
+		if data and data.creeps then
+			print(i,  data.creeps[1])
+		end
+	end
+	for i = 1,#boss_waves do  
+		local data = wave_types[boss_waves[i]]
+		if data and data.creeps then
+			print(i,  data.creeps[1])
+		end
+	end
 end
 
 end
 
-function my_game:GetMkb( n , boss )
-if boss == true then 
-	return info_skills[boss_waves[n][1]][1]
-else 
-	return info_skills[waves[n][1]][1]
-end
+function dota1x6:GetMkb( index, is_boss )
 
+local array = waves
+if is_boss then
+	array = boss_waves
+end
+if not array[index] then return end
+
+local data = wave_types[array[index]]
+
+if not data or not data.mkb then return 0 end
+return data.mkb
 end	
 
 
 
-function my_game:GetSkills( n , boss )
-local skills = {}
-local j = 0
-local array = {}
-
-if boss == true then 
+function dota1x6:GetSkills( index, is_boss )
+local array = waves
+if is_boss then
 	array = boss_waves
-else 
-	array = waves
-end 
-
-if info_skills[array[n][1]][2] > 0 then 
-
-	for i = 1,info_skills[array[n][1]][2] do
-		j = j + 1
-		skills[j] = info_skills[array[n][1]][i+2]
+end
+local skills = {}
+if array[index] then
+	local data = wave_types[array[index]]
+	if data and data.skills then
+		skills = data.skills
 	end
-
-end 
+end
 
 return skills
-end	
-
-
-function my_game:GetWave( n , boss )
-if boss == true then 
-	return boss_waves[n][3]
-else 
-	return waves[n][3]
 end
 
+
+function dota1x6:GetWave( index, is_boss )
+local array = waves
+if is_boss then
+	array = boss_waves
+end
+local name = ""
+if array[index] then 
+	local data = wave_types[array[index]]
+	if data and data.creeps then
+		name = data.creeps[1]
+	end
+end
+return name 
 end	
 
 
 
-
-
-
-
-function my_game:SpawnNecro(team, caster, enemy_caster)
+function dota1x6:SpawnNecro(team)
 if not IsServer() then return end
 if not teleports[team] then return end 
 
 local number = tonumber(teleports[team]:GetName())
-
-local necro_wave = necro_wave_info
 local ally = {}
 
+print(#necro_wave_info)
 
-for i = 1,#necro_wave do 
+
+for i = 1,#necro_wave_info do 
+
+	print(necro_wave_info[i])
+
 	local spawner = Entities:FindByName( nil, "spawner_team" ..number ):GetAbsOrigin()+RandomVector(RandomInt(-1, 1) + 125)
-  local unit = my_game:CreateUnitCustom(necro_wave[i], spawner, true, nil, nil, DOTA_TEAM_CUSTOM_5, function(unit) 
+  local unit = dota1x6:CreateUnitCustom(necro_wave_info[i], spawner, true, nil, nil, DOTA_TEAM_CUSTOM_5, function(unit) 
+
+  	unit.host_team = team
+  	unit.is_necro_creep = true
 
   	unit:AddNewModifier(unit, nil, "modifier_waveupgrade", {wave = wave_number})
   	ally[#ally + 1] = unit 
 
-  	if i == #necro_wave then
+  	if i == #necro_wave_info then
   		for j = 1,#ally do 
   			ally[j].ally = ally
-  			ally[j]:AddNewModifier(caster, nil, "modifier_necro_creeps", {enemy_caster = enemy_caster})
+  			ally[j]:AddNewModifier(ally[j], nil, "modifier_patrol_reward_2_necro_creeps", {})
   		end 
   	end 
   end)
 end 
 
-
 end 
 
 
-function my_game:spawn_wave( team , wave_number, boss, necro_wave, lownet, trap_wave)
-
+function dota1x6:spawn_wave( team , wave_number, boss, lownet, more_gold, trap_wave)
 if not teleports[team] then return end 
-if not players[team] then return end 
 
-players[team].ActiveWave = {}
+local ids = dota1x6:FindPlayers(team)
+if not ids then return end
 
-local wave = {}
-
-if not boss then 
-
-	for i = 1,#waves[wave_number] do 
- 			wave[#wave + 1] = waves[wave_number][i]
- 	end
-
-else 
-
+local current_wave = {}
+local array = waves
+if boss then
 	After_Lich = true
-	for i = 1,#boss_waves[wave_number] do 
-		wave[#wave + 1] = boss_waves[wave_number][i]
+	array = boss_waves
+end
+if not array[wave_number] then return end
+
+local data = wave_types[array[wave_number]]
+
+if not data or not data.creeps then return end
+
+for i = 1,#data.creeps do
+	table.insert(current_wave, data.creeps[i])
+end
+
+local max = #current_wave
+local current_wave_number = dota1x6.current_wave
+local allys = {}
+local spawned_count = 0
+local has_mkb = 0
+if data.mkb then
+	has_mkb = data.mkb
+end
+
+if max == 0 then return end
+
+for _,id in pairs(ids) do
+	local player = players[id]
+	if player then
+		player.reward = nil
+		player.ActiveWave = {}
 	end
 end
 
-if necro_wave == true then 
-	--for i = 1,#necro_wave_info do 
-		--wave[#wave + 1] = necro_wave_info[i]
-	--end 
-end
-
-
-
-local givegold = players[team].givegold
-local reward = players[team].reward
-local max = #wave - 2
-local allys = {}
-local j = 0
-
-local multi = players[team].creeps_upgrade
-
-if reward == 4 then 
-	players[team].orange_count = players[team].orange_count + 1
-end
-
-
 local number = tonumber(teleports[team]:GetName())
 
-
-
-for i = 3,#wave do
+for _,creep_name in pairs(current_wave) do
 
 	local spawner = Entities:FindByName( nil, "spawner_team" ..number ):GetAbsOrigin()+RandomVector(RandomInt(-1, 1) + 125)
-	local unit = my_game:CreateUnitCustom(wave[i], spawner, true, nil, nil, DOTA_TEAM_CUSTOM_5, function(unit) 
+	local unit = dota1x6:CreateUnitCustom(creep_name, spawner, true, nil, nil, DOTA_TEAM_CUSTOM_5, function(unit) 
 
-		j = j + 1
-		allys[j] = unit
-		unit.mkb = info_skills[waves[wave_number][1]][1]
+		local index = spawned_count + 1
+		spawned_count = index
 
-		allys[j].owner = players[team]
+		unit.isboss = boss
+		unit.max = max
+		unit.wave_number = wave_number
+		unit.host_team = team
+		unit.number = index
+		unit.more_gold = more_gold
+		unit.lownet = lownet
+		unit.mkb = has_mkb
+		unit.current_wave_number = current_wave_number
+
+		if more_gold and more_gold == 1 then 
+			local gold = unit:GetMinimumGoldBounty()
+			unit:SetMinimumGoldBounty(gold*GoldComeback)
+			unit:SetMaximumGoldBounty(gold*GoldComeback)
+		end
+
+		allys[index] = unit
 
 		if not DontUpgradeCreeps then
-
 			if not boss or (unit:GetUnitName() == "npc_necro_melle" or unit:GetUnitName() == "npc_necro_range") then 
 				unit:AddNewModifier(unit, nil, "modifier_waveupgrade", {wave = wave_number})
 			else 
 				unit:AddNewModifier(unit, nil, "modifier_waveupgrade_boss", {wave = wave_number})
 			end
-
 		end
 
-		allys[j].isboss = boss
-		allys[j].max = max
-		allys[j].wave_number = wave_number
-		allys[j].host = players[team]
-		allys[j].number = j
-		allys[j].givegold = givegold
+		if index == max then
 
-		allys[j].reward = reward
-		allys[j].lownet = lownet
-		
-		if reward == 1 then
-			allys[j].drop = "item_gray_upgrade"
-			allys[j].effect = "particles/gray_drop.vpcf"
-			allys[j].sound = "powerup_04"
-		end
-
-		if reward == 4 then
-			allys[j].drop = "item_legendary_upgrade"
-			allys[j].effect = "particles/orange_drop.vpcf"
-			allys[j].sound = "powerup_02"
-		end
-
-		if reward == 3 then
-			allys[j].drop = "item_purple_upgrade"
-			allys[j].effect = "particles/purple_drop.vpcf"
-			allys[j].sound = "powerup_05"
-		end
-
-		if givegold then 
-			local gold = allys[j]:GetMinimumGoldBounty()
-			allys[j]:SetMinimumGoldBounty(gold*GoldComeback)
-			allys[j]:SetMaximumGoldBounty(gold*GoldComeback)
-		end
-
-			
-		if j == max then
-
-			for i = 1,j do
-				allys[i].ally = allys 		
+			for count = 1,index do
+				allys[count].ally = allys 		
 			end
 
-			if players[team] ~= nil then 
-
-				local next_wave = my_game:GetWave(wave_number, boss)
-				local skills = my_game:GetSkills(wave_number, boss)
-				local mkb = my_game:GetMkb(wave_number, boss)
-
-	  		local player = PlayerResource:GetPlayer(players[team]:GetPlayerOwnerID())
-	      if player ~= nil then
-	        CustomGameEventManager:Send_ServerToPlayer(player , 'timer_progress',  {units = max, units_max = max,  time = -1, max = -1, name = next_wave, skills = skills, mkb = mkb, reward = reward, gold = givegold, number = my_game.current_wave, hide = false})    
-	      end
+			for _,id in pairs(ids) do
+				local player = players[id]
+				if player then 
+					local next_wave = dota1x6:GetWave(wave_number, boss)
+					local skills = dota1x6:GetSkills(wave_number, boss)
+					local mkb = dota1x6:GetMkb(wave_number, boss)
+					local reward = dota1x6:GetReward(current_wave_number, player)
+		      CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(player:GetId()), 'timer_progress',  {units = max, units_max = max, time = -1, max = -1, name = next_wave, skills = skills, mkb = mkb, reward = reward, gold = more_gold, number = dota1x6.current_wave, hide = false})    
+		    end
 			end
 		end
 
 		if trap_wave == true then 
 	    unit:EmitSound("UI.Creeps_trap_active")
-			unit:AddNewModifier(players[team], nil, "modifier_creeps_trap", {duration = Trap_Duration})
+			unit:AddNewModifier(unit, nil, "modifier_creeps_trap", {duration = Trap_Duration, team = team})
 		end
-
 	end)
+end
 
 
 end
@@ -397,40 +293,8 @@ end
 
 
 
-end
 
-
-
-
-
-
-modifier_creeps_movespeed = class({})
-function modifier_creeps_movespeed:IsHidden() return true end 
-function modifier_creeps_movespeed:IsPurgable() return false end
-function modifier_creeps_movespeed:DeclareFunctions()
-return
-{
-	MODIFIER_EVENT_ON_TAKEDAMAGE,
-	MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE
-}
-end
-
-function modifier_creeps_movespeed:GetModifierMoveSpeed_Absolute()
-return 200
-end
-
-
-function modifier_creeps_movespeed:OnTakeDamage(params)
-if not IsServer() then return end
-if self:GetParent() ~= params.unit then return end
-
-self:Destroy()
-end
-
-
-
-
-function my_game:spawn_portal( team )
+function dota1x6:spawn_portal( team )
 
 local number = tonumber(teleports[team]:GetName())
 local point = Entities:FindByName( nil, "spawner_team" ..number ):GetAbsOrigin()
@@ -440,7 +304,7 @@ teleport_center:AddNewModifier(teleport_center, nil, "modifier_invulnerable", {}
 teleport_center:AddNewModifier(teleport_center, nil, "modifier_unselect", {})
 
 
-teleport_center:EmitSound("Hero_AbyssalUnderlord.DarkRift.Cast")
+teleport_center:EmitSound("UI.Creep_portal_loop")
 
 teleport_center.nWarningFX = ParticleManager:CreateParticle( "particles/portals/portal_ground_spawn_endpoint.vpcf", PATTACH_WORLDORIGIN, nil )
 ParticleManager:SetParticleControl( teleport_center.nWarningFX, 0, teleport_center:GetAbsOrigin() )
@@ -448,8 +312,8 @@ ParticleManager:SetParticleControl( teleport_center.nWarningFX, 0, teleport_cent
 
 Timers:CreateTimer(PortalDelay+0.3,function()
 	ParticleManager:DestroyParticle(teleport_center.nWarningFX, true)
-	teleport_center:StopSound("Hero_AbyssalUnderlord.DarkRift.Cast")
-	teleport_center:EmitSound("Hero_AbyssalUnderlord.DarkRift.Complete")
+	teleport_center:StopSound("UI.Creep_portal_loop")
+	teleport_center:EmitSound("UI.Creep_portal_end")
 	teleport_center:Destroy()
 end)
 

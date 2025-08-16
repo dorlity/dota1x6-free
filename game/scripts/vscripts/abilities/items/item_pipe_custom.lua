@@ -4,6 +4,12 @@ LinkLuaModifier("modifier_item_pipe_custom_active", "abilities/items/item_pipe_c
 
 item_pipe_custom = class({})
 
+function item_pipe_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/items2_fx/pipe_of_insight_launch.vpcf", context )
+PrecacheResource( "particle","particles/items2_fx/pipe_of_insight_v2.vpcf", context )
+end
+
 function item_pipe_custom:GetIntrinsicModifierName()
 	return "modifier_item_pipe_custom"
 end
@@ -23,7 +29,6 @@ function item_pipe_custom:OnSpellStart()
 
 		unit:RemoveModifierByName("modifier_item_eternal_shroud_custom_active")
 		unit:RemoveModifierByName("modifier_item_pipe_custom_active")
-		unit:RemoveModifierByName("modifier_item_hood_of_defiance_custom_active")
 		unit:AddNewModifier(self:GetCaster(), self, "modifier_item_pipe_custom_active", {duration = self:GetSpecialValueFor("barrier_duration")})
 	end
 end
@@ -33,7 +38,6 @@ modifier_item_pipe_custom = class({})
 function modifier_item_pipe_custom:IsHidden() return true end
 function modifier_item_pipe_custom:IsPurgable() return false end
 function modifier_item_pipe_custom:RemoveOnDeath() return false end
-function modifier_item_pipe_custom:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 
 function modifier_item_pipe_custom:DeclareFunctions()
 	return 
@@ -108,6 +112,7 @@ function modifier_item_pipe_custom_active:IsPurgable() return false end
 function modifier_item_pipe_custom_active:IsPurgeException() return false end
 
 function modifier_item_pipe_custom_active:OnCreated( params )
+self.parent = self:GetParent()
 self.max_shield = self:GetAbility():GetSpecialValueFor("barrier_block")
 
 if not IsServer() then return end
@@ -155,19 +160,15 @@ end
 
 
 if not IsServer() then return end
-
 if self:GetStackCount() == 0 then return end
 
+local damage = math.min(params.damage, self:GetStackCount())
+self.parent:AddShieldInfo({shield_mod = self, healing = damage, healing_type = "shield"})
 
-if self:GetStackCount() > params.damage then
-    self:SetStackCount(self:GetStackCount() - params.damage)
-    local i = params.damage
-    return -i
-else
-    
-    local i = self:GetStackCount()
-    self:Destroy()
-    return -i
+self:SetStackCount(self:GetStackCount() - damage)
+if self:GetStackCount() <= 0 then
+  self:Destroy()
 end
 
+return -damage
 end

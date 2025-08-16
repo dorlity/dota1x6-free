@@ -47,7 +47,7 @@ return
 	MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
 	MODIFIER_PROPERTY_STATS_AGILITY_BONUS,
 	MODIFIER_PROPERTY_STATS_INTELLECT_BONUS,
-	MODIFIER_EVENT_ON_ATTACK_LANDED,
+	MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
 }
 end
 
@@ -87,11 +87,11 @@ end
 
 
 
-function modifier_item_muerta_mercy_and_grace_custom_stats:OnAttackLanded(params)
+function modifier_item_muerta_mercy_and_grace_custom_stats:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.attacker then return end
 if self:GetParent():IsIllusion() then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end
+if not params.target:IsUnit() then return end
 
 local health = params.target:GetHealth()
 
@@ -116,7 +116,7 @@ if params.target:IsCreep() then
 end
 
 
-local apply = ApplyDamage({victim = params.target, attacker = self:GetCaster(), ability = self:GetAbility(), damage = damage, damage_type = DAMAGE_TYPE_MAGICAL})
+local apply = DoDamage({victim = params.target, attacker = self:GetCaster(), ability = self:GetAbility(), damage = damage, damage_type = DAMAGE_TYPE_MAGICAL})
 
 
 self:GetParent():Heal(apply, self:GetAbility())
@@ -139,33 +139,41 @@ function modifier_item_muerta_mercy_and_grace_custom_active:GetTexture() return 
 function modifier_item_muerta_mercy_and_grace_custom_active:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_ATTACK,
 	MODIFIER_PROPERTY_PROJECTILE_NAME,
-	MODIFIER_EVENT_ON_DEATH
 }
 end
 
+function modifier_item_muerta_mercy_and_grace_custom_active:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-function modifier_item_muerta_mercy_and_grace_custom_active:OnDeath(params)
+self.active_bonus = self.ability:GetSpecialValueFor("active_bonus")
+self.active_max = self.ability:GetSpecialValueFor("active_max")
+
+self.parent:AddDeathEvent(self, true)
+self.parent:AddAttackStartEvent_out(self, true)
+end
+
+function modifier_item_muerta_mercy_and_grace_custom_active:DeathEvent(params)
 if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end
+if not IsValid(self.ability) then return end
+if self.parent ~= params.attacker then return end
 if not params.unit:IsRealHero() then return end
 if params.unit:IsReincarnating() then return end
-if not self:GetAbility():GetSpecialValueFor("active_bonus") then return end
-if not self:GetAbility():GetSpecialValueFor("active_max") or self:GetAbility():GetSpecialValueFor("active_max") == 0 then return end
+if self.active_max == 0 then return end
 
-self:GetParent():EmitSound("Muerta.Quest_hero_kill")
+self.parent:EmitSound("Muerta.Quest_hero_kill")
 
-self:GetAbility():SetCurrentCharges(self:GetAbility():GetCurrentCharges() + 1)
+self.ability:SetCurrentCharges(self.ability:GetCurrentCharges() + 1)
 
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'muerta_quest_panel',  { max = 5, stack = self:GetAbility():GetCurrentCharges(), stage = 3})
+CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self.parent:GetPlayerOwnerID()), "muerta_quest_panel",  { max = 5, stack = self.ability:GetCurrentCharges(), stage = 3})
 
 
-local effect_cast = ParticleManager:CreateParticle( "particles/heroes/muerta/muerta_quest_kill.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-ParticleManager:SetParticleControlEnt(effect_cast, 2, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+local effect_cast = ParticleManager:CreateParticle( "particles/heroes/muerta/muerta_quest_kill.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent )
+ParticleManager:SetParticleControlEnt(effect_cast, 2, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true)
 ParticleManager:ReleaseParticleIndex( effect_cast )
 
-if self:GetAbility():GetCurrentCharges() >= self:GetAbility():GetSpecialValueFor("active_max") then 
+if self.ability:GetCurrentCharges() >= self.ability:GetSpecialValueFor("active_max") then 
 
 	local particle_peffect = ParticleManager:CreateParticle("particles/muerta/muerta_quest_item.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
 	ParticleManager:SetParticleControl(particle_peffect, 0, self:GetCaster():GetAbsOrigin())
@@ -175,31 +183,31 @@ if self:GetAbility():GetCurrentCharges() >= self:GetAbility():GetSpecialValueFor
 	self:GetCaster():EmitSound("Muerta.Quest_item2")
 
 
-	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'muerta_quest_alert',  {type = 6})
-	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'muerta_quest_panel',  {stage = 4})
+	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self.parent:GetPlayerOwnerID()), "muerta_quest_alert",  {type = 6})
+	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self.parent:GetPlayerOwnerID()), "muerta_quest_panel",  {stage = 4})
 
-	self:GetAbility():Destroy()
-    local full = CreateItem("item_muerta_mercy_and_grace_full_custom", self:GetParent(), self:GetParent())
-    self:GetParent():AddItem(full)
-
-end
+	self.ability:Destroy()
+  local full = CreateItem("item_muerta_mercy_and_grace_full_custom", self.parent, self.parent)
+  self.parent:AddItem(full)
 
 end
 
+end
 
 
-function modifier_item_muerta_mercy_and_grace_custom_active:OnAttack(params)
+
+function modifier_item_muerta_mercy_and_grace_custom_active:AttackStartEvent_out(params)
 if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end
+if self.parent ~= params.attacker then return end
 
 local projectile =
 {
   Target = params.target,
-  Source = self:GetParent(),
+  Source = self.parent,
   Ability = self:GetAbility(),
   EffectName = "particles/units/heroes/hero_muerta/muerta_ultimate_projectile_alternate.vpcf",
-  iMoveSpeed = self:GetParent():GetProjectileSpeed(),
-  vSourceLoc = self:GetParent():GetAbsOrigin(),
+  iMoveSpeed = self.parent:GetProjectileSpeed(),
+  vSourceLoc = self.parent:GetAbsOrigin(),
   bDodgeable = true,
   bProvidesVision = false,
 }

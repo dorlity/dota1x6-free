@@ -1,5 +1,3 @@
-LinkLuaModifier("modifier_patrol_start", "modifiers/modifier_patrol_start", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_patrol_gospawn", "modifiers/modifier_patrol_start", LUA_MODIFIER_MOTION_NONE)
 
 
 function Spawn( entityKeyValues )

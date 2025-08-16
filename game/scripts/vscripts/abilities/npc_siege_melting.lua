@@ -13,14 +13,26 @@ function modifier_siege_melting:IsPurgable() return false end
 
 
 
+function modifier_siege_melting:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+self.duration = self.ability:GetSpecialValueFor("duration")
 
-
-function modifier_siege_melting:DoScript(target)
-if not IsServer() then return end
-target:EmitSound("Item_Desolator.Target")
-target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_siege_armor", {duration = self:GetAbility():GetSpecialValueFor("duration")*(1 - target:GetStatusResistance())})
-
+self.parent:AddAttackEvent_out(self, true)
 end
+
+
+
+function modifier_siege_melting:AttackEvent_out(params)
+if not IsServer() then return end
+if params.attacker ~= self.parent then return end
+
+local target = params.target
+target:EmitSound("Item_Desolator.Target")
+target:AddNewModifier(self.parent, self.ability, "modifier_siege_armor", {duration = self.duration})
+end
+
+
 
 modifier_siege_armor = class ({})
 
@@ -52,5 +64,5 @@ function modifier_siege_armor:GetModifierPhysicalArmorBonus() return self.armor*
 
 function modifier_siege_armor:OnTooltip() return self.armor*self:GetStackCount() end
 
-function modifier_siege_armor:GetEffectName() return "particles/items3_fx/star_emblem.vpcf" end
+function modifier_siege_armor:GetEffectName() return "particles/general/generic_armor_reduction.vpcf" end
 function modifier_siege_armor:GetEffectAttachType() return PATTACH_OVERHEAD_FOLLOW end

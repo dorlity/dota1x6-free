@@ -14,25 +14,31 @@ hoodwink_bushwhack_custom = class({})
 
 
 
-
-
-
 hoodwink_bushwhack_custom.active_traps = {}
 hoodwink_bushwhack_custom.trap_index = 0
 
 
 function hoodwink_bushwhack_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-    
 PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_bushwhack_projectile.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_bushwhack_fail.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_bushwhack.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_bushwhack_target.vpcf", context )
 PrecacheResource( "particle", "particles/tree_fx/tree_simple_explosion.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_treant/treant_eyesintheforest.vpcf", context )
-PrecacheResource( "particle", "particles/hoodwink_bush_damage.vpcf", context )
-PrecacheResource( "particle", "particles/pa_vendetta.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_treant/treant_eyesintheforest.vpcf", context )
+PrecacheResource( "particle", "particles/items2_fx/refresher.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_bushwhack.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_marci/marci_rebound_bounce_impact_debuff.vpcf", context )
+PrecacheResource( "particle", "particles/status_fx/status_effect_snapfire_slow.vpcf", context )
+PrecacheResource( "particle", "particles/generic_gameplay/generic_silenced.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_venomancer/venomancer_poison_debuff.vpcf", context )
 PrecacheResource( "particle", "particles/hoodwink/poison_stack.vpcf", context )
+PrecacheResource( "particle", "particles/pa_vendetta.vpcf", context )
+PrecacheResource( "particle", "particles/status_fx/status_effect_poison_venomancer.vpcf", context )
+PrecacheResource( "particle", "particles/hoodwink/bush_damage.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf", context )
 
 end
 
@@ -46,25 +52,20 @@ end
 
 
 function hoodwink_bushwhack_custom:GetAOERadius()
-	return self:GetSpecialValueFor( "trap_radius" )
+return self:GetSpecialValueFor( "trap_radius" )
 end
 
 function hoodwink_bushwhack_custom:GetCastPoint()
-local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_hoodwink_bush_6") then 
+if self:GetCaster():HasTalent("modifier_hoodwink_bush_6") then 
 	return 0
 end
-
-return self:GetSpecialValueFor("AbilityCastPoint") + bonus
+return self:GetSpecialValueFor("AbilityCastPoint")
 end
-
 
 
 function hoodwink_bushwhack_custom:GetCooldown(iLevel)
-
 local upgrade_cooldown = 0
-if self:GetCaster():HasModifier("modifier_hoodwink_bush_1") then 
+if self:GetCaster():HasTalent("modifier_hoodwink_bush_1") then 
 	upgrade_cooldown = self:GetCaster():GetTalentValue("modifier_hoodwink_bush_1", "cd")
 end
 return self.BaseClass.GetCooldown(self, iLevel) + upgrade_cooldown
@@ -76,7 +77,7 @@ function hoodwink_bushwhack_custom:GetManaCost(level)
 
 local bonus = 0
 
-if self:GetCaster():HasModifier("modifier_hoodwink_bush_1") then
+if self:GetCaster():HasTalent("modifier_hoodwink_bush_1") then
 	bonus = self:GetCaster():GetTalentValue("modifier_hoodwink_bush_1", "mana")
 end
 
@@ -149,7 +150,7 @@ if not IsServer() then return end
 AddFOWViewer( self.caster:GetTeamNumber(), self.location, self.radius, self.duration, false )
 
 
-if self:GetCaster():HasModifier("modifier_hoodwink_bush_legendary") then
+if self:GetCaster():HasTalent("modifier_hoodwink_bush_legendary") then
 	local enemies = FindUnitsInRadius( self.caster:GetTeamNumber(), self.location, nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NO_INVIS, 0, false )
 	local trees = GridNav:GetAllTreesAroundPoint( self.location, self.radius, false )
 	if #trees>0 and #enemies<1 then
@@ -165,7 +166,7 @@ if self:GetCaster():HasModifier("modifier_hoodwink_bush_legendary") then
 			end
 		end
 
-		local tree = CreateUnitByName("npc_dota_treant_eyes", mytree:GetAbsOrigin(), false, self.caster, self.caster, self.caster:GetTeamNumber())
+		local tree = CreateUnitByName("npc_dota_treant_eyes_custom", mytree:GetAbsOrigin(), false, self.caster, self.caster, self.caster:GetTeamNumber())
 
 		self:GetAbility().trap_index = self:GetAbility().trap_index + 1
 
@@ -251,7 +252,6 @@ modifier_hoodwink_bushwhack_custom_debuff = class({})
 
 function modifier_hoodwink_bushwhack_custom_debuff:IsPurgeException() return true end
 function modifier_hoodwink_bushwhack_custom_debuff:IsStunDebuff() return true end
-
 function modifier_hoodwink_bushwhack_custom_debuff:OnCreated( kv )
 self.parent = self:GetParent()
 self.height = self:GetAbility():GetSpecialValueFor( "visual_height" )
@@ -273,15 +273,15 @@ self.damage_stack = self:GetCaster():GetTalentValue("modifier_hoodwink_bush_4", 
 
 self.init = false
 
-if self:GetCaster():HasModifier("modifier_hoodwink_bush_2") then 
+if self:GetCaster():HasTalent("modifier_hoodwink_bush_2") then 
 	self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_hoodwink_bushwhack_custom_damage_bonus", {duration = self:GetCaster():GetTalentValue("modifier_hoodwink_bush_2", "duration")})
 end 
 
-if self:GetCaster():HasModifier("modifier_hoodwink_bush_3") then 
+if self:GetCaster():HasTalent("modifier_hoodwink_bush_3") then 
 	self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_hoodwink_bushwhack_custom_heal", {duration = self:GetCaster():GetTalentValue("modifier_hoodwink_bush_3", "duration")})
 end 
 
-if self:GetCaster():HasModifier("modifier_hoodwink_bush_6") then 
+if self:GetCaster():HasTalent("modifier_hoodwink_bush_6") then 
 	self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_hoodwink_bushwhack_custom_vision", {duration = self:GetCaster():GetTalentValue("modifier_hoodwink_bush_6", "vision")})
 end
 
@@ -309,7 +309,7 @@ if not IsServer() then return end
 self:GetParent():RemoveHorizontalMotionController( self )
 
 
-if self:GetCaster():HasModifier("modifier_hoodwink_bush_5") then 
+if self:GetCaster():HasTalent("modifier_hoodwink_bush_5") then 
 	self:GetParent():EmitSound("Hoodwink.Bush_silence")
 	self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_hoodwink_bushwhack_custom_slow", {duration = (1 - self:GetParent():GetStatusResistance())*self:GetCaster():GetTalentValue("modifier_hoodwink_bush_5", "silence")})
 end
@@ -385,7 +385,7 @@ end
 if self.init == false then 
 	self.init = true
 
-	if self:GetCaster():HasModifier("modifier_hoodwink_bush_4") then
+	if self:GetCaster():HasTalent("modifier_hoodwink_bush_4") then
 		for i = 1,self.damage_stack do 
 			self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_hoodwink_bushwhack_custom_damage", {duration = self.damage_duration})
 		end
@@ -394,7 +394,7 @@ end
 
 
 if (self.allow_damage == 0) then return end
-ApplyDamage( { victim = self:GetParent(), attacker = self:GetCaster(), damage = self.damage, damage_type = self:GetAbility():GetAbilityDamageType(), ability = self:GetAbility(), damage_flags = DOTA_DAMAGE_FLAG_NONE, } )
+DoDamage( { victim = self:GetParent(), attacker = self:GetCaster(), damage = self.damage, damage_type = self:GetAbility():GetAbilityDamageType(), ability = self:GetAbility(), damage_flags = DOTA_DAMAGE_FLAG_NONE, } )
 end
 
 function modifier_hoodwink_bushwhack_custom_debuff:UpdateHorizontalMotion( me, dt )
@@ -671,7 +671,7 @@ function modifier_hoodwink_bushwhack_custom_damage:OnIntervalThink()
 if not IsServer() then return end 
 
 self.damageTable.damage = self:GetStackCount()*self.damage*self.interval
-ApplyDamage(self.damageTable)
+DoDamage(self.damageTable, "modifier_hoodwink_bush_4")
 
 
 if self:GetParent():HasModifier("modifier_hoodwink_sharpshooter_custom_legendary") and self.effect_cast then
@@ -815,22 +815,50 @@ function modifier_hoodwink_bushwhack_custom_tracker:OnCreated()
 
 self.parent = self:GetParent()
 self.damage_duration = self:GetCaster():GetTalentValue("modifier_hoodwink_bush_4", "duration", true)
+self.magic_resist = self.parent:GetTalentValue("modifier_hoodwink_bush_3", "resist")
+
+if not IsServer() then return end 
+self:SetHasCustomTransmitterData(true)
+self:UpdateTalent()
 end
 
 function modifier_hoodwink_bushwhack_custom_tracker:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_ATTACK_LANDED
+	MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
+	MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS,
 }
 end
 
-function modifier_hoodwink_bushwhack_custom_tracker:OnAttackLanded(params)
+function modifier_hoodwink_bushwhack_custom_tracker:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end 
-if not self.parent:HasModifier("modifier_hoodwink_bush_4") then return end 
+if not self.parent:HasTalent("modifier_hoodwink_bush_4") then return end 
 if self.parent ~= params.attacker then return end 
-if not params.target:IsHero() and not params.target:IsCreep() then return end 
+if not params.target:IsUnit() then return end 
 
 params.target:AddNewModifier(self.parent, self:GetAbility(), "modifier_hoodwink_bushwhack_custom_damage", {duration = self.damage_duration})
+end
+
+function modifier_hoodwink_bushwhack_custom_tracker:GetModifierMagicalResistanceBonus()
+return self.magic_resist
+end
+
+
+function modifier_hoodwink_bushwhack_custom_tracker:UpdateTalent(name)
+self.magic_resist = self.parent:GetTalentValue("modifier_hoodwink_bush_3", "resist")
+self:SendBuffRefreshToClients()
+end
+
+
+function modifier_hoodwink_bushwhack_custom_tracker:AddCustomTransmitterData() 
+return 
+{
+    magic_resist = self.magic_resist,
+} 
+end
+
+function modifier_hoodwink_bushwhack_custom_tracker:HandleCustomTransmitterData(data)
+self.magic_resist = data.magic_resist
 end
 
 
@@ -846,7 +874,7 @@ return "particles/status_fx/status_effect_poison_venomancer.vpcf"
 end
 
 function modifier_hoodwink_bushwhack_custom_damage_status:StatusEffectPriority()
-return 9999999
+return MODIFIER_PRIORITY_HIGH 
 end
 
 
@@ -885,32 +913,22 @@ end
 modifier_hoodwink_bushwhack_custom_heal = class({})
 function modifier_hoodwink_bushwhack_custom_heal:IsHidden() return false end
 function modifier_hoodwink_bushwhack_custom_heal:IsPurgable() return false end
-function modifier_hoodwink_bushwhack_custom_heal:GetTexture() return "buffs/hoodwink_heal" end
+function modifier_hoodwink_bushwhack_custom_heal:GetTexture() return "buffs/aim_agility" end
 function modifier_hoodwink_bushwhack_custom_heal:DeclareFunctions()
 return
 {
     MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE,
-    MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
 }
 end
 
 function modifier_hoodwink_bushwhack_custom_heal:GetModifierHealthRegenPercentage()
-    return self.heal
+return self.heal
 end
-
-
-function modifier_hoodwink_bushwhack_custom_heal:GetModifierMoveSpeedBonus_Percentage()
-    return self.move
-end
-
 
 function modifier_hoodwink_bushwhack_custom_heal:OnCreated()
-self.heal = self:GetCaster():GetTalentValue("modifier_hoodwink_bush_3", "heal")/self:GetCaster():GetTalentValue("modifier_hoodwink_bush_3", "duration")
-self.move = self:GetCaster():GetTalentValue("modifier_hoodwink_bush_3", "move")
+self.heal = self:GetCaster():GetTalentValue("modifier_hoodwink_bush_3", "heal")/self:GetRemainingTime()
 end 
 
 function modifier_hoodwink_bushwhack_custom_heal:GetEffectName() return "particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf" end
-
-function modifier_hoodwink_bushwhack_custom_heal:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 
 

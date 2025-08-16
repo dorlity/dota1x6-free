@@ -4,11 +4,6 @@ $.GetContextPanel().SetParent(parentHUDElements);
 
 
 
-
-
-
-
-
 function init()
 {
 
@@ -37,6 +32,9 @@ function init()
 	GameEvents.Subscribe_custom('ravager_used', ravager_used)
 
 	GameEvents.Subscribe_custom('lownet_bonus', lownet_bonus)
+
+	GameEvents.Subscribe_custom('arcana_alert', arcana_alert)
+	GameEvents.Subscribe_custom('duo_gift_alert', duo_gift_alert)
 
 
 	GameEvents.Subscribe_custom('DuelAlert', DuelAlert)
@@ -67,7 +65,6 @@ function init()
 
 	GameEvents.Subscribe_custom('destroy_tower', destroy_tower)
 
-
 	GameEvents.Subscribe_custom('random_talent_alert', random_talent_alert)
 
 	GameEvents.Subscribe_custom('muerta_quest_alert', muerta_quest_alert)
@@ -76,26 +73,22 @@ function init()
 	GameEvents.Subscribe_custom('legion_duel_status', legion_duel_status)
 	GameEvents.Subscribe_custom('legion_duel_status_end', legion_duel_status_end)
 
-	GameEvents.Subscribe_custom('patrol_refresher', patrol_refresher)
+	GameEvents.Subscribe_custom('mini_alert_event', mini_alert_event)
 
 	GameEvents.Subscribe_custom('grenade_alert', grenade_alert)
 
 	GameEvents.Subscribe_custom('TargetAttack', TargetAttack)
-	GameEvents.Subscribe_custom('TargetTimer', TargetTimer)
 	GameEvents.Subscribe_custom('TargetTimer_change', TargetTimer_change)
 	GameEvents.Subscribe_custom('TargetTimer_delete', TargetTimer_delete)
 	GameEvents.Subscribe_custom('PatrolAlert', PatrolAlert)
 
 	GameEvents.Subscribe_custom('generic_sound', generic_sound)
 
-	GameEvents.Subscribe_custom('ChangePickOrbs_js', ChangePickOrbs_js)
-
 	GameEvents.Subscribe_custom('init_double_rating', init_double_rating)
 	GameEvents.Subscribe_custom('double_rating_alert', double_rating_alert)
 	GameEvents.Subscribe_custom('hide_double_rating', hide_double_rating)
 
 	GameEvents.Subscribe_custom('DoubleRating_show_change_js', DoubleRating_show_change_js)
-
 
 	GameEvents.Subscribe_custom('end_loading', end_loading)
 
@@ -109,25 +102,60 @@ function init()
 
 	GameEvents.Subscribe_custom('RatingAlert', RatingAlert)
 
+	GameEvents.Subscribe_custom('SetTargetUnit', SetTargetUnit)
+
+	GameEvents.Subscribe_custom('EndScreenShow', ShowWindow)
+
 	Game.AddCommand( "show_key", (k,c) => {
     	GameEvents.SendCustomGameEventToServer_custom("request_key", {fuck_cheaters : c}) }, "", 0 )
 
 
-
-	var main = $.GetContextPanel().FindChildTraverse("PickOrbs")
-
-
-	var text = $.Localize("#PickOrbs_info")
-
-	main.SetPanelEvent('onmouseover', function() {
-    $.DispatchEvent('DOTAShowTextTooltip', main, text) });
-    
-	main.SetPanelEvent('onmouseout', function() {
-    $.DispatchEvent('DOTAHideTextTooltip', main); });
-
+	let start_quest_panel = $.CreatePanel("Panel", $.GetContextPanel(), "start_quest_panel")
+	start_quest_panel.BLoadLayout( "file://{resources}/layout/custom_game/start_quest/start_quest.xml", false, false );
 
 }
 
+function IsSpectator() {
+	const localPlayer = Players.GetLocalPlayer()
+	if (Players.IsSpectator(localPlayer))
+		return true
+	const localTeam = Players.GetTeam(localPlayer)
+	return localTeam !== 2 &&
+		localTeam !== 3 &&
+		localTeam !== 6 &&
+		localTeam !== 7 &&
+		localTeam !== 8 &&
+		localTeam !== 9
+}
+
+
+//$.Schedule( 2, function(){ 
+	//ShowWindow({"exp":0,"total_games":140,"kills":0,"expire":0,"place":1,"rating_before":0,"rating_change":0,"runes":0,"calibration_games":0,"valid_time":1,"level":1,"towers":0,"randomed":1,"points": 500,"subscribed":1,"achivment_table":{"1": {"amount":3000, "id":2, "completed":1}, "2": {"amount":3000, "id":1, "completed":1}}, "quest_table":{"shards":15,"icon":"Hook","exp":80,"completed":1,"name":"Pudge.Quest_5"},"n":625258387})
+//})
+
+function ShowWindow(kv)
+{
+	let parent = $.GetContextPanel().FindChildTraverse("EndPanel_alert")
+	if (!parent) return
+
+  let end_panel = $.CreatePanel("Panel", parent, "end_panel")
+  end_panel.BLoadLayout( "file://{resources}/layout/custom_game/end_screen_points/end_screen_points.xml", false, false );
+
+  Game.ShowEndWindow(kv, false)
+}
+
+
+
+function SetTargetUnit(kv)
+{
+	let set_group = kv.set_group
+	let flag = false
+
+	if (set_group && set_group == 1)
+		flag = true
+
+	GameUI.SelectUnit(kv.entindex, flag)
+}
 
 
 function DuelAlert(kv)
@@ -135,7 +163,6 @@ function DuelAlert(kv)
 	Game.EmitSound("UI.Duel_Alert")
 
 	var Main = $.GetContextPanel().FindChildTraverse("DuelAlert")
-
 
 	let event = $.CreatePanel("Panel",Main,"event")
 	event.AddClass("DuelAlert_event")
@@ -152,35 +179,46 @@ function DuelAlert(kv)
 	let main_content = $.CreatePanel("Panel", bot, "")
 	main_content.AddClass("DuelAlert_content_all")
 
-	main_content.style.width = String(Object.keys(kv.array).length * 30) + "%"
-
   for (var i = 1; i <= Object.keys(kv.array).length; i++) 
   {
 
+  	let team_length = Object.keys(kv.array[i][1]).length
+
+		let start_filler = $.CreatePanel("Panel", main_content, "")
+		start_filler.AddClass("DuelAlert_content_filler")
 
 		let content = $.CreatePanel("Panel", main_content, "")
 		content.AddClass("DuelAlert_content")
 
-		let icon1 = $.CreatePanel("Panel", content, "")
-		icon1.AddClass("DuelAlert_content_icon_1")  
+  	for (var j = 1; j <= team_length; j++)
+  	{
+			let icon = $.CreatePanel("Panel", content, "")
+			icon.AddClass("DuelAlert_content_icon")  
+			icon.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + kv.array[i][1][j].hero + '.png" );'
+			icon.style.backgroundSize = "contain"
+  	}
 
 		let iconVS = $.CreatePanel("Panel", content, "")
 		iconVS.AddClass("DuelAlert_content_icon_vs")
 
+  	team_length = Object.keys(kv.array[i][2]).length
 
-		let icon2 = $.CreatePanel("Panel", content, "")
-		icon2.AddClass("DuelAlert_content_icon_2")
+  	for (var j = 1; j <= team_length; j++)
+  	{
+
+			let icon = $.CreatePanel("Panel", content, "")
+			icon.AddClass("DuelAlert_content_icon")  
+			icon.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + kv.array[i][2][j].hero + '.png" );'
+			icon.style.backgroundSize = "contain"
+  	}
 
 
-		icon1.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + kv.array[i][1] + '.png" );'
-		icon1.style.backgroundSize = "contain"
-
-		icon2.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + kv.array[i][2] + '.png" );'
-		icon2.style.backgroundSize = "contain"
+		let filler = $.CreatePanel("Panel", main_content, "")
+		filler.AddClass("DuelAlert_content_filler")
 
 		if (i < Object.keys(kv.array).length)
 		{
-			content.AddClass("DuelAlert_content_not_last")
+			filler.AddClass("DuelAlert_content_not_last")
 		}
 
 	}
@@ -204,7 +242,7 @@ function get_cursor_position(kv)
 	const worldPosition = GameUI.GetScreenWorldPosition(cursor);
 
 
-	GameEvents.SendCustomGameEventToServer_custom("send_cursor_position", {x : worldPosition[0], y : worldPosition[1], z: worldPosition[2]})
+	GameEvents.SendCustomGameEventToServer_custom("send_cursor_position", {x : worldPosition[0], y : worldPosition[1], z: worldPosition[2], ability : kv.ability})
 }
 
 
@@ -239,38 +277,24 @@ function WaitingPlayers_end(kv)
 
 }
 
-
-
 function PreGameStart(kv)
 {
-
 	let dota_timer_bg = $.GetContextPanel().GetParent().FindChildTraverse("topbar")
-
 	if (dota_timer_bg)
 	{
 		dota_timer_bg.style.opacity = "0"
 	}
-
-
 	let custom_timer_bg = $.GetContextPanel().FindChildTraverse("PreGameTimerBg")
-
-
 	if (custom_timer_bg)
 	{
 		custom_timer_bg.RemoveClass("PreGameTimer_hidden")
 	}
-
 	let custom_timer = $.GetContextPanel().FindChildTraverse("PreGameTimer")
-
 	if (custom_timer)
 	{
 		custom_timer.RemoveClass("PreGameTimer_hidden")
 	}
-
-
-
 	let custom_timer_text = $.GetContextPanel().FindChildTraverse("PreGameTimer_text")
-
 	if (custom_timer_text)
 	{
 		let n = kv.time 
@@ -281,13 +305,57 @@ function PreGameStart(kv)
 		{
 			n = String(n)
 		}
-
 		let text = "0:" + n
-
 		custom_timer_text.text = text
 	}
 
+  
+  let Hud = GetDotaHud()
+  
+  let margin = 190
+  if (Hud.BHasClass("AspectRatio16x10"))
+  {
+      margin = 150
+  }
+  if (Hud.BHasClass("AspectRatio21x9"))
+  {
+      margin = 200
+  }
+  if (Hud.BHasClass("AspectRatio4x3"))
+  {
+      margin = 200
+  }
+  
+  if (Game.GetGameMode() <= 1)
+  	return
 
+  // custom_timer_bg.style.marginLeft = margin + "px"
+  // custom_timer_bg.style.horizontalAlign = "left"
+
+  // custom_timer.style.marginLeft = (margin+5) + "px"
+  // custom_timer.style.horizontalAlign = "left"
+}
+
+function GetDotaHud()
+{
+    let hPanel = $.GetContextPanel();
+
+    while ( hPanel && hPanel.id !== 'Hud')
+    {
+        hPanel = hPanel.GetParent();
+    }
+
+    if (!hPanel)
+    {
+        throw new Error('Could not find Hud root from panel with id: ' + $.GetContextPanel().id);
+    }
+
+    return hPanel;
+}
+
+function FindDotaHudElement(sId)
+{
+    return GetDotaHud().FindChildTraverse(sId);
 }
 
 
@@ -479,17 +547,17 @@ function double_rating_alert(kv)
 	text.text = $.Localize("#DoubleRating_used")
 
 	let portrait = $.CreatePanel("Panel",event,"DoubleRating_portrait")
-	portrait.AddClass("portrait")
+	portrait.AddClass("DoubleRating_portrait")
 	portrait.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + kv.unit + '.png" );'
 	portrait.style.backgroundSize = "contain"
 
 
-	$.Schedule( 5.55, function(){ 
-		  event.RemoveClass("DoubleRating_event");
-           event.AddClass("DoubleRating_event_close");
-           table_rating[i] = 0
+	$.Schedule( 6.55, function(){ 
+	  event.RemoveClass("DoubleRating_event");
+    event.AddClass("DoubleRating_event_close");
+    table_rating[i] = 0
 	 })
-	event.DeleteAsync( 5.8 );
+	event.DeleteAsync( 6.8 );
 
 }
 
@@ -789,7 +857,7 @@ function badmap(kv)
 
 	$.Schedule( 10.55, function(){ 
 		  event.RemoveClass("BadMap");
-           event.AddClass("BadMap_hidden");
+      event.AddClass("BadMap_hidden");
 	 })
 	event.DeleteAsync( 11 );
 }
@@ -839,20 +907,107 @@ function badmap_ban(kv)
 		text3.text = $.Localize("#badmap_map_mmr") + String(kv.min) + "-" + String(kv.max)
 
 	}
-
-
 	GameEvents.SendCustomGameEventToServer_custom("GiveGlobalVision",{})
-
-
-
-	$.Schedule( 90.55, function(){ 
+	$.Schedule( 9.55, function(){ 
 		  event.RemoveClass("BadMap");
-           event.AddClass("BadMap_hidden");
+      event.AddClass("BadMap_hidden");
 	 })
-	event.DeleteAsync( 91 );
+	event.DeleteAsync( 10 );
 }
 
 
+
+function duo_gift_alert(kv)
+{
+	let event = $.GetContextPanel().FindChildTraverse("duo_alert")
+	let button = event.FindChildTraverse("duo_alert_button")
+	let text_top1 = event.FindChildTraverse("duo_alert_top_text")
+	let text_top2 = event.FindChildTraverse("duo_alert_top_text2")
+	let icon = event.FindChildTraverse("duo_alert_icon")
+
+	event.RemoveClass("duo_alert_hidden")
+	event.RemoveClass("duo_alert_close");
+	event.AddClass("duo_alert_open")
+
+	text_top1.text = $.Localize("#duo_alert_top")
+	text_top2.text = $.Localize("#duo_alert_top2")
+
+	$.Schedule( 8, function()
+	{ 
+		event.RemoveClass("duo_alert_open");
+	  event.AddClass("duo_alert_close");
+		$.Schedule( 0.4, function()
+		{
+			event.AddClass("duo_alert_hidden")
+		})
+	})
+}
+
+
+function arcana_alert(kv)
+{
+
+	let event = $.GetContextPanel().FindChildTraverse("arcana_alert")
+	let button = event.FindChildTraverse("arcana_alert_button")
+	let text_top1 = event.FindChildTraverse("arcana_alert_top_text")
+	let text_top2 = event.FindChildTraverse("arcana_alert_top_text2")
+	let button_text = event.FindChildTraverse("arcana_alert_button_text")
+	let icon = event.FindChildTraverse("arcana_alert_icon")
+	let type = kv.type
+
+	event.RemoveClass("arcana_alert_hidden")
+	event.RemoveClass("arcana_alert_close");
+	event.AddClass("arcana_alert_open")
+
+
+	if (type == 0)
+	{
+		text_top1.text = $.Localize("#arcana_alert_top")
+		text_top2.text = $.Localize("#arcana_alert_top2")
+		button_text.text = $.Localize("#pass_header_top_button")
+
+	  button.SetPanelEvent("onmouseactivate", function() { 
+	    Game.EmitSound("UI.Click")
+	    GameEvents.SendCustomGameEventToServer_custom( "browser_subscribe", {item_name: "sub"})
+			arcana_alert_end()
+	  })
+	}
+
+	if (type == 1)
+	{
+		Game.EmitSound("UI.Gift_alert")
+
+		text_top1.text = $.Localize("#arcana_alert_active_top")
+		text_top2.text = $.Localize("#arcana_alert_active_top2")
+		button_text.text = $.Localize("#arcana_alert_active_button")
+
+    button.SetPanelEvent("onmouseactivate", function() 
+    { 
+	    GameUI.CustomUIConfig().OpenShop()
+			arcana_alert_end()
+      if (GameUI.CustomUIConfig().OpenChestWindow)
+      {
+        GameUI.CustomUIConfig().OpenChestWindow()
+      }
+    })
+	}
+	$.Schedule( 9.55, function()
+	{ 
+		arcana_alert_end()
+	})
+}
+
+
+function arcana_alert_end()
+{
+	let event = $.GetContextPanel().FindChildTraverse("arcana_alert")
+	event.RemoveClass("arcana_alert_open");
+  event.AddClass("arcana_alert_close");
+	$.Schedule( 0.4, function()
+	{
+		event.AddClass("arcana_alert_hidden")
+	})
+}
 
 
 function unranked_alert(kv)
@@ -996,7 +1151,7 @@ function init_chat(kv)
 
 function print_debug(kv)
 {
-	$.Msg(kv.text)
+	$.Msg(kv)
 }
 
 Hack()
@@ -1177,7 +1332,7 @@ function notvalid()
 function dontleave(kv)
 {
 	var main = $.CreatePanel("Panel",$.GetContextPanel(),"NotValid")
-	
+
 	main.AddClass("NotValid")
 
 	var panel = $.CreatePanel("Label",main,"Alert_text")
@@ -1186,7 +1341,7 @@ function dontleave(kv)
 
 	if (kv.lp == 1)
 	{
-		panel.text = $.Localize("#active_lp")
+		panel.text = $.Localize("#active_lp") + Game.GetWinPlace() + $.Localize("#active_lp2")
 	}else 
 	{
 		panel.text = $.Localize("#dontleave_match")
@@ -1210,79 +1365,85 @@ function hero_lost(kv)
 {
 	var main = $.GetContextPanel().FindChildTraverse("Alerts")
 	
+	let length1 = Object.keys(kv.hero).length
+	let length2 = Object.keys(kv.hero2).length
+	let ban = kv.ban
+	let abbandon = kv.abbandon
+
 	var alert = $.CreatePanel("Panel",main,"Alert")
 	alert.AddClass("Alert_visible")
 	
 	var content = $.CreatePanel("Panel",alert,"content")
 	content.AddClass("Alert_content")
 
-	var alert_icon1 = $.CreatePanel("Panel",content,"alert_icon1")
-	alert_icon1.AddClass("Alert_icon")
 
-	var alert_text_label = $.CreatePanel("Panel",content,"alert_text_label")
-	alert_text_label.AddClass("Alert_text_label")
+	for (var i = 1; i <= length1; i++) 
+	{
+		var alert_icon1 = $.CreatePanel("Panel",content,"alert_icon1")
+		alert_icon1.AddClass("Alert_icon")
+		if (i == length1)
+		{
+			alert_icon1.AddClass("Alert_icon_left")
+		}
+		alert_icon1.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + kv.hero[i] + '.png" );'
+		alert_icon1.style.backgroundSize = '100%'
+		alert_icon1.style.backgroundRepeat = 'no-repeat'
+	}
 
-	var alert_icon2 = $.CreatePanel("Panel",content,"alert_icon2")
-	alert_icon2.AddClass("Alert_icon")
-
-
-
-	var hero_icon1 = $.CreatePanel("Panel",alert_icon1,"hero_icon")
-	hero_icon1.AddClass("hero_icon_left")
-	var hero = kv.hero
-
-    hero_icon1.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + hero + '.png" );'
-    hero_icon1.style.backgroundSize = '100%'
-    hero_icon1.style.backgroundRepeat = 'no-repeat'
-
-
-	var hero_icon2 = $.CreatePanel("Panel",alert_icon2,"hero_icon")
-	hero_icon2.AddClass("hero_icon_left")
-	
-
-
-
-	var panel = $.CreatePanel("Label",alert_text_label,"Alert_text")
+	var panel = $.CreatePanel("Label",content,"Alert_text")
 	panel.AddClass("Alert_text_with_hero")
 	panel.html = true
 
+	if (length2 > 0)
+	{
+		if (length1 > 1)
+		{
+			panel.text = $.Localize("#player_lost_2")
+		}else
+		{
+			panel.text = $.Localize("#player_lost")
+		}
 
-	panel.text = $.Localize("#player_lost_creeps")
+		for (var i = 1; i <= length2; i++) 
+		{
 
-	if (kv.ban == 1 )
+			var alert_icon2 = $.CreatePanel("Panel",content,"alert_icon1")
+			alert_icon2.AddClass("Alert_icon")
+			if (i == 1)
+			{
+				alert_icon2.AddClass("Alert_icon_right")
+			}
+			alert_icon2.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + kv.hero2[i] + '.png" );'
+			alert_icon2.style.backgroundSize = '100%'
+			alert_icon2.style.backgroundRepeat = 'no-repeat'
+		}
+	}else
+	{
+		if (length1 > 1)
+		{
+			panel.text = $.Localize("#player_lost_creeps_2")
+		}else
+		{
+			panel.text = $.Localize("#player_lost_creeps")
+		}
+	}
+
+
+	if (ban == 1 )
 	{
 		panel.text = $.Localize("#player_banned")
 	}
-
-	if (kv.abbandon == 1)
+	if (abbandon == 1)
 	{
 		panel.text = $.Localize("#player_abandon")
 	}
-
-	if (kv.hero2 != '')
-	{
-
-    	hero_icon2.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + kv.hero2 + '.png" );'
-    	hero_icon2.style.backgroundSize = '100%'
-    	hero_icon2.style.backgroundRepeat = 'no-repeat'
-		panel.text = $.Localize("#player_lost")
-	}
-	else
-	{
-		alert_icon2.style.visibility = "collapse";
-	}
-
 
 	$.Schedule(6, function ()
 	{
 		alert.RemoveClass("Alert_visible")
 		alert.AddClass("Alert")
-		$.Schedule(0.4, function ()
-		{
-			alert.DeleteAsync(0)
-		})
+		alert.DeleteAsync(0.4)
 	})
-
 }
 
 
@@ -1536,7 +1697,6 @@ function glyph_used(kv)
 	let n = Main.GetChildCount()
 	if ( n >= 5 ) { return }
 
-
 	for (var i = 1; i <= 6; i++) {
 		if (table[i] == 0 ) 
 		{
@@ -1545,34 +1705,40 @@ function glyph_used(kv)
 		}
 	}
 
-
-
 	let margin = String((i - 1)*16.6666)
 
 	let event = $.CreatePanel("Panel",Main,"event")
-	event.AddClass("event")
+	event.AddClass("glyph_event")
 	event.style.marginTop =  margin + '%'
 
-	let portrait = $.CreatePanel("Panel",event,"portrait")
-	portrait.AddClass("portrait")
-	portrait.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + kv.player + '.png" );'
-	portrait.style.backgroundSize = "contain"
+	let length =  Object.keys(kv.heroes).length
 
-
+	for (var i = 1; i <= length; i++) 
+	{
+		let portrait = $.CreatePanel("Panel",event,"portrait")
+		portrait.AddClass("glyph_portrait")
+		portrait.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + kv.heroes[i] + '.png" );'
+		portrait.style.backgroundSize = "contain"
+	}
 
 	Game.EmitSound("Glyph.Used")
 
 	let text = $.CreatePanel("Label",event,"text_skill")
 	text.html = true
-	text.AddClass("text_skill")
-	text.text = $.Localize("#glyph_used")
+	text.AddClass("glyph_text_skill")
 
-
+	if (length > 1)
+	{	
+		text.text = $.Localize("#glyph_used_2")
+	}else
+	{
+		text.text = $.Localize("#glyph_used")
+	}
 
 	$.Schedule( 7.55, function(){ 
-		  event.RemoveClass("event");
-           event.AddClass("event_close");
-           table[i] = 0
+  	event.RemoveClass("glyph_event");
+    event.AddClass("glyph_event_close");
+    table[i] = 0
 	 })
 	event.DeleteAsync( 8 );
 }
@@ -1645,30 +1811,9 @@ function ravager_used(kv)
 			event.AddClass("Ravager_hide")
 		 })
 		event.DeleteAsync(9)
-
     }
 
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1685,7 +1830,9 @@ function pause_think(kv)
 	{
 
 		pause = $.CreatePanel("Panel",Main,"pause"+kv.id)
-		pause.AddClass("event")
+		pause.AddClass("pause_event")
+		pause.AddClass("pause_event_normal")
+		pause.AddClass("pause_event_open")
 
 		let portrait = $.CreatePanel("Panel",pause,"portrait")
 		portrait.AddClass("portrait")
@@ -1697,12 +1844,27 @@ function pause_think(kv)
 		text = $.CreatePanel("Label",pause,"text_pause"+kv.id)
 		text.html = true
 		text.AddClass("text_skill")
-
 	}
 
+	let ending = kv.ending
+	if (ending == 1)
+	{
+		if (pause.BHasClass("pause_event_normal"))
+		{
+			pause.RemoveClass("pause_event_normal")
+			pause.AddClass("pause_event_ending")
+		}
+	}else
+	{
+
+		if (pause.BHasClass("pause_event_ending"))
+		{
+			pause.RemoveClass("pause_event_ending")
+			pause.AddClass("pause_event_normal")
+		}
+	}
 
 	text.text = $.Localize("#hero_paused") + String(kv.time)
-
 }
 
 
@@ -1710,16 +1872,12 @@ function pause_end(kv)
 {
 	var Main = $.GetContextPanel().FindChildTraverse("Pauses")
 	let pause = $.GetContextPanel().FindChildTraverse("pause" + kv.id)
-
 	if (pause)
 	{
-		pause.RemoveClass("event");
-   	 	pause.AddClass("event_close")
+		pause.RemoveClass("pause_event_open");
+		pause.AddClass("pause_event_close")
 		pause.DeleteAsync( 0.4 );	
-
 	}
-
-
 }
 
 function report_alert(kv)
@@ -1740,8 +1898,6 @@ function report_alert(kv)
 
 	let report_label1 =  $.CreatePanel("Panel",reports_label,"report_label1")
 	report_label1.AddClass("report_label1")
-
-
 
 
 	let report_label2 =  $.CreatePanel("Panel",reports_label,"report_label2")
@@ -1783,9 +1939,9 @@ function report_alert(kv)
 
 
 	$.Schedule( 9.55, function(){ 
-		  report.RemoveClass("report_alert");
-           report.AddClass("report_alert_close");
-	 })
+		report.RemoveClass("report_alert");
+		report.AddClass("report_alert_close");
+	})
 	report.DeleteAsync( 10 );
 }
 
@@ -1824,14 +1980,10 @@ function banned(kv)
 	text2.text = $.Localize("#ban_repotrs1") + String(kv.max) + $.Localize("#ban_repotrs2") + String(kv.reports) 
 
 
-
-
-
-
 	$.Schedule( 19.55, function(){ 
 		Main.RemoveClass("Ban_open")
 		Main.AddClass("Ban_close")
-	 })
+	})
 	Main.DeleteAsync( 20 );
 }
 
@@ -1880,8 +2032,8 @@ function BackdoorAlert(kv)
 
 	$.Schedule( 7.55, function(){ 
 		event.RemoveClass("BackdoorAlert_event");
-        event.AddClass("BackdoorAlert_event_close");
-	 })
+		event.AddClass("BackdoorAlert_event_close");
+	})
 	event.DeleteAsync( 8 );
 }
 
@@ -1889,75 +2041,59 @@ function BackdoorAlert(kv)
 
 
 
-
-
-
-
-
+let necro_table = [0, 0]
 
 
 function NecroAttack(kv)
 {
 
-
 	var Main = $.GetContextPanel().FindChildTraverse("NecroAlert")
 
+	let n = Main.GetChildCount()
+	if ( n >= 2 ) { return }
 
+	for (var i = 1; i <= 2; i++) {
+		if (table[i] == 0 ) 
+		{
+			table[i] = 1
+			break 
+		}
+	}
+
+	let margin = String((i - 1)*50)
 
 	let event = $.CreatePanel("Panel",Main,"event")
 	event.AddClass("necro_event")
+	event.style.marginTop =  margin + '%'
 
-	
 	let event_text_main = $.CreatePanel("Panel",event,"event")
 	event_text_main.AddClass("necro_event_main")
 
-	let portrait = $.CreatePanel("Panel",event,"portrait")
+	let event_icons = $.CreatePanel("Panel", event, "")
+	event_icons.AddClass("necro_event_portraits")
+
+	let hero = $.CreatePanel("Panel",event_icons,"")
+	hero.AddClass("necro_caster")
+	hero.style.backgroundImage = 'url( "file://{images}/heroes/' +  Game.GetHeroImage(kv.player_id, String(kv.attacker)) + '.png" );'
+	hero.style.backgroundSize = "contain"
+
+	let portrait = $.CreatePanel("Panel",event_icons,"portrait")
 	portrait.AddClass("necro_portrait")
-	portrait.style.backgroundImage = "url('file://{images}/custom_game/NecroBook.png')"
 	portrait.style.backgroundSize = "contain"
 
-
-
-	let event_top = $.CreatePanel("Panel",event_text_main,"event_top")
-	event_top.AddClass("necro_event_top")
-
-	let event_bottom = $.CreatePanel("Panel",event_text_main,"event_bottom")
-	event_bottom.AddClass("necro_event_bottom")
-
-
-
-	let necro_hero_text = $.CreatePanel("Label",event_top,"text_skill")
-	necro_hero_text.html = true
-	necro_hero_text.AddClass("necro_hero_text")
-	necro_hero_text.text = $.Localize("#necro_hero_text")
-
-
-	let hero_2 = $.CreatePanel("Panel",event_top,"portrait")
-	hero_2.AddClass("necro_icon")
-	hero_2.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + kv.victim + '.png" );'
-	hero_2.style.backgroundSize = "contain"
-
-
-
-
-
-	let text = $.CreatePanel("Label",event_bottom,"text_skill")
+	let text = $.CreatePanel("Label",event_text_main,"text_skill")
 	text.html = true
 	text.AddClass("necro_text_skill")
 	text.text = $.Localize("#necro_attack_text")
 
-
-
-
 	Game.EmitSound("Necro.Wave")
 
-
-
-	$.Schedule( 9.55, function(){ 
-		  event.RemoveClass("necro_event");
-           event.AddClass("necro_event_close");
-	 })
-	event.DeleteAsync( 10 );
+	$.Schedule( 7.55, function(){ 
+		event.RemoveClass("necro_event");
+		event.AddClass("necro_event_close");
+		table[i] = 0
+	})
+	event.DeleteAsync( 8 );
 }
 
 
@@ -2036,9 +2172,9 @@ function UpgradeCreeps(kv)
 
 
 	$.Schedule( 9.55, function(){ 
-		  event.RemoveClass("upgrade_creeps_event");
-           event.AddClass("upgrade_creeps_close");
-	 })
+		event.RemoveClass("upgrade_creeps_event");
+		event.AddClass("upgrade_creeps_close");
+	})
 	event.DeleteAsync( 10 );
 }
 
@@ -2116,54 +2252,68 @@ function patrol_vision(kv)
 function TargetAttack(kv)
 {
 
+	let heroes = kv.heroes
+	let length = Object.keys(heroes).length
+	let delay = kv.delay
+
+	if (length <= 0)
+	{
+		return
+	}
 
 	var Main = $.GetContextPanel().FindChildTraverse("TargetAlert")
-
 
 	let event = $.CreatePanel("Panel",Main,"TargetAlert")
 	event.AddClass("TargetAlert_event")
 
-
-	
-		Game.EmitSound("Hunt.Start")
-
-
+	Game.EmitSound("Hunt.Start")
 
 	let event_left = $.CreatePanel("Panel",event,"event_left")
 	event_left.AddClass("TargetAlert_left_label")
-
+	event_left.AddClass("TargetAlert_left_label_" + String(length))
 
 	let event_right = $.CreatePanel("Panel",event,"event_right")
 	event_right.AddClass("TargetAlert_right_label")
+	event_right.AddClass("TargetAlert_right_label_" + String(length))
 
 
-	let hero_icon = $.CreatePanel("Panel",event_right,"portrait")
-	hero_icon.AddClass("TargetAlert_portrait")
-    hero_icon.style.backgroundImage = 'url( "file://{images}/heroes/' + kv.hero + '.png" );'
-   hero_icon.style.backgroundSize = 'contain';
-   hero_icon.style.backgroundRepeat = 'no-repeat'
+  for (var i = 1; i <= length; i++) 
+  {
 
+		let hero_icon = $.CreatePanel("Panel",event_right,"portrait")
+		hero_icon.AddClass("TargetAlert_portrait")
+		hero_icon.AddClass("TargetAlert_portrait_" + String(length))
 
-	let target_shadow = $.CreatePanel("Panel",event_right,"Target")
-	target_shadow.AddClass("TargetAlert_portrait_target_shadow")
+		hero_icon.style.backgroundImage = 'url( "file://{images}/heroes/' + heroes[i] + '.png" );'
+		hero_icon.style.backgroundSize = 'contain';
+		hero_icon.style.backgroundRepeat = 'no-repeat'
 
-	let target = $.CreatePanel("Panel",event_right,"Target")
-	target.AddClass("TargetAlert_portrait_target")
+		let target_shadow = $.CreatePanel("Panel",hero_icon,"Target")
+		target_shadow.AddClass("TargetAlert_portrait_target_shadow")
 
+		let target = $.CreatePanel("Panel",hero_icon,"Target")
+		target.AddClass("TargetAlert_portrait_target")
 
+	}
 
 	let text = $.CreatePanel("Label",event_left,"text_skill")
 	text.html = true
 	text.AddClass("target_text")
-	text.text = $.Localize("#Hunt_Start")
 
+	if (length <= 1)
+	{
+		text.text = $.Localize("#Hunt_Start")
+	}else
+	{
+		text.text = $.Localize("#Hunt_Start_team")
+	}
 
-
-	$.Schedule( 9.55, function(){ 
-		  event.RemoveClass("TargetAlert_event");
-           event.AddClass("TargetAlert_event_close");
-	 })
-	event.DeleteAsync( 10);
+	$.Schedule( delay, function()
+	{ 
+	  event.RemoveClass("TargetAlert_event");
+    event.AddClass("TargetAlert_event_close");
+		event.DeleteAsync( 0.45);
+	})
 }
 
 
@@ -2208,59 +2358,62 @@ function random_talent_alert(kv)
 	}
 
 	let hero = kv.hero
-	let data = Game.FindUpgradeByName(hero, kv.skill)
-	let type = data[2]
+	let is_general = false
+	let name = kv.skill
+
+	let data = Game.talents_values[hero][name] 
+	if (data == undefined)
+	{
+		is_general = true
+		data = Game.talents_values["general"][name] 
+	}
+
+	let rarity = data["rarity"]
 
 	let skill_icon = $.CreatePanel("Panel",bot,"")
 	skill_icon.AddClass("random_talent_alert_icon")
 
 	if (first == true)
 	{
-
-		if (data[3] == "gray")
+		if (rarity == "gray")
 		{
-
 			skill_icon.AddClass("random_talent_alert_icon_first_gray")
 		}else 
 		{
-
 			skill_icon.AddClass("random_talent_alert_icon_first")
 		}
 	}
 
-
 	let show_text = ""
 
-	if (type == 1) {
-		if (Game.UpgradeMatchesRarity(data, "orange")) {
-			skill_icon.style.backgroundImage = 'url( "file://{images}/custom_game/icons/mini/' + hero + '/' + data[6] + '.png" );'
+	if (is_general == false) 
+	{
+		if (rarity == "orange") 
+		{
+			skill_icon.style.backgroundImage = 'url( "file://{images}/custom_game/icons/mini/' + hero + '/' + data["mini_icon"] + '.png" );'
 			skill_icon.style.boxShadow = "fill #f29400 0px 0px 2px 1px"
 		} else
 		{
-			skill_icon.style.backgroundImage = 'url( "file://{images}/custom_game/icons/mini/' + hero + '/' + data[9] + '.png" );'
-			skill_icon.style.backgroundSize = "100%";
-
+			skill_icon.style.backgroundImage = 'url( "file://{images}/custom_game/icons/mini/' + hero + '/' + data["mini_icon"] + '.png" );'
 		}
-
-		show_text = $.Localize("#talent_disc_" + data[1] + "_0")
-	}
-	if ( (type == 0)||(type == 2) ) {
-		skill_icon.style.backgroundImage = 'url( "file://{images}/custom_game/icons/mini/general/' + data[6] + '.png" );'
-		skill_icon.style.backgroundSize = "100%";
-
-		show_text = $.Localize("#upgrade_disc_" + data[1] + "_3")
+	}else
+	{
+		skill_icon.style.backgroundImage = 'url( "file://{images}/custom_game/icons/mini/general/' + data["skill_icon"] + '.png" );'
 	}	
 
-	if (data[3] == "gray")
-	{
-		show_text = '+' + String(Math.trunc(data[8] )) + $.Localize('#talent_disc_' + data[1])
+	skill_icon.style.backgroundSize = "100%";
 
+	if (rarity == "gray")
+	{
+		show_text = '+' + String(Math.trunc(data["general_bonus"] )) + $.Localize('#talent_disc_' + name)
+	}else
+	{
+		show_text = Game.ShowTalentValues("#upgrade_disc_" + name, name, null, true, false)
 	}
 
 
-	if (data[3] == "blue" || data[3] == "gray")
+	if (rarity == "blue" || rarity == "gray")
 	{
-    
 		skill_icon.SetPanelEvent('onmouseover', function() {
 	    $.DispatchEvent('DOTAShowTextTooltip', skill_icon, show_text )});
 	    
@@ -2273,9 +2426,9 @@ function random_talent_alert(kv)
 		if (event)
 		{
 		  event.RemoveClass("random_talent_alert_evente");
-          event.AddClass("random_talent_alert_event_close");
+      event.AddClass("random_talent_alert_event_close");
 	 	}
-	 })
+	})
 	event.DeleteAsync(11.9);
 }
 
@@ -2348,55 +2501,113 @@ function muerta_quest_alert(kv)
 	$.Schedule( 7.55, function(){ 
 		if (event !== undefined)
 		{
-		  event.RemoveClass("muerta_quest_alert_event");
-          event.AddClass("muerta_quest_alert_event_close");
-	 	}
-	 })
+			event.RemoveClass("muerta_quest_alert_event");
+			event.AddClass("muerta_quest_alert_event_close");
+		}
+	})
 	event.DeleteAsync( 8);
 }
 
 
 
 
-function patrol_refresher(kv)
+var mini_alert_table = [0,0,0,0,0,0]
+
+
+function mini_alert_event(kv)
 {
 
+var Main = $.GetContextPanel().FindChildTraverse("mini_alert_feed")
 
-var Main = $.GetContextPanel().FindChildTraverse("patrol_refresher_status_main")
+let n = Main.GetChildCount()
 
-let event = Main.FindChildTraverse("patrol_refresher_status")
+if ( n >= 6 ) { return }
 
-if (event)
-{
-	return
+
+for (var i = 0; i <= 6; i++) {
+	if (table[i] == 0 ) 
+	{
+		table[i] = 1
+		break 
+	}
 }
 
-let new_event = $.CreatePanel("Panel", Main, "patrol_refresher_status")
-new_event.AddClass("patrol_refresher_status") 
+let margin = String((i)*(100/6))
+let event_type = kv.event_type
 
-let icon_1 = $.CreatePanel("Panel", new_event, "")
-icon_1.AddClass("patrol_refresher_status_icon_1") 
-
-let icon_vs = $.CreatePanel("Panel", new_event, "")
-icon_vs.AddClass("patrol_refresher_status_icon_vs") 
-
-
-let icon_2 = $.CreatePanel("Panel", new_event, "")
-icon_2.AddClass("patrol_refresher_status_icon_2") 
+let event = $.CreatePanel("Panel",Main,"")
+event.AddClass("mini_alert_feed_event")
+event.AddClass("mini_alert_feed_event_open")
+event.style.marginTop =  margin + '%'
 
 
-icon_1.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + kv.hero_1 + '.png" );'
-icon_1.style.backgroundSize = "contain"
+let icon_hero = $.CreatePanel("Panel", event, "")
+icon_hero.AddClass("mini_alert_feed_icon_hero") 
+icon_hero.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + kv.hero_1 + '.png" );'
+icon_hero.style.backgroundSize = "contain"
+
+let icon = $.CreatePanel("Panel", event, "")
 
 
-$.Schedule( 6.5, function(){ 
-	if (new_event !== undefined)
+if (event_type == "tormentor")
+{
+	let hero_2 = kv.hero_2
+
+	if (hero_2 != -1)
 	{
-	  new_event.RemoveClass("patrol_refresher_status");
-    new_event.AddClass("patrol_refresher_status_close");
- 	}
- })
-new_event.DeleteAsync(6.8);
+		event.AddClass("mini_alert_feed_event_super_long")
+		let icon_hero_2 = $.CreatePanel("Panel", event, "")
+		icon_hero_2.AddClass("mini_alert_feed_icon_hero") 
+		icon_hero_2.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + hero_2 + '.png" );'
+		icon_hero_2.style.backgroundSize = "contain"
+
+		let icon_shard = $.CreatePanel("Panel", event, "")
+		icon_shard.AddClass("mini_alert_feed_shard_icon") 
+	}else
+	{
+		event.AddClass("mini_alert_feed_event_short")
+	}
+
+	icon.AddClass("mini_alert_feed_gem_icon") 
+}
+
+if (event_type == "trap")
+{
+	event.AddClass("mini_alert_feed_event_short")
+	icon.AddClass("mini_alert_feed_trap_icon") 
+	Game.EmitSound("UI.Creeps_trap")
+}
+
+
+if (event_type == "razor")
+{
+	event.AddClass("mini_alert_feed_event_dinamic")
+	icon.AddClass("mini_alert_feed_razor_icon")
+
+	let length =  Object.keys(kv.heroes_2).length
+
+	for (var i = 1; i <= length; i++) 
+	{
+		let icon_hero_2 = $.CreatePanel("Panel", event, "")
+		icon_hero_2.AddClass("mini_alert_feed_icon_hero_dinamic") 
+		icon_hero_2.style.backgroundImage = 'url( "file://{images}/heroes/icons/' + kv.heroes_2[i] + '.png" );'
+		icon_hero_2.style.backgroundSize = "contain"
+	}
+	let filler = $.CreatePanel("Panel", event, "")
+	filler.AddClass("mini_alert_filler") 
+
+	Game.EmitSound("Patrol_razor")
+}
+
+
+
+$.Schedule( 7.5, function()
+{ 
+	event.RemoveClass("mini_alert_feed_event_open");
+  event.AddClass("mini_alert_feed_event_close");
+	table[i] = 0
+})
+event.DeleteAsync(7.8);
 
 }
 
@@ -2638,15 +2849,25 @@ function PatrolAlert(kv)
 
 
 	var Main = $.GetContextPanel().FindChildTraverse("PatrolAlert")
+	let number = kv.number
 
+	let patro_table = []
 
-	let event = $.CreatePanel("Panel",Main,"TargetAlert")
-	event.AddClass("PatrolAlert_event")
+	for (const name in Game.talents_values["patrol"])
+	{
+		let table = Game.talents_values["patrol"][name]
+		table["name"] = name
+
+		if (table["patrol_" + number] == 1)
+			patro_table.push(table)
+	}
+
+	if (!patro_table || patro_table == undefined) return
 
 
 	Game.EmitSound("Patrol.Sound")
-
-
+	let event = $.CreatePanel("Panel",Main,"TargetAlert")
+	event.AddClass("PatrolAlert_event")
 
 	let patrol_top = $.CreatePanel("Panel",event,"event_left")
 	patrol_top.AddClass("patrol_top")
@@ -2655,173 +2876,56 @@ function PatrolAlert(kv)
 	text.html = true
 	text.AddClass("TargetTimer_mid_text")
 
-	let style = "patrol_bot_item"
-
-	if (kv.number == 1) 
+	if (number == 1) 
 	{
 		text.text =  $.Localize("#Patrol_first")
 	}
 	else 
 	{
-		style = "patrol_bot_item_2"
 		text.text =  $.Localize("#Patrol_second")
 	}
-
 
 	let patrol_bot = $.CreatePanel("Panel",event,"event_right")
 	patrol_bot.AddClass("patrol_bot")
 
-
 	let patrol_bot_content = $.CreatePanel("Panel",patrol_bot,"event_right")
 	patrol_bot_content.AddClass("patrol_bot_content")
 
-
-
-	let patrol_bot_item1 = $.CreatePanel("DOTAItemImage",patrol_bot_content,"")
-	patrol_bot_item1.itemname = kv.items[1]
-	patrol_bot_item1.AddClass(style)
-
-	let patrol_bot_item2 = $.CreatePanel("DOTAItemImage",patrol_bot_content,"")
-	patrol_bot_item2.itemname = kv.items[2]
-	patrol_bot_item2.AddClass(style)
-
-	let patrol_bot_item3 = $.CreatePanel("DOTAItemImage",patrol_bot_content,"")
-	patrol_bot_item3.itemname = kv.items[3]
-	patrol_bot_item3.AddClass(style)
-
-	let patrol_bot_item4 = $.CreatePanel("DOTAItemImage",patrol_bot_content,"")
-	patrol_bot_item4.itemname = kv.items[4]
-	patrol_bot_item4.AddClass(style)
-
-	let patrol_bot_item5 = $.CreatePanel("DOTAItemImage",patrol_bot_content,"")
-	patrol_bot_item5.itemname = kv.items[5]
-	patrol_bot_item5.AddClass(style)
-
-	if (kv.number !== 1) 
+	for (const data of Object.values(patro_table)) 
 	{
+		let icon = $.CreatePanel("Panel",patrol_bot_content,"")
+		icon.AddClass("patrol_bot_item")
+	  icon.style.backgroundImage = 'url("file://{images}/custom_game/icons/mini/patrol_icons/' + data["skill_icon"] + '.png")';
+	  icon.style.backgroundSize = 'contain';
+	  icon.style.backgroundRepeat = 'no-repeat'
 
+	  let name = data["name"]
+	  let text = Game.ShowTalentValues("#upgrade_disc_" + name, name, 1, false, false)
 
-		let patrol_bot_item6 = $.CreatePanel("DOTAItemImage",patrol_bot_content,"")
-		patrol_bot_item6.itemname = kv.items[6]
-		patrol_bot_item6.AddClass(style)
+		icon.SetPanelEvent('onmouseover', function() 
+		{
+			$.DispatchEvent('DOTAShowTextTooltip', icon, text)
+		});
+
+		icon.SetPanelEvent('onmouseout', function() 
+		{
+			$.DispatchEvent('DOTAHideTextTooltip', icon); 
+		});
 	}
 
-
-	$.Schedule( 9.55, function(){ 
+	$.Schedule( 9.55, function()
+	{ 
 		  event.RemoveClass("PatrolAlert_event");
-           event.AddClass("PatrolAlert_event_close");
-	 })
+      event.AddClass("PatrolAlert_event_close");
+	})
 	event.DeleteAsync( 10);
 }
 
 
 
-function TargetTimer(kv)
-{
 
 
-	var Main = $.GetContextPanel().FindChildTraverse("TargetTimer")
-
-
-	let body = $.CreatePanel("Panel",Main,"TargetTimer_main")
-	body.AddClass("TargetTimer_main")
-
-
-	body.SetPanelEvent('onmouseover', function() {
-    $.DispatchEvent('DOTAShowTextTooltip', body, $.Localize("#Hunt_Tip")) });
-    
-	body.SetPanelEvent('onmouseout', function() {
-    $.DispatchEvent('DOTAHideTextTooltip', body); });
-
-
-	let top = $.CreatePanel("Panel",body,"TargetTimer")
-	top.AddClass("TargetTimer_top")
-
-
-	let hero = $.CreatePanel("Panel",top,"TargetTimer")
-	hero.AddClass("TargetTimer_top_hero")
-
-	let target_shadow = $.CreatePanel("Panel",top,"TargetTimer")
-	target_shadow.AddClass("TargetTimer_top_shadow")
-	let target = $.CreatePanel("Panel",top,"TargetTimer")
-	target.AddClass("TargetTimer_top_target")
-
-
-  hero.style.backgroundImage = 'url( "file://{images}/heroes/' + kv.hero + '.png" );'
-  hero.style.backgroundSize = 'contain';
-  hero.style.backgroundRepeat = 'no-repeat'
-
-
-	let mid = $.CreatePanel("Panel",body,"TargetTimer")
-	mid.AddClass("TargetTimer_mid")
-   
-
-	var time = kv.time
-
-	var min = Math.trunc((time)/60) 
-	var sec_n =  (time) - 60*Math.trunc((time)/60) 
-
-	var hour = String( Math.trunc((min)/60) )
-
-	var min = String(min - 60*( Math.trunc(min/60) ))
-
-	var sec = String(sec_n)
-	if (sec_n < 10) 
-	{
-		sec = '0' + sec
-
-	}
-
-
-
-
-	let timer = $.CreatePanel("Label",mid,"text_target_timer")
-	timer.html = true
-	timer.AddClass("TargetTimer_mid_text")
-	timer.text =  $.Localize("#Hunt_time") +  min + ':' + sec
-
-
-	let purple = $.CreatePanel("Panel",body,"TargetTimer")
-	purple.AddClass("TargetTimer_epic")
-
-
-	let damage_text = $.CreatePanel("Label",purple,"text_skill")
-	damage_text.html = true
-	damage_text.AddClass("TargetTimer_damage_text")
-	damage_text.text = '+25%'+ $.Localize("#Hunt_damage")
-	let gold = $.CreatePanel("Panel",body,"TargetTimer")
-	gold.AddClass("TargetTimer_epic")
-
-
-
-	if (kv.is_target == 1) 
-	{
-
-		top.RemoveClass("TargetTimer_top")
-		top.AddClass("TargetTimer_top_is_target")
-		return
-	}
-   
-	let purple_text = $.CreatePanel("Label",gold,"text_skill")
-	purple_text.html = true
-	purple_text.AddClass("TargetTimer_epic_text")
-	purple_text.text = '1'
-
-	let purple_icon = $.CreatePanel("Panel",gold,"TargetTimer")
-	purple_icon.AddClass("TargetTimer_epic_icon")
-
-   
-	let gold_text = $.CreatePanel("Label",gold,"text_target_gold")
-	gold_text.html = true
-	gold_text.AddClass("TargetTimer_gold_text")
-	gold_text.text = String(kv.gold)
-
-	let gold_icon = $.CreatePanel("Panel",gold,"TargetTimer")
-	gold_icon.AddClass("TargetTimer_gold_icon")
-
-
-
-}
+let target_length = 0
 
 
 function TargetTimer_change(kv)
@@ -2829,7 +2933,109 @@ function TargetTimer_change(kv)
 
 
 	var Main = $.GetContextPanel().FindChildTraverse("TargetTimer")
+	let body = Main.FindChildTraverse("TargetTimer_main")
+	var top = Main.FindChildTraverse("TargetTimer_top")
+
+	let heroes = kv.heroes
+	let length = Object.keys(heroes).length
+	
+	if (length <= 0)
+	{
+		return
+	}
+
+	if (!body)
+	{
+		body = $.CreatePanel("Panel",Main,"TargetTimer_main")
+		body.AddClass("TargetTimer_main")
+
+		body.SetPanelEvent('onmouseover', function() 
+		{
+	  	$.DispatchEvent('DOTAShowTextTooltip', body, $.Localize("#Hunt_Tip")) 
+	  });
+	    
+		body.SetPanelEvent('onmouseout', function() 
+		{
+	  	$.DispatchEvent('DOTAHideTextTooltip', body); 
+	  });
+
+		top = $.CreatePanel("Panel",body,"TargetTimer_top")
+		top.AddClass("TargetTimer_top")
+
+		let mid = $.CreatePanel("Panel",body,"TargetTimer")
+		mid.AddClass("TargetTimer_mid")
+	   
+		let timer = $.CreatePanel("Label",mid,"text_target_timer")
+		timer.html = true
+		timer.AddClass("TargetTimer_mid_text")
+
+		let purple = $.CreatePanel("Panel",body,"TargetTimer")
+		purple.AddClass("TargetTimer_epic")
+
+		let damage_text = $.CreatePanel("Label",purple,"text_skill")
+		damage_text.html = true
+		damage_text.AddClass("TargetTimer_damage_text")
+		damage_text.text = "+" + String(kv.damage_inc) + "%" + $.Localize("#Hunt_damage")
+
+		if (kv.is_target == 0)
+		{
+
+			let gold = $.CreatePanel("Panel",body,"TargetTimer")
+			gold.AddClass("TargetTimer_epic")
+
+			let purple_text = $.CreatePanel("Label",gold,"text_skill")
+			purple_text.html = true
+			purple_text.AddClass("TargetTimer_epic_text")
+			purple_text.text = '1'
+
+			let purple_icon = $.CreatePanel("Panel",gold,"TargetTimer")
+			purple_icon.AddClass("TargetTimer_epic_icon")
+
+			let gold_text = $.CreatePanel("Label",gold,"text_target_gold")
+			gold_text.html = true
+			gold_text.AddClass("TargetTimer_gold_text")
+			gold_text.text = String(kv.gold)
+
+			let gold_icon = $.CreatePanel("Panel",gold,"TargetTimer")
+			gold_icon.AddClass("TargetTimer_gold_icon")
+		}
+	}
+
+	if (target_length != length)
+	{
+
+		$.Msg('update!!!')
+
+		target_length = length
+
+		var top_icons = Main.FindChildTraverse("top_icons")
+		if (top_icons)
+		{
+			top_icons.DeleteAsync(0)
+		}
+
+		top_icons = $.CreatePanel("Panel", top, "top_icons")
+		top_icons.AddClass("TargetTimer_top_icons")
+
+	  for (var i = 1; i <= length; i++) 
+	  {
+			let hero_icon = $.CreatePanel("Panel",top_icons, "portrait")
+			hero_icon.AddClass("TargetTimer_top_hero")
+
+			hero_icon.style.backgroundImage = 'url( "file://{images}/heroes/' + heroes[i] + '.png" );'
+			hero_icon.style.backgroundSize = 'contain';
+			hero_icon.style.backgroundRepeat = 'no-repeat'
+
+			let target = $.CreatePanel("Panel",hero_icon,"")
+			target.AddClass("TargetTimer_top_target")
+
+			let target_shadow = $.CreatePanel("Panel",hero_icon,"")
+			target_shadow.AddClass("TargetTimer_top_shadow")
+		}
+	}
+
 	var timer = Main.FindChildTraverse("text_target_timer")
+
 	if (timer) 
 	{
 		var time = kv.time
@@ -2850,9 +3056,6 @@ function TargetTimer_change(kv)
 		timer.text =  $.Localize("#Hunt_time") +  min + ':' + sec
 	}
 
-	if (kv.is_target == 1) return
-
-
 	let gold_text = Main.FindChildTraverse("text_target_gold")
 	if (gold_text) 
 	{
@@ -2865,7 +3068,6 @@ function TargetTimer_change(kv)
 function TargetTimer_delete(kv)
 {
 
-
 	var Main = $.GetContextPanel().FindChildTraverse("TargetTimer")
 	var timer = Main.FindChildTraverse("TargetTimer_main")
 	if (timer) 
@@ -2874,9 +3076,6 @@ function TargetTimer_delete(kv)
 		timer.AddClass("TargetTimer_main_close")
 		timer.DeleteAsync(0.45)
 	}
-
-
-
 }
 
 
@@ -3041,38 +3240,6 @@ function patrol_timer(kv)
 	}
 
 }
-
-
-
-
-function SwapPickOrbs()
-{
-
-	Game.EmitSound("UI.Click")
-
-
-
-	GameEvents.SendCustomGameEventToServer_custom("ChangePickOrbs", {})
-}
-
-function ChangePickOrbs_js(kv)
-{
-	let button = $.GetContextPanel().FindChildTraverse("SwapPickOrbs")
-	if (button)
-	{
-		if (kv.pick == 1)
-		{
-			button.RemoveClass("SwapPickOrbs")
-			button.AddClass("SwapPickOrbs_active")
-		}else 
-		{
-
-			button.RemoveClass("SwapPickOrbs_active")
-			button.AddClass("SwapPickOrbs")
-		}
-	}
-}
-
 
 
 

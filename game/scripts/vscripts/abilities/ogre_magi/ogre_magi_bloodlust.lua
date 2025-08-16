@@ -1,197 +1,176 @@
 LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_buff", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_buff_count", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_damage", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_tracker", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_legendary_1", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_legendary_2", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_legendary_3", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_legendary_4", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_legendary_4_damage", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_legendary_5", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_legendary_6", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_legendary_attack", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_legendary_attack_no", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_legendary_resist", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_legendary_slow", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_heal_cd", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_attack_count", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_incoming", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_quest", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_charge", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_HORIZONTAL )
+LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_str", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_ogre_magi_bloodlust_custom_damage", "abilities/ogre_magi/ogre_magi_bloodlust", LUA_MODIFIER_MOTION_NONE )
 
 ogre_magi_bloodlust_custom = class({})
 
-ogre_magi_bloodlust_custom.speed_attack = {5, 10, 15}
-ogre_magi_bloodlust_custom.speed_move = {1, 2, 3}
-
-ogre_magi_bloodlust_custom.damage_max_stack = 10
-ogre_magi_bloodlust_custom.damage_duration = 3
-ogre_magi_bloodlust_custom.damage_per_stack = {3,4,5}
-
-ogre_magi_bloodlust_custom.proc_chance = {15,25}
-ogre_magi_bloodlust_custom.proc_delay = 0.15
-
-ogre_magi_bloodlust_custom.heal = 0.05
-ogre_magi_bloodlust_custom.heal_damage = -30
-ogre_magi_bloodlust_custom.heal_duration = 3
-
-ogre_magi_bloodlust_custom.attack_max = 10
-ogre_magi_bloodlust_custom.attack_stack = 1
-
-
-ogre_magi_bloodlust_custom.armor = {2,3,4}
-ogre_magi_bloodlust_custom.armor_magic = {2,3,4}
 
 ogre_magi_bloodlust_custom.legendary_buffs = 
 {
-	"modifier_ogre_magi_bloodlust_custom_legendary_1",
-	"modifier_ogre_magi_bloodlust_custom_legendary_2",
-	"modifier_ogre_magi_bloodlust_custom_legendary_3",
-	"modifier_ogre_magi_bloodlust_custom_legendary_4",
-	"modifier_ogre_magi_bloodlust_custom_legendary_5",
-	"modifier_ogre_magi_bloodlust_custom_legendary_6",
+	["modifier_ogre_magi_bloodlust_custom_legendary_1"] = "particles/general/patrol_refresh.vpcf",
+	["modifier_ogre_magi_bloodlust_custom_legendary_2"] = "particles/rare_orb_patrol.vpcf",
+	["modifier_ogre_magi_bloodlust_custom_legendary_3"] = "particles/lc_odd_proc_.vpcf",
+	["modifier_ogre_magi_bloodlust_custom_legendary_4"] = "particles/arc_warden/tempest_rune_arcane.vpcf",
 }
-ogre_magi_bloodlust_custom.legendary_duration = 25
-ogre_magi_bloodlust_custom.legendary_heal = 0.15
-ogre_magi_bloodlust_custom.legendary_heal_creeps = 0.5
-
-ogre_magi_bloodlust_custom.legendary_cdr = 15
-ogre_magi_bloodlust_custom.legendary_cast = 40
-
-ogre_magi_bloodlust_custom.legendary_chance = 20
-ogre_magi_bloodlust_custom.legendary_slow = 0.5
-ogre_magi_bloodlust_custom.legendary_slow_move = -100
-ogre_magi_bloodlust_custom.legendary_slow_attack = -100
-
-ogre_magi_bloodlust_custom.legendary_str = 8
-ogre_magi_bloodlust_custom.legendary_str_damage = 50
-ogre_magi_bloodlust_custom.legendary_str_radius = 500
-ogre_magi_bloodlust_custom.legendary_str_interval = 1
-
-ogre_magi_bloodlust_custom.legendary_resist_duration = 5
-ogre_magi_bloodlust_custom.legendary_resist_speed = 15
-ogre_magi_bloodlust_custom.legendary_resist_effects = 30
-
-ogre_magi_bloodlust_custom.legendary_proc_chance = 25
-ogre_magi_bloodlust_custom.legendary_proc_aoe = 700
-ogre_magi_bloodlust_custom.legendary_proc_number = 5
-ogre_magi_bloodlust_custom.legendary_proc_damage = 120
-
 
 
 function ogre_magi_bloodlust_custom:GetIntrinsicModifierName()
-	return "modifier_ogre_magi_bloodlust_custom_tracker"
+return "modifier_ogre_magi_bloodlust_custom_tracker"
 end
 
+function ogre_magi_bloodlust_custom:GetAbilityTextureName()
+if self:GetCaster():HasModifier("modifier_ogre_magi_immortal_weapon_custom") then
+    return "ogre_magi_bloodlust_ti8"
+end
+if self:GetCaster():HasModifier("modifier_ogre_magi_arcana_custom") then
+    return "ogre_magi/arcana/ogre_magi_bloodlust_arcana"
+end
+if self:GetCaster():HasModifier("modifier_ogre_magi_arcana_custom_2") then
+    return "ogre_magi/arcana/ogre_magi_bloodlust_arcana_alt2"
+end
+return "ogre_magi_bloodlust"
+end
+
+function ogre_magi_bloodlust_custom:CreateTalent()
+
+CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), "ability_ogre_bloodlust",  {})
+end
 
 
 function ogre_magi_bloodlust_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/units/heroes/hero_ogre_magi/ogre_magi_bloodlust_cast.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_sven/sven_spell_great_cleave.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_ogre_magi/ogre_magi_bloodlust_buff.vpcf", context )
+PrecacheResource( "particle","particles/orge_lightning.vpcf", context )
+PrecacheResource( "particle","particles/generic_gameplay/rune_arcane_owner.vpcf", context )
+PrecacheResource( "particle","particles/ogre_dd.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_sniper/sniper_headshot_slow.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_pangolier/pangolier_tailthump_buff.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_egg.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_streaks.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_primal_beast/primal_beast_onslaught_impact.vpcf", context )
+PrecacheResource( "particle","particles/ogre_magi/blood_charge.vpcf", context )
+PrecacheResource( "particle","particles/econ/items/invoker/invoker_ti7/status_effect_alacrity_ti7.vpcf", context )
 
-PrecacheResource( "particle", 'particles/units/heroes/hero_ogre_magi/ogre_magi_bloodlust_cast.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_ogre_magi/ogre_magi_bloodlust_buff.vpcf', context )
-PrecacheResource( "particle", 'particles/orge_lightning.vpcf', context )
-PrecacheResource( "particle", 'particles/generic_gameplay/rune_arcane_owner.vpcf', context )
-PrecacheResource( "particle", 'particles/ogre_shield.vpcf', context )
-PrecacheResource( "particle", 'particles/ogre_dd.vpcf', context )
-PrecacheResource( "particle", 'particles/troll_char.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_sniper/sniper_headshot_slow.vpcf', context )
-
+PrecacheResource( "particle","particles/general/patrol_refresh.vpcf", context )
+PrecacheResource( "particle","particles/rare_orb_patrol.vpcf", context )
+PrecacheResource( "particle","particles/lc_odd_proc_.vpcf", context )
+PrecacheResource( "particle","particles/arc_warden/tempest_rune_arcane.vpcf", context )
+PrecacheResource( "particle","particles/ogre_magi/blood_resist.vpcf", context )
 end
 
 
 
-function ogre_magi_bloodlust_custom:AddStack()
-if not IsServer() then return end
-
-local duration = self:GetSpecialValueFor( "duration" )
-local target = self:GetCaster()
-
-target:AddNewModifier( self:GetCaster(), self, "modifier_ogre_magi_bloodlust_custom_buff", { duration = duration } )
-
-local mod = target:FindModifierByName("modifier_ogre_magi_bloodlust_custom_buff")
-
-local max = self:GetSpecialValueFor("max")
-if self:GetCaster():HasModifier("modifier_ogremagi_bloodlust_6") then 
-	max = max + self.attack_stack
+function ogre_magi_bloodlust_custom:GetBehavior()
+local bonus = 0
+local base = DOTA_ABILITY_BEHAVIOR_NO_TARGET
+if not IsSoloMode() then 
+  base = DOTA_ABILITY_BEHAVIOR_UNIT_TARGET
 end
-
-if mod and mod:GetStackCount() > max then 
-
-	for _,all_counts in ipairs(self:GetCaster():FindAllModifiersByName("modifier_ogre_magi_bloodlust_custom_buff_count")) do 
-     	 all_counts:Destroy()
-      	break
-    end
+if self:GetCaster():HasTalent("modifier_ogremagi_bloodlust_5") then
+	bonus = DOTA_ABILITY_BEHAVIOR_IGNORE_PSEUDO_QUEUE + DOTA_ABILITY_BEHAVIOR_IMMEDIATE
+end
+return base + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK + bonus
 end
 
 
-target:AddNewModifier( self:GetCaster(), self, "modifier_ogre_magi_bloodlust_custom_buff_count", { duration = duration } )
 
-local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_ogre_magi/ogre_magi_bloodlust_cast.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-ParticleManager:SetParticleControlEnt( particle, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_attack1", Vector(0,0,0), true)
-ParticleManager:SetParticleControlEnt( particle, 2, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_attack1", Vector(0,0,0), true )
-ParticleManager:SetParticleControlEnt( particle, 3, target, PATTACH_POINT_FOLLOW, "attach_hitloc", Vector(0,0,0), true )
-ParticleManager:ReleaseParticleIndex( particle )
-
-self:GetCaster():EmitSound("Hero_OgreMagi.Bloodlust.Cast")
-
+function ogre_magi_bloodlust_custom:GetManaCost(level)
+if self:GetCaster():HasTalent("modifier_ogremagi_bloodlust_5") then  
+  return 0
 end
+return self.BaseClass.GetManaCost(self,level) 
+end
+
+
 
 
 function ogre_magi_bloodlust_custom:LegendaryProc()
 if not IsServer() then return end
-
+local caster = self:GetCaster()
 local buff_table = {}
+local mod = caster:FindModifierByName("modifier_ogre_magi_bloodlust_custom_buff")
 
-for _,name in pairs(self.legendary_buffs) do
-	if not self:GetCaster():HasModifier(name) then 
+if not mod then return end
+
+for name,particle in pairs(self.legendary_buffs) do
+	if not caster:HasModifier(name) then 
 		buff_table[#buff_table + 1] = name
 	end
 end
 
-
 if #buff_table == 0 then 
- 	buff_table = self.legendary_buffs
+ 	return
 end
 
 local name = buff_table[RandomInt(1, #buff_table)]
 
-self:GetCaster():AddNewModifier(self:GetCaster(), self, name, {duration = self.legendary_duration})
+local particle_peffect = ParticleManager:CreateParticle(self.legendary_buffs[name], PATTACH_ABSORIGIN_FOLLOW, caster)
+ParticleManager:SetParticleControl(particle_peffect, 0, caster:GetAbsOrigin())
+ParticleManager:SetParticleControl(particle_peffect, 2, caster:GetAbsOrigin())
+ParticleManager:ReleaseParticleIndex(particle_peffect)
+
+caster:EmitSound("Ogre.Blood_legendary")
+caster:AddNewModifier(caster, self, name, {duration = mod:GetRemainingTime() + FrameTime()})
 end
 
 
-function ogre_magi_bloodlust_custom:OnSpellStart(multi)
-if not IsServer() then return end
-	
 
-if self:GetCaster():HasModifier("modifier_ogre_magi_bloodlust_custom_legendary_5") then 
-	local ability = self:GetCaster():FindAbilityByName("ogre_magi_bloodlust_custom")
-	self:GetCaster():AddNewModifier(self:GetCaster(), ability, "modifier_ogre_magi_bloodlust_custom_legendary_resist", {duration = ability.legendary_resist_duration})
+
+function ogre_magi_bloodlust_custom:OnSpellStart(new_target)
+local caster = self:GetCaster()
+local target = caster
+if self:GetCursorTarget() then
+	target = self:GetCursorTarget()
+end
+if new_target then
+	target = new_target
 end
 
-if self:GetCaster():HasModifier("modifier_ogremagi_multi_2") then 
-	local ability = self:GetCaster():FindAbilityByName("ogre_magi_multicast_custom")
-	self:GetCaster():AddNewModifier(self:GetCaster(), ability, "modifier_ogre_magi_multicast_custom_spell", {duration = ability.spell_duration[self:GetCaster():GetUpgradeStack("modifier_ogremagi_multi_2")]})
-	self:GetCaster():AddNewModifier(self:GetCaster(), ability, "modifier_ogre_magi_multicast_custom_spell_count", {duration = ability.spell_duration[self:GetCaster():GetUpgradeStack("modifier_ogremagi_multi_2")]})
+local duration = self:GetSpecialValueFor( "duration" )
+
+local slark_mod = caster:FindModifierByName("modifier_slark_essence_shift_custom_legendary_steal")
+if slark_mod then
+	duration = slark_mod:GetRemainingTime()
 end
 
-if self:GetCaster():HasModifier("modifier_ogremagi_bloodlust_5") then 
-
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_ogre_magi_bloodlust_custom_incoming", {duration = self.heal_duration})
+if caster:HasTalent("modifier_ogremagi_bloodlust_5") then 
+	target:AddNewModifier(caster, self, "modifier_ogre_magi_bloodlust_custom_incoming", {duration = caster:GetTalentValue("modifier_ogremagi_bloodlust_5", "duration")})
 end
 
+local mod = target:FindModifierByName("modifier_ogre_magi_bloodlust_custom_buff")
 
-if self:GetCaster():HasModifier("modifier_ogremagi_multi_5") then 
-	local ability = self:GetCaster():FindAbilityByName("ogre_magi_multicast_custom")
+if mod then 
+	mod:AddStack()
+else 
+	mod = target:AddNewModifier( caster, self, "modifier_ogre_magi_bloodlust_custom_buff", { duration = duration } )
 
-	if RollPseudoRandomPercentage(ability.proc_chance, 525, self:GetCaster()) then 
-		self:GetCaster():AddNewModifier(self:GetCaster(), ability, "modifier_ogre_magi_multicast_custom_proc_bkb", {duration = ability.proc_bkb})
-		self:GetCaster():AddNewModifier(self:GetCaster(), ability, "modifier_generic_debuff_immune", {magic_damage = ability.proc_bkb_magic, duration = ability.proc_bkb})
+	if slark_mod then
+		local effect_cast = ParticleManager:CreateParticle(  "particles/units/heroes/hero_ogre_magi/ogre_magi_multicast.vpcf", PATTACH_OVERHEAD_FOLLOW, caster )
+		ParticleManager:SetParticleControl( effect_cast, 1, Vector( 2, 0, 0 ) )
+		ParticleManager:ReleaseParticleIndex( effect_cast )
+		caster:EmitSound("Hero_OgreMagi.Fireblast.x2")
+		mod:AddStack()
 	end
+end	
 
-end
+local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_ogre_magi/ogre_magi_bloodlust_cast.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster )
+ParticleManager:SetParticleControlEnt( particle, 0, caster, PATTACH_POINT_FOLLOW, "attach_attack1", Vector(0,0,0), true)
+ParticleManager:SetParticleControlEnt( particle, 2, caster, PATTACH_POINT_FOLLOW, "attach_attack1", Vector(0,0,0), true )
+ParticleManager:SetParticleControlEnt( particle, 3, target, PATTACH_POINT_FOLLOW, "attach_hitloc", Vector(0,0,0), true )
+ParticleManager:ReleaseParticleIndex( particle )
 
-self:AddStack()
-
-
+caster:EmitSound("Hero_OgreMagi.Bloodlust.Cast")
 end
 
 
@@ -201,188 +180,114 @@ end
 
 modifier_ogre_magi_bloodlust_custom_buff = class({})
 
-function modifier_ogre_magi_bloodlust_custom_buff:IsPurgable()
-	return false
+function modifier_ogre_magi_bloodlust_custom_buff:IsPurgable() return false end
+function modifier_ogre_magi_bloodlust_custom_buff:OnCreated( kv )
+
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+
+self.model_scale = self.ability:GetSpecialValueFor( "modelscale" )
+self.move_bonus = self.ability:GetSpecialValueFor( "bonus_movement_speed" ) + self.caster:GetTalentValue("modifier_ogremagi_bloodlust_1", "move")
+self.speed_bonus = self.ability:GetSpecialValueFor( "self_bonus" )
+
+self.max = self.ability:GetSpecialValueFor("max")
+
+self.stack_bonus = self.ability:GetSpecialValueFor("stack_bonus")/100
+
+self.armor = self.caster:GetTalentValue("modifier_ogremagi_bloodlust_3", "armor")
+self.magic = self.caster:GetTalentValue("modifier_ogremagi_bloodlust_3", "magic")
+
+self.RemoveForDuel = true
+
+if not IsServer() then return end
+
+local particle_name = "particles/units/heroes/hero_ogre_magi/ogre_magi_bloodlust_buff.vpcf"
+if self.caster:HasModifier("modifier_ogre_magi_immortal_weapon_custom") then
+    particle_name = "particles/econ/items/ogre_magi/ogre_ti8_immortal_weapon/ogre_ti8_immortal_bloodlust_buff.vpcf"
 end
 
-function modifier_ogre_magi_bloodlust_custom_buff:OnCreated( kv )
-	self.model_scale = self:GetAbility():GetSpecialValueFor( "modelscale" )
-	self.bonus_movement_speed = self:GetAbility():GetSpecialValueFor( "bonus_movement_speed" )
-
-	self.cleave = self:GetAbility():GetSpecialValueFor("cleave_damage")
-
-	self.bonus_attack_speed = self:GetAbility():GetSpecialValueFor( "self_bonus" )
-
-	self.RemoveForDuel = true
-	if not IsServer() then return end
+local particle = ParticleManager:CreateParticle(particle_name, PATTACH_ABSORIGIN_FOLLOW, self.parent)
+self:AddParticle(particle, false, false, -1, true, false)
 
 
-	if self:GetParent():HasModifier("modifier_ogremagi_bloodlust_7") then 
-		self:GetAbility():LegendaryProc()
-	end
+self.legendary_count = 0
 
+self.ability:SetActivated(false)
 
+if self.caster:HasTalent("modifier_ogremagi_bloodlust_6") and not self.ability:IsHidden() then 
+	self.caster:SwapAbilities(self.ability:GetName(), "ogre_magi_bloodlust_custom_charge", false, true)
+end 
 
+if self.parent:HasTalent("modifier_ogremagi_bloodlust_7") then 
+	self.ability:LegendaryProc()
+end
 
-	if self:GetParent():HasModifier("modifier_ogremagi_bloodlust_5") then 
-
-	
-
-		local heal = self:GetAbility().heal*(self:GetCaster():GetMaxHealth())
-		self:GetCaster():GenericHeal(heal, self:GetAbility())
-	end
-
-
-	self:IncrementStackCount()
-	self:GetParent():EmitSound("Hero_OgreMagi.Bloodlust.Target")
-	EmitSoundOnClient( "Hero_OgreMagi.Bloodlust.Target.FP", self:GetParent():GetPlayerOwner() )
+self:AddStack()
 end
 
 function modifier_ogre_magi_bloodlust_custom_buff:OnRefresh( kv )
-	self:OnCreated( kv )
+self:AddStack()
+end
+
+
+
+function modifier_ogre_magi_bloodlust_custom_buff:AddStack()
+if not IsServer() then return end 
+if self:GetStackCount() >= self.max then return end
+self:IncrementStackCount()
+
+self.parent:EmitSound("Hero_OgreMagi.Bloodlust.Target")
+EmitSoundOnClient( "Hero_OgreMagi.Bloodlust.Target.FP", self.parent:GetPlayerOwner() )
+end
+
+
+
+
+function modifier_ogre_magi_bloodlust_custom_buff:OnDestroy()
+if not IsServer() then return end 
+self.ability:SetActivated(true)
+
+if self.caster:HasTalent("modifier_ogremagi_bloodlust_6") and self.ability:IsHidden() then 
+	self.caster:SwapAbilities(self.ability:GetName(), "ogre_magi_bloodlust_custom_charge", true, false)
+end 
+
+self.parent:RemoveModifierByName("modifier_ogre_magi_bloodlust_custom_str")
 end
 
 function modifier_ogre_magi_bloodlust_custom_buff:DeclareFunctions()
-	local funcs = {
-		MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-		MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-		MODIFIER_PROPERTY_MODEL_SCALE,
-		MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
-		MODIFIER_EVENT_ON_ATTACK_LANDED,
-		MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS
-	}
-
-	return funcs
-end
-
-
-function modifier_ogre_magi_bloodlust_custom_buff:OnAttackLanded(params)
-if not IsServer() then return end
-if self:GetParent() ~= self:GetCaster() then return end
-if params.attacker ~= self:GetParent() then return end
-if not params.target:IsCreep() and not params.target:IsHero() then return end
-params.target:EmitSound("Hero_Sven.GreatCleave")
-
-DoCleaveAttack( self:GetParent(), params.target, self:GetAbility(), self.cleave*params.damage/100, 150, 360, 500, "particles/units/heroes/hero_sven/sven_spell_great_cleave.vpcf" )
-
-end
-
-
-function modifier_ogre_magi_bloodlust_custom_buff:GetModifierMoveSpeedBonus_Percentage()
-local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_ogremagi_bloodlust_1") then 
-	bonus = self:GetAbility().speed_move[self:GetCaster():GetUpgradeStack("modifier_ogremagi_bloodlust_1")]
-end
-
-	return (self.bonus_movement_speed + bonus)*self:GetStackCount()
-end
-
-
-function modifier_ogre_magi_bloodlust_custom_buff:GetModifierPhysicalArmorBonus()
-local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_ogremagi_bloodlust_3") then 
-	bonus = self:GetAbility().armor[self:GetCaster():GetUpgradeStack("modifier_ogremagi_bloodlust_3")]
-end
-
-	return (bonus)*self:GetStackCount()
-end
-
-
-
-function modifier_ogre_magi_bloodlust_custom_buff:GetModifierMagicalResistanceBonus()
-local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_ogremagi_bloodlust_3") then 
-	bonus = self:GetAbility().armor_magic[self:GetCaster():GetUpgradeStack("modifier_ogremagi_bloodlust_3")]
-end
-
-	return (bonus)*self:GetStackCount()
-end
-
-
-
-function modifier_ogre_magi_bloodlust_custom_buff:GetModifierAttackSpeedBonus_Constant()
-local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_ogremagi_bloodlust_1") then 
-	bonus = self:GetAbility().speed_attack[self:GetCaster():GetUpgradeStack("modifier_ogremagi_bloodlust_1")]
-end
-
-return (self.bonus_attack_speed + bonus)*self:GetStackCount()
-end
-
-function modifier_ogre_magi_bloodlust_custom_buff:GetModifierModelScale()
-	return self.model_scale
-end
-
-
-
-
-
-
-
-
-modifier_ogre_magi_bloodlust_custom_buff_count = class({})
-function modifier_ogre_magi_bloodlust_custom_buff_count:IsHidden() return true end
-function modifier_ogre_magi_bloodlust_custom_buff_count:IsPurgable() return false end
-function modifier_ogre_magi_bloodlust_custom_buff_count:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-
-function modifier_ogre_magi_bloodlust_custom_buff_count:OnCreated(table)
-self.RemoveForDuel = true
-end
-
-function modifier_ogre_magi_bloodlust_custom_buff_count:OnDestroy()
-if not IsServer() then return end
-local mod = self:GetParent():FindModifierByName("modifier_ogre_magi_bloodlust_custom_buff")
-if mod then 
-	mod:DecrementStackCount()
-	if mod:GetStackCount() == 0 then 
-		mod:Destroy()
-	end
-end
-
-end
-function modifier_ogre_magi_bloodlust_custom_buff_count:GetEffectName()
-	return "particles/units/heroes/hero_ogre_magi/ogre_magi_bloodlust_buff.vpcf"
-end
-
-function modifier_ogre_magi_bloodlust_custom_buff_count:GetEffectAttachType()
-	return PATTACH_ABSORIGIN_FOLLOW
-end
-
-
-modifier_ogre_magi_bloodlust_custom_damage = class({})
-function modifier_ogre_magi_bloodlust_custom_damage:IsHidden() return false end
-function modifier_ogre_magi_bloodlust_custom_damage:IsPurgable() return false end
-function modifier_ogre_magi_bloodlust_custom_damage:GetTexture() return "buffs/bloodlust_damage" end
-
-function modifier_ogre_magi_bloodlust_custom_damage:OnCreated(table)
-if not self:GetAbility() then return end
-
-if not IsServer() then return end
-
-self:SetStackCount(1)
-end
-
-function modifier_ogre_magi_bloodlust_custom_damage:OnRefresh(table)
-if not IsServer() then return end
-if self:GetStackCount() >= self:GetAbility().damage_max_stack then return end
-self:IncrementStackCount()
-end
-
-function modifier_ogre_magi_bloodlust_custom_damage:DeclareFunctions()
-return
+return 
 {
-	MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+	MODIFIER_PROPERTY_MODEL_SCALE,
+	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
+	MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS
 }
 end
 
-
-function modifier_ogre_magi_bloodlust_custom_damage:GetModifierPreAttack_BonusDamage()
-return self:GetStackCount()*self:GetAbility().damage_per_stack[self:GetCaster():GetUpgradeStack("modifier_ogremagi_bloodlust_2")]
+function modifier_ogre_magi_bloodlust_custom_buff:GetModifierAttackSpeedBonus_Constant()
+return self.speed_bonus + self.speed_bonus*self.stack_bonus*(self:GetStackCount() - 1)
 end
+
+function modifier_ogre_magi_bloodlust_custom_buff:GetModifierMoveSpeedBonus_Percentage()
+return self.move_bonus + self.move_bonus*self.stack_bonus*(self:GetStackCount() - 1)
+end
+
+function modifier_ogre_magi_bloodlust_custom_buff:GetModifierPhysicalArmorBonus()
+if not self.caster:HasTalent("modifier_ogremagi_bloodlust_3") then return end
+return self.armor*self:GetStackCount()
+end
+
+function modifier_ogre_magi_bloodlust_custom_buff:GetModifierMagicalResistanceBonus()
+if not self.caster:HasTalent("modifier_ogremagi_bloodlust_3") then return end
+return self.magic*self:GetStackCount()
+end
+
+function modifier_ogre_magi_bloodlust_custom_buff:GetModifierModelScale()
+return self.model_scale
+end
+
 
 
 
@@ -390,89 +295,99 @@ end
 modifier_ogre_magi_bloodlust_custom_tracker = class({})
 function modifier_ogre_magi_bloodlust_custom_tracker:IsHidden() return true end
 function modifier_ogre_magi_bloodlust_custom_tracker:IsPurgable() return false end
+
+
+function modifier_ogre_magi_bloodlust_custom_tracker:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.legendary_chance = self.parent:GetTalentValue("modifier_ogremagi_bloodlust_7", "chance", true)
+self.legendary_radius = self.parent:GetTalentValue("modifier_ogremagi_bloodlust_7", "radius", true)
+self.legendary_slow = self.parent:GetTalentValue("modifier_ogremagi_bloodlust_7", "duration", true)
+self.legendary_damage = self.parent:GetTalentValue("modifier_ogremagi_bloodlust_7", "damage", true)/100
+self.legendary_attacks = self.parent:GetTalentValue("modifier_ogremagi_bloodlust_7", "attacks", true)
+self.legendary_heal = self.parent:GetTalentValue("modifier_ogremagi_bloodlust_7", "heal", true)/100
+
+
+self.damage_duration = self.parent:GetTalentValue("modifier_ogremagi_bloodlust_2", "duration", true)
+
+self.cleave = self.ability:GetSpecialValueFor("cleave_damage")/100
+self.parent:AddAttackEvent_out(self)
+end
+
+
 function modifier_ogre_magi_bloodlust_custom_tracker:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_ATTACK_LANDED,
+	MODIFIER_PROPERTY_ATTACK_RANGE_BONUS
 }
 end
 
 
+function modifier_ogre_magi_bloodlust_custom_tracker:GetModifierAttackRangeBonus()
+if not self.parent:HasTalent("modifier_ogremagi_bloodlust_1") then return end 
+return self.parent:GetTalentValue("modifier_ogremagi_bloodlust_1", "range")
+end
 
 
-
-function modifier_ogre_magi_bloodlust_custom_tracker:OnAttackLanded(params)
+function modifier_ogre_magi_bloodlust_custom_tracker:AttackEvent_out(params)
 if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end
+if self.parent ~= params.attacker then return end
+if not params.target:IsUnit() then return end
 
+local mod = self.parent:FindModifierByName("modifier_ogre_magi_bloodlust_custom_buff") 
+if mod then 
+	params.target:EmitSound("Hero_Sven.GreatCleave")
+	DoCleaveAttack( self.parent, params.target, self.ability, self.cleave*params.damage, 150, 360, 500, "particles/units/heroes/hero_sven/sven_spell_great_cleave.vpcf" )
 
-if self:GetParent():GetQuest() == "Ogre.Quest_7" and not self:GetParent():QuestCompleted() and params.target:IsRealHero() then 
-	params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_ogre_magi_bloodlust_custom_quest", {duration = 1})
+	if self.parent:HasTalent("modifier_ogremagi_bloodlust_7") then 
+		mod.legendary_count = mod.legendary_count + 1 
+		if mod.legendary_count >= self.legendary_attacks then 
+			mod.legendary_count = 0
+			self.ability:LegendaryProc()
+		end 
+	end 
 end
 
 
-if self:GetParent():HasModifier("modifier_ogremagi_bloodlust_6") and not params.target:IsBuilding() then 
-	self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_ogre_magi_bloodlust_custom_attack_count", {target = params.target:entindex()})
+if self.parent:HasModifier("modifier_ogre_magi_bloodlust_custom_legendary_1") then 
+	self.parent:GenericHeal(self.parent:GetMaxHealth()*self.legendary_heal, self.ability, true, nil, "modifier_ogremagi_bloodlust_7")
+end
+
+if self.parent:GetQuest() == "Ogre.Quest_7" and not self.parent:QuestCompleted() and params.target:IsRealHero() then 
+	params.target:AddNewModifier(self.parent, self.ability, "modifier_ogre_magi_bloodlust_custom_quest", {duration = 1})
 end
 
 
-if self:GetParent():HasModifier("modifier_ogremagi_bloodlust_2") then 
-	self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_ogre_magi_bloodlust_custom_damage", {duration = self:GetAbility().damage_duration})
-end
+if self.parent:HasTalent("modifier_ogremagi_bloodlust_2") then 
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_ogre_magi_bloodlust_custom_damage", {duration = self.damage_duration})
+end 
 
+if self.parent:HasModifier("modifier_ogre_magi_bloodlust_custom_legendary_2") and RollPseudoRandomPercentage(self.legendary_chance, 548, self.parent) then 
 
-if self:GetParent():HasModifier("modifier_ogremagi_bloodlust_4") then 
-	if params.target:IsAlive()  and (params.target:IsCreep() or params.target:IsHero()) and 
-		RollPseudoRandomPercentage(self:GetAbility().proc_chance[self:GetCaster():GetUpgradeStack("modifier_ogremagi_bloodlust_4")], 546, self:GetParent()) then 
+	self.parent:EmitSound("Item.Maelstrom.Chain_Lightning.Jump")
 
-		params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_ogre_magi_bloodlust_custom_legendary_attack", {duration = self:GetAbility().proc_delay})
-	end
-end
+	local damage = self.legendary_damage*self.parent:GetAverageTrueAttackDamage(nil)
+	local damage_table = {attacker = self.parent, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self.ability}
 
+	for _,unit in pairs(self.parent:FindTargets(self.legendary_radius, params.target:GetAbsOrigin())) do
 
-if self:GetParent():HasModifier("modifier_ogre_magi_bloodlust_custom_legendary_6") then 
-	if params.target and RollPseudoRandomPercentage(self:GetAbility().legendary_proc_chance, 548, self:GetParent()) then 
+		damage_table.victim = unit
+		local real_damage = DoDamage(damage_table, "modifier_ogremagi_bloodlust_7")
+		unit:SendNumber(4, real_damage)
 
-
-		self:GetParent():EmitSound("Item.Maelstrom.Chain_Lightning.Jump")
-
-		local units = FindUnitsInRadius( self:GetParent():GetTeamNumber(), params.target:GetAbsOrigin(), nil, self:GetAbility().legendary_proc_aoe, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO+DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_CLOSEST, false )
-		for _, unit in pairs(units) do
-
-			local damage = self:GetAbility().legendary_proc_damage
-				
-			ApplyDamage({victim = unit, attacker = self:GetParent(), damage = damage, damage_type = DAMAGE_TYPE_MAGICAL})
-
-			SendOverheadEventMessage(unit, 4, unit, damage, nil)
-
-			local source = self:GetParent()
-			if unit ~= params.target then 
-				source = params.target
-			end
-
-			unit:EmitSound("Item.Maelstrom.Chain_Lightning")
-
-			local particle = ParticleManager:CreateParticle( "particles/orge_lightning.vpcf", PATTACH_POINT_FOLLOW, unit )
-			ParticleManager:SetParticleControlEnt( particle, 0, unit, PATTACH_POINT_FOLLOW, "attach_hitloc", unit:GetAbsOrigin(), true )
-			ParticleManager:SetParticleControlEnt( particle, 1, source, PATTACH_POINT_FOLLOW, "attach_hitloc", source:GetAbsOrigin(), true )
-			ParticleManager:ReleaseParticleIndex( particle )
-
-
-
+		local source = self.parent
+		if unit ~= params.target then 
+			source = params.target
 		end
-	end
-end
+		unit:EmitSound("Item.Maelstrom.Chain_Lightning")
 
+		local particle = ParticleManager:CreateParticle( "particles/orge_lightning.vpcf", PATTACH_POINT_FOLLOW, unit )
+		ParticleManager:SetParticleControlEnt( particle, 0, unit, PATTACH_POINT_FOLLOW, "attach_hitloc", unit:GetAbsOrigin(), true )
+		ParticleManager:SetParticleControlEnt( particle, 1, source, PATTACH_POINT_FOLLOW, "attach_hitloc", source:GetAbsOrigin(), true )
+		ParticleManager:ReleaseParticleIndex( particle )
 
-if self:GetParent():HasModifier("modifier_ogre_magi_bloodlust_custom_legendary_3") then 
-	local chance = self:GetAbility().legendary_chance
-
-	if RollPseudoRandomPercentage(chance, 542, self:GetParent()) then 
-		params.target:EmitSound("BB.Goo_stun")
-
-		params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_ogre_magi_bloodlust_custom_legendary_slow", {duration = self:GetAbility().legendary_slow*(1 - params.target:GetStatusResistance())})
-
-
+		unit:AddNewModifier(self.parent, self.ability, "modifier_ogre_magi_bloodlust_custom_legendary_slow", {duration = (1 - unit:GetStatusResistance())*self.legendary_slow})
 	end
 end
 
@@ -484,38 +399,14 @@ end
 modifier_ogre_magi_bloodlust_custom_legendary_1 = class({})
 function modifier_ogre_magi_bloodlust_custom_legendary_1:IsHidden() return true end
 function modifier_ogre_magi_bloodlust_custom_legendary_1:IsPurgable() return false end
-function modifier_ogre_magi_bloodlust_custom_legendary_1:DeclareFunctions()
-return
-{
-	MODIFIER_EVENT_ON_TAKEDAMAGE
-}
-end
 
-function modifier_ogre_magi_bloodlust_custom_legendary_1:OnTakeDamage(params)
-if not IsServer() then return end
-if self:GetCaster() ~= params.attacker then return end
-if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end
-
-local k = 1
-if params.unit:IsCreep() then 
-	k = self:GetAbility().legendary_heal_creeps
-end
-
-local heal = self:GetAbility().legendary_heal*params.damage*k
-
-self:GetCaster():Heal(heal, self)
-
-SendOverheadEventMessage(self:GetCaster(), 10, self:GetCaster(), heal, nil)
-
-local particle = ParticleManager:CreateParticle( "particles/generic_gameplay/generic_lifesteal.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-ParticleManager:ReleaseParticleIndex( particle )
-
-end
 
 function modifier_ogre_magi_bloodlust_custom_legendary_1:OnCreated(table)
-if not IsServer() then return end
 self.RemoveForDuel = true 
+self.PercentStr = self:GetParent():GetTalentValue("modifier_ogremagi_bloodlust_7", "str")/100
 end
+
+
 
 
 
@@ -524,31 +415,15 @@ modifier_ogre_magi_bloodlust_custom_legendary_2 = class({})
 function modifier_ogre_magi_bloodlust_custom_legendary_2:IsHidden() return true end
 function modifier_ogre_magi_bloodlust_custom_legendary_2:IsPurgable() return false end
 function modifier_ogre_magi_bloodlust_custom_legendary_2:GetEffectName()
-return "particles/generic_gameplay/rune_arcane_owner.vpcf"
+return "particles/ogre_dd.vpcf"
 end
 
+
 function modifier_ogre_magi_bloodlust_custom_legendary_2:OnCreated(table)
-if not IsServer() then return end
+self.caster = self:GetCaster()
 self.RemoveForDuel = true 
 end
 
-function modifier_ogre_magi_bloodlust_custom_legendary_2:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_CASTTIME_PERCENTAGE,
-MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE
-}
-end
-
-function modifier_ogre_magi_bloodlust_custom_legendary_2:GetModifierPercentageCasttime()
-return self:GetAbility().legendary_cast
-end
-
-
-function modifier_ogre_magi_bloodlust_custom_legendary_2:GetModifierPercentageCooldown() 
-	return self:GetAbility().legendary_cdr
-end
-   
 
 
 
@@ -559,9 +434,32 @@ function modifier_ogre_magi_bloodlust_custom_legendary_3:IsHidden() return true 
 function modifier_ogre_magi_bloodlust_custom_legendary_3:IsPurgable() return false end
 
 function modifier_ogre_magi_bloodlust_custom_legendary_3:OnCreated(table)
-if not IsServer() then return end
+self.status = self:GetCaster():GetTalentValue("modifier_ogremagi_bloodlust_7", "status")
 self.RemoveForDuel = true 
 end
+
+function modifier_ogre_magi_bloodlust_custom_legendary_3:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
+}
+end
+
+function modifier_ogre_magi_bloodlust_custom_legendary_3:GetModifierStatusResistanceStacking()
+return self.status
+end
+
+function modifier_ogre_magi_bloodlust_custom_legendary_3:CheckState()
+return
+{
+	[MODIFIER_STATE_UNSLOWABLE] = true
+}
+end
+
+function modifier_ogre_magi_bloodlust_custom_legendary_3:GetEffectName()
+return "particles/ogre_magi/blood_resist.vpcf"
+end
+
 
 
 
@@ -570,301 +468,72 @@ modifier_ogre_magi_bloodlust_custom_legendary_4 = class({})
 function modifier_ogre_magi_bloodlust_custom_legendary_4:IsHidden() return true end
 function modifier_ogre_magi_bloodlust_custom_legendary_4:IsPurgable() return false end
 function modifier_ogre_magi_bloodlust_custom_legendary_4:GetEffectName()
- return "particles/ogre_shield.vpcf" end
- 
-function modifier_ogre_magi_bloodlust_custom_legendary_4:GetEffectAttachType() return PATTACH_OVERHEAD_FOLLOW end
-
-
-function modifier_ogre_magi_bloodlust_custom_legendary_4:OnCreated(table)
-if not IsServer() then return end
-	self.RemoveForDuel = true
-	self.str_percentage = self:GetAbility().legendary_str
-	self:StartIntervalThink(0.2)
+return "particles/generic_gameplay/rune_arcane_owner.vpcf"
 end
 
-function modifier_ogre_magi_bloodlust_custom_legendary_4:OnIntervalThink()
-if not IsServer() then return end
-self.str  = 0
+function modifier_ogre_magi_bloodlust_custom_legendary_4:OnCreated(table)
+self.RemoveForDuel = true 
+self.caster = self:GetCaster()
 
-self.str   = self:GetParent():GetStrength() * self.str_percentage * 0.01
-
-self:GetParent():CalculateStatBonus(true)
-
-
+self.cdr = self.caster:GetTalentValue("modifier_ogremagi_bloodlust_7", "cdr")
+self.cast = self.caster:GetTalentValue("modifier_ogremagi_bloodlust_7", "cast")
 end
 
 function modifier_ogre_magi_bloodlust_custom_legendary_4:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
+	MODIFIER_PROPERTY_CASTTIME_PERCENTAGE,
+	MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE
 }
 end
 
-
-function modifier_ogre_magi_bloodlust_custom_legendary_4:GetModifierBonusStats_Strength()
-  return self.str
+function modifier_ogre_magi_bloodlust_custom_legendary_4:GetModifierPercentageCasttime()
+return self.cast
 end
 
-
-
-
-function modifier_ogre_magi_bloodlust_custom_legendary_4:GetAuraRadius()
-  return self:GetAbility().legendary_str_radius
+function modifier_ogre_magi_bloodlust_custom_legendary_4:GetModifierPercentageCooldown() 
+return self.cdr
 end
-
-function modifier_ogre_magi_bloodlust_custom_legendary_4:GetAuraSearchTeam()
-  return DOTA_UNIT_TARGET_TEAM_ENEMY
-end
-
-function modifier_ogre_magi_bloodlust_custom_legendary_4:GetAuraSearchType() 
-  return DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO
-end
+   
 
 
-function modifier_ogre_magi_bloodlust_custom_legendary_4:GetModifierAura()
-  return "modifier_ogre_magi_bloodlust_custom_legendary_4_damage"
-end
-
-function modifier_ogre_magi_bloodlust_custom_legendary_4:IsAura()
-  return true
-end
-
-		
-
-modifier_ogre_magi_bloodlust_custom_legendary_4_damage = class({})
-function modifier_ogre_magi_bloodlust_custom_legendary_4_damage:IsHidden() return false end
-function modifier_ogre_magi_bloodlust_custom_legendary_4_damage:IsPurgable() return false end
-function modifier_ogre_magi_bloodlust_custom_legendary_4_damage:GetTexture() return "buffs/berserker_armor" end
-
-function modifier_ogre_magi_bloodlust_custom_legendary_4_damage:OnCreated(table)
-self.damage = self:GetAbility().legendary_str_damage
-
-if not IsServer() then return end
-self:StartIntervalThink(self:GetAbility().legendary_str_interval)
-
-end
-
-function modifier_ogre_magi_bloodlust_custom_legendary_4_damage:OnIntervalThink()
-if not IsServer() then return end
-
-ApplyDamage({victim = self:GetParent(), attacker = self:GetCaster(), ability = self:GetAbility(), damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL})
-end
-
-
-
-
-function modifier_ogre_magi_bloodlust_custom_legendary_4_damage:GetEffectName()
-  return "particles/huskar_burn_aura.vpcf"
-end
-
-function modifier_ogre_magi_bloodlust_custom_legendary_4_damage:GetEffectAttachType()
-  return PATTACH_ABSORIGIN_FOLLOW
-end
-function modifier_ogre_magi_bloodlust_custom_legendary_4_damage:DeclareFunctions()
-return
-{
-  MODIFIER_PROPERTY_TOOLTIP
-}
-end
-
-
-function modifier_ogre_magi_bloodlust_custom_legendary_4_damage:OnTooltip()
-
-return self.damage
-end
-
-
-
-
-
-
-modifier_ogre_magi_bloodlust_custom_legendary_5 = class({})
-function modifier_ogre_magi_bloodlust_custom_legendary_5:IsHidden() return true end
-function modifier_ogre_magi_bloodlust_custom_legendary_5:IsPurgable() return false end
-
-
-function modifier_ogre_magi_bloodlust_custom_legendary_5:OnCreated(table)
-if not IsServer() then return end
-self.RemoveForDuel = true 
-end
-
-
-modifier_ogre_magi_bloodlust_custom_legendary_resist = class({})
-function modifier_ogre_magi_bloodlust_custom_legendary_resist:IsHidden() return false end
-function modifier_ogre_magi_bloodlust_custom_legendary_resist:IsPurgable() return true end
-function modifier_ogre_magi_bloodlust_custom_legendary_resist:GetTexture() return "buffs/bloodlust_resist" end
-function modifier_ogre_magi_bloodlust_custom_legendary_resist:GetEffectName() return "particles/items4_fx/ascetic_cap.vpcf" end
-
-function modifier_ogre_magi_bloodlust_custom_legendary_resist:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING
-}
-
-end
-function modifier_ogre_magi_bloodlust_custom_legendary_resist:GetModifierMoveSpeedBonus_Percentage()
-	return self:GetAbility().legendary_resist_speed
-end
-function modifier_ogre_magi_bloodlust_custom_legendary_resist:GetModifierStatusResistanceStacking() 
-	return self:GetAbility().legendary_resist_effects
-end
-
-
-
-modifier_ogre_magi_bloodlust_custom_legendary_6 = class({})
-function modifier_ogre_magi_bloodlust_custom_legendary_6:IsHidden() return true end
-function modifier_ogre_magi_bloodlust_custom_legendary_6:IsPurgable() return false end
-function modifier_ogre_magi_bloodlust_custom_legendary_6:GetEffectName()
-return "particles/ogre_dd.vpcf"
-end
-
-
-function modifier_ogre_magi_bloodlust_custom_legendary_6:OnCreated(table)
-if not IsServer() then return end
-self.RemoveForDuel = true 
-end
-
-
-
-
-
-
-
-
-modifier_ogre_magi_bloodlust_custom_legendary_attack = class({})
-function modifier_ogre_magi_bloodlust_custom_legendary_attack:IsHidden() return true end
-function modifier_ogre_magi_bloodlust_custom_legendary_attack:IsPurgable() return false end
-function modifier_ogre_magi_bloodlust_custom_legendary_attack:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-function modifier_ogre_magi_bloodlust_custom_legendary_attack:OnDestroy()
-if not IsServer() then return end
-if not self:GetParent():IsAlive() then return end
-if not self:GetCaster() then return end
-if self:GetCaster():IsNull() then return end
-
-self:GetCaster():PerformAttack(self:GetParent(), true, true, true, true, false, false, false)
-self:GetParent():EmitSound("Ogre.Bloodlust_hit")
-
-end
 
 
 
 modifier_ogre_magi_bloodlust_custom_legendary_slow = class({})
-function modifier_ogre_magi_bloodlust_custom_legendary_slow:IsHidden() return false end
-function modifier_ogre_magi_bloodlust_custom_legendary_slow:IsPurgable() return false end
-function modifier_ogre_magi_bloodlust_custom_legendary_slow:GetTexture() return "buffs/bloodlust_slow" end
+function modifier_ogre_magi_bloodlust_custom_legendary_slow:IsHidden() return true end
+function modifier_ogre_magi_bloodlust_custom_legendary_slow:IsPurgable() return true end
 function modifier_ogre_magi_bloodlust_custom_legendary_slow:DeclareFunctions()
 return
 {
 	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
 }
+end
+
+function modifier_ogre_magi_bloodlust_custom_legendary_slow:OnCreated()
+self.slow = self:GetCaster():GetTalentValue("modifier_ogremagi_bloodlust_7", "slow")
 end
 
 function modifier_ogre_magi_bloodlust_custom_legendary_slow:GetModifierMoveSpeedBonus_Percentage()
-	return self:GetAbility().legendary_slow_move
+return self.slow
 end
-
-function modifier_ogre_magi_bloodlust_custom_legendary_slow:GetModifierAttackSpeedBonus_Constant()
-	return self:GetAbility().legendary_slow_attack
-end
-
 
 function modifier_ogre_magi_bloodlust_custom_legendary_slow:GetEffectName()
-    return "particles/units/heroes/hero_sniper/sniper_headshot_slow.vpcf"
+return "particles/units/heroes/hero_sniper/sniper_headshot_slow.vpcf"
 end
-
 
 function modifier_ogre_magi_bloodlust_custom_legendary_slow:GetEffectAttachType()
-    return PATTACH_OVERHEAD_FOLLOW
-end
-
-
-
-modifier_ogre_magi_bloodlust_custom_heal_cd = class({})
-
-function modifier_ogre_magi_bloodlust_custom_heal_cd:IsPurgable() return false end
-function modifier_ogre_magi_bloodlust_custom_heal_cd:IsHidden() return false end
-function modifier_ogre_magi_bloodlust_custom_heal_cd:IsDebuff() return true end
-function modifier_ogre_magi_bloodlust_custom_heal_cd:RemoveOnDeath() return false end
-function modifier_ogre_magi_bloodlust_custom_heal_cd:GetTexture()
-  return "buffs/inner_heal" end
-function modifier_ogre_magi_bloodlust_custom_heal_cd:OnCreated(table)
-  self.RemoveForDuel = true
+return PATTACH_OVERHEAD_FOLLOW
 end
 
 
 
 
-modifier_ogre_magi_bloodlust_custom_attack_count = class({})
-function modifier_ogre_magi_bloodlust_custom_attack_count:IsHidden() return false end
-function modifier_ogre_magi_bloodlust_custom_attack_count:IsPurgable() return false end
-function modifier_ogre_magi_bloodlust_custom_attack_count:GetTexture() return "buffs/bloodlust_count" end
-
-function modifier_ogre_magi_bloodlust_custom_attack_count:OnCreated(table)
-if not IsServer() then return end
-self.RemoveForDuel = true 
-self:SetStackCount(1)
-self.target = EntIndexToHScript(table.target)
-
-self.particle = ParticleManager:CreateParticle("particles/troll_char.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())
-self:AddParticle(self.particle, false, false, -1, false, false)
-
-
-end
-
-
-function modifier_ogre_magi_bloodlust_custom_attack_count:OnRefresh(table)
-if not IsServer() then return end
-
-local new_target = EntIndexToHScript(table.target)
-if not new_target then return end 
-
-if new_target == self.target then 
-	self:IncrementStackCount()
-	if self:GetStackCount() >= self:GetAbility().attack_max then 
-		self:Destroy()
-		self:GetAbility():AddStack()
-	end
-else 
-	self.target = new_target
-	self:SetStackCount(1)
-end
-
-end
-
-
-function modifier_ogre_magi_bloodlust_custom_attack_count:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_TOOLTIP
-}
-end
-
-function modifier_ogre_magi_bloodlust_custom_attack_count:OnTooltip()
-	return self:GetAbility().attack_max
-end
 
 
 
-function modifier_ogre_magi_bloodlust_custom_attack_count:OnStackCountChanged(iStackCount)
-if self:GetStackCount() == 0 then return end
-if not self.particle then return end
-
-local max = self:GetAbility().attack_max/2
-local stack = math.min(math.floor(self:GetStackCount()/2), max)
 
 
-for i = 1,max do 
-	
-	if i <= stack then 
-		ParticleManager:SetParticleControl(self.particle, i, Vector(1, 0, 0))	
-	else 
-		ParticleManager:SetParticleControl(self.particle, i, Vector(0, 0, 0))	
-	end
-end
-
-end
 
 
 
@@ -875,31 +544,25 @@ function modifier_ogre_magi_bloodlust_custom_incoming:IsHidden() return false en
 function modifier_ogre_magi_bloodlust_custom_incoming:IsPurgable() return false end
 function modifier_ogre_magi_bloodlust_custom_incoming:GetTexture() return "buffs/chemical_incoming" end
 function modifier_ogre_magi_bloodlust_custom_incoming:OnCreated(table)
-if not IsServer() then return end
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.damage_reduce = self.caster:GetTalentValue("modifier_ogremagi_bloodlust_5", "damage_reduce")
 
- 
-  self.particle_1 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff.vpcf"
-  self.particle_2 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_egg.vpcf"
-  self.particle_3 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_streaks.vpcf"
-  self.sound = "Hero_Pangolier.TailThump.Shield"
-  self.buff_particles = {}
+if not IsServer() then return end 
+self.buff_particles = {}
 
-  self:GetCaster():EmitSound( self.sound)
+self.buff_particles[1] = ParticleManager:CreateParticle("particles/units/heroes/hero_pangolier/pangolier_tailthump_buff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt(self.buff_particles[1], 1, self.parent, PATTACH_ABSORIGIN_FOLLOW, nil, Vector(0,0,0), false) 
+self:AddParticle(self.buff_particles[1], false, false, -1, true, false)
+ParticleManager:SetParticleControl( self.buff_particles[1], 3, Vector( 255, 255, 255 ) )
 
+self.buff_particles[2] = ParticleManager:CreateParticle("particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_egg.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt(self.buff_particles[2], 1, self.parent, PATTACH_ABSORIGIN_FOLLOW, nil, Vector(0,0,0), false) 
+self:AddParticle(self.buff_particles[2], false, false, -1, true, false)
 
-  self.buff_particles[1] = ParticleManager:CreateParticle(self.particle_1, PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-  ParticleManager:SetParticleControlEnt(self.buff_particles[1], 1, self:GetCaster(), PATTACH_ABSORIGIN_FOLLOW, nil, Vector(0,0,0), false) 
-  self:AddParticle(self.buff_particles[1], false, false, -1, true, false)
-  ParticleManager:SetParticleControl( self.buff_particles[1], 3, Vector( 255, 255, 255 ) )
-
-  self.buff_particles[2] = ParticleManager:CreateParticle(self.particle_2, PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-  ParticleManager:SetParticleControlEnt(self.buff_particles[2], 1, self:GetCaster(), PATTACH_ABSORIGIN_FOLLOW, nil, Vector(0,0,0), false) 
-  self:AddParticle(self.buff_particles[2], false, false, -1, true, false)
-
-  self.buff_particles[3] = ParticleManager:CreateParticle(self.particle_3, PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-  ParticleManager:SetParticleControlEnt(self.buff_particles[3], 1, self:GetCaster(), PATTACH_ABSORIGIN_FOLLOW, nil, Vector(0,0,0), false) 
-  self:AddParticle(self.buff_particles[3], false, false, -1, true, false)
-
+self.buff_particles[3] = ParticleManager:CreateParticle("particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_streaks.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt(self.buff_particles[3], 1, self.parent, PATTACH_ABSORIGIN_FOLLOW, nil, Vector(0,0,0), false) 
+self:AddParticle(self.buff_particles[3], false, false, -1, true, false)
 end
 
 
@@ -912,8 +575,180 @@ return
 end
 
 function modifier_ogre_magi_bloodlust_custom_incoming:GetModifierIncomingDamage_Percentage()
-return self:GetAbility().heal_damage
+return self.damage_reduce
 end
+
+
+
+
+
+
+ogre_magi_bloodlust_custom_charge = class({})
+
+
+function ogre_magi_bloodlust_custom_charge:GetCastRange(vLocation, hTarget)
+return self:GetCaster():GetTalentValue("modifier_ogremagi_bloodlust_6", "range")
+end
+
+function ogre_magi_bloodlust_custom_charge:OnSpellStart()
+local caster = self:GetCaster()
+local ability = caster:FindAbilityByName("ogre_magi_bloodlust_custom")
+
+
+if ability and ability:IsHidden() then 
+	caster:SwapAbilities(self:GetName(), ability:GetName(), false, true)
+end 
+
+caster:AddNewModifier(caster, self, "modifier_ogre_magi_bloodlust_custom_charge", {duration = caster:GetTalentValue("modifier_ogremagi_bloodlust_6", "duration")})
+end
+
+
+
+
+
+modifier_ogre_magi_bloodlust_custom_charge = class({})
+function modifier_ogre_magi_bloodlust_custom_charge:IsHidden() return true end
+function modifier_ogre_magi_bloodlust_custom_charge:IsPurgable() return false end
+
+function modifier_ogre_magi_bloodlust_custom_charge:OnCreated()
+if not IsServer() then return end
+
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+self.caster:StartGesture(ACT_DOTA_FLAIL)
+
+self.angle = self.caster:GetForwardVector():Normalized()
+self.distance = self.caster:GetTalentValue("modifier_ogremagi_bloodlust_6", "range") / ( self:GetDuration() / FrameTime())
+self.radius = self.caster:GetTalentValue("modifier_ogremagi_bloodlust_6", "radius")
+self.stun = self.caster:GetTalentValue("modifier_ogremagi_bloodlust_6", "stun")
+
+self.bkb = self.caster:AddNewModifier(self.caster, self.ability, "modifier_generic_debuff_immune", {})
+
+self.targets = {}
+
+
+self.caster:EmitSound("Ogre.Blood_charge")
+self.caster:EmitSound("Ogre.Blood_charge2")
+--self.caster:EmitSound("Ogre.Blood_charge_vo")
+
+if self:ApplyHorizontalMotionController() == false then
+    self:Destroy()
+end
+
+end
+
+function modifier_ogre_magi_bloodlust_custom_charge:DeclareFunctions()
+return
+{
+ 	MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
+    MODIFIER_PROPERTY_DISABLE_TURNING
+}
+end
+
+function modifier_ogre_magi_bloodlust_custom_charge:GetActivityTranslationModifiers()
+  return "forcestaff_friendly"
+end
+
+
+function modifier_ogre_magi_bloodlust_custom_charge:GetModifierDisableTurning() return 1 end
+
+
+function modifier_ogre_magi_bloodlust_custom_charge:OnDestroy()
+if not IsServer() then return end
+self.caster:InterruptMotionControllers( true )
+
+if self.bkb and not self.bkb:IsNull() then 
+	self.bkb:Destroy()
+end
+
+self.caster:FadeGesture(ACT_DOTA_FLAIL)
+self.caster:StartGesture(ACT_DOTA_FORCESTAFF_END)
+
+ResolveNPCPositions(self.caster:GetAbsOrigin(), 128)
+
+local dir = self.caster:GetForwardVector()
+dir.z = 0
+self.caster:SetForwardVector(dir)
+self.caster:FaceTowards(self.caster:GetAbsOrigin() + dir*10)
+
+end
+
+
+function modifier_ogre_magi_bloodlust_custom_charge:UpdateHorizontalMotion( me, dt )
+if not IsServer() then return end
+local pos = self.caster:GetAbsOrigin()
+local pos_p = self.angle * self.distance
+local next_pos = GetGroundPosition(pos + pos_p,self.caster)
+self.caster:SetAbsOrigin(next_pos)
+
+GridNav:DestroyTreesAroundPoint(pos, 120, false)
+
+for _,enemy in pairs(self.caster:FindTargets(self.radius)) do 
+	if not self.targets[enemy] then 
+		self.targets[enemy] = true
+		enemy:AddNewModifier(self.caster, self.ability, "modifier_stunned", {duration = (1 - enemy:GetStatusResistance())*self.stun})
+
+		local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_primal_beast/primal_beast_onslaught_impact.vpcf", PATTACH_ABSORIGIN_FOLLOW, enemy )
+		ParticleManager:SetParticleControl( effect_cast, 1, Vector( self.radius, self.radius, self.radius ) )
+		ParticleManager:ReleaseParticleIndex( effect_cast )
+		enemy:EmitSound("Ogre.Blood_hit")
+
+
+		if not (enemy:IsCurrentlyHorizontalMotionControlled() or enemy:IsCurrentlyVerticalMotionControlled()) then
+			local direction = enemy:GetOrigin()-self:GetCaster():GetOrigin()
+			direction.z = 0
+			direction = direction:Normalized()
+
+			local knockbackProperties =
+			{
+			  center_x = self.caster:GetOrigin().x,
+			  center_y = self.caster:GetOrigin().y,
+			  center_z = self.caster:GetOrigin().z,
+			  duration = 0.2,
+			  knockback_duration = 0.2,
+			  knockback_distance = 80,
+			  knockback_height = 50
+			}
+			enemy:AddNewModifier( self.caster, self.ability, "modifier_knockback", knockbackProperties )
+		end
+
+	end
+end
+
+end
+
+function modifier_ogre_magi_bloodlust_custom_charge:OnHorizontalMotionInterrupted()
+self:Destroy()
+end
+
+
+
+function modifier_ogre_magi_bloodlust_custom_charge:CheckState()
+return
+{
+	[MODIFIER_STATE_DISARMED] = true,
+	[MODIFIER_STATE_SILENCED] = true
+}
+end
+
+function modifier_ogre_magi_bloodlust_custom_charge:GetEffectName()
+	return "particles/ogre_magi/blood_charge.vpcf"
+end
+
+function modifier_ogre_magi_bloodlust_custom_charge:GetEffectAttachType()
+	return PATTACH_ABSORIGIN_FOLLOW
+end
+
+
+function modifier_ogre_magi_bloodlust_custom_charge:GetStatusEffectName()
+return "particles/econ/items/invoker/invoker_ti7/status_effect_alacrity_ti7.vpcf"
+end
+
+function modifier_ogre_magi_bloodlust_custom_charge:StatusEffectPriority()
+return MODIFIER_PRIORITY_HIGH 
+end
+
+
 
 
 
@@ -942,3 +777,100 @@ if self:GetStackCount() >= self:GetCaster().quest.number then
 end
 
 end
+
+
+
+modifier_ogre_magi_bloodlust_custom_str = class({})
+function modifier_ogre_magi_bloodlust_custom_str:IsHidden() return false end
+function modifier_ogre_magi_bloodlust_custom_str:IsPurgable() return false end
+function modifier_ogre_magi_bloodlust_custom_str:GetTexture() return "buffs/bloodlust_str" end
+function modifier_ogre_magi_bloodlust_custom_str:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.max = self.parent:GetTalentValue("modifier_ogremagi_bloodlust_4", "max")
+self.str = self.parent:GetTalentValue("modifier_ogremagi_bloodlust_4", "str")
+self.speed = self.parent:GetTalentValue("modifier_ogremagi_bloodlust_4", "speed")
+self.model = 2
+
+if not IsServer() then return end 
+self:SetStackCount(1)
+self.parent:CalculateStatBonus(true)
+end
+
+function modifier_ogre_magi_bloodlust_custom_str:OnRefresh()
+if not IsServer() then return end 
+if self:GetStackCount() >= self.max then return end 
+
+self:IncrementStackCount()
+self.parent:CalculateStatBonus(true)
+end
+
+
+function modifier_ogre_magi_bloodlust_custom_str:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+	MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
+	MODIFIER_PROPERTY_MODEL_SCALE
+}
+end
+
+
+function modifier_ogre_magi_bloodlust_custom_str:GetModifierAttackSpeedBonus_Constant()
+return self.speed*self:GetStackCount()
+end
+
+function modifier_ogre_magi_bloodlust_custom_str:GetModifierBonusStats_Strength()
+return self.str*self:GetStackCount()
+end
+function modifier_ogre_magi_bloodlust_custom_str:GetModifierModelScale()
+return self.model*self:GetStackCount()
+end
+
+
+
+
+
+modifier_ogre_magi_bloodlust_custom_damage = class({})
+function modifier_ogre_magi_bloodlust_custom_damage:IsHidden() return false end
+function modifier_ogre_magi_bloodlust_custom_damage:IsPurgable() return false end
+function modifier_ogre_magi_bloodlust_custom_damage:GetTexture() return "buffs/bloodlust_damage" end
+function modifier_ogre_magi_bloodlust_custom_damage:OnCreated()
+self.parent = self:GetParent()
+self.damage = self.parent:GetTalentValue("modifier_ogremagi_bloodlust_2", "attack")
+self.spells = self.parent:GetTalentValue("modifier_ogremagi_bloodlust_2", "spells")
+self.max = self.parent:GetTalentValue("modifier_ogremagi_bloodlust_2", "max")
+
+if not IsServer() then return end 
+self:SetStackCount(1)
+end
+
+function modifier_ogre_magi_bloodlust_custom_damage:OnRefresh()
+if not IsServer() then return end 
+if self:GetStackCount() >= self.max then return end 
+
+self:IncrementStackCount()
+end
+
+
+function modifier_ogre_magi_bloodlust_custom_damage:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
+	MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE
+}
+end
+
+
+function modifier_ogre_magi_bloodlust_custom_damage:GetModifierSpellAmplify_Percentage()
+return self:GetStackCount()*self.spells
+end
+
+function modifier_ogre_magi_bloodlust_custom_damage:GetModifierPreAttack_BonusDamage()
+return self:GetStackCount()*self.damage
+end
+
+
+
+

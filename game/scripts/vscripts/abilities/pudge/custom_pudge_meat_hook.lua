@@ -1,721 +1,779 @@
 LinkLuaModifier( "modifier_custom_pudge_meat_hook", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
 LinkLuaModifier( "modifier_custom_pudge_meat_hook_debuff", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_HORIZONTAL  )
-LinkLuaModifier( "modifier_custom_pudge_meat_hook_streak", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
-LinkLuaModifier( "modifier_custom_pudge_meat_hook_streak_check", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
 LinkLuaModifier( "modifier_custom_pudge_meat_hook_blood", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
 LinkLuaModifier( "modifier_custom_pudge_meat_hook_root", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
-LinkLuaModifier( "modifier_custom_pudge_meat_hook_attacks", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
 LinkLuaModifier( "modifier_custom_pudge_meat_hook_speed", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
-LinkLuaModifier( "modifier_custom_pudge_meat_hook_damage", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
 LinkLuaModifier( "modifier_custom_pudge_meat_hook_tracker", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
-LinkLuaModifier( "modifier_custom_pudge_meat_hook_legendary", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
-LinkLuaModifier( "modifier_custom_pudge_meat_hook_move", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
-LinkLuaModifier( "modifier_custom_pudge_meat_hook_incoming", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
+LinkLuaModifier( "modifier_custom_pudge_meat_hook_perma", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
 LinkLuaModifier( "modifier_custom_pudge_meat_hook_stack", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
-
+LinkLuaModifier( "modifier_custom_pudge_meat_hook_hidden", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
+LinkLuaModifier( "modifier_custom_pudge_meat_hook_move_speed", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
+LinkLuaModifier( "modifier_custom_pudge_meat_hook_move_slow", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
+LinkLuaModifier( "modifier_custom_pudge_meat_hook_move_vision", "abilities/pudge/custom_pudge_meat_hook", LUA_MODIFIER_MOTION_NONE  )
 
 custom_pudge_meat_hook = class({})
 
 custom_pudge_meat_hook.hooks = {}
+custom_pudge_meat_hook.legendary_hooks = {}
+custom_pudge_meat_hook.legendary_targets = {}
 
-
-
-custom_pudge_meat_hook.range_bonus = 300
-custom_pudge_meat_hook.range_speed = 0.2
-custom_pudge_meat_hook.range_radius = 2000
-custom_pudge_meat_hook.range_health = 50
-
-
-
-
-
-custom_pudge_meat_hook.reduce_duration = 1.5
-custom_pudge_meat_hook.reduce_cast = 0.15
-custom_pudge_meat_hook.reduce_mana = 70
-
-
-
-
-
-function custom_pudge_meat_hook:GetCooldown(level)
-local bonus = 0
-if self:GetCaster():HasModifier("modifier_pudge_hook_2") then 
-    bonus = self:GetCaster():GetTalentValue("modifier_pudge_hook_2", "cd")
+function custom_pudge_meat_hook:GetAbilityTextureName()
+local caster = self:GetCaster()
+if caster:HasModifier("modifier_pudge_persona_custom_1") then
+    return "pudge/persona_toy_butcher_calavera/pudge_meat_hook_persona_calavera1"
 end
-
-    return self.BaseClass.GetCooldown( self, level ) + bonus
+if caster:HasModifier("modifier_pudge_persona_custom_2") then
+    return "pudge/persona_frostivus/pudge_meat_hook_persona_frostivus1"
 end
-
-
-
-
-
-function custom_pudge_meat_hook:GetCastPoint(iLevel)
-if self:GetCaster():HasModifier('modifier_pudge_hook_6') then 
-    return self.BaseClass.GetCastPoint(self) - self.reduce_cast
+if caster:HasModifier("modifier_pudge_persona_custom") or caster:HasModifier("modifier_pudge_persona_custom_3") then
+    return "pudge/persona_toy_butcher/pudge_meat_hook_persona1"
 end
-
-return self.BaseClass.GetCastPoint(self)
+if caster:HasModifier("modifier_pudge_harpoon_hook_custom") then
+    return "pudge/immortal/pudge_meat_hook"
+end
+if caster:HasModifier("modifier_pudge_harpoon_hook_custom_golden") then
+    return "pudge/immortal_gold/pudge_meat_hook"
+end
+if caster:HasModifier("modifier_pudge_harpoon_hook_custom_witness") then
+    return "pudge/immortal_gold/pudge_meat_hook"
+end
+if caster:HasModifier("modifier_pudge_hook_ti10_claws_custom") then
+    return "pudge/ti_10_pudge_immortal_hook/pudge_meat_hook_immortal"
+end
+if caster:HasModifier("modifier_pudge_hook_ti10_claws_custom_green") then
+    return "pudge/ti_10_pudge_immortal_hook/pudge_meat_hook_immortal_alt"
+end
+if caster:HasModifier("modifier_pudge_arcana_custom") then
+    return "pudge/arcana/pudge_meat_hook_arcana"
+end
+if caster:HasModifier("modifier_pudge_arcana_custom_green") then
+    return "pudge/arcana/pudge_meat_hook_arcana_style1"
+end
+if caster:HasModifier("modifier_pudge_hungry_clown_weapon") then
+    return "pudge/hungry_clown/hungry_clown_meat_hook"
+end
+return "pudge_meat_hook"
 end
 
 
 
 function custom_pudge_meat_hook:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/units/heroes/hero_pudge/pudge_meathook.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_pudge/pudge_meathook_impact.vpcf", context )
+PrecacheResource( "particle","particles/items3_fx/hook_root.vpcf", context )
+PrecacheResource( "particle","particles/lc_odd_proc_.vpcf", context )
+PrecacheResource( "particle","particles/general/generic_armor_reduction.vpcf", context )
+PrecacheResource( "particle","particles/pudge/hook_stack.vpcf", context )
+PrecacheResource( "particle","particles/pudge/hook_no_model.vpcf", context )
 
-    
-PrecacheResource( "particle", "particles/units/heroes/hero_pudge/pudge_meathook.vpcf", context )
-PrecacheResource( "particle", "particles/econ/items/pudge/pudge_arcana/pudge_arcana_hook_streak.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_pudge/pudge_meathook_impact.vpcf", context )
-PrecacheResource( "particle", "particles/items3_fx/hook_root.vpcf", context )
-PrecacheResource( "particle", "particles/pudge/hook_stack.vpcf", context )
+--PrecacheResource( "particle","particles/econ/items/pudge/pudge_ti6_immortal/pudge_meathook_impact_ti6.vpcf", context )
+--PrecacheResource( "particle","particles/econ/items/pudge/pudge_ti6_immortal/pudge_meathook_witness_impact_ti6.vpcf", context )
+--PrecacheResource( "particle","particles/econ/items/pudge/pudge_ti6_immortal_gold/pudge_ti6_meathook_gold.vpcf", context )
 
+--PrecacheResource( "particle","particles/econ/items/pudge/pudge_ti6_immortal/pudge_ti6_meathook.vpcf", context )
+--PrecacheResource( "particle","particles/econ/items/pudge/pudge_ti6_immortal/pudge_ti6_witness_meathook.vpcf", context )
+--PrecacheResource( "particle","particles/econ/items/pudge/pudge_hook_whale/pudge_meathook_whale.vpcf", context )
+
+dota1x6:PrecacheShopItems("npc_dota_hero_pudge", context)
 end
-
-
 
 
 
 function custom_pudge_meat_hook:GetIntrinsicModifierName()
+if not self:GetCaster():IsRealHero() then return end
 return "modifier_custom_pudge_meat_hook_tracker"
 end
 
 
+function custom_pudge_meat_hook:GetCooldown(level)
+local bonus = 0
+if self:GetCaster():HasTalent("modifier_pudge_hook_4") then 
+    bonus = self:GetCaster():GetTalentValue("modifier_pudge_hook_4", "cd")
+end
+return self.BaseClass.GetCooldown( self, level ) + bonus
+end
+
+function custom_pudge_meat_hook:GetCastPoint(iLevel)
+local bonus = 1
+if self:GetCaster():HasTalent("modifier_pudge_hook_2") then 
+    bonus = 1 + self:GetCaster():GetTalentValue("modifier_pudge_hook_2", "cast")/100
+end
+return self.BaseClass.GetCastPoint(self)*bonus
+end
+
 function custom_pudge_meat_hook:GetManaCost(level)
-
-if self:GetCaster():HasModifier("modifier_pudge_hook_6") then  
-  return self.reduce_mana
+local bonus = 0
+if self:GetCaster():HasTalent("modifier_pudge_hook_3") then 
+    bonus = self:GetCaster():GetTalentValue("modifier_pudge_hook_3", "mana")
 end
-
-return self.BaseClass.GetManaCost(self,level) 
+return self.BaseClass.GetManaCost(self,level) + bonus
 end
-
-
 
 function custom_pudge_meat_hook:GetCastRange(location, target)
-local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_pudge_hook_5") then 
-    bonus = self.range_bonus
+return self:GetRange()
 end
 
-    return self.BaseClass.GetCastRange(self, location, target) + bonus
+function custom_pudge_meat_hook:GetRange()
+return self:GetSpecialValueFor("hook_distance")*(1 + self:GetCaster():GetTalentValue("modifier_pudge_hook_2", "range")/100)
 end
-
 
 
 function custom_pudge_meat_hook:OnAbilityPhaseStart()
-    self:GetCaster():StartGesture( ACT_DOTA_OVERRIDE_ABILITY_1 )
-    return true
+self:GetCaster():StartGesture( ACT_DOTA_OVERRIDE_ABILITY_1 )
+return true
 end
 
 function custom_pudge_meat_hook:OnAbilityPhaseInterrupted()
-    self:GetCaster():RemoveGesture( ACT_DOTA_OVERRIDE_ABILITY_1 )
+self:GetCaster():RemoveGesture( ACT_DOTA_OVERRIDE_ABILITY_1 )
 end
 
 function custom_pudge_meat_hook:OnSpellStart()
-    for id, hook in pairs(self.hooks) do
-        if hook ~= nil then
+local caster = self:GetCaster()
 
-            if self.hooks[id].hVictim and not self.hooks[id].hVictim:IsNull() then
-                
+self.hook_sound_extend = "Hero_Pudge.AttackHookExtend"
+self.hook_sound_retract = "Hero_Pudge.AttackHookRetract"
+if caster:HasModifier("modifier_pudge_persona_custom") or caster:HasModifier("modifier_pudge_persona_custom_1") or caster:HasModifier("modifier_pudge_persona_custom_2") or caster:HasModifier("modifier_pudge_persona_custom_3") then
+    self.hook_sound_extend = "Hero_Pudge.Hook.Cast.Persona"
+    self.hook_sound_retract = "Hero_Pudge.Hook.Retract.Persona"
+end
 
-                self.hooks[id].hVictim:RemoveModifierByName("modifier_custom_pudge_meat_hook_debuff")
-            
-                if self.hooks[id].hVictim and self.hooks[id].hVictim:GetUnitName() == "npc_dota_companion" then 
-                    UTIL_Remove(self.hooks[id].hVictim)
-                end
-
-                 if self.hooks[id].thinker then 
-                    UTIL_Remove(self.hooks[id].thinker)
-                end
+for id, hook in pairs(self.hooks) do
+    if hook ~= nil then
+        if self.hooks[id].hVictim and not self.hooks[id].hVictim:IsNull() then
+    
+            self.hooks[id].hVictim:RemoveModifierByName("modifier_custom_pudge_meat_hook_debuff")
+        
+            if self.hooks[id].hVictim and self.hooks[id].hVictim:GetUnitName() == "npc_dota_companion" then 
+                UTIL_Remove(self.hooks[id].hVictim)
             end
-            ProjectileManager:DestroyLinearProjectile(id)
+
+             if self.hooks[id].thinker then 
+                UTIL_Remove(self.hooks[id].thinker)
+            end
         end
-    end
-
-    self.hooks = {}
-
-
-
-    local caster_position = self:GetCaster():GetOrigin()
-
-    local point = self:GetCursorPosition()
-    if point == caster_position then 
-        point = point + self:GetCaster():GetForwardVector()*5
-    end
-
-    local direction = CalculateDirection(point, caster_position)
-
-    local distance = (point - self:GetCaster():GetAbsOrigin()):Length2D()
-
-    self:UseHook(direction, distance)
-
-    if self:GetCaster() and self:GetCaster():IsHero() then
-        local hHook = self:GetCaster():GetTogglableWearable( DOTA_LOADOUT_TYPE_WEAPON )
-        if hHook ~= nil then
-            hHook:AddEffects( EF_NODRAW )
-        end
-    end
-
-    if self:GetCaster():HasModifier("modifier_pudge_hook_legendary") then    -- Тестовый талант на несколько хуков
-        local angle = self:GetCaster():GetTalentValue("modifier_pudge_hook_legendary", "angle")
-        local hook_count = self:GetCaster():GetTalentValue("modifier_pudge_hook_legendary", "count")
-        for i = 1, hook_count do
-            local newAngle = angle * math.ceil(i / 2) * (-1)^i
-            local newDir = RotateVector2D( direction, ToRadians( newAngle ) )
-            self:UseHook( newDir, distance )
-        end
+        ProjectileManager:DestroyLinearProjectile(id)
     end
 end
 
------------------------- Функции
+self.hooks = {}
+self.legendary_hooks = {}
+
+local caster_position = caster:GetOrigin()
+local point = self:GetCursorPosition()
+
+if point == caster_position then 
+    point = point + caster:GetForwardVector()*5
+end
+
+local direction = CalculateDirection(point, caster_position)
+local distance = (point - caster:GetAbsOrigin()):Length2D()
+
+self:UseHook(direction, distance)
+
+if caster and caster:IsHero() then
+    local hHook = caster:GetTogglableWearable( DOTA_LOADOUT_TYPE_WEAPON )
+    if hHook ~= nil then
+        hHook:AddEffects( EF_NODRAW )
+    end
+    caster:AddNewModifier(caster, self, "modifier_custom_pudge_meat_hook_hidden", {})
+    if caster:GetModelName() ~= "models/heroes/pudge_cute/pudge_cute.vmdl" then
+        if caster.items_data_custom ~= nil then
+            if caster.items_data_custom["weapon"] ~= nil then
+                caster.items_data_custom["weapon"]:AddNoDraw()
+            end
+        end
+        if caster.other_model_backup ~= nil then
+            if caster.other_model_backup["weapon"] ~= nil then
+                caster.other_model_backup["weapon"]:AddNoDraw()
+            end
+        end
+    end
+    local modifier_hero_donate_hex_checking = caster:FindModifierByName("modifier_hero_donate_hex_checking")
+    if modifier_hero_donate_hex_checking then
+        modifier_hero_donate_hex_checking:UpdateVisibleItems()
+    end
+end
+
+if caster:HasTalent("modifier_pudge_hook_legendary") then  
+    local angle = caster:GetTalentValue("modifier_pudge_hook_legendary", "angle")
+    local hook_count = caster:GetTalentValue("modifier_pudge_hook_legendary", "count")
+    for i = 1, hook_count do
+        local newAngle = angle * math.ceil(i / 2) * (-1)^i
+        local newDir = RotateVector2D( direction, ToRadians( newAngle ) )
+        self:UseHook( newDir, distance )
+    end
+end
+
+end
+
+
+function custom_pudge_meat_hook:CheckHooksLegendary()
+local targets_hit = {}
+local clear_index = {}
+
+for _,index in pairs(self.legendary_hooks) do
+    if index == 0 then
+        return
+    else
+        targets_hit[index] = true
+    end
+end
+
+for index,_ in pairs(self.legendary_targets) do
+    if not targets_hit[index] then
+        clear_index[#clear_index + 1] = index
+    end
+end
+
+if #clear_index == 0 then return end
+
+for i = 1,#clear_index do
+    local target = EntIndexToHScript(clear_index[i])
+    if target and not target:IsNull() then
+        target:RemoveModifierByName("modifier_custom_pudge_meat_hook_stack")
+    end
+end
+
+end
+
 
 
 function RotateVector2D(vector, theta)
-    local xp = vector.x*math.cos(theta)-vector.y*math.sin(theta)
-    local yp = vector.x*math.sin(theta)+vector.y*math.cos(theta)
-    return Vector(xp,yp,vector.z):Normalized()
+local xp = vector.x*math.cos(theta)-vector.y*math.sin(theta)
+local yp = vector.x*math.sin(theta)+vector.y*math.cos(theta)
+
+return Vector(xp,yp,vector.z):Normalized()
 end
 
 function ToRadians(degrees)
-    return degrees * math.pi / 180
+return degrees * math.pi / 180
 end
 
 function CalculateDirection(ent1, ent2)
-    local pos1 = ent1
-    local pos2 = ent2
-    if ent1.GetAbsOrigin then pos1 = ent1:GetAbsOrigin() end
-    if ent2.GetAbsOrigin then pos2 = ent2:GetAbsOrigin() end
-    local direction = (pos1 - pos2)
-    direction.z = 0
-    return direction:Normalized()
+local pos1 = ent1
+local pos2 = ent2
+if ent1.GetAbsOrigin then pos1 = ent1:GetAbsOrigin() end
+if ent2.GetAbsOrigin then pos2 = ent2:GetAbsOrigin() end
+local direction = (pos1 - pos2)
+direction.z = 0
+
+return direction:Normalized()
 end
 
-------------------------------------
+
 
 function custom_pudge_meat_hook:UseHook( direction, distance )
-    self.hook_damage = self:GetSpecialValueFor( "damage" )
-    self.hook_speed = self:GetSpecialValueFor( "hook_speed" )
-    self.hook_width = self:GetSpecialValueFor( "hook_width" )
-    self.hook_distance = self:GetSpecialValueFor( "hook_distance" ) + self:GetCaster():GetCastRangeBonus()
 
-    self.hook_followthrough_constant = 0.65
-    self.vision_radius = self:GetSpecialValueFor( "vision_radius" )  
-    self.vision_duration = self:GetSpecialValueFor( "vision_duration" )  
+local caster = self:GetCaster()
+self.hook_width = self:GetSpecialValueFor( "hook_width" )
+self.hook_distance = self:GetRange() + caster:GetCastRangeBonus()
+self.hook_speed = self:GetSpecialValueFor( "hook_speed" )*(1 + caster:GetTalentValue("modifier_pudge_hook_2", "speed")/100)
 
-    local mod = self:GetCaster():FindModifierByName("modifier_custom_pudge_meat_hook_legendary")
+self.hook_followthrough_constant = 0.65
 
-    if mod and self:GetCaster():HasModifier("modifier_pudge_hook_4") then 
-        self.hook_damage = self.hook_damage + self:GetCaster():GetTalentValue("modifier_pudge_hook_4", "damage")*mod:GetStackCount()
+local caster_location = caster:GetOrigin()
+local flFollowthroughDuration = ( self.hook_distance / self.hook_speed ) * self.hook_followthrough_constant 
+
+caster:AddNewModifier( caster, self, "modifier_custom_pudge_meat_hook", { duration = flFollowthroughDuration } )
+
+self.vHookOffset = Vector( 0, 0, 96 )
+local vHookTarget = (caster_location + (direction * self.hook_distance)) + self.vHookOffset
+local vKillswitch = Vector( ( ( self.hook_distance / self.hook_speed ) * 2 ), 0, 0 )
+
+local pudge_meat_hook_particle = "particles/units/heroes/hero_pudge/pudge_meathook.vpcf"
+
+if caster:HasModifier("modifier_pudge_persona_custom") then
+    pudge_meat_hook_particle = "particles/units/heroes/hero_pudge_cute/pudge_cute_meathook.vpcf"
+elseif caster:HasModifier("modifier_pudge_persona_custom_1") then
+    pudge_meat_hook_particle = "particles/units/heroes/hero_pudge_cute/pudge_cute_calavera_meathook.vpcf"
+elseif caster:HasModifier("modifier_pudge_persona_custom_2") then
+    pudge_meat_hook_particle = "particles/units/heroes/hero_pudge_cute/pudge_cute_frostivus_meathook.vpcf"
+elseif caster:HasModifier("modifier_pudge_persona_custom_3") then
+    pudge_meat_hook_particle = "particles/econ/items/pudge_cute/little_knight/pudge_cute_meathook_little_knight.vpcf"
+elseif caster:HasModifier("modifier_pudge_whale_hook_custom") then
+    pudge_meat_hook_particle = "particles/econ/items/pudge/pudge_hook_whale/pudge_meathook_whale.vpcf"
+elseif caster:HasModifier("modifier_dragonclaw_hook_custom") then
+    pudge_meat_hook_particle = "particles/econ/items/pudge/pudge_dragonclaw/pudge_meathook_dragonclaw.vpcf"
+elseif caster:HasModifier("modifier_pudge_harpoon_hook_custom") then
+    pudge_meat_hook_particle = "particles/econ/items/pudge/pudge_ti6_immortal/pudge_ti6_meathook.vpcf"
+elseif caster:HasModifier("modifier_pudge_harpoon_hook_custom_witness") then
+    pudge_meat_hook_particle = "particles/econ/items/pudge/pudge_ti6_immortal/pudge_ti6_witness_meathook.vpcf"
+elseif caster:HasModifier("modifier_pudge_harpoon_hook_custom_golden") then
+    pudge_meat_hook_particle = "particles/econ/items/pudge/pudge_ti6_immortal_gold/pudge_ti6_meathook_gold.vpcf"
+elseif caster:HasModifier("modifier_pudge_hook_ti10_claws_custom") then
+    pudge_meat_hook_particle = "particles/econ/items/pudge/pudge_ti10_immortal/pudge_ti10_immortal_meathook.vpcf"
+elseif caster:HasModifier("modifier_pudge_hook_ti10_claws_custom_green") then
+    pudge_meat_hook_particle = "particles/econ/items/pudge/pudge_ti10_immortal/pudge_ti10_immortal_meathook_arcana_green.vpcf"
+elseif caster:HasModifier("modifier_scorching_talon_custom") then
+    pudge_meat_hook_particle = "particles/econ/items/pudge/pudge_scorching_talon/pudge_scorching_talon_meathook.vpcf"
+end
+
+local attach_point = "attach_weapon_chain_rt"
+if caster:GetUnitName() ~= "npc_dota_hero_pudge" then
+    pudge_meat_hook_particle = "particles/pudge/hook_no_model.vpcf"
+    attach_point = "attach_attack1"
+end
+
+local hook_particle = ParticleManager:CreateParticle( pudge_meat_hook_particle, PATTACH_CUSTOMORIGIN, nil )
+ParticleManager:SetParticleAlwaysSimulate( hook_particle )
+
+ParticleManager:SetParticleControlEnt( hook_particle, 0, caster, PATTACH_POINT_FOLLOW, attach_point, caster:GetOrigin() + self.vHookOffset, true )
+ParticleManager:SetParticleControl( hook_particle, 1, vHookTarget )
+ParticleManager:SetParticleControl( hook_particle, 2, Vector( self.hook_speed, self.hook_distance, self.hook_width ) )
+ParticleManager:SetParticleControl( hook_particle, 3, vKillswitch )
+ParticleManager:SetParticleControl( hook_particle, 4, Vector( 1, 0, 0 ) )
+ParticleManager:SetParticleControl( hook_particle, 5, Vector( 0, 0, 0 ) )
+ParticleManager:SetParticleControlEnt( hook_particle, 7, caster, PATTACH_CUSTOMORIGIN, nil, caster:GetOrigin(), true )
+
+local hHook = caster:GetTogglableWearable( DOTA_LOADOUT_TYPE_WEAPON )
+if hHook ~= nil then    
+    ParticleManager:SetParticleControlEnt( hook_particle, 7, hHook, PATTACH_CUSTOMORIGIN, nil, hHook:GetOrigin(), true )
+end
+
+if caster.items_data_custom ~= nil then
+    if caster.items_data_custom["weapon"] ~= nil then
+       ParticleManager:SetParticleControlEnt( hook_particle, 7, caster.items_data_custom["weapon"], PATTACH_CUSTOMORIGIN, nil, caster.items_data_custom["weapon"]:GetOrigin(), true )
     end
-
-
-    if self:GetCaster():HasModifier("modifier_pudge_hook_5") then 
-        self.hook_speed = self.hook_speed*(1 + self.range_speed)
-        self.hook_distance =  self.hook_distance + self.range_bonus
+end
+if caster.other_model_backup ~= nil then
+    if caster.other_model_backup["weapon"] ~= nil then
+        ParticleManager:SetParticleControlEnt( hook_particle, 7, caster.other_model_backup["weapon"], PATTACH_CUSTOMORIGIN, nil, caster.other_model_backup["weapon"]:GetOrigin(), true )
     end
+end
+ParticleManager:SetParticleShouldCheckFoW( hook_particle, false )
+ParticleManager:SetParticleAlwaysSimulate(hook_particle)
+ParticleManager:SetParticleFoWProperties( hook_particle, 0, 7, 3000 )
+local thinker = CreateModifierThinker(caster, self, "modifier_invulnerable",  {}, caster:GetOrigin(), caster:GetTeamNumber(), false )
 
+local info = 
+{
+    Ability = self,
+    vSpawnOrigin = caster:GetOrigin(),
+    vVelocity = direction * self.hook_speed,
+    fDistance = self.hook_distance,
+    fStartRadius = self.hook_width ,
+    fEndRadius = self.hook_width ,
+    Source = caster,
+    iUnitTargetTeam = DOTA_UNIT_TARGET_TEAM_BOTH,
+    iUnitTargetType = DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,
+    iUnitTargetFlags = DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES,
+    iVisionRadius = 300,--
+    iVisionTeamNumber = caster:GetTeamNumber(),
+    bProvidesVision = true,
+}
 
-    local caster_location = self:GetCaster():GetOrigin()
-    local flFollowthroughDuration = ( self.hook_distance / self.hook_speed ) * self.hook_followthrough_constant 
+local projectileIndex = ProjectileManager:CreateLinearProjectile( info )
 
-    self:GetCaster():AddNewModifier( self:GetCaster(), self, "modifier_custom_pudge_meat_hook", { duration = flFollowthroughDuration } )
+if caster:HasTalent("modifier_pudge_hook_legendary") then
+    self.legendary_hooks[projectileIndex] = 0
+end
 
-    self.vHookOffset = Vector( 0, 0, 96 )
-    local vHookTarget = (caster_location + (direction * self.hook_distance)) + self.vHookOffset
-    local vKillswitch = Vector( ( ( self.hook_distance / self.hook_speed ) * 2 ), 0, 0 )
-
-    local hook_particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_pudge/pudge_meathook.vpcf", PATTACH_CUSTOMORIGIN, nil )
-    ParticleManager:SetParticleAlwaysSimulate( hook_particle )
-
-    ParticleManager:SetParticleControlEnt( hook_particle, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_weapon_chain_rt", self:GetCaster():GetOrigin() + self.vHookOffset, true )
-    ParticleManager:SetParticleControl( hook_particle, 1, vHookTarget )
-    ParticleManager:SetParticleControl( hook_particle, 2, Vector( self.hook_speed, self.hook_distance, self.hook_width ) )
-    ParticleManager:SetParticleControl( hook_particle, 3, vKillswitch )
-    ParticleManager:SetParticleControl( hook_particle, 4, Vector( 1, 0, 0 ) )
-    ParticleManager:SetParticleControl( hook_particle, 5, Vector( 0, 0, 0 ) )
-    ParticleManager:SetParticleControlEnt( hook_particle, 7, self:GetCaster(), PATTACH_CUSTOMORIGIN, nil, self:GetCaster():GetOrigin(), true )
-
-
-    --ParticleManager:SetParticleShouldCheckFoW( hook_particle, false )
-    local thinker = CreateModifierThinker(
-        self:GetCaster(),
-        self,
-        "modifier_invulnerable",
-        {},
-        self:GetCaster():GetOrigin(),
-        self:GetCaster():GetTeamNumber(),
-        false
-    )
-
-
-
-    local info = {
-        Ability = self,
-        vSpawnOrigin = self:GetCaster():GetOrigin(),
-        vVelocity = direction * self.hook_speed,
-        fDistance = self.hook_distance,
-        fStartRadius = self.hook_width ,
-        fEndRadius = self.hook_width ,
-        Source = self:GetCaster(),
-        iUnitTargetTeam = DOTA_UNIT_TARGET_TEAM_BOTH,
-        iUnitTargetType = DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,
-        iUnitTargetFlags = DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES,
-          iVisionRadius = 300,--
-          iVisionTeamNumber = self:GetCaster():GetTeamNumber(),
-          bProvidesVision = true,
-
-    }
-
-    local projectileIndex = ProjectileManager:CreateLinearProjectile( info )
-
-    self.hooks[projectileIndex] = {}
-    self.hooks[projectileIndex].particleIndex = hook_particle
-    self.hooks[projectileIndex].hook_speed = self.hook_speed
-    self.hooks[projectileIndex].hook_width = self.hook_width
-    self.hooks[projectileIndex].bRetracting = false
-    self.hooks[projectileIndex].hVictim = nil
-    self.hooks[projectileIndex].bDiedInHook = false
-    self.hooks[projectileIndex].direction = caster_location * (direction * self.hook_distance)
-    self.hooks[projectileIndex].start_position = caster_location
-    self.hooks[projectileIndex].proj_location = nil
-    self.hooks[projectileIndex].thinker = thinker
-    EmitSoundOn("Hero_Pudge.AttackHookExtend", self.hooks[projectileIndex].thinker)
+self.hooks[projectileIndex] = {}
+self.hooks[projectileIndex].particleIndex = hook_particle
+self.hooks[projectileIndex].hook_speed = self.hook_speed
+self.hooks[projectileIndex].hook_width = self.hook_width
+self.hooks[projectileIndex].bRetracting = false
+self.hooks[projectileIndex].hVictim = nil
+self.hooks[projectileIndex].bDiedInHook = false
+self.hooks[projectileIndex].direction = caster_location * (direction * self.hook_distance)
+self.hooks[projectileIndex].start_position = caster_location
+self.hooks[projectileIndex].proj_location = nil
+self.hooks[projectileIndex].thinker = thinker
+EmitSoundOn(self.hook_sound_extend, self.hooks[projectileIndex].thinker)
 end
 
 
 function custom_pudge_meat_hook:OnProjectileHitHandle( target, position, projectileIndex )
 if not IsServer() then return end
 
-    local caster = self:GetCaster()
+local caster = self:GetCaster()
+if target == caster then return false end
+if self.hooks[projectileIndex] == nil then return true end
+if not self.hooks[projectileIndex].thinker or self.hooks[projectileIndex].thinker:IsNull() then return end
 
-    if target == caster then return false end
+if self.hooks[projectileIndex].bRetracting == false then
 
+    if target ~= nil and (not (target:IsCreep() or target:IsConsideredHero())) then
+        return false
+    end
 
-    if not self.hooks[projectileIndex].thinker or  self.hooks[projectileIndex].thinker:IsNull() then return end
+    local target_index = -1
 
-    if self.hooks[projectileIndex] == nil then return true end
+    local bTargetPulled = false
+    if target ~= nil then
 
-
-    if self.hooks[projectileIndex].bRetracting == false then
-        if target ~= nil and ( not ( target:IsCreep() or target:IsConsideredHero() ) ) then
+        if target:HasModifier("modifier_custom_pudge_meat_hook_debuff") or  target:GetUnitName() == "npc_teleport" or target:GetUnitName() == "npc_psi_blades_crystal" or target:GetUnitName() == "npc_psi_blades_crystal_mini" then 
             return false
         end
 
-        local bTargetPulled = false
-        if target ~= nil then
+        self.hooks[projectileIndex].thinker:StopSound(self.hook_sound_extend)
 
-            if target:HasModifier("modifier_custom_pudge_meat_hook_debuff") or  target:GetUnitName() == "npc_teleport" 
-               or target:GetUnitName() == "npc_psi_blades_crystal" or target:GetUnitName() == "npc_psi_blades_crystal_mini" then 
-                return false
-            end
-        
-
-            if self:GetCaster():HasModifier("modifier_custom_pudge_meat_hook_streak_check") then 
-                local mod = self:GetCaster():FindModifierByName("modifier_custom_pudge_meat_hook_streak_check")
-                if target:IsRealHero() then 
-
-                    local mod_stack = self:GetCaster():FindModifierByName("modifier_custom_pudge_meat_hook_streak")
-                    local streak = 1
-                    local max = 0
-
-                    if mod_stack then 
-                        streak = mod_stack:GetStackCount() + 1
-                        if mod_stack:GetStackCount() == self.legendary_max then 
-                            max = 6
-                            streak = self.legendary_max
-                        end
-                    end
-
-
-                    local nFXIndex = ParticleManager:CreateParticle( "particles/econ/items/pudge/pudge_arcana/pudge_arcana_hook_streak.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetCaster())
-                    ParticleManager:SetParticleControl( nFXIndex, 0, self:GetCaster():GetAbsOrigin() )
-                    ParticleManager:SetParticleControl( nFXIndex, 2, Vector(0,streak,max) )
-                    ParticleManager:ReleaseParticleIndex(nFXIndex)
-
-                    mod.hit_hero = true 
-                end
-                if target:IsIllusion() or target:IsCreep() then 
-                    mod.hit_creep = true
-                end
-
-            end
-
-            self.hooks[projectileIndex].thinker:StopSound("Hero_Pudge.AttackHookExtend")
-
-            if self:GetCaster():HasModifier("modifier_custom_pudge_meat_hook") then 
-                self:GetCaster():RemoveModifierByName("modifier_custom_pudge_meat_hook")
-            end
-
-            target:EmitSound("Hero_Pudge.AttackHookImpact")
-
-
-            local mod = target:FindModifierByName("modifier_backdoor_knock_aura_damage")
-
-
-            if not target:HasModifier("modifier_waveupgrade_boss") and (not mod or not mod.target or mod.target == self:GetCaster()) then 
-
-                target:AddNewModifier( self:GetCaster(), self, "modifier_custom_pudge_meat_hook_debuff", {} )
-            end
-
-            if target:GetTeamNumber() ~= self:GetCaster():GetTeamNumber() then
-
-                local damage = self.hook_damage
-
-                local stack_mod = target:FindModifierByName("modifier_custom_pudge_meat_hook_stack")
-
-                if stack_mod then 
-                    damage = damage*(1 + stack_mod:GetStackCount()*self:GetCaster():GetTalentValue("modifier_pudge_hook_legendary", "damage")/100)
-                end 
-
-                local damage_table = {  victim = target, attacker = self:GetCaster(), damage = damage, damage_type = DAMAGE_TYPE_PURE, ability = self }
-
-                if self:GetCaster():GetQuest() == "Pudge.Quest_5" and target:IsRealHero() and (self:GetCaster():GetAbsOrigin() - target:GetAbsOrigin()):Length2D() >= self:GetCaster().quest.number then 
-                    self:GetCaster():UpdateQuest(1)
-                end
-
-                if target:IsValidKill(self:GetCaster()) then 
-                    self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_custom_pudge_meat_hook_legendary", {})
-                end
-
-                if self:GetCaster():HasModifier("modifier_pudge_hook_1") then 
-                    target:AddNewModifier(self:GetCaster(), self, "modifier_custom_pudge_meat_hook_incoming", {duration = self:GetCaster():GetTalentValue("modifier_pudge_hook_1", "duration")})
-                end 
-
-                ApplyDamage( damage_table )
-
-
-                if self:GetCaster():HasModifier("modifier_pudge_hook_legendary") then 
-                    target:AddNewModifier(self:GetCaster(), self, "modifier_custom_pudge_meat_hook_stack", {duration = self:GetCaster():GetTalentValue("modifier_pudge_hook_legendary", "duration")})
-                end 
-
-
-                if self:GetCaster():HasModifier("modifier_pudge_hook_2") then 
-                    self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_custom_pudge_meat_hook_speed", {duration = self:GetCaster():GetTalentValue("modifier_pudge_hook_2", "duration")})
-                end
-
-                if self:GetCaster():HasModifier("modifier_pudge_hook_3") then 
-                    self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_custom_pudge_meat_hook_blood", {duration = self:GetCaster():GetTalentValue("modifier_pudge_hook_3", "duration")})
-                end
-
-                if not target:IsAlive() 
-                 then self.hooks[projectileIndex].bDiedInHook = true end
-
-                if not target:IsMagicImmune() then target:Interrupt() end
-
-                local nFXIndex = ParticleManager:CreateParticle( "particles/units/heroes/hero_pudge/pudge_meathook_impact.vpcf", PATTACH_CUSTOMORIGIN, target )
-                ParticleManager:SetParticleControlEnt( nFXIndex, 0, target, PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetCaster():GetOrigin(), true )
-                ParticleManager:ReleaseParticleIndex( nFXIndex )
-            end
-            AddFOWViewer( self:GetCaster():GetTeamNumber(), target:GetOrigin(), self.vision_radius, self.vision_duration, false )
-
-            if not target:HasModifier("modifier_waveupgrade_boss") and (not mod or not mod.target or mod.target == self:GetCaster()) then 
-                self.hooks[projectileIndex].hVictim = target
-                bTargetPulled = true
-            end
+        if caster:HasModifier("modifier_custom_pudge_meat_hook") then 
+            caster:RemoveModifierByName("modifier_custom_pudge_meat_hook")
         end
 
-
-
-        if self.hooks[projectileIndex].hVictim == nil then
-            local dummy = CreateUnitByName("npc_dota_companion", position, false, nil, nil, self:GetCaster():GetTeamNumber())
-            dummy:AddNewModifier(self, nil, "modifier_phased", {})
-            dummy:AddNewModifier(self, nil, "modifier_no_healthbar", {})
-            dummy:AddNewModifier(self, nil, "modifier_invulnerable", {})
-            self.hooks[projectileIndex].hVictim = dummy
-            target = dummy
-        end
-
-        local vHookPos = self.hooks[projectileIndex].direction
-        local flPad = self:GetCaster():GetPaddedCollisionRadius()
-
-        if target ~= nil then
-            vHookPos = target:GetOrigin()
-            flPad = flPad + target:GetPaddedCollisionRadius()
-        end
-
-        local vVelocity = self.hooks[projectileIndex].start_position - vHookPos
-        vVelocity.z = 0.0
-
-        local flDistance = vVelocity:Length2D() - flPad
-        vVelocity = vVelocity:Normalized() * self.hook_speed
-
-        --self.vProjectileLocation = vHookPos
-
-        if bTargetPulled then
-
-            ParticleManager:SetParticleControlEnt( self.hooks[projectileIndex].particleIndex, 0, self:GetCaster(), PATTACH_ABSORIGIN, "attach_weapon_chain_rt", self.hooks[projectileIndex].start_position + self.vHookOffset, true )
-            ParticleManager:SetParticleControl( self.hooks[projectileIndex].particleIndex, 0, self.hooks[projectileIndex].start_position + self.vHookOffset )
-
-            ParticleManager:SetParticleControlEnt( self.hooks[projectileIndex].particleIndex, 1, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetOrigin() + self.vHookOffset, true )
-            ParticleManager:SetParticleControl( self.hooks[projectileIndex].particleIndex, 4, Vector( 0, 0, 0 ) )
-            ParticleManager:SetParticleControl( self.hooks[projectileIndex].particleIndex, 5, Vector( 1, 0, 0 ) )
+        if caster:HasModifier("modifier_pudge_hook_ti10_claws_custom") or caster:HasModifier("modifier_pudge_hook_ti10_claws_custom_green") then
+            target:EmitSound("Hero_Pudge.Hook.Target.TI10")
+        elseif caster:HasModifier("modifier_pudge_persona_custom") or caster:HasModifier("modifier_pudge_persona_custom_1") or caster:HasModifier("modifier_pudge_persona_custom_2") or caster:HasModifier("modifier_pudge_persona_custom_3") then
+            target:EmitSound("Hero_Pudge.Hook.Target.Persona")
         else
-            ParticleManager:SetParticleControlEnt( self.hooks[projectileIndex].particleIndex, 1, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_weapon_chain_rt", self:GetCaster():GetOrigin() + self.vHookOffset, true);
+            target:EmitSound("Hero_Pudge.AttackHookImpact")
         end
 
+        if not target:HasModifier("modifier_waveupgrade_boss") and not caster:TargetLockedOnBase(target) then 
 
-        EmitSoundOn("Hero_Pudge.AttackHookRetract",  self.hooks[projectileIndex].thinker)
-     
-
-        if self:GetCaster():IsAlive() then
-            self:GetCaster():RemoveGesture( ACT_DOTA_OVERRIDE_ABILITY_1 );
-            self:GetCaster():StartGesture( ACT_DOTA_CHANNEL_ABILITY_1 );
-        end
-
-        self.hooks[projectileIndex].bRetracting = true
-
-        local info = {
-            Ability = self,
-            vSpawnOrigin = vHookPos,
-            vVelocity = vVelocity,
-            fDistance = flDistance,
-            Source = self:GetCaster(),
-        }
-
-        local back_proj = ProjectileManager:CreateLinearProjectile( info )
-
-        self.hooks[back_proj] = {}
-
-        self.hooks[back_proj].hook_speed = self.hooks[projectileIndex].hook_speed
-        self.hooks[back_proj].hook_width = self.hooks[projectileIndex].hook_width
-        self.hooks[back_proj].particleIndex = self.hooks[projectileIndex].particleIndex
-        self.hooks[back_proj].bRetracting =  self.hooks[projectileIndex].bRetracting
-        self.hooks[back_proj].hVictim = self.hooks[projectileIndex].hVictim
-        self.hooks[back_proj].bDiedInHook = self.hooks[projectileIndex].bDiedInHook
-        self.hooks[back_proj].direction = self.hooks[projectileIndex].direction
-        self.hooks[back_proj].start_position = self.hooks[projectileIndex].start_position
-        self.hooks[back_proj].thinker = self.hooks[projectileIndex].thinker 
-        self.hooks[back_proj].proj_location = position
-
-        self.hooks[projectileIndex] = nil
-    else
-
-
-        if self:GetCaster() and self:GetCaster():IsHero() then
-            local hHook = self:GetCaster():GetTogglableWearable( DOTA_LOADOUT_TYPE_WEAPON )
-            if hHook ~= nil then
-                hHook:RemoveEffects( EF_NODRAW )
+            local dist = 0
+            if self.hooks[projectileIndex].start_position then
+                dist = (self.hooks[projectileIndex].start_position - target:GetAbsOrigin()):Length2D()
             end
+            target:AddNewModifier( caster, self, "modifier_custom_pudge_meat_hook_debuff", {dist = dist} )
         end
 
-        if self.hooks[projectileIndex].hVictim ~= nil and not self.hooks[projectileIndex].hVictim:IsNull() then
+        local damage = self:GetSpecialValueFor("damage") + caster:GetAverageTrueAttackDamage(nil)*caster:GetTalentValue("modifier_pudge_hook_1", "damage")/100
+        local vision_radius = self:GetSpecialValueFor( "vision_radius" )  
+        local vision_duration = self:GetSpecialValueFor( "vision_duration" )  
 
-            local vFinalHookPos = position
-            self.hooks[projectileIndex].hVictim:InterruptMotionControllers( true )
-            
-            self.hooks[projectileIndex].thinker:StopSound("Hero_Pudge.AttackHookRetract")
+        if target:GetTeamNumber() ~= caster:GetTeamNumber() then
 
-            self.hooks[projectileIndex].hVictim:RemoveModifierByName( "modifier_custom_pudge_meat_hook_debuff" )
+            local damage_table = {  victim = target, attacker = caster, damage = damage, damage_type = DAMAGE_TYPE_PURE, ability = self }
 
-            local vVictimPosCheck = self.hooks[projectileIndex].hVictim:GetOrigin() - vFinalHookPos 
-            local flPad = self:GetCaster():GetPaddedCollisionRadius() + self.hooks[projectileIndex].hVictim:GetPaddedCollisionRadius()
-            if vVictimPosCheck:Length2D() > flPad then
-                local check_dir = (self.hooks[projectileIndex].start_position - self.hooks[projectileIndex].hVictim:GetAbsOrigin()):Normalized()
-                local origin = self.hooks[projectileIndex].start_position + (check_dir * 75)
-                origin.z = 0
-                FindClearSpaceForUnit( self.hooks[projectileIndex].hVictim, origin, false )
-
-             
-
-
-                local angel =(self.hooks[projectileIndex].start_position - self.hooks[projectileIndex].hVictim:GetAbsOrigin())
-                angel.z = 0.0
-                angel = angel:Normalized()
-                self.hooks[projectileIndex].hVictim:SetForwardVector(angel)
+            if caster:GetQuest() == "Pudge.Quest_5" and target:IsRealHero() and (caster:GetAbsOrigin() - target:GetAbsOrigin()):Length2D() >= caster.quest.number then 
+                caster:UpdateQuest(1)
             end
-        end
 
-        if not self.hooks[projectileIndex].hVictim:IsNull() and self.hooks[projectileIndex].hVictim:GetUnitName() == "npc_dota_companion" then 
-            UTIL_Remove(self.hooks[projectileIndex].hVictim)
-        end
-
-
-        self.hooks[projectileIndex].thinker:StopSound("Hero_Pudge.AttackHookRetract")
-        self.hooks[projectileIndex].thinker:StopSound("Hero_Pudge.AttackHookExtend")
-        UTIL_Remove(self.hooks[projectileIndex].thinker)
-
-        self.hooks[projectileIndex].hVictim = nil
-
-
-        ParticleManager:DestroyParticle( self.hooks[projectileIndex].particleIndex, true )
-        EmitSoundOn("Hero_Pudge.AttackHookRetractStop", self:GetCaster())
-
-        if self:GetCaster():HasModifier("modifier_custom_pudge_meat_hook_streak_check") then
-
-            self:GetCaster():FindModifierByName("modifier_custom_pudge_meat_hook_streak_check"):DecrementStackCount()
-            if self:GetCaster():FindModifierByName("modifier_custom_pudge_meat_hook_streak_check"):GetStackCount() == 0 then 
-                self:GetCaster():RemoveModifierByName("modifier_custom_pudge_meat_hook_streak_check")
+            if target:IsValidKill(caster) then 
+                caster:AddNewModifier(caster, self, "modifier_custom_pudge_meat_hook_perma", {})
             end
+
+            DoDamage( damage_table )
+
+            if caster:HasTalent("modifier_pudge_hook_legendary") then 
+                target:AddNewModifier(caster, self, "modifier_custom_pudge_meat_hook_stack", {duration = caster:GetTalentValue("modifier_pudge_hook_legendary", "duration")})
+            end 
+
+            if caster:HasTalent("modifier_pudge_hook_1") or caster:HasTalent("modifier_pudge_hook_3") then 
+                caster:AddNewModifier(caster, self, "modifier_custom_pudge_meat_hook_speed", {duration = caster:GetTalentValue("modifier_pudge_hook_1", "duration", true)})
+            end
+
+            if caster:HasTalent("modifier_pudge_hook_5") then
+                local duration = caster:GetTalentValue("modifier_pudge_hook_5", "duration")
+                caster:AddNewModifier(caster, self, "modifier_custom_pudge_meat_hook_move_speed", {duration = duration})
+                target:AddNewModifier(caster, self, "modifier_custom_pudge_meat_hook_move_slow", {duration = duration})
+            end
+
+            if not target:IsAlive() then self.hooks[projectileIndex].bDiedInHook = true end
+            if not target:IsMagicImmune() then target:Interrupt() end
+
+            local impact_particle_d = "particles/units/heroes/hero_pudge/pudge_meathook_impact.vpcf"
+            if caster:HasModifier("modifier_pudge_harpoon_hook_custom") then
+                impact_particle_d = "particles/econ/items/pudge/pudge_ti6_immortal/pudge_meathook_impact_ti6.vpcf"
+            elseif caster:HasModifier("modifier_pudge_harpoon_hook_custom_witness") then
+                impact_particle_d = "particles/econ/items/pudge/pudge_ti6_immortal/pudge_meathook_witness_impact_ti6.vpcf"
+            elseif caster:HasModifier("modifier_pudge_harpoon_hook_custom_golden") then
+                impact_particle_d = "particles/econ/items/pudge/pudge_ti6_immortal/pudge_meathook_impact_ti6.vpcf"
+            end
+            local nFXIndex = ParticleManager:CreateParticle( impact_particle_d, PATTACH_CUSTOMORIGIN, target )
+            ParticleManager:SetParticleControlEnt( nFXIndex, 0, target, PATTACH_POINT_FOLLOW, "attach_hitloc", caster:GetOrigin(), true )
+            ParticleManager:ReleaseParticleIndex( nFXIndex )
         end
 
+        AddFOWViewer( caster:GetTeamNumber(), target:GetOrigin(), vision_radius, vision_duration, false )
 
+        if not target:HasModifier("modifier_waveupgrade_boss") and not caster:TargetLockedOnBase(target) then 
+            self.hooks[projectileIndex].hVictim = target
+            bTargetPulled = true
+            target_index = target:entindex()
+        end
     end
 
-    return true
+    if self.legendary_hooks[projectileIndex] then
+        self.legendary_hooks[projectileIndex] = target_index
+        self:CheckHooksLegendary()
+    end
+
+    if self.hooks[projectileIndex].hVictim == nil then
+        local dummy = CreateUnitByName("npc_dota_companion", position, false, nil, nil, caster:GetTeamNumber())
+        dummy:AddNewModifier(self, nil, "modifier_phased", {})
+        dummy:AddNewModifier(self, nil, "modifier_no_healthbar", {})
+        dummy:AddNewModifier(self, nil, "modifier_invulnerable", {})
+        self.hooks[projectileIndex].hVictim = dummy
+        target = dummy
+    end
+
+    local vHookPos = self.hooks[projectileIndex].direction
+    local flPad = caster:GetPaddedCollisionRadius()
+
+    if target ~= nil then
+        vHookPos = target:GetOrigin()
+        flPad = flPad + target:GetPaddedCollisionRadius()
+    end
+
+    local vVelocity = self.hooks[projectileIndex].start_position - vHookPos
+    vVelocity.z = 0.0
+
+    local flDistance = vVelocity:Length2D() - flPad
+    vVelocity = vVelocity:Normalized() * self.hook_speed
+
+    if bTargetPulled then
+        ParticleManager:SetParticleControlEnt( self.hooks[projectileIndex].particleIndex, 0, caster, PATTACH_ABSORIGIN, "attach_weapon_chain_rt", self.hooks[projectileIndex].start_position + self.vHookOffset, true )
+        ParticleManager:SetParticleControl( self.hooks[projectileIndex].particleIndex, 0, self.hooks[projectileIndex].start_position + self.vHookOffset )
+
+        ParticleManager:SetParticleControlEnt( self.hooks[projectileIndex].particleIndex, 1, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetOrigin() + self.vHookOffset, true )
+        ParticleManager:SetParticleControl( self.hooks[projectileIndex].particleIndex, 4, Vector( 0, 0, 0 ) )
+        ParticleManager:SetParticleControl( self.hooks[projectileIndex].particleIndex, 5, Vector( 1, 0, 0 ) )
+    else
+        ParticleManager:SetParticleControlEnt( self.hooks[projectileIndex].particleIndex, 1, caster, PATTACH_POINT_FOLLOW, "attach_weapon_chain_rt", caster:GetOrigin() + self.vHookOffset, true);
+    end
+
+    EmitSoundOn(self.hook_sound_retract,  self.hooks[projectileIndex].thinker)
+
+    if caster:IsAlive() then
+        caster:RemoveGesture( ACT_DOTA_OVERRIDE_ABILITY_1 )
+        caster:StartGesture( ACT_DOTA_CHANNEL_ABILITY_1 )
+    end
+
+    self.hooks[projectileIndex].bRetracting = true
+
+    local info = 
+    {
+        Ability = self,
+        vSpawnOrigin = vHookPos,
+        vVelocity = vVelocity,
+        fDistance = flDistance,
+        Source = caster,
+    }
+
+    local back_proj = ProjectileManager:CreateLinearProjectile( info )
+
+    self.hooks[back_proj] = {}
+    self.hooks[back_proj].hook_speed = self.hooks[projectileIndex].hook_speed
+    self.hooks[back_proj].hook_width = self.hooks[projectileIndex].hook_width
+    self.hooks[back_proj].particleIndex = self.hooks[projectileIndex].particleIndex
+    self.hooks[back_proj].bRetracting =  self.hooks[projectileIndex].bRetracting
+    self.hooks[back_proj].hVictim = self.hooks[projectileIndex].hVictim
+    self.hooks[back_proj].bDiedInHook = self.hooks[projectileIndex].bDiedInHook
+    self.hooks[back_proj].direction = self.hooks[projectileIndex].direction
+    self.hooks[back_proj].start_position = self.hooks[projectileIndex].start_position
+    self.hooks[back_proj].thinker = self.hooks[projectileIndex].thinker 
+    self.hooks[back_proj].proj_location = position
+    self.hooks[back_proj].hit_target = target_index
+    self.hooks[projectileIndex] = nil
+else
+    if caster and caster:IsHero() then
+        local hHook = caster:GetTogglableWearable( DOTA_LOADOUT_TYPE_WEAPON )
+        if hHook ~= nil then
+            hHook:RemoveEffects( EF_NODRAW )
+        end
+        caster:RemoveModifierByName("modifier_custom_pudge_meat_hook_hidden")
+        if caster:GetModelName() ~= "models/heroes/pudge_cute/pudge_cute.vmdl" then
+            if caster.items_data_custom ~= nil then
+                if caster.items_data_custom["weapon"] ~= nil then
+                    caster.items_data_custom["weapon"]:RemoveNoDraw()
+                end
+            end
+            if caster.other_model_backup ~= nil then
+                if caster.other_model_backup["weapon"] ~= nil then
+                    caster.other_model_backup["weapon"]:RemoveNoDraw()
+                end
+            end
+        end
+        local modifier_hero_donate_hex_checking = caster:FindModifierByName("modifier_hero_donate_hex_checking")
+        if modifier_hero_donate_hex_checking then
+            modifier_hero_donate_hex_checking:UpdateVisibleItems()
+        end
+    end
+
+    if self.hooks[projectileIndex].hVictim ~= nil and not self.hooks[projectileIndex].hVictim:IsNull() then
+
+        local vFinalHookPos = position
+        self.hooks[projectileIndex].hVictim:InterruptMotionControllers( true )
+        
+        self.hooks[projectileIndex].thinker:StopSound(self.hook_sound_retract)
+
+        self.hooks[projectileIndex].hVictim:RemoveModifierByName( "modifier_custom_pudge_meat_hook_debuff" )
+
+        local vVictimPosCheck = self.hooks[projectileIndex].hVictim:GetOrigin() - vFinalHookPos 
+        local flPad = caster:GetPaddedCollisionRadius() + self.hooks[projectileIndex].hVictim:GetPaddedCollisionRadius()
+        if vVictimPosCheck:Length2D() > flPad then
+            local check_dir = (self.hooks[projectileIndex].start_position - self.hooks[projectileIndex].hVictim:GetAbsOrigin()):Normalized()
+            local origin = self.hooks[projectileIndex].start_position + (check_dir * 75)
+            origin.z = 0
+            FindClearSpaceForUnit( self.hooks[projectileIndex].hVictim, origin, false )
+
+            local angel =(self.hooks[projectileIndex].start_position - self.hooks[projectileIndex].hVictim:GetAbsOrigin())
+            angel.z = 0.0
+            angel = angel:Normalized()
+            self.hooks[projectileIndex].hVictim:SetForwardVector(angel)
+        end
+    end
+
+    if not self.hooks[projectileIndex].hVictim:IsNull() and self.hooks[projectileIndex].hVictim:GetUnitName() == "npc_dota_companion" then 
+        UTIL_Remove(self.hooks[projectileIndex].hVictim)
+    end
+
+    self.hooks[projectileIndex].thinker:StopSound(self.hook_sound_retract)
+    self.hooks[projectileIndex].thinker:StopSound(self.hook_sound_extend)
+    UTIL_Remove(self.hooks[projectileIndex].thinker)
+
+    self.hooks[projectileIndex].hVictim = nil
+
+    ParticleManager:DestroyParticle( self.hooks[projectileIndex].particleIndex, true )
+    EmitSoundOn("Hero_Pudge.AttackHookRetractStop", caster)
 end
+
+return true
+end
+
+
 
 
 function custom_pudge_meat_hook:OnProjectileThinkHandle( projectileIndex )
 if not IsServer() then return end
-    if self.hooks[projectileIndex] then
 
-        if not self.hooks[projectileIndex].thinker or self.hooks[projectileIndex].thinker:IsNull() then return end
+if self.hooks[projectileIndex] then
 
+    if not self.hooks[projectileIndex].thinker or self.hooks[projectileIndex].thinker:IsNull() then return end
+
+    local position = ProjectileManager:GetLinearProjectileLocation( projectileIndex )
+
+    self.hooks[projectileIndex].thinker:SetAbsOrigin(position)
+
+    if self.hooks[projectileIndex].bRetracting then
+        local caster = self:GetCaster()
+        local speed = self.hooks[projectileIndex].hook_speed or 0
+        local width = self.hooks[projectileIndex].hook_width or 0
         local position = ProjectileManager:GetLinearProjectileLocation( projectileIndex )
 
         self.hooks[projectileIndex].thinker:SetAbsOrigin(position)
 
-        if self.hooks[projectileIndex].bRetracting then
-            local caster = self:GetCaster()
-            local speed = self.hooks[projectileIndex].hook_speed or 0
-            local width = self.hooks[projectileIndex].hook_width or 0
-            local position = ProjectileManager:GetLinearProjectileLocation( projectileIndex )
+        if self.hooks[projectileIndex].hVictim then
+            if not self.hooks[projectileIndex].hVictim:HasModifier("modifier_custom_pudge_meat_hook_debuff") then
 
-            self.hooks[projectileIndex].thinker:SetAbsOrigin(position)
-
-            if self.hooks[projectileIndex].hVictim then
-                if not self.hooks[projectileIndex].hVictim:HasModifier("modifier_custom_pudge_meat_hook_debuff") then
-                    self.hooks[projectileIndex].hVictim:AddNewModifier( self:GetCaster(), self, "modifier_custom_pudge_meat_hook_debuff", {} )
+                local dist = 0
+                if self.hooks[projectileIndex].start_position then
+                    dist = (self.hooks[projectileIndex].start_position - self.hooks[projectileIndex].hVictim:GetAbsOrigin()):Length2D()
                 end
+                self.hooks[projectileIndex].hVictim:AddNewModifier( caster, self, "modifier_custom_pudge_meat_hook_debuff", {dist = dist} )
+            end
 
+            local check_dir_2 = (self.hooks[projectileIndex].start_position - self.hooks[projectileIndex].hVictim:GetAbsOrigin()):Normalized()
 
-                local check_dir_2 = (self.hooks[projectileIndex].start_position - self.hooks[projectileIndex].hVictim:GetAbsOrigin()):Normalized()
+            self.hooks[projectileIndex].hVictim:SetOrigin(GetGroundPosition(position, self.hooks[projectileIndex].hVictim))
+            self.hooks[projectileIndex].hVictim:SetForwardVector(check_dir_2)
 
-                self.hooks[projectileIndex].hVictim:SetOrigin(GetGroundPosition(position, self.hooks[projectileIndex].hVictim))
-                self.hooks[projectileIndex].hVictim:SetForwardVector(check_dir_2)
+            local vFinalHookPos = self.hooks[projectileIndex].start_position 
 
+            local vVictimPosCheck = vFinalHookPos - self.hooks[projectileIndex].hVictim:GetOrigin() 
+            local flPad = caster:GetPaddedCollisionRadius() + self.hooks[projectileIndex].hVictim:GetPaddedCollisionRadius()
+            if vVictimPosCheck:Length2D() < flPad then
 
-                local vFinalHookPos = self.hooks[projectileIndex].start_position 
+                local check_dir = (self.hooks[projectileIndex].start_position - self.hooks[projectileIndex].hVictim:GetAbsOrigin()):Normalized()
+                local origin = self.hooks[projectileIndex].start_position + (check_dir * 150)
+                origin.z = 0
 
-                local vVictimPosCheck = vFinalHookPos - self.hooks[projectileIndex].hVictim:GetOrigin() 
-                local flPad = self:GetCaster():GetPaddedCollisionRadius() + self.hooks[projectileIndex].hVictim:GetPaddedCollisionRadius()
-                if vVictimPosCheck:Length2D() < flPad then
+                FindClearSpaceForUnit( self.hooks[projectileIndex].hVictim, origin, false )
 
-                    local check_dir = (self.hooks[projectileIndex].start_position - self.hooks[projectileIndex].hVictim:GetAbsOrigin()):Normalized()
+                local angel = (self.hooks[projectileIndex].start_position - self.hooks[projectileIndex].hVictim:GetAbsOrigin())
+                angel.z = 0.0
+                angel = angel:Normalized()
+                self.hooks[projectileIndex].hVictim:SetForwardVector(angel)
 
-
-                    local origin = self.hooks[projectileIndex].start_position + (check_dir * 150)
-                    origin.z = 0
-
-                    FindClearSpaceForUnit( self.hooks[projectileIndex].hVictim, origin, false )
-
-                    local angel = (self.hooks[projectileIndex].start_position - self.hooks[projectileIndex].hVictim:GetAbsOrigin())
-                    angel.z = 0.0
-                    angel = angel:Normalized()
-                    self.hooks[projectileIndex].hVictim:SetForwardVector(angel)
-
-
-
-
-                    self.hooks[projectileIndex].hVictim:InterruptMotionControllers( true )
-                    self.hooks[projectileIndex].hVictim:RemoveModifierByName( "modifier_custom_pudge_meat_hook_debuff" )
-                    if self.hooks[projectileIndex].hVictim:GetUnitName() == "npc_dota_companion" then
-                        UTIL_Remove(self.hooks[projectileIndex].hVictim)
-                    end
+                self.hooks[projectileIndex].hVictim:InterruptMotionControllers( true )
+                self.hooks[projectileIndex].hVictim:RemoveModifierByName( "modifier_custom_pudge_meat_hook_debuff" )
+                if self.hooks[projectileIndex].hVictim:GetUnitName() == "npc_dota_companion" then
+                    UTIL_Remove(self.hooks[projectileIndex].hVictim)
                 end
             end
-            ParticleManager:SetParticleControl(self.hooks[projectileIndex].particleIndex, 1, self:GetCaster():GetAbsOrigin())
         end
+        ParticleManager:SetParticleControl(self.hooks[projectileIndex].particleIndex, 1, caster:GetAbsOrigin())
     end
 end
 
-function custom_pudge_meat_hook:OnOwnerDied()
-    self:GetCaster():RemoveGesture( ACT_DOTA_OVERRIDE_ABILITY_1 );
-    self:GetCaster():RemoveGesture( ACT_DOTA_CHANNEL_ABILITY_1 );
 end
+
+function custom_pudge_meat_hook:OnOwnerDied()
+self:GetCaster():RemoveGesture( ACT_DOTA_OVERRIDE_ABILITY_1 )
+self:GetCaster():RemoveGesture( ACT_DOTA_CHANNEL_ABILITY_1 )
+end
+
 
 modifier_custom_pudge_meat_hook = class({})
-
-function modifier_custom_pudge_meat_hook:IsHidden()
-    return true
-end
-
-function modifier_custom_pudge_meat_hook:IsPurgable()
-    return false
-end
-
+function modifier_custom_pudge_meat_hook:IsHidden()  return true end
+function modifier_custom_pudge_meat_hook:IsPurgable() return false end
 function modifier_custom_pudge_meat_hook:CheckState()
-    local state = {
+return 
+{
     [MODIFIER_STATE_STUNNED] = true,
-    }
-
-    return state
+}
 end
+
+
 
 modifier_custom_pudge_meat_hook_debuff = class({})
-
-function modifier_custom_pudge_meat_hook_debuff:IsDebuff()
-    return true
-end
-
 function modifier_custom_pudge_meat_hook_debuff:IsHidden() return true end
+function modifier_custom_pudge_meat_hook_debuff:IsPurgable() return false end
 
-function modifier_custom_pudge_meat_hook_debuff:RemoveOnDeath()
-    return false
+function modifier_custom_pudge_meat_hook_debuff:OnCreated(table)
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+
+if not IsServer() then return end
+
+self.dist = table.dist
 end
+
 
 function modifier_custom_pudge_meat_hook_debuff:OnDestroy()
 if not IsServer() then return end
 
-    FindClearSpaceForUnit(self:GetParent(), self:GetParent():GetAbsOrigin(), false)
+FindClearSpaceForUnit(self.parent, self.parent:GetAbsOrigin(), false)
 
-    local angel = (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin())
-    angel.z = 0.0
-    angel = angel:Normalized()
-    self:GetParent():SetForwardVector(angel)
+local angel = (self.caster:GetAbsOrigin() - self.parent:GetAbsOrigin())
+angel.z = 0.0
+angel = angel:Normalized()
+self.parent:SetForwardVector(angel)
 
-    if self:GetParent():GetUnitName() ~= "npc_dota_companion" and self:GetCaster():HasModifier("modifier_pudge_hook_6") then 
-        self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_custom_pudge_meat_hook_root", {duration = (1 - self:GetParent():GetStatusResistance())*self:GetAbility().reduce_duration})
+if self.parent:GetUnitName() ~= "npc_dota_companion" and self.caster:HasTalent("modifier_pudge_hook_6") and self.parent:GetTeamNumber() ~= self.caster:GetTeamNumber() then 
+    local duration = self.caster:GetTalentValue("modifier_pudge_hook_6", "min_duration")
+
+    if self.dist and self.dist > 0 then
+        local max = self.caster:GetTalentValue("modifier_pudge_hook_6", "max_duration")
+        local max_dist = self.caster:GetTalentValue("modifier_pudge_hook_6", "max_dist")
+
+        self.dist = math.min(max_dist, self.dist)
+
+        duration = duration + (max - duration)*(self.dist/max_dist)
     end
-
-
-    self:GetParent():RemoveModifierByName("modifier_custom_pudge_meat_hook_attacks")
-
-
+    self.parent:AddNewModifier(self.caster, self.ability, "modifier_custom_pudge_meat_hook_root", {duration = (1 - self.parent:GetStatusResistance())*duration})
 end
 
-
-function modifier_custom_pudge_meat_hook_debuff:OnCreated(table)
-if not IsServer() then return end
-
-end
-
-
-function modifier_custom_pudge_meat_hook_debuff:IsPurgable()
-    return false
 end
 
 function modifier_custom_pudge_meat_hook_debuff:DeclareFunctions()
-    local funcs = {
-        MODIFIER_PROPERTY_OVERRIDE_ANIMATION,
-    }
-
-    return funcs
+return 
+{
+    MODIFIER_PROPERTY_OVERRIDE_ANIMATION,
+}
 end
 
 function modifier_custom_pudge_meat_hook_debuff:GetOverrideAnimation( params )
-    return ACT_DOTA_FLAIL
+return ACT_DOTA_FLAIL
 end
 
 function modifier_custom_pudge_meat_hook_debuff:CheckState()
-    --if IsServer() then
-        if self:GetCaster() ~= nil and self:GetParent() ~= nil then
-            if self:GetCaster():GetTeamNumber() ~= self:GetParent():GetTeamNumber() and ( not self:GetParent():IsMagicImmune() ) then
-                local state = {
-                [MODIFIER_STATE_STUNNED] = true,
-                }
-
-                return state
-            end
-        end
-    --end
-
-    local state = {}
-
-    return state
+if self.caster ~= nil and self.parent ~= nil then
+    if self.caster:GetTeamNumber() ~= self.parent:GetTeamNumber() then
+        return  
+        {
+            [MODIFIER_STATE_STUNNED] = true,
+        }
+    end
 end
 
+return {}
+end
 
 
 
@@ -727,111 +785,56 @@ function modifier_custom_pudge_meat_hook_speed:DeclareFunctions()
 return
 {
     MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+    MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE
 }
 end
 
 function modifier_custom_pudge_meat_hook_speed:GetModifierAttackSpeedBonus_Constant()
+if not self.parent:HasTalent("modifier_pudge_hook_1") then return end
 return self.speed
 end
 
-
-
-
-function modifier_custom_pudge_meat_hook_speed:OnCreated()
-self.speed = self:GetCaster():GetTalentValue("modifier_pudge_hook_2", "speed")
-end 
-
-
-
-
-
-
-modifier_custom_pudge_meat_hook_streak = class({})
-function modifier_custom_pudge_meat_hook_streak:IsHidden() return false end
-function modifier_custom_pudge_meat_hook_streak:IsPurgable() return false end
-function modifier_custom_pudge_meat_hook_streak:RemoveOnDeath() return false end
-
-function modifier_custom_pudge_meat_hook_streak:DeclareFunctions()
-return
-{
-    MODIFIER_PROPERTY_TOOLTIP
-}
-end
-
-function modifier_custom_pudge_meat_hook_streak:OnTooltip()
-return 100*self:GetStackCount()*self:GetAbility().legendary_damage
-end
-
-
-modifier_custom_pudge_meat_hook_streak_check = class({})
-function modifier_custom_pudge_meat_hook_streak_check:IsHidden() return true end
-function modifier_custom_pudge_meat_hook_streak_check:IsPurgable() return false end
-
-function modifier_custom_pudge_meat_hook_streak_check:OnCreated(table)
-if not IsServer() then return end
-self.hit_hero = false
-self.hit_creep = false
-
-end
-
-function modifier_custom_pudge_meat_hook_streak_check:OnDestroy()
-if not IsServer() then return end
-local mod = self:GetParent():FindModifierByName("modifier_custom_pudge_meat_hook_streak")
-
-
-if mod and self.hit_hero == false and self.hit_creep == false then 
-    mod:Destroy()
-    return
-end
-
-if not mod and self.hit_hero == true then 
-    mod = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_pudge_meat_hook_streak", {})
-end
-
-if self.hit_hero == true and mod:GetStackCount() < self:GetAbility().legendary_max then 
-    mod:IncrementStackCount()
-end
-
-end
-
-
-modifier_custom_pudge_meat_hook_blood = class({})
-function modifier_custom_pudge_meat_hook_blood:IsHidden() return false end
-function modifier_custom_pudge_meat_hook_blood:IsPurgable() return true end
-function modifier_custom_pudge_meat_hook_blood:GetTexture() return "buffs/Crit_blood" end
-
-function modifier_custom_pudge_meat_hook_blood:OnCreated(table)
-self.heal = self:GetCaster():GetTalentValue("modifier_pudge_hook_3", "heal")/self:GetRemainingTime()
-if not IsServer() then return end
-
-self:StartIntervalThink(1)
-end
-
-function modifier_custom_pudge_meat_hook_blood:OnIntervalThink()
-if not IsServer() then return end
-local particle = ParticleManager:CreateParticle( "particles/generic_gameplay/generic_lifesteal.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-ParticleManager:ReleaseParticleIndex( particle )
-SendOverheadEventMessage(self:GetParent(), 10, self:GetParent(), self.heal*self:GetParent():GetMaxHealth()/100, nil)
-end
-
-
-function modifier_custom_pudge_meat_hook_blood:DeclareFunctions()
-return
-{
-    MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE
-}
-end
-function modifier_custom_pudge_meat_hook_blood:GetModifierHealthRegenPercentage()
+function modifier_custom_pudge_meat_hook_speed:GetModifierHealthRegenPercentage()
+if not self.parent:HasTalent("modifier_pudge_hook_3") then return end
 return self.heal
 end
+
+function modifier_custom_pudge_meat_hook_speed:OnCreated()
+self.parent = self:GetParent()
+
+self.speed = self.parent:GetTalentValue("modifier_pudge_hook_1", "speed")
+self.heal = self.parent:GetTalentValue("modifier_pudge_hook_3", "heal")/self:GetRemainingTime()
+if not IsServer() then return end
+if not self.parent:HasTalent("modifier_pudge_hook_3") then return end
+
+self:StartIntervalThink(0.98)
+end
+
+function modifier_custom_pudge_meat_hook_speed:OnIntervalThink()
+if not IsServer() then return end
+self.parent:GenericParticle("particles/generic_gameplay/generic_lifesteal.vpcf")
+self.parent:SendNumber(10, self.heal*self.parent:GetMaxHealth()/100)
+end
+
+
 
 
 
 modifier_custom_pudge_meat_hook_root = class({})
-function modifier_custom_pudge_meat_hook_root:IsHidden() return false end
+function modifier_custom_pudge_meat_hook_root:IsHidden() return true end
 function modifier_custom_pudge_meat_hook_root:IsPurgable() return true end
 function modifier_custom_pudge_meat_hook_root:GetTexture() return "buffs/hook_root" end
 
+function modifier_custom_pudge_meat_hook_root:DeclareFunctions()
+return
+{
+    MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
+}
+end
+
+function modifier_custom_pudge_meat_hook_root:GetModifierAttackSpeedBonus_Constant()
+return self.speed
+end
 
 function modifier_custom_pudge_meat_hook_root:CheckState()
 return
@@ -840,24 +843,23 @@ return
 }
 end
 
-
-
 function modifier_custom_pudge_meat_hook_root:OnCreated(table)
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+
+self.speed = self.caster:GetTalentValue("modifier_pudge_hook_6", "speed")
+
 if not IsServer() then return end
-self:GetParent():EmitSound("Pudge.Hook_Root")
+self.parent:EmitSound("Pudge.Hook_Root")
 
-local parent = self:GetParent()
-
-self.nFXIndex = ParticleManager:CreateParticle( "particles/items3_fx/hook_root.vpcf", PATTACH_ABSORIGIN_FOLLOW, parent)
-ParticleManager:SetParticleControl( self.nFXIndex, 0, parent:GetAbsOrigin() )
-self:AddParticle(self.nFXIndex, false, false, -1, false, false)
-
+self:StartIntervalThink(0.1)
 end
 
-
-
-
-
+function modifier_custom_pudge_meat_hook_root:OnIntervalThink()
+if not IsServer() then return end
+self.parent:GenericParticle("particles/items3_fx/hook_root.vpcf", self)
+self:StartIntervalThink(-1)
+end
 
 
 modifier_custom_pudge_meat_hook_tracker = class({})
@@ -866,154 +868,161 @@ function modifier_custom_pudge_meat_hook_tracker:IsPurgable() return false end
 function modifier_custom_pudge_meat_hook_tracker:DeclareFunctions()
 return
 {
-    MODIFIER_EVENT_ON_ATTACK_LANDED,
+    MODIFIER_PROPERTY_ATTACK_RANGE_BONUS
 }
 end
 
 
-
-
-function modifier_custom_pudge_meat_hook_tracker:OnAttackLanded(params)
-if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end
-if not self:GetParent():HasModifier("modifier_pudge_hook_legendary") then return end
-if not params.target:IsCreep() and not params.target:IsHero() then return end
-
-self:GetCaster():CdAbility(self:GetAbility(), self:GetCaster():GetTalentValue("modifier_pudge_hook_legendary", "cd"))
+function modifier_custom_pudge_meat_hook_tracker:GetModifierAttackRangeBonus()
+if not self.parent:HasTalent("modifier_pudge_hook_5") then return end
+return self.range
 end
 
 function modifier_custom_pudge_meat_hook_tracker:OnCreated(table)
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.range = self.parent:GetTalentValue("modifier_pudge_hook_5", "range", true)
+self.vision_duration = self.parent:GetTalentValue("modifier_pudge_hook_5", "vision", true)
+self.speed_duration = self.parent:GetTalentValue("modifier_pudge_hook_5", "duration", true)
+
+self.legendary_cd = self.parent:GetTalentValue("modifier_pudge_hook_legendary", "cd", true)
+self.parent:AddAttackEvent_out(self)
+end
+
+function modifier_custom_pudge_meat_hook_tracker:AttackEvent_out(params)
 if not IsServer() then return end
-self:StartIntervalThink(0.2)
+if self.parent ~= params.attacker then return end
+if not params.target:IsUnit() then return end
+
+local mod = self.parent:FindModifierByName("modifier_custom_pudge_meat_hook_move_speed")
+local target_mod = params.target:FindModifierByName("modifier_custom_pudge_meat_hook_move_slow")
+
+if mod then
+    mod:SetDuration(self.speed_duration, true)
+end
+if target_mod then
+    target_mod:SetDuration(self.speed_duration, true)
+end
+
+if self.parent:HasTalent("modifier_pudge_hook_5") then
+    params.target:AddNewModifier(self.parent, self.ability, "modifier_custom_pudge_meat_hook_move_vision", {duration = self.vision_duration})
+end
+
+if not self.parent:HasTalent("modifier_pudge_hook_legendary") then return end
+self.parent:CdAbility(self.ability, self.legendary_cd)
 end
 
 
-function modifier_custom_pudge_meat_hook_tracker:OnIntervalThink()
+
+modifier_custom_pudge_meat_hook_move_speed = class({})
+function modifier_custom_pudge_meat_hook_move_speed:IsHidden() return false end
+function modifier_custom_pudge_meat_hook_move_speed:IsPurgable() return false end
+function modifier_custom_pudge_meat_hook_move_speed:GetTexture() return "buffs/edict_speed" end
+function modifier_custom_pudge_meat_hook_move_speed:OnCreated()
+self.speed = self:GetParent():GetTalentValue("modifier_pudge_hook_5", "speed")
+end
+
+function modifier_custom_pudge_meat_hook_move_speed:DeclareFunctions()
+return
+{
+    MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
+}
+end
+
+function modifier_custom_pudge_meat_hook_move_speed:GetEffectName()
+return "particles/generic_gameplay/rune_haste_owner.vpcf"
+end
+
+function modifier_custom_pudge_meat_hook_move_speed:GetModifierMoveSpeedBonus_Percentage()
+return self.speed
+end
+
+modifier_custom_pudge_meat_hook_move_slow = class({})
+function modifier_custom_pudge_meat_hook_move_slow:IsHidden() return true end
+function modifier_custom_pudge_meat_hook_move_slow:IsPurgable() return true end
+function modifier_custom_pudge_meat_hook_move_slow:OnCreated()
+self.slow = self:GetCaster():GetTalentValue("modifier_pudge_hook_5", "slow")
 if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_pudge_hook_5") then return end
-
-local nearby_enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility().range_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_NOT_CREEP_HERO, FIND_ANY_ORDER, false)
-
-for _,enemy in pairs(nearby_enemies) do
-    if enemy:IsRealHero() and enemy:GetHealthPercent() < self:GetAbility().range_health then 
-        AddFOWViewer(self:GetParent():GetTeamNumber(), enemy:GetAbsOrigin(), 10, 0.2, false)
-    end
+self:GetParent():GenericParticle("particles/items2_fx/sange_maim.vpcf", self)
 end
 
+function modifier_custom_pudge_meat_hook_move_slow:DeclareFunctions()
+return
+{
+    MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
+}
+end
+
+function modifier_custom_pudge_meat_hook_move_slow:GetModifierMoveSpeedBonus_Percentage()
+return self.slow
+end
+
+
+modifier_custom_pudge_meat_hook_move_vision = class({})
+function modifier_custom_pudge_meat_hook_move_vision:IsHidden() return true end
+function modifier_custom_pudge_meat_hook_move_vision:IsPurgable() return false end
+function modifier_custom_pudge_meat_hook_move_vision:OnCreated()
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+if not IsServer() then return end
+self.interval = 0.2
+self:StartIntervalThink(self.interval)
+end
+
+function modifier_custom_pudge_meat_hook_move_vision:OnIntervalThink()
+if not IsServer() then return end
+AddFOWViewer(self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), 10, self.interval*2, false)
 end
 
 
 
 
-
-
-
-
-
-modifier_custom_pudge_meat_hook_legendary = class({})
-function modifier_custom_pudge_meat_hook_legendary:IsHidden() return not self:GetCaster():HasModifier("modifier_pudge_hook_4") end
-function modifier_custom_pudge_meat_hook_legendary:IsPurgable() return false end
-function modifier_custom_pudge_meat_hook_legendary:RemoveOnDeath() return false end
-function modifier_custom_pudge_meat_hook_legendary:DeclareFunctions()
+modifier_custom_pudge_meat_hook_perma = class({})
+function modifier_custom_pudge_meat_hook_perma:IsHidden() return not self:GetCaster():HasTalent("modifier_pudge_hook_4") end
+function modifier_custom_pudge_meat_hook_perma:IsPurgable() return false end
+function modifier_custom_pudge_meat_hook_perma:RemoveOnDeath() return false end
+function modifier_custom_pudge_meat_hook_perma:DeclareFunctions()
 return
 {
     MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
-  MODIFIER_PROPERTY_TOOLTIP,
-  MODIFIER_PROPERTY_TOOLTIP2
 }
 end
 
-function modifier_custom_pudge_meat_hook_legendary:OnTooltip2()
-return self:GetStackCount()*self:GetCaster():GetTalentValue("modifier_pudge_hook_4", "damage")
+function modifier_custom_pudge_meat_hook_perma:GetModifierSpellAmplify_Percentage() 
+if not self.parent:HasTalent("modifier_pudge_hook_4") then return 0 end 
+return self:GetStackCount()*self.parent:GetTalentValue("modifier_pudge_hook_4", "damage")/self.max
 end
 
-
-function modifier_custom_pudge_meat_hook_legendary:OnTooltip()
-return self:GetStackCount()
-end
-
-
-function modifier_custom_pudge_meat_hook_legendary:GetModifierSpellAmplify_Percentage() 
-if not self:GetParent():HasModifier("modifier_pudge_hook_4") then return 0 end 
-if self:GetStackCount() < self.max then return end
-
-    return self:GetCaster():GetTalentValue("modifier_pudge_hook_4", "amp")
-end
-
-
-function modifier_custom_pudge_meat_hook_legendary:OnCreated(table)
-
-self.max = self:GetCaster():GetTalentValue("modifier_pudge_hook_4", "max", true)
+function modifier_custom_pudge_meat_hook_perma:OnCreated(table)
+self.parent = self:GetParent()
+self.max = self.parent:GetTalentValue("modifier_pudge_hook_4", "max", true)
 
 if not IsServer() then return end 
-
-
 self:SetStackCount(1)
+self:StartIntervalThink(0.5)
 end
 
-
-
-
-function modifier_custom_pudge_meat_hook_legendary:OnRefresh()
+function modifier_custom_pudge_meat_hook_perma:OnRefresh()
 if not IsServer() then return end
 if self:GetStackCount() >= self.max then return end
-
 self:IncrementStackCount()
-
-if self:GetStackCount() >= self.max then 
-
-    local particle_peffect = ParticleManager:CreateParticle("particles/lc_odd_proc_.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-    ParticleManager:SetParticleControl(particle_peffect, 0, self:GetParent():GetAbsOrigin())
-    ParticleManager:SetParticleControl(particle_peffect, 2, self:GetParent():GetAbsOrigin())
-    ParticleManager:ReleaseParticleIndex(particle_peffect)
-
-    self:GetCaster():EmitSound("BS.Thirst_legendary_active")
-
 end
 
-end
-
-
-
-modifier_custom_pudge_meat_hook_move = class({})
-function modifier_custom_pudge_meat_hook_move:IsHidden() return true end
-function modifier_custom_pudge_meat_hook_move:IsPurgable() return false end
-
-
-
-
-
-
-
-
-
-
-modifier_custom_pudge_meat_hook_incoming = class({})
-function modifier_custom_pudge_meat_hook_incoming:IsHidden() return false end
-function modifier_custom_pudge_meat_hook_incoming:IsPurgable() return true end
-function modifier_custom_pudge_meat_hook_incoming:GetTexture() return "buffs/odds_mark" end
-
-function modifier_custom_pudge_meat_hook_incoming:OnCreated(table)
-
-self.damage = self:GetCaster():GetTalentValue("modifier_pudge_hook_1", "damage")
-
+function modifier_custom_pudge_meat_hook_perma:OnIntervalThink()
 if not IsServer() then return end
+if not self.parent:HasTalent("modifier_pudge_hook_4") then return end
+if self:GetStackCount() < self.max then return end
 
-self.particle_peffect = ParticleManager:CreateParticle("particles/items3_fx/star_emblem.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())   
-ParticleManager:SetParticleControl(self.particle_peffect, 0, self:GetParent():GetAbsOrigin())
-self:AddParticle(self.particle_peffect, false, false, -1, false, true)
+local particle_peffect = ParticleManager:CreateParticle("particles/lc_odd_proc_.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControl(particle_peffect, 0, self.parent:GetAbsOrigin())
+ParticleManager:SetParticleControl(particle_peffect, 2, self.parent:GetAbsOrigin())
+ParticleManager:ReleaseParticleIndex(particle_peffect)
+
+self.parent:EmitSound("BS.Thirst_legendary_active")
+self:StartIntervalThink(-1)
 end
 
-function modifier_custom_pudge_meat_hook_incoming:DeclareFunctions()
-return
-{
-    MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE
-}
-end
-
-function modifier_custom_pudge_meat_hook_incoming:GetModifierIncomingDamage_Percentage() 
-    return self.damage
-end
 
 
 
@@ -1022,10 +1031,17 @@ modifier_custom_pudge_meat_hook_stack = class({})
 function modifier_custom_pudge_meat_hook_stack:IsHidden() return false end
 function modifier_custom_pudge_meat_hook_stack:IsPurgable() return false end
 function modifier_custom_pudge_meat_hook_stack:OnCreated()
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
 
-self.damage = self:GetCaster():GetTalentValue("modifier_pudge_hook_legendary", "damage")
+self.damage = self.caster:GetTalentValue("modifier_pudge_hook_legendary", "damage")
+self.max = self.caster:GetTalentValue("modifier_pudge_hook_legendary", "max")
 
 if not IsServer() then return end 
+
+self.particle = self.parent:GenericParticle("particles/pudge/hook_stack.vpcf", self, true)
+self.ability.legendary_targets[self.parent:entindex()] = true
 
 self.RemoveForDuel = true
 self:SetStackCount(1)
@@ -1033,37 +1049,36 @@ end
 
 function modifier_custom_pudge_meat_hook_stack:OnRefresh()
 if not IsServer() then return end 
-if self:GetStackCount() >= self:GetCaster():GetTalentValue("modifier_pudge_hook_legendary", "max") then return end 
-
+if self:GetStackCount() >= self.max then return end 
 self:IncrementStackCount()
 end 
 
 
+function modifier_custom_pudge_meat_hook_stack:OnDestroy()
+if not IsServer() then return end
+self.ability.legendary_targets[self.parent:entindex()] = nil
+end
+
 function modifier_custom_pudge_meat_hook_stack:OnStackCountChanged(iStackCount)
-if self:GetStackCount() == 0 then return end
-if not self.effect_cast then 
-
-    local particle_cast = "particles/pudge/hook_stack.vpcf"
-
-    self.effect_cast = ParticleManager:CreateParticle( particle_cast, PATTACH_OVERHEAD_FOLLOW, self:GetParent() )
-    ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( 0, self:GetStackCount(), 0 ) )
-
-    self:AddParticle(self.effect_cast,false, false, -1, false, false)
-else 
-
-  ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( 0, self:GetStackCount(), 0 ) )
-
+if not self.particle then return end
+ParticleManager:SetParticleControl(self.particle, 1, Vector( 0, self:GetStackCount(), 0 ) )
 end
 
-end
 function modifier_custom_pudge_meat_hook_stack:DeclareFunctions()
 return
 {
-    MODIFIER_PROPERTY_TOOLTIP
+    MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE
 }
 end
 
-
-function modifier_custom_pudge_meat_hook_stack:OnTooltip()
+function modifier_custom_pudge_meat_hook_stack:GetModifierIncomingDamage_Percentage()
 return self:GetStackCount()*self.damage
 end
+
+
+
+
+modifier_custom_pudge_meat_hook_hidden = class({})
+function modifier_custom_pudge_meat_hook_hidden:IsHidden() return true end
+function modifier_custom_pudge_meat_hook_hidden:IsPurgable() return false end
+function modifier_custom_pudge_meat_hook_hidden:IsPurgeException() return false end

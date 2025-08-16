@@ -11,16 +11,19 @@ if self.after_legen == true then
 end
 
 upgrade:init_upgrade(self:GetCaster(),2,nil,after)
-self:SpendCharge()
+self:SpendCharge(0)
 end
+
 
 function item_blue_upgrade:OnAbilityPhaseStart()
 if not IsServer() then return end
+local player = players[self:GetCaster():GetId()]
 
-if players[self:GetCaster():GetTeamNumber()]:HasModifier("modifier_end_choise") then 
+if not player then return end
+
+if player:HasModifier("modifier_end_choise") then 
 	return false 
 end
-
 
 return true
 end
@@ -40,13 +43,19 @@ if self.after_legen == true then
 end
 
 upgrade:init_upgrade(self:GetCaster(),1,nil,after)
-self:SpendCharge()
+self:SpendCharge(0)
 end
 
 function item_gray_upgrade:OnAbilityPhaseStart()
 if not IsServer() then return end
-if players[self:GetCaster():GetTeamNumber()]:HasModifier("modifier_end_choise")
- then return false end
+local player = players[self:GetCaster():GetId()]
+
+if not player then return end
+
+if player:HasModifier("modifier_end_choise") then 
+	return false 
+end
+
 return true
 end
 
@@ -65,15 +74,22 @@ if self.after_legen == true then
 end
 
 upgrade:init_upgrade(self:GetCaster(),4,nil,after)
-self:SpendCharge()
+self:SpendCharge(0)
 end
 
 function item_legendary_upgrade:OnAbilityPhaseStart()
 if not IsServer() then return end
-if players[self:GetCaster():GetTeamNumber()]:HasModifier("modifier_end_choise")
- then return false end
+local player = players[self:GetCaster():GetId()]
+
+if not player then return end
+
+if player:HasModifier("modifier_end_choise") then 
+	return false 
+end
+
 return true
 end
+
 
 --------------------------------------------------------------------
 
@@ -88,13 +104,19 @@ if self.after_legen == true then
 end
 
 upgrade:init_upgrade(self:GetCaster(),3,nil,after)
-self:SpendCharge()
+self:SpendCharge(0)
 end
 
 function item_purple_upgrade:OnAbilityPhaseStart()
 if not IsServer() then return end
-if players[self:GetCaster():GetTeamNumber()]:HasModifier("modifier_end_choise")
- then return false end
+local player = players[self:GetCaster():GetId()]
+
+if not player then return end
+
+if player:HasModifier("modifier_end_choise") then 
+	return false 
+end
+
 return true
 end
 
@@ -107,15 +129,20 @@ function item_purple_upgrade_shop:OnSpellStart()
 if not IsServer() then return end
 
 upgrade:init_upgrade(self:GetCaster(),3,nil,true)
-self:SpendCharge()
+self:SpendCharge(0)
 end
 
 function item_purple_upgrade_shop:OnAbilityPhaseStart()
 if not IsServer() then return end
-if players[self:GetCaster():GetTeamNumber()]:HasModifier("modifier_end_choise")
- then return false end
-return true
+local player = players[self:GetCaster():GetId()]
+
+if not player then return end
+
+if player:HasModifier("modifier_end_choise") then 
+	return false 
 end
 
+return true
+end
 
 

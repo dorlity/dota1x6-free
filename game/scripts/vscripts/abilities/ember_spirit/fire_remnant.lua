@@ -24,31 +24,50 @@ ember_spirit_activate_fire_remnant_custom = class({})
 
 
 
+function ember_spirit_fire_remnant_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
+PrecacheResource( "particle", "particles/units/heroes/hero_broodmother/broodmother_web.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_ember_spirit/ember_spirit_fire_remnant_trail.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_ember_spirit/ember_spirit_fire_remnant.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_ember_spirit/ember_spirit_hit.vpcf", context )
+PrecacheResource( "particle", "particles/ember_spirit/remnant_fire.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_ember_spirit/ember_spirit_remnant_dash.vpcf", context )
+PrecacheResource( "particle", "particles/ember_spirit/legendary_aoe.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_phoenix/phoenix_icarus_dive_burn_debuff.vpcf", context )
+PrecacheResource( "particle", "particles/status_fx/status_effect_burn.vpcf", context )
+PrecacheResource( "particle", "particles/sf_refresh_a.vpcf", context )
+PrecacheResource( "particle", "particles/ember_spirit/attack_slow.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf", context )
+end
+
+
+function ember_spirit_fire_remnant_custom:CreateTalent()
+local ability = self:GetCaster():FindAbilityByName("ember_spirit_fire_remnant_burst")
+if not ability then return end
+
+ability:SetHidden(false) 
+end
 
 
 function ember_spirit_fire_remnant_custom:GetCastRange(vLocation, hTarget)
 local bonus = 0
-if self:GetCaster():HasModifier("modifier_ember_remnant_1") then 
+if self:GetCaster():HasTalent("modifier_ember_remnant_1") then 
 	bonus = self:GetCaster():GetTalentValue("modifier_ember_remnant_1", "range")
 end 
-
 return self:GetSpecialValueFor("AbilityCastRange") + bonus
 end
 
 
 function ember_spirit_fire_remnant_custom:GetCooldown(iLevel)
 if self:GetCaster():HasScepter() then 
---	return 0
+	--return 0
 end
 return self.BaseClass.GetCooldown(self, iLevel) 
 end
 
 
 function ember_spirit_fire_remnant_custom:GetCastPoint(iLevel)
-if self:GetCaster():HasScepter() then 
-	return 0
-end
 return self.BaseClass.GetCastPoint(self)
 end
 
@@ -62,13 +81,11 @@ end
 ember_spirit_fire_remnant_custom_shard_ability = class({})
 
 
-
 function ember_spirit_fire_remnant_custom_shard_ability:GetCastRange(vLocation, hTarget)
 local bonus = 0
-if self:GetCaster():HasModifier("modifier_ember_remnant_1") then 
+if self:GetCaster():HasTalent("modifier_ember_remnant_1") then 
 	bonus = self:GetCaster():GetTalentValue("modifier_ember_remnant_1", "range")
 end 
-
 return self:GetSpecialValueFor("AbilityCastRange") + bonus
 end
 
@@ -80,61 +97,25 @@ end
 return self.BaseClass.GetCooldown(self, iLevel)
 end
 
-
 function ember_spirit_fire_remnant_custom_shard_ability:GetCastPoint(iLevel)
-if self:GetCaster():HasScepter() then 
-	return 0
-end
 return self.BaseClass.GetCastPoint(self)
 end
-
 
 function ember_spirit_fire_remnant_custom_shard_ability:ProcsMagicStick()
 return false
 end
 
 
-
-
-
-
-
 function ember_spirit_activate_fire_remnant_custom:GetManaCost(level)
-
 if self:GetCaster():HasShard() and self:GetCaster():FindAbilityByName("ember_spirit_fire_remnant_custom") then  
   return self:GetCaster():FindAbilityByName("ember_spirit_fire_remnant_custom"):GetSpecialValueFor("shard_mana")
 end
-
 return self.BaseClass.GetManaCost(self,level) 
 end
 
 
 
-
-
-function ember_spirit_fire_remnant_custom:Precache(context)
-
-PrecacheResource( "particle", "particles/units/heroes/hero_ember_spirit/ember_spirit_fire_remnant_trail.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_ember_spirit/ember_spirit_fire_remnant.vpcf", context )
-PrecacheResource( "particle", "particles/sf_refresh_a.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_ember_spirit/ember_spirit_hit.vpcf", context )
-PrecacheResource( "particle", "particles/dragon_fireball.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_ember_spirit/ember_spirit_remnant_dash.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_phoenix/phoenix_icarus_dive_burn_debuff.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_terrorblade/ember_slow.vpcf", context )
-PrecacheResource( "particle", "particles/ember_spirit/remnant_fire.vpcf", context )
-
-end
-
-
-
-
-
-
-
-
 function ember_spirit_fire_remnant_custom:OnInventoryContentsChanged()
-
 
 if self:GetCaster():HasShard() then
 	local ability = self:GetCaster():FindAbilityByName("ember_spirit_fire_remnant_custom_shard_ability")
@@ -142,9 +123,7 @@ if self:GetCaster():HasShard() then
 		self:GetCaster():SwapAbilities(self:GetAbilityName(), ability:GetAbilityName(), false, true)
 		ability:SetCurrentAbilityCharges(self:GetCurrentAbilityCharges())
 	end 
-
 else
-
 	local ability = self:GetCaster():FindAbilityByName("ember_spirit_fire_remnant_custom_shard_ability")
 	if ability and not ability:IsHidden() then 
 		self:GetCaster():SwapAbilities(self:GetAbilityName(), ability:GetAbilityName(), true, false)
@@ -155,22 +134,15 @@ end
 end
 
 
-
-
 function ember_spirit_fire_remnant_custom:OnSpellStart()
 self:Cast(self:GetAbilityName())
 end
+
 
 function ember_spirit_fire_remnant_custom_shard_ability:OnSpellStart()
 local ability = self:GetCaster():FindAbilityByName("ember_spirit_fire_remnant_custom")
 ability:Cast(self:GetAbilityName())
 end
-
-
-
-
-
-
 
 
 
@@ -207,31 +179,33 @@ end
 
 
 
-
-
-
-function ember_spirit_fire_remnant_custom:AddStack()
+function ember_spirit_fire_remnant_custom:AddStack(is_chains)
 
 local caster = self:GetCaster()
 
-if caster:HasModifier("modifier_ember_chain_4") then 
-	if RollPseudoRandomPercentage(caster:GetTalentValue("modifier_ember_chain_4", "chance"),1221, caster) then 
-		caster:EmitSound("Ember.Chain_speed")
-		caster:AddNewModifier(caster, self, "modifier_searing_chains_custom_speed", {duration = caster:GetTalentValue("modifier_ember_chain_4", "duration")})
-	end 
+if caster:HasTalent("modifier_ember_chain_4") and not is_chains then 
+--	if RollPseudoRandomPercentage(caster:GetTalentValue("modifier_ember_chain_4", "chance"),1221, caster) then 
+	--	caster:EmitSound("Ember.Chain_speed")
+	--	caster:AddNewModifier(caster, self, "modifier_searing_chains_custom_speed", {duration = caster:GetTalentValue("modifier_ember_chain_4", "duration")})
+--	end 
+
+	local ability = caster:FindAbilityByName("ember_spirit_searing_chains_custom")
+	if ability and ability:IsTrained() then
+		caster:AddNewModifier(caster, ability, "modifier_searing_chains_custom_speed_stack", {duration = caster:GetTalentValue("modifier_ember_chain_4", "effect_duration")})
+	end
 end
 
-if caster:HasModifier("modifier_ember_remnant_2") then 
+if caster:HasTalent("modifier_ember_remnant_2") then 
 	local duration = caster:GetTalentValue("modifier_ember_remnant_2", "duration")
 	caster:AddNewModifier(caster, self, "modifier_ember_spirit_activate_fire_remnant_custom_heal", {duration = duration})
 	caster:AddNewModifier(caster, self, "modifier_ember_spirit_activate_fire_remnant_custom_heal_count", {duration = duration})
 end
 
-if caster:HasModifier("modifier_ember_remnant_3") then 
+if caster:HasTalent("modifier_ember_remnant_3") then 
 	caster:AddNewModifier(caster, self, "modifier_ember_spirit_activate_fire_remnant_custom_amp", {duration = caster:GetTalentValue("modifier_ember_remnant_3", "duration")})
 end 
 
-if not self:GetCaster():HasModifier("modifier_ember_remnant_5") then return end
+if not self:GetCaster():HasTalent("modifier_ember_remnant_5") then return end
 
 self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_ember_spirit_activate_fire_remnant_stack_count", {})
 
@@ -261,7 +235,7 @@ local vDirection = TargetPosition - StartPosition
 vDirection.z = 0
 if vDirection:Length2D() == 0 then vDirection = caster:GetForwardVector() end
 
-local remnant_unit = CreateUnitByName("npc_dota_ember_spirit_remnant", StartPosition, false, caster, caster, caster:GetTeamNumber())
+local remnant_unit = CreateUnitByName("npc_dota_ember_spirit_remnant_custom", StartPosition, false, caster, caster, caster:GetTeamNumber())
 
 remnant_unit:SetDayTimeVisionRange(700)
 remnant_unit:SetNightTimeVisionRange(700)
@@ -279,7 +253,7 @@ remnant_unit.mod = caster:AddNewModifier(caster, self, "modifier_ember_spirit_fi
 local remnant_speed = caster:GetMoveSpeedModifier(caster:GetBaseMoveSpeed(), false) * speed_multiplier * 0.01
 
 
-if caster:HasModifier("modifier_ember_remnant_5") then
+if caster:HasTalent("modifier_ember_remnant_5") then
 		remnant_speed = caster:GetTalentValue("modifier_ember_remnant_5", "speed")
 end
 
@@ -445,10 +419,10 @@ function modifier_ember_spirit_fire_remnant_custom_remnant:CheckState()
 		local state = {
 			[MODIFIER_STATE_NO_UNIT_COLLISION] = true,
 			[MODIFIER_STATE_INVULNERABLE] = true,
-			[MODIFIER_STATE_NO_HEALTH_BAR] = true,
-			[MODIFIER_STATE_MAGIC_IMMUNE] = true,
-			[MODIFIER_STATE_ROOTED] = true,
 			[MODIFIER_STATE_UNSELECTABLE] = true,
+			[MODIFIER_STATE_OUT_OF_GAME] = true,
+			[MODIFIER_STATE_NO_HEALTH_BAR] = true,
+			[MODIFIER_STATE_ROOTED] = true,
 			[MODIFIER_STATE_FORCED_FLYING_VISION] = true
 		}
 
@@ -482,22 +456,12 @@ end
 
 
 
-
-
-
-
-
-
-
-
-
-
 function ember_spirit_activate_fire_remnant_custom:DealDamage(target)
 local caster = self:GetCaster()
 
 local damage = self:GetSpecialValueFor("damage") + self:GetCaster():GetTalentValue("modifier_ember_remnant_3", "damage")
 
-if caster:HasModifier("modifier_ember_remnant_6") and not target:HasModifier('modifier_ember_spirit_activate_fire_remnant_silence_cd') then 
+if caster:HasTalent("modifier_ember_remnant_6") and not target:HasModifier("modifier_ember_spirit_activate_fire_remnant_silence_cd") then 
 	local duration = (1 - target:GetStatusResistance())*caster:GetTalentValue("modifier_ember_remnant_6", "silence")
 
 	target:EmitSound("Sf.Raze_Silence")
@@ -507,7 +471,7 @@ if caster:HasModifier("modifier_ember_remnant_6") and not target:HasModifier('mo
 	target:AddNewModifier(caster, self, "modifier_ember_spirit_activate_fire_remnant_silence_cd", {duration = caster:GetTalentValue("modifier_ember_remnant_6", "cd")})
 end
 
-ApplyDamage({victim = target, attacker = caster, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self})
+DoDamage({victim = target, attacker = caster, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self})
 
 
 if caster:HasScepter() then
@@ -543,11 +507,11 @@ for n, hTarget in pairs(tTargets) do
 end
 
 
-if caster:HasModifier("modifier_ember_remnant_4") then 
+if caster:HasTalent("modifier_ember_remnant_4") then 
 	CreateModifierThinker(caster, self, "modifier_custom_ember_remnant_fire_thinker", {duration = self:GetCaster():GetTalentValue("modifier_ember_remnant_4", "duration")}, point, caster:GetTeamNumber(), false)
 end
 
-if caster:HasModifier("modifier_ember_remnant_1") then 
+if caster:HasTalent("modifier_ember_remnant_1") then 
 	caster:AddNewModifier(caster, self, "modifier_ember_spirit_activate_fire_remnant_custom_speed", {duration = caster:GetTalentValue("modifier_ember_remnant_1", "duration")})
 end 
 
@@ -830,7 +794,7 @@ end
 function modifier_custom_ember_remnant_fire_thinker:OnIntervalThink()
 if not IsServer() then return end
 
-for _,enemy in ipairs(self.caster:FindTargets(self.radius, self.parent:GetAbsOrigin())) do
+for _,enemy in pairs(self.caster:FindTargets(self.radius, self.parent:GetAbsOrigin())) do
 
 	enemy:AddNewModifier(self.caster, self:GetAbility(), "modifier_ember_spirit_activate_fire_remnant_custom_burn", {duration = self.duration})
 	
@@ -936,7 +900,7 @@ end
 
 self.dist = self.dist + (hAbility.vLocation - self.old_pos):Length2D()
 
-if self:GetCaster():HasModifier("modifier_ember_remnant_4") and self.dist >= self.fire_radius then 
+if self:GetCaster():HasTalent("modifier_ember_remnant_4") and self.dist >= self.fire_radius then 
 	self.dist = 0
 
 	CreateModifierThinker(self:GetCaster(), self:GetAbility(), "modifier_custom_ember_remnant_fire_thinker", {duration = self.fire_duration}, hAbility.vLocation, self:GetCaster():GetTeamNumber(), false)
@@ -958,8 +922,9 @@ end
 function modifier_ember_spirit_activate_fire_remnant_custom_caster:CheckState()
 	return {
 		[MODIFIER_STATE_INVULNERABLE] = true,
+		[MODIFIER_STATE_OUT_OF_GAME] = true,
 		[MODIFIER_STATE_NO_HEALTH_BAR] = true,
-		[MODIFIER_STATE_UNSELECTABLE] = true,
+		--[MODIFIER_STATE_UNSELECTABLE] = true,
 		[MODIFIER_STATE_ROOTED] = true,
 	}
 end
@@ -1063,13 +1028,13 @@ function modifier_ember_spirit_activate_fire_remnant_custom_blast:IsHidden() ret
 function modifier_ember_spirit_activate_fire_remnant_custom_blast:IsPurgable() return false end
 function modifier_ember_spirit_activate_fire_remnant_custom_blast:OnCreated(table)
 if not IsServer() then return end
-
-self.ability = self:GetCaster():FindAbilityByName("ember_spirit_fire_remnant_custom")
-self.count = self:GetCaster():GetTalentValue("modifier_ember_remnant_legendary", "count")
+self.caster = self:GetCaster()
+self.ability = self.caster:FindAbilityByName("ember_spirit_fire_remnant_custom")
+self.count = self.caster:GetTalentValue("modifier_ember_remnant_legendary", "count")
 
 self:SetStackCount(self.count )
 
-self.interval = self:GetCaster():GetTalentValue("modifier_ember_remnant_legendary", "cast")/(self:GetStackCount() - 1)
+self.interval = self.caster:GetTalentValue("modifier_ember_remnant_legendary", "cast")/(self:GetStackCount() - 1) - FrameTime()
 
 self.radius = self:GetAbility():GetSpecialValueFor("range")
 self.center = Vector(table.x, table.y, table.z)
@@ -1136,7 +1101,7 @@ function modifier_ember_spirit_activate_fire_remnant_custom_burn:GetStatusEffect
 end
 
 function modifier_ember_spirit_activate_fire_remnant_custom_burn:StatusEffectPriority()
-    return 1019999
+    return MODIFIER_PRIORITY_NORMAL 
 end
 
 
@@ -1174,7 +1139,7 @@ if not IsServer() then return end
 
 self.damage_table.damage = self:GetStackCount()*self.damage*self.burn_interval
 
-ApplyDamage(self.damage_table)
+DoDamage(self.damage_table, "modifier_ember_remnant_4")
 
 self.stack_count = self.stack_count + self.burn_interval
 
@@ -1209,27 +1174,15 @@ function modifier_ember_spirit_activate_fire_remnant_custom_heal:IsHidden() retu
 function modifier_ember_spirit_activate_fire_remnant_custom_heal:IsPurgable() return false end
 function modifier_ember_spirit_activate_fire_remnant_custom_heal:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 
-function modifier_ember_spirit_activate_fire_remnant_custom_heal:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT,
-}
-end
-
-function modifier_ember_spirit_activate_fire_remnant_custom_heal:GetModifierConstantHealthRegen()
-return self.heal
-end
-
-
 function modifier_ember_spirit_activate_fire_remnant_custom_heal:OnCreated()
-self.heal = self:GetCaster():GetTalentValue("modifier_ember_remnant_2", "heal")/self:GetCaster():GetTalentValue("modifier_ember_remnant_2", "duration")
+self.caster = self:GetCaster()
 end
 
 
 function modifier_ember_spirit_activate_fire_remnant_custom_heal:OnDestroy()
 if not IsServer() then return end
 
-local mod = self:GetParent():FindModifierByName("modifier_ember_spirit_activate_fire_remnant_custom_heal_count")
+local mod = self.caster:FindModifierByName("modifier_ember_spirit_activate_fire_remnant_custom_heal_count")
 
 if mod then 
 	mod:DecrementStackCount()
@@ -1250,7 +1203,9 @@ function modifier_ember_spirit_activate_fire_remnant_custom_heal_count:GetTextur
 function modifier_ember_spirit_activate_fire_remnant_custom_heal_count:IsHidden() return false end
 function modifier_ember_spirit_activate_fire_remnant_custom_heal_count:IsPurgable() return false end
 function modifier_ember_spirit_activate_fire_remnant_custom_heal_count:OnCreated(table)
-self.heal = self:GetCaster():GetTalentValue("modifier_ember_remnant_2", "heal")/self:GetCaster():GetTalentValue("modifier_ember_remnant_2", "duration")
+self.caster = self:GetCaster()
+self.heal = self.caster:GetTalentValue("modifier_ember_remnant_2", "heal")/self.caster:GetTalentValue("modifier_ember_remnant_2", "duration")
+self.mana = self.caster:GetTalentValue("modifier_ember_remnant_2", "mana")/self.caster:GetTalentValue("modifier_ember_remnant_2", "duration")
 self:SetStackCount(1)
 end
 
@@ -1260,15 +1215,21 @@ if not IsServer() then return end
 self:IncrementStackCount()
 end
 
+
 function modifier_ember_spirit_activate_fire_remnant_custom_heal_count:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_TOOLTIP
+	MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT,
+	MODIFIER_PROPERTY_MANA_REGEN_CONSTANT
 }
 end
 
-function modifier_ember_spirit_activate_fire_remnant_custom_heal_count:OnTooltip()
-return self:GetStackCount()*self.heal
+function modifier_ember_spirit_activate_fire_remnant_custom_heal_count:GetModifierConstantHealthRegen()
+return self.heal*self:GetStackCount()
+end
+
+function modifier_ember_spirit_activate_fire_remnant_custom_heal_count:GetModifierConstantManaRegen()
+return self.mana*self:GetStackCount()
 end
 
 
@@ -1300,8 +1261,10 @@ function modifier_ember_spirit_activate_fire_remnant_stack_count:IsPurgable() re
 function modifier_ember_spirit_activate_fire_remnant_stack_count:RemoveOnDeath() return false end
 function modifier_ember_spirit_activate_fire_remnant_stack_count:OnCreated()
 if not IsServer() then return end 
-self.timer = self:GetCaster():GetTalentValue("modifier_ember_remnant_5", "duration")
-self.max = self:GetCaster():GetTalentValue("modifier_ember_remnant_5", "max")
+self.parent = self:GetParent()
+
+self.timer = self.parent:GetTalentValue("modifier_ember_remnant_5", "duration")
+self.max = self.parent:GetTalentValue("modifier_ember_remnant_5", "max")
 self:SetStackCount(1)
 
 self:StartIntervalThink(self.timer)
@@ -1332,10 +1295,7 @@ end
 
 function modifier_ember_spirit_activate_fire_remnant_stack_count:OnStackCountChanged(iStackCount)
 if not IsServer() then return end 
-local damage = self:GetStackCount()
-
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'ember_remnant_change',  {max = self.max, damage = damage})
-
+self.parent:UpdateUIlong({max = self.max, stack = self:GetStackCount(), style = "EmberRemnant", no_min = true})
 end 
 
 
@@ -1452,7 +1412,7 @@ end
 
 
 function modifier_ember_spirit_activate_fire_remnant_custom_speed:OnCreated()
-self.move = self:GetCaster():GetTalentValue("modifier_ember_remnant_1", 'move')
+self.move = self:GetCaster():GetTalentValue("modifier_ember_remnant_1", "move")
 end
 
 

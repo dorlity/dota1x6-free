@@ -6,6 +6,14 @@ LinkLuaModifier("modifier_warlock_boss_upheaval_incoming", "abilities/warlock_bo
 warlock_boss_upheaval = class({})
 
 
+function warlock_boss_upheaval:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+
+PrecacheResource( "particle", "particles/econ/items/warlock/warlock_staff_hellborn/warlock_upheaval_hellborn.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_warlock/warlock_upheaval_debuff.vpcf", context )
+
+end
+
 
 
 function warlock_boss_upheaval:OnSpellStart()
@@ -15,10 +23,6 @@ self:GetCaster():EmitSound("Warlock.Slow_cast")
 self.thinker = CreateModifierThinker(self:GetCaster(), self, "modifier_warlock_boss_upheaval_thinker", {duration = self:GetChannelTime() + FrameTime()*3}, self:GetCursorPosition(), self:GetCaster():GetTeamNumber(), false)
 
 self.mod = self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_warlock_boss_upheaval_incoming", {duration = self:GetChannelTime() + FrameTime()*3})
-
-if self:GetCaster():GetUpgradeStack("modifier_waveupgrade_boss") == 2 then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_generic_bkb", {duration = self:GetSpecialValueFor("bkb")})
-end
 
 self:GetCaster():EmitSound("Warlock.Slow_voice")
 self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_warlock_boss_upheaval_cd", {duration = self:GetCooldownTimeRemaining()})
@@ -92,7 +96,7 @@ for _,enemy in pairs(enemy_for_ability) do
 	self.damageTable.damage = enemy:GetMaxHealth()*self.damage
 
 	SendOverheadEventMessage(enemy, 4, enemy, enemy:GetMaxHealth()*self.damage, nil)
-	ApplyDamage(self.damageTable)
+	DoDamage(self.damageTable)
 
 	enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_warlock_boss_upheaval_slow", {duration = self.duration})
 end
@@ -157,7 +161,22 @@ return
 }
 end
 function modifier_warlock_boss_upheaval_incoming:OnCreated(table)
+self.parent = self:GetParent()
 self.incoming = self:GetAbility():GetSpecialValueFor("incoming")
+
+if not IsServer() then return end
+
+if self.parent:GetUpgradeStack("modifier_waveupgrade_boss") == 2 then 
+	self.bkb = self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_generic_debuff_immune", {effect = 1})
+end
+
+end
+
+function modifier_warlock_boss_upheaval_incoming:OnDestroy()
+if not IsServer() then return end
+if self.bkb and not self.bkb:IsNull() then
+  self.bkb:Destroy()
+end
 end
 
 function modifier_warlock_boss_upheaval_incoming:GetModifierIncomingDamage_Percentage()

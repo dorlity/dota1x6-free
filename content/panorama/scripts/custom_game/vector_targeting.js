@@ -17,6 +17,7 @@ var vectorRange = 800;
 var useDual = false;
 var currentlyActiveVectorTargetAbility;
 var muerta_current_target_index;
+var particle_ability;
 
 const defaultAbilities = 
 ["pangolier_swashbuckle",
@@ -29,7 +30,9 @@ const defaultAbilities =
  "muerta_dead_shot_custom",
  "pangolier_swashbuckle_custom",
  "invoker_ice_wall_custom",
- "arc_warden_flux_custom"
+ "arc_warden_flux_custom",
+ "centaur_stampede_custom_legendary",
+ "tinker_march_of_the_machines_custom",
 ];
 
 GameUI.SetMouseCallback(function(eventName, arg, arg2, arg3)
@@ -82,8 +85,9 @@ function CheckAbilityVectorTargeting(panel){
 			return;
 		}
 
-
 		//Check if the ability/item gets activated or is finished
+
+
 		if (panel.BHasClass("is_active")) {
 			currentlyActiveVectorTargetAbility = abilityIndex;
 			if(GameUI.GetClickBehaviors() == 9 ) {
@@ -128,8 +132,10 @@ function OnVectorTargetingStart(fStartWidth, fEndWidth, fCastLength, bDual, bIgn
 	if (vectorTargetParticle) {
 
 		Particles.DestroyParticleEffect(vectorTargetParticle, true)
+		Particles.ReleaseParticleIndex(vectorTargetParticle)
 		vectorTargetParticle = undefined;
 		vectorTargetUnit = undefined;
+		particle_ability = undefined;
 	}
 
 	const iPlayerID = Players.GetLocalPlayer();
@@ -201,6 +207,24 @@ function OnVectorTargetingStart(fStartWidth, fEndWidth, fCastLength, bDual, bIgn
 		
 		}else if (abilityName == "pangolier_swashbuckle_custom") {
 			vectorRange = Abilities.GetSpecialValueFor(currentlyActiveVectorTargetAbility, "range")
+
+			if (Game.HasTalent("npc_dota_hero_pangolier", "modifier_pangolier_buckle_2"))
+			{
+				vectorRange = vectorRange + 150
+			}
+
+			let multiplier = 1
+			vectorRange = vectorRange * multiplier	
+		}else if (abilityName == "centaur_stampede_custom_legendary") {
+			vectorRange = Abilities.GetSpecialValueFor(currentlyActiveVectorTargetAbility, "distance")
+			startWidth = Abilities.GetSpecialValueFor(currentlyActiveVectorTargetAbility, "width");
+			endWidth = Abilities.GetSpecialValueFor(currentlyActiveVectorTargetAbility, "width");
+			let multiplier = 1
+			vectorRange = vectorRange * multiplier	
+		}else if (abilityName == "tinker_march_of_the_machines_custom") {
+			vectorRange = Abilities.GetSpecialValueFor(currentlyActiveVectorTargetAbility, "distance")/2;
+			startWidth = Game.GetTalentValue("modifier_tinker_march_7", "width")
+			endWidth = Game.GetTalentValue("modifier_tinker_march_7", "width")
 			let multiplier = 1
 			vectorRange = vectorRange * multiplier	
 		}
@@ -236,7 +260,16 @@ function OnVectorTargetingStart(fStartWidth, fEndWidth, fCastLength, bDual, bIgn
 	if (useDual) {
 		particleName = "particles/ui_mouseactions/custom_range_finder_cone_dual.vpcf"
 	}
+	if (abilityName == "centaur_stampede_custom_legendary")
+	{
+		particleName = "particles/centaur/stampede_vector.vpcf"
+	}
+	if (abilityName == "tinker_march_of_the_machines_custom")
+	{
+		particleName = "particles/tinker/march_vector.vpcf"
+	}
 
+	particle_ability = currentlyActiveVectorTargetAbility
 
 	if (abilityName == "muerta_dead_shot_custom" && muerta_current_target_index)
 	{
@@ -260,24 +293,22 @@ function OnVectorTargetingStart(fStartWidth, fEndWidth, fCastLength, bDual, bIgn
 	} 
 	else 
 	{
-		vectorTargetParticle = Particles.CreateParticle(particleName, ParticleAttachment_t.PATTACH_CUSTOMORIGIN, mainSelected);
+		vectorTargetParticle = Particles.CreateParticle(particleName, ParticleAttachment_t.PATTACH_WORLDORIGIN, -1);
 		vectorTargetUnit = mainSelected
 
+		Particles.SetParticleControl(vectorTargetParticle, 0, vectorStartPosition);
 		Particles.SetParticleControl(vectorTargetParticle, 1, Vector_raiseZ(worldPosition, 100));
 		Particles.SetParticleControl(vectorTargetParticle, 3, [endWidth, startWidth, ignoreArrowWidth]);
 		Particles.SetParticleControl(vectorTargetParticle, 4, [0, 255, 0]);
 		vectorStartPosition = worldPosition;
+
 		const unitPosition = Entities.GetAbsOrigin(mainSelected);
 		const direction = Vector_normalize(Vector_sub(vectorStartPosition, unitPosition));
+	//	vectorStartPosition = Vector_add(vectorStartPosition, Vector_mult(direction, Abilities.GetSpecialValueFor(currentlyActiveVectorTargetAbility, "distance_start")))
+	
 		const newPosition = Vector_add(vectorStartPosition, Vector_mult(direction, vectorRange));
-		if (!useDual) 
-		{
-			Particles.SetParticleControl(vectorTargetParticle, 2, newPosition);
-		} else {
-			Particles.SetParticleControl(vectorTargetParticle, 7, newPosition);
-			const secondPosition = Vector_add(vectorStartPosition, Vector_mult(Vector_negate(direction), vectorRange));
-			Particles.SetParticleControl(vectorTargetParticle, 8, secondPosition);
-		}
+		Particles.SetParticleControl(vectorTargetParticle, 2, newPosition);
+
 	}
 	
 
@@ -293,14 +324,23 @@ function OnVectorTargetingEnd()
 	muerta_current_target_index = undefined
 	if (vectorTargetParticle) {
 		Particles.DestroyParticleEffect(vectorTargetParticle, true)
+		Particles.ReleaseParticleIndex( vectorTargetParticle );
 		vectorTargetParticle = undefined;
 		vectorTargetUnit = undefined;
+		particle_ability = undefined;
 	}
 }
 
 //Updates the particle effect and detects when the ability is actually casted
 function ShowVectorTargetingParticle()
 {
+
+	if ( !particle_ability || particle_ability == undefined || !Abilities.IsDisplayedAbility( particle_ability ) )
+	{
+		OnVectorTargetingEnd()
+		return
+	}
+
 	if (vectorTargetParticle !== undefined)
 	{
 		const mainSelected = Players.GetLocalPlayerPortraitUnit();

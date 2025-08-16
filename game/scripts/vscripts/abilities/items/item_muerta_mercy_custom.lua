@@ -23,12 +23,14 @@ return
 	MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
 	MODIFIER_PROPERTY_STATS_AGILITY_BONUS,
 	MODIFIER_PROPERTY_STATS_INTELLECT_BONUS,
-	MODIFIER_EVENT_ON_ATTACK_LANDED,
-	MODIFIER_EVENT_ON_DEATH
+	MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
 }
 end
 
 function modifier_item_muerta_mercy_custom_stats:OnCreated(table)
+self.parent = self:GetParent()
+self.parent:AddDeathEvent(self, true)
+
 self.move = self:GetAbility():GetSpecialValueFor("movespeed")
 self.stats = self:GetAbility():GetSpecialValueFor("stats")
 self.speed = self:GetAbility():GetSpecialValueFor("attack_speed")
@@ -64,7 +66,7 @@ end
 
 
 
-function modifier_item_muerta_mercy_custom_stats:OnDeath(params)
+function modifier_item_muerta_mercy_custom_stats:DeathEvent(params)
 if not IsServer() then return end
 if not params.attacker then return end
 if self:GetParent():IsIllusion() then return end
@@ -86,10 +88,10 @@ ParticleManager:ReleaseParticleIndex( effect_cast )
 self:GetAbility():SetCurrentCharges(self:GetAbility():GetCurrentCharges() + 1)
 
 	
-if self:GetAbility():GetCurrentCharges() >= self:GetAbility():GetSpecialValueFor('goal') then 
+if self:GetAbility():GetCurrentCharges() >= self:GetAbility():GetSpecialValueFor("goal") then 
 
-	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'muerta_quest_panel',  { max = 0, stack = 0, stage = 3})	
-	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'muerta_quest_alert',  {type = 5})
+	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), "muerta_quest_panel",  { max = 0, stack = 0, stage = 3})	
+	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), "muerta_quest_alert",  {type = 5})
 
 
 	local particle_peffect = ParticleManager:CreateParticle("particles/muerta/muerta_quest_item.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
@@ -104,11 +106,11 @@ if self:GetAbility():GetCurrentCharges() >= self:GetAbility():GetSpecialValueFor
     local grace = CreateItem("item_muerta_mercy_and_grace_custom", self:GetParent(), self:GetParent())
     self:GetParent():AddItem(grace)
 
-	my_game:MuertaQuestPhase()
+	dota1x6:MuertaQuestPhase()
 else 
 
-	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'muerta_quest_panel',  { max = 0, stack = self:GetAbility():GetCurrentCharges(), stage = 2})
-	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), 'muerta_quest_alert',  {type = 2, max = self:GetAbility():GetSpecialValueFor("goal"), stack = self:GetAbility():GetCurrentCharges()})
+	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), "muerta_quest_panel",  { max = 0, stack = self:GetAbility():GetCurrentCharges(), stage = 2})
+	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), "muerta_quest_alert",  {type = 2, max = self:GetAbility():GetSpecialValueFor("goal"), stack = self:GetAbility():GetCurrentCharges()})
 	
 end
 
@@ -116,11 +118,11 @@ end
 
 
 
-function modifier_item_muerta_mercy_custom_stats:OnAttackLanded(params)
+function modifier_item_muerta_mercy_custom_stats:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.attacker then return end
 if self:GetParent():IsIllusion() then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end
+if not params.target:IsUnit() then return end
 
 local health = params.target:GetHealth()
 
@@ -138,7 +140,7 @@ if params.target:IsCreep() then
 	damage = math.min(damage, self:GetAbility():GetSpecialValueFor("passive_creeps"))
 end
 
-local apply = ApplyDamage({victim = params.target, attacker = self:GetCaster(), ability = self:GetAbility(), damage = damage, damage_type = DAMAGE_TYPE_MAGICAL})
+local apply = DoDamage({victim = params.target, attacker = self:GetCaster(), ability = self:GetAbility(), damage = damage, damage_type = DAMAGE_TYPE_MAGICAL})
 
 
 self:GetParent():Heal(apply, self:GetAbility())

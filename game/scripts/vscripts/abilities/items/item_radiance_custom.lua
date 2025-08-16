@@ -4,6 +4,12 @@ LinkLuaModifier( "modifier_radiance_custom_burn", "abilities/items/item_radiance
 
 item_radiance_custom = class({})
 
+function item_radiance_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/items2_fx/radiance_owner.vpcf", context )
+PrecacheResource( "particle","particles/items2_fx/radiance.vpcf", context )
+end
+
 function item_radiance_custom:GetIntrinsicModifierName()
 	return "modifier_radiance_custom_stats" end
 
@@ -67,8 +73,7 @@ function modifier_radiance_custom_stats:GetModifierEvasion_Constant()
 end
 
 modifier_radiance_custom_aura = class({})
-function modifier_radiance_custom_aura:IsAura() return not self:GetParent():HasModifier("modifier_alchemist_gold_shiva_custom_stats")
-end
+function modifier_radiance_custom_aura:IsAura() return true end
 function modifier_radiance_custom_aura:IsHidden() return true end
 function modifier_radiance_custom_aura:IsDebuff() return false end
 function modifier_radiance_custom_aura:IsPurgable() return false end
@@ -117,26 +122,26 @@ return
 end
 
 function modifier_radiance_custom_burn:OnCreated()
-	
-	local ability = self:GetAbility()
-	self.creeps_damage = ability:GetSpecialValueFor("creeps_damage")
-	self.heroes_damage_base = ability:GetSpecialValueFor("heroes_damage_base")
-	self.heroes_damage_health = ability:GetSpecialValueFor("heroes_damage_health")
-	self.illusions_damage = ability:GetSpecialValueFor("aura_damage_illusions")
-	self.miss_pers = ability:GetSpecialValueFor("blind_pct")
+
+local ability = self:GetAbility()
+self.creeps_damage = ability:GetSpecialValueFor("creeps_damage")
+self.heroes_damage_base = ability:GetSpecialValueFor("heroes_damage_base")
+self.heroes_damage_health = ability:GetSpecialValueFor("heroes_damage_health")
+self.illusions_damage = ability:GetSpecialValueFor("aura_damage_illusions")
+self.miss_pers = ability:GetSpecialValueFor("blind_pct")
 
 if not IsServer() then return end
-	self.particle = ParticleManager:CreateParticle("particles/items2_fx/radiance.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-	ParticleManager:SetParticleControl(self.particle, 1, self:GetCaster():GetAbsOrigin())
-	self:AddParticle(self.particle,false, false, -1, false, false)
-	self:StartIntervalThink(self:GetAbility():GetSpecialValueFor("think_interval"))
+self.particle = ParticleManager:CreateParticle("particles/items2_fx/radiance.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+ParticleManager:SetParticleControl(self.particle, 1, self:GetCaster():GetAbsOrigin())
+self:AddParticle(self.particle,false, false, -1, false, false)
+self:StartIntervalThink(self:GetAbility():GetSpecialValueFor("think_interval"))
 
 
-	self.aura_radius = ability:GetSpecialValueFor("aura_radius")
+self.aura_radius = ability:GetSpecialValueFor("aura_radius")
 
-	self.miss_chance = ability:GetSpecialValueFor("blind_pct")
+self.miss_chance = ability:GetSpecialValueFor("blind_pct")
 
-	EmitSoundOnEntityForPlayer("DOTA_Item.Radiance.Target.Loop", self:GetParent(), self:GetParent():GetPlayerOwnerID())
+EmitSoundOnEntityForPlayer("DOTA_Item.Radiance.Target.Loop", self:GetParent(), self:GetParent():GetPlayerOwnerID())
 end
 
 function modifier_radiance_custom_burn:OnDestroy()
@@ -151,22 +156,22 @@ end
 function modifier_radiance_custom_burn:OnIntervalThink()
 if not IsServer() then return end
 
-	ParticleManager:SetParticleControl(self.particle, 1, self:GetCaster():GetAbsOrigin())
+ParticleManager:SetParticleControl(self.particle, 1, self:GetCaster():GetAbsOrigin())
 
-	local ability = self:GetAbility()
-	local caster = self:GetCaster()
+local ability = self:GetAbility()
+local caster = self:GetCaster()
 
-	local damage = self.creeps_damage
+local damage = self.creeps_damage
 
-	if self:GetParent():IsHero() then 
-		damage = self.heroes_damage_base + self.heroes_damage_health*self:GetParent():GetMaxHealth()
-	end
-	
-	if self:GetCaster():IsIllusion() then 
-		damage = self.illusions_damage
-	end
+if self:GetParent():IsHero() then 
+	damage = self.heroes_damage_base + self.heroes_damage_health*self:GetParent():GetMaxHealth()
+end
 
-	ApplyDamage({victim = self:GetParent(), attacker = caster, ability = ability, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL})
+if self:GetCaster():IsIllusion() then 
+	damage = self.illusions_damage
+end
+
+DoDamage({victim = self:GetParent(), attacker = caster, ability = ability, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL})
 
 end
 

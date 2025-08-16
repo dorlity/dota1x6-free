@@ -11,6 +11,21 @@ function item_celestial_spear_custom:GetIntrinsicModifierName()
 end
 
 
+function item_celestial_spear_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+
+PrecacheResource( "particle","particles/items/celestial_spear_proj.vpcf", context )
+PrecacheResource( "particle","particles/econ/items/dragon_knight/dk_persona/dk_persona_dragon_tail_dragon_form_proj_impact.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_monkey_king/monkey_king_quad_tap_hit.vpcf", context )
+PrecacheResource( "particle","particles/items_fx/desolator_projectile.vpcf", context )
+PrecacheResource( "particle","particles/items3_fx/star_emblem_caster.vpcf", context )
+PrecacheResource( "particle","particles/huskar_disarm_coil.vpcf", context )
+PrecacheResource( "particle","particles/items/celestial_spear_leash.vpcf", context )
+
+end
+
+
+
 function item_celestial_spear_custom:OnSpellStart()
 if not IsServer() then return end 
 
@@ -53,7 +68,7 @@ ParticleManager:SetParticleControlEnt(hit_effect, 1, hTarget, PATTACH_POINT_FOLL
 ParticleManager:ReleaseParticleIndex(hit_effect)
 
 
-hTarget:EmitSound("Hero_Mars.Spear.Target")
+hTarget:EmitSound("Items.Spear_hit")
 hTarget:EmitSound("Item.StarEmblem.Enemy")
 
 hTarget:AddNewModifier(self:GetCaster(), self, "modifier_item_celestial_spear_custom_debuff", {duration = self:GetSpecialValueFor("duration")})
@@ -68,62 +83,53 @@ function modifier_item_celestial_spear_custom:IsHidden() return true end
 function modifier_item_celestial_spear_custom:IsPurgable() return false end
 function modifier_item_celestial_spear_custom:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_item_celestial_spear_custom:DeclareFunctions()
-    local funcs = {
-        MODIFIER_PROPERTY_STATS_STRENGTH_BONUS, 
-        MODIFIER_PROPERTY_STATS_AGILITY_BONUS,
-        MODIFIER_PROPERTY_STATS_INTELLECT_BONUS,
-        MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
-        MODIFIER_PROPERTY_PROJECTILE_NAME,
-        MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
-        MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE
-    }
-
-    return funcs
+return 
+{
+    MODIFIER_PROPERTY_PROJECTILE_NAME,
+    MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+    MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE
+}
 end
 
 
 
 function modifier_item_celestial_spear_custom:OnCreated()
 
-self.corruption_duration = self:GetAbility():GetSpecialValueFor("corruption_duration")
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+self.caster:AddAttackEvent_out(self, true)
+
+self.armor_reduce = self.ability:GetSpecialValueFor("corruption_armor")
+self.corruption_duration = self.ability:GetSpecialValueFor("corruption_duration")
+self.speed = self.ability:GetSpecialValueFor("bonus_speed")
+self.damage = self.ability:GetSpecialValueFor("bonus_damage")
 end 
 
 
 function modifier_item_celestial_spear_custom:GetModifierAttackRangeBonus()
 if self:GetParent():IsRangedAttacker() then return end
-
-if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("attack_range") end
+return self.range
 end
 
-
-function modifier_item_celestial_spear_custom:GetModifierBonusStats_Strength()
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_all_stats") end
+function modifier_item_celestial_spear_custom:GetModifierAttackSpeedBonus_Constant()
+return self.speed
 end
-
-
-function modifier_item_celestial_spear_custom:GetModifierBonusStats_Agility()
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_all_stats") end
-end
-
-
-function modifier_item_celestial_spear_custom:GetModifierBonusStats_Intellect()
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_all_stats") end
-end
-
 
 function modifier_item_celestial_spear_custom:GetModifierPreAttack_BonusDamage(keys)
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_damage") end
+return self.damage
 end
 
 function modifier_item_celestial_spear_custom:GetModifierProjectileName()
-    return "particles/items_fx/desolator_projectile.vpcf"
+return "particles/items_fx/desolator_projectile.vpcf"
 end
 
-function modifier_item_celestial_spear_custom:GetModifierProcAttack_Feedback(params)
-if params.attacker ~= self:GetParent() then return end
+function modifier_item_celestial_spear_custom:AttackEvent_out(params)
+if params.attacker ~= self.caster then return end
+if not params.target:IsUnit() then return end
+
 local target = params.target
 
-target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_item_celestial_spear_custom_armor", {duration = self.corruption_duration})
+target:AddNewModifier(self.caster, self.caster:BkbAbility(nil, true), "modifier_item_celestial_spear_custom_armor", {armor = self.armor_reduce, duration = self.corruption_duration})
 target:EmitSound("Item_Desolator.Target")
 
 end
@@ -164,13 +170,14 @@ end
 
 modifier_item_celestial_spear_custom_armor   = class({})
 
-function modifier_item_celestial_spear_custom_armor:IsPurgable()     return true end
+function modifier_item_celestial_spear_custom_armor:IsPurgable() return true end
+function modifier_item_celestial_spear_custom_armor:IsHidden() return true end
 function modifier_item_celestial_spear_custom_armor:GetTexture() return "item_desolator" end
 
 
-function modifier_item_celestial_spear_custom_armor:OnCreated()
-    self.corruption_armor = self:GetAbility():GetSpecialValueFor("corruption_armor")
-
+function modifier_item_celestial_spear_custom_armor:OnCreated(table)
+if not IsServer() then return end
+self:SetStackCount(table.armor) 
 end
 
 function modifier_item_celestial_spear_custom_armor:DeclareFunctions()
@@ -180,7 +187,7 @@ function modifier_item_celestial_spear_custom_armor:DeclareFunctions()
 end
 
 function modifier_item_celestial_spear_custom_armor:GetModifierPhysicalArmorBonus()
-    return self.corruption_armor
+    return self:GetStackCount()*-1
 end
 
 
@@ -194,6 +201,7 @@ function modifier_item_celestial_spear_custom_leash:IsPurgable() return false en
 function modifier_item_celestial_spear_custom_leash:OnCreated(table)
 if not IsServer() then return end
 
+self.RemoveForDuel = true
 self.center = self:GetParent():GetAbsOrigin() - (self:GetCaster():GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Normalized()*60
 
 self.effect_cast = ParticleManager:CreateParticle( "particles/huskar_disarm_coil.vpcf", PATTACH_WORLDORIGIN, self:GetParent() )
@@ -238,7 +246,7 @@ local knockbackProperties =
     center_z = center.z,
     duration = 0.2,
     knockback_duration = 0.2,
-    knockback_distance = (self:GetParent():GetOrigin()-self.center):Length2D()*0.7,
+    knockback_distance = (self:GetParent():GetOrigin()-self.center):Length2D(),
     knockback_height = 0,
     isStun = true,
 }

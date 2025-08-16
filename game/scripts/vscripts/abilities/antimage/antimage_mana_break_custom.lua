@@ -1,180 +1,323 @@
 LinkLuaModifier( "modifier_antimage_mana_break_custom", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_antimage_mana_break_custom_slow", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_antimage_mana_break_custom_slow_legendary", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_antimage_mana_break_custom_silence", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_antimage_mana_break_custom_anim", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_antimage_mana_break_custom_legendary", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_antimage_mana_break_custom_heal_reduce", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_antimage_mana_break_custom_damage_cd", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_antimage_mana_break_custom_anim_normal", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_antimage_mana_break_custom_silence_cd", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_antimage_mana_break_custom_shard", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_antimage_mana_break_custom_armor", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_antimage_mana_break_custom_agility", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
-
-
+LinkLuaModifier( "modifier_antimage_mana_break_custom_target_effect", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_antimage_mana_break_custom_caster_effect", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_antimage_mana_break_custom_stun_cd", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_antimage_mana_break_custom_stats", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_antimage_mana_break_custom_haste", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_antimage_mana_break_custom_haste_target", "abilities/antimage/antimage_mana_break_custom", LUA_MODIFIER_MOTION_NONE )
 
 
 antimage_mana_break_custom = class({})
 
 
-
-
 function antimage_mana_break_custom:Precache(context)
-
-PrecacheResource( "particle", 'particles/am_heal_mana.vpcf', context )
-PrecacheResource( "particle", 'particles/ogre_hit.vpcf', context )
-PrecacheResource( "particle", 'particles/am_no_mana.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_antimage/antimage_manabreak_slow.vpcf', context )
-PrecacheResource( "particle", 'particles/econ/items/death_prophet/death_prophet_ti9/death_prophet_silence_custom_ti9_overhead_model.vpcf', context )
-PrecacheResource( "particle", 'particles/am_break_2.vpcf', context )
-PrecacheResource( "particle", 'particles/am_break_legendary.vpcf', context )
-PrecacheResource( "particle", 'particles/am_damage.vpcf', context )
-PrecacheResource( "particle", 'particles/items3_fx/gleipnir_root.vpcf', context )
-PrecacheResource( "particle", 'particles/anti-mage/manabreak_cleave.vpcf', context )
-
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle", "particles/am_heal_mana.vpcf", context )
+PrecacheResource( "particle", "particles/ogre_hit.vpcf", context )
+PrecacheResource( "particle", "particles/am_no_mana.vpcf", context )
+PrecacheResource( "particle", "particles/econ/items/death_prophet/death_prophet_ti9/death_prophet_silence_custom_ti9_overhead_model.vpcf", context )
+PrecacheResource( "particle", "particles/am_break_2.vpcf", context )
+PrecacheResource( "particle", "particles/am_break_legendary.vpcf", context )
+PrecacheResource( "particle", "particles/am_damage.vpcf", context )
+PrecacheResource( "particle", "particles/items3_fx/gleipnir_root.vpcf", context )
+PrecacheResource( "particle", "particles/anti-mage/manabreak_cleave.vpcf", context )
+PrecacheResource( "particle", "particles/am_heal_mana.vpcf", context )
+PrecacheResource( "particle", "particles/generic_gameplay/generic_manaburn.vpcf", context )
+PrecacheResource( "particle", "particles/am_no_mana.vpcf", context )
+PrecacheResource( "particle", "particles/am_break_2.vpcf", context )
+PrecacheResource( "particle", "particles/am_break_legendary.vpcf", context )
+PrecacheResource( "particle", "particles/anti-mage/nomana_haste.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_keeper_of_the_light/keeper_of_the_light_mana_leak.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_keeper_of_the_light/keeper_mana_leak.vpcf", context )
 
 end
 
+function antimage_mana_break_custom:GetIntrinsicModifierName()
+return "modifier_antimage_mana_break_custom"
+end
 
 
+function antimage_mana_break_custom:GetAbilityTargetFlags()
+if self:GetCaster():HasTalent("modifier_antimage_hero_8") then 
+	return DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES
+else 
+	return DOTA_UNIT_TARGET_FLAG_NONE
+end
 
+end
+
+function antimage_mana_break_custom:GetAbilityTextureName()
+local caster = self:GetCaster()
+if caster:HasModifier("modifier_antimage_basher_1_custom_golden") or caster:HasModifier("modifier_antimage_basher_2_custom_golden") then
+    return "antimage/golden_basher_blades/antimage_mana_break"
+end
+if caster:HasModifier("modifier_antimage_basher_1_custom") or caster:HasModifier("modifier_antimage_basher_2_custom") then
+    return "antimage/the_basher_blades/antimage_mana_break"
+end
+return "antimage_mana_break"
+end
 
 function antimage_mana_break_custom:GetCooldown(iLevel)
-
-if self:GetCaster():HasModifier("modifier_antimage_break_7") then 
-	return self:GetCaster():GetTalentValue("modifier_antimage_break_7", "cd")
+if self:GetCaster():HasTalent("modifier_antimage_break_7") then 
+	return self:GetCaster():GetTalentValue("modifier_antimage_break_7", "talent_cd")
 end
-
 return
 end
 
-
 function antimage_mana_break_custom:GetBehavior()
-  if self:GetCaster():HasModifier("modifier_antimage_break_7") then
-    return  DOTA_ABILITY_BEHAVIOR_NO_TARGET
-  end
- return DOTA_ABILITY_BEHAVIOR_PASSIVE
+if self:GetCaster():HasTalent("modifier_antimage_break_7") then
+	return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IMMEDIATE
+end
+return DOTA_ABILITY_BEHAVIOR_PASSIVE
 end
 
-function antimage_mana_break_custom:OnAbilityPhaseStart()
-if not IsServer() then return end
-self:GetCaster():StartGestureWithPlaybackRate(ACT_DOTA_CAST_ABILITY_2, 1.2)
+function antimage_mana_break_custom:GetManaK(target)
+local max_mana = target:GetMaxMana()
+local min_mana = target:GetMana()
+local mana_k = 0
 
-return true
+if max_mana == 0 then 
+	max_mana = self:GetSpecialValueFor("nomana_max")
+	min_mana = self:GetSpecialValueFor("nomana_min")
 end
+mana_k = min_mana/max_mana
 
-
-function antimage_mana_break_custom:OnAbilityPhaseInterrupted()
-if not IsServer() then return end
-self:GetCaster():FadeGesture(ACT_DOTA_CAST_ABILITY_2)
+return mana_k
 end
-
 
 function antimage_mana_break_custom:OnSpellStart()
-if not IsServer() then return end
+local caster = self:GetCaster()
+caster:EmitSound("Antimage.Break_legendary")
+caster:StartGestureWithPlaybackRate(ACT_DOTA_CAST_ABILITY_2, 1.3)
 
-self:GetCaster():Purge(false, true, false, false, false)
-
-self:GetCaster():EmitSound("Antimage.Break_legendary")
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_antimage_mana_break_custom_legendary", {duration = self:GetCaster():GetTalentValue("modifier_antimage_break_7", "duration")})
+caster:Purge(false, true, false, false, false)
+caster:AddNewModifier(caster, self, "modifier_antimage_mana_break_custom_legendary", {duration = caster:GetTalentValue("modifier_antimage_break_7", "duration")})
 end
 
 
 
 
-
-
-
-
-
-function antimage_mana_break_custom:GetIntrinsicModifierName()
-	return "modifier_antimage_mana_break_custom"
-end
-
-modifier_antimage_mana_break_custom = class({})
-
-function modifier_antimage_mana_break_custom:IsHidden()
-	return true
-end
-
-function modifier_antimage_mana_break_custom:IsPurgable()
-	return false
-end
-
+modifier_antimage_mana_break_custom = class(mod_hidden)
 function modifier_antimage_mana_break_custom:OnCreated( kv )
-	self.mana_break = self:GetAbility():GetSpecialValueFor( "mana_per_hit" ) -- special value
-	self.mana_damage_pct = self:GetAbility():GetSpecialValueFor( "damage_per_burn" ) -- special value
+
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.nomana_max = self.ability:GetSpecialValueFor("nomana_max")
+self.nomana_min = self.ability:GetSpecialValueFor("nomana_min")
+
+self.percent_damage_per_burn = self.ability:GetSpecialValueFor("percent_damage_per_burn")
+self.creeps_bonus = self.ability:GetSpecialValueFor("creeps_bonus")
+
+self.mana_illusion = self.ability:GetSpecialValueFor("illusion_burn")
+self.mana_flat = self.ability:GetSpecialValueFor("mana_per_hit")
+self.mana_pct = self.ability:GetSpecialValueFor("mana_per_hit_pct")
+
+self.stats_init = self.parent:GetTalentValue("modifier_antimage_hero_3", "stats_init")
+self.stats_inc = self.parent:GetTalentValue("modifier_antimage_hero_3", "stats_inc")
+self.stats_duration = self.parent:GetTalentValue("modifier_antimage_hero_3", "duration", true)
+
+self.range_bonus = self.parent:GetTalentValue("modifier_antimage_break_3", "range")
+
+self.armor_duration = self.parent:GetTalentValue("modifier_antimage_break_1", "duration", true)
+
+self.haste_radius = self.parent:GetTalentValue("modifier_antimage_hero_8", "radius", true)
+self.haste_mana = self.parent:GetTalentValue("modifier_antimage_hero_8", "mana", true)
+self.haste_duration = self.parent:GetTalentValue("modifier_antimage_hero_8", "duration", true)
+
+if self.parent:IsRealHero() then
+	self.lifesteal = self.parent:GetTalentValue("modifier_antimage_hero_2", "heal")/100
+	self.heal_bonus = self.parent:GetTalentValue("modifier_antimage_hero_2", "bonus", true)
+	self.heal_mana = self.parent:GetTalentValue("modifier_antimage_hero_2", "mana", true)
+	self.heal_creeps = self.parent:GetTalentValue("modifier_antimage_hero_2", "creeps", true)
+
+	self.mana_bonus = self.parent:GetTalentValue("modifier_antimage_break_2", "mana")
+	self.cleave_damage = self.parent:GetTalentValue("modifier_antimage_break_2", "cleave")/100
+
+	self.low_mana = self.parent:GetTalentValue("modifier_antimage_break_4", "mana", true)
+	self.stun_duration = self.parent:GetTalentValue("modifier_antimage_break_4", "stun", true)
+	self.stun_cd = self.parent:GetTalentValue("modifier_antimage_break_4", "talent_cd", true)
+end
+
+self.particle_mana_burn = "particles/generic_gameplay/generic_manaburn.vpcf"
+if self.parent:HasModifier("modifier_antimage_basher_1_custom") or self.parent:HasModifier("modifier_antimage_basher_2_custom") then
+    self.particle_mana_burn = "particles/econ/items/antimage/antimage_weapon_basher_ti5/am_manaburn_basher_ti_5.vpcf"
+end
+if self.parent:HasModifier("modifier_antimage_basher_1_custom_golden") or self.parent:HasModifier("modifier_antimage_basher_2_custom_golden") then
+    self.particle_mana_burn = "particles/econ/items/antimage/antimage_weapon_basher_ti5_gold/am_manaburn_basher_ti_5_gold.vpcf"
+end
+
+if not IsServer() then return end
+self:SetHasCustomTransmitterData(true)
+self:UpdateTalent()
 end
 
 function modifier_antimage_mana_break_custom:OnRefresh( kv )
-	self.mana_break = self:GetAbility():GetSpecialValueFor( "mana_per_hit" )
-	self.mana_damage_pct = self:GetAbility():GetSpecialValueFor( "damage_per_burn" )
+self.mana_flat = self.ability:GetSpecialValueFor("mana_per_hit")
+self.mana_pct = self.ability:GetSpecialValueFor("mana_per_hit_pct")
+end
+
+
+
+function modifier_antimage_mana_break_custom:UpdateTalent(name)
+if not IsServer() then return end
+
+if name == "modifier_antimage_hero_3" or self.parent:HasTalent("modifier_antimage_hero_3") then
+	self.stats_init = self.parent:GetTalentValue("modifier_antimage_hero_3", "stats_init")
+	self.stats_inc = self.parent:GetTalentValue("modifier_antimage_hero_3", "stats_inc")
+	self.parent:AddAttackEvent_inc(self, true)
+
+	self.parent:CalculateStatBonus(true)
+end
+
+if name == "modifier_antimage_hero_2" or self.parent:HasTalent("modifier_antimage_hero_2") then
+	self.lifesteal = self.parent:GetTalentValue("modifier_antimage_hero_2", "heal")/100
+	self.parent:AddDamageEvent_out(self, true)
+end
+
+if name == "modifier_antimage_break_1" or self.parent:HasTalent("modifier_antimage_break_1") then
+	self.parent:AddAttackRecordEvent_out(self)
+end
+
+if name == "modifier_antimage_break_7" or self.parent:HasTalent("modifier_antimage_break_7") then
+	self.parent:AddAttackRecordEvent_out(self)
+end
+
+if name == "modifier_antimage_break_3" or self.parent:HasTalent("modifier_antimage_break_3") then
+	self.parent:AddAttackRecordEvent_out(self)
+	self.range_bonus = self.parent:GetTalentValue("modifier_antimage_break_3", "range")
+end
+
+if name == "modifier_antimage_hero_8" or self.parent:HasTalent("modifier_antimage_hero_8") then
+	local interval = self.parent:IsRealHero() and 0.5 or 1
+	self:OnIntervalThink()
+	self:StartIntervalThink(interval)
+end
+
+if name == "modifier_antimage_break_2" or self.parent:HasTalent("modifier_antimage_break_2") then
+	self.mana_bonus = self.parent:GetTalentValue("modifier_antimage_break_2", "mana")
+	self.cleave_damage = self.parent:GetTalentValue("modifier_antimage_break_2", "cleave")/100
+end
+
+self:SendBuffRefreshToClients()
+end
+
+
+function modifier_antimage_mana_break_custom:OnIntervalThink()
+if not IsServer() then return end
+if not self.parent:IsAlive() then return end
+if not self.parent:HasTalent("modifier_antimage_hero_8") then return end
+
+for _,target in pairs(self.parent:FindTargets(self.haste_radius)) do
+	if target:GetMaxMana() > 0 and target:GetManaPercent() <= self.haste_mana then
+		self.parent:AddNewModifier(self.parent, self.ability, "modifier_antimage_mana_break_custom_haste", {duration = self.haste_duration})
+		target:AddNewModifier(self.parent, self.ability, "modifier_antimage_mana_break_custom_haste_target", {duration = self.haste_duration})
+	end
+end
+
+end
+
+
+function modifier_antimage_mana_break_custom:AddCustomTransmitterData() 
+return 
+{
+  range_bonus = self.range_bonus,
+  stats_init = self.stats_init,
+  stats_inc = self.stats_inc,
+} 
+end
+
+function modifier_antimage_mana_break_custom:HandleCustomTransmitterData(data)
+self.range_bonus = data.range_bonus
+self.stats_init = data.stats_init
+self.stats_inc = data.stats_inc
+end
+
+
+function modifier_antimage_mana_break_custom:DamageEvent_out(params)
+if not IsServer() then return end
+if not self.parent:HasTalent("modifier_antimage_hero_2") then return end
+if not self.parent:CheckLifesteal(params) then return end
+
+local target = params.unit
+local mana_k = self.ability:GetManaK(target)
+local heal = self.lifesteal*params.damage
+local effect = ""
+
+heal = target:IsCreep() and heal/self.heal_creeps or heal
+
+if mana_k <= 0.5 then
+	if not params.inflictor then
+		effect = nil
+	end
+	heal = heal*self.heal_bonus
+end
+
+self.parent:GenericHeal(heal, self.ability, true, effect, "modifier_antimage_hero_2")
+end
+
+
+function modifier_antimage_mana_break_custom:AttackEvent_inc(params)
+if not IsServer() then return end
+if self.parent ~= params.target then return end
+if not self.parent:HasTalent("modifier_antimage_hero_3") then return end
+
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_antimage_mana_break_custom_stats", {duration = self.stats_duration})
+end
+
+function modifier_antimage_mana_break_custom:AttackRecordEvent_out(params)
+if not IsServer() then return end
+if self.parent ~= params.attacker then return end
+if not params.target:IsUnit() then return end
+
+local target = params.target
+local mana_k = self.ability:GetManaK(target)
+
+if self.parent:HasTalent("modifier_antimage_break_1") or self.parent:HasTalent("modifier_antimage_break_3") then
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_antimage_mana_break_custom_caster_effect", {mana_k = mana_k, duration = self.armor_duration})
+end
+
+local mod = self.parent:FindModifierByName("modifier_antimage_mana_break_custom_legendary")
+if mod then
+	mod:SetStack(mana_k)
+end
+
 end
 
 function modifier_antimage_mana_break_custom:DeclareFunctions()
-	local funcs = {
-		MODIFIER_PROPERTY_PROCATTACK_BONUS_DAMAGE_PHYSICAL,
-		MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
-		MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
-		MODIFIER_EVENT_ON_ATTACK_LANDED
-	}
-
-	return funcs
+return 
+{
+	MODIFIER_PROPERTY_PROCATTACK_BONUS_DAMAGE_PHYSICAL,
+	MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
+	MODIFIER_PROPERTY_STATS_AGILITY_BONUS,
+	MODIFIER_PROPERTY_PROCATTACK_BONUS_DAMAGE_PHYSICAL,
+	MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
+}
 end
-
-function modifier_antimage_mana_break_custom:GetModifierDamageOutgoing_Percentage(params)
-if not IsServer() then return end 
-local target = params.target
-
-if not target then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end
-
-local mana_k = target:GetMana()/target:GetMaxMana()
-
-if self:GetParent():HasModifier("modifier_antimage_mana_break_custom_legendary") then 
-	bonus_damage = self:GetCaster():GetTalentValue("modifier_antimage_break_7", "damage")*(1 - mana_k)
-	return bonus_damage
-end
-
-end 
 
 function modifier_antimage_mana_break_custom:GetModifierAttackRangeBonus()
-if not self:GetCaster():HasModifier("modifier_antimage_break_5") then return end
-return self:GetCaster():GetTalentValue("modifier_antimage_break_5", "range")
+return self.range_bonus
 end
 
-
-function modifier_antimage_mana_break_custom:OnAttackLanded(params)
-if not IsServer() then return end 
-if not self:GetParent():HasModifier("modifier_antimage_break_1") then return end 
-if self:GetParent() ~= params.attacker then return end 
-if not params.target:IsHero() and not params.target:IsCreep() then return end 
-
-local damage = self:GetCaster():GetTalentValue("modifier_antimage_break_1", "cleave")*params.damage/100
-
-if not self:GetParent():HasModifier("modifier_no_cleave") then 
-    DoCleaveAttack( self:GetParent(), params.target, self:GetAbility(), damage, 150, 360, 500, "particles/anti-mage/manabreak_cleave.vpcf" )
+function modifier_antimage_mana_break_custom:GetModifierBonusStats_Strength()
+return self.stats_init + self.stats_inc*self.parent:GetUpgradeStack("modifier_antimage_mana_break_custom_stats")
 end
 
-end 
-
+function modifier_antimage_mana_break_custom:GetModifierBonusStats_Agility()
+return self.stats_init + self.stats_inc*self.parent:GetUpgradeStack("modifier_antimage_mana_break_custom_stats")
+end
 
 function modifier_antimage_mana_break_custom:GetModifierProcAttack_BonusDamage_Physical( params )
 if not IsServer() then return end
 local target = params.target
 
 if not target then return end
+if not target:IsUnit() then return end
 
-local bonus_damage = 0
+local mana_k = self.ability:GetManaK(target)
 
-local mana_k = target:GetMana()/target:GetMaxMana()
-
-
-if self:GetParent():HasModifier("modifier_antimage_mana_break_custom_legendary") then 
-
-	target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_antimage_mana_break_custom_slow_legendary", {duration = self:GetCaster():GetTalentValue("modifier_antimage_break_7", "slow_duration")})
-
+if self.parent:HasModifier("modifier_antimage_mana_break_custom_legendary") then 
 	target:EmitSound("Antimage.Break_legendary_hit")
 
 	local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_antimage/antimage_manabreak_slow.vpcf", PATTACH_ABSORIGIN_FOLLOW, target)
@@ -183,228 +326,125 @@ if self:GetParent():HasModifier("modifier_antimage_mana_break_custom_legendary")
 	ParticleManager:ReleaseParticleIndex(particle)
 end
 
+if self.parent:PassivesDisabled() then return end
 
-if self:GetParent():PassivesDisabled() then end
-
-if target:GetMaxMana() == 0 then return end
-if target:IsMagicImmune() then return bonus_damage end
-
-local percent_damage_per_burn = self:GetAbility():GetSpecialValueFor("percent_damage_per_burn")
-local mana_per_hit_pct = self:GetAbility():GetSpecialValueFor("mana_per_hit_pct")
-local mana_per_hit = self:GetAbility():GetSpecialValueFor("mana_per_hit")
-local illusion_burn = self:GetAbility():GetSpecialValueFor("illusion_burn")
-local slow_duration = self:GetAbility():GetSpecialValueFor("slow_duration")
-
-
-
-if self:GetParent():HasModifier("modifier_antimage_break_4") then 
-	mana_per_hit_pct = mana_per_hit_pct + self:GetCaster():GetTalentValue("modifier_antimage_break_4", "mana_burn")
-	self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_antimage_mana_break_custom_agility", {mana_k = mana_k, duration = self:GetCaster():GetTalentValue("modifier_antimage_break_4", "duration")})
-
+local legendary_mod = self.parent:FindModifierByName("modifier_antimage_mana_void_custom_illusion")
+local max_mana = target:GetMaxMana()
+local min_mana = target:GetMana()
+if max_mana == 0 then 
+	max_mana = self.nomana_max
+	min_mana = self.nomana_min
 end
 
-local reduce_mana_full = mana_per_hit + (target:GetMaxMana() / 100 * mana_per_hit_pct)
+local bkb_ability = self.parent:BkbAbility(self.ability, self.parent:HasTalent("modifier_antimage_hero_8"))
 
-if self:GetParent():IsIllusion() then
-	reduce_mana_full = illusion_burn
+local mana_burn = self.parent:IsIllusion() and self.mana_illusion or (self.mana_flat + (max_mana / 100 * (self.mana_pct + self.mana_bonus)))
+mana_burn = math.min( min_mana, mana_burn )
 
-	if self:GetParent():HasShard() then 
-		reduce_mana_full = reduce_mana_full + self:GetAbility():GetSpecialValueFor("shard_bonus")
+if self.parent:GetQuest() == "Anti.Quest_5" and params.target:IsRealHero() and not self.parent:QuestCompleted() and not target:HasModifier("modifier_huskar_blood_magic") then 
+	self.parent:UpdateQuest(math.floor(mana_burn))
+end
+
+if not legendary_mod then
+	local real_mana = target:Script_ReduceMana(mana_burn, bkb_ability) 
+
+	if self.parent:HasShard() then
+		local ability = self.parent:FindAbilityByName("antimage_counterspell_custom")
+		if ability then
+			ability:ShardMana(real_mana)
+		end
 	end
 end
 
-if self:GetParent():HasModifier("modifier_antimage_break_3") then 
-	target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_antimage_mana_break_custom_shard", {duration = self:GetCaster():GetTalentValue("modifier_antimage_break_3", "duration")})
+target:GenericParticle(self.particle_mana_burn)
+
+if self.parent:HasTalent("modifier_antimage_break_1") or self.parent:HasTalent("modifier_antimage_break_4") then 
+	target:AddNewModifier(self.parent, bkb_ability, "modifier_antimage_mana_break_custom_target_effect", {mana_k = mana_k, duration = self.armor_duration})
 end
 
-if self:GetParent():HasModifier("modifier_antimage_break_1") then 
-	target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_antimage_mana_break_custom_armor", {duration = self:GetCaster():GetTalentValue("modifier_antimage_break_1", "duration")})
+if self.parent:HasTalent("modifier_antimage_break_2") then
+	DoCleaveAttack( self.parent, target, self.ability, self.cleave_damage*params.damage, 150, 360, 500, "particles/anti-mage/manabreak_cleave.vpcf" )
 end
 
-
-
-if self:GetParent():HasModifier("modifier_antimage_break_5") and not target:HasModifier("modifier_antimage_mana_break_custom_silence_cd") then 
-	target:EmitSound("Antimage.Break_silence")
-	target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_antimage_mana_break_custom_silence", {duration = self:GetCaster():GetTalentValue("modifier_antimage_break_5", "silence")*(1 - params.target:GetStatusResistance())})
-	target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_antimage_mana_break_custom_silence_cd", {duration = self:GetCaster():GetTalentValue("modifier_antimage_break_5", "cd")})
-end
-
-
-local mana_burn =  math.min( target:GetMana(), reduce_mana_full )
-
-if self:GetParent():HasModifier("modifier_antimage_break_2") then 
-	local heal = self:GetCaster():GetTalentValue("modifier_antimage_break_2", "heal")
-
-	heal = heal * (1 + (self:GetCaster():GetTalentValue("modifier_antimage_break_2", "bonus") - 1)*(1 - mana_k))
-
-	self:GetCaster():GenericHeal(heal, self:GetAbility(), false, "particles/am_heal_mana.vpcf")
-end
-
-
-if self:GetParent():GetQuest() == "Anti.Quest_5" and params.target:IsRealHero() and not self:GetParent():QuestCompleted() then 
-	self:GetParent():UpdateQuest(math.floor(mana_burn))
-end
-
-target:Script_ReduceMana(mana_burn, self:GetAbility()) 
-
-local particle = ParticleManager:CreateParticle( "particles/generic_gameplay/generic_manaburn.vpcf", PATTACH_ABSORIGIN, target )
-ParticleManager:ReleaseParticleIndex( particle )
-
+mana_k = self.ability:GetManaK(target)
 local sound = "Hero_Antimage.ManaBreak"
-
-if target:GetManaPercent() <= 50 then 
+if mana_k <= 0.5 and target:GetMaxMana() ~= 0 then 
 	sound = "Antimage.Low_mana"
+end
+
+if self.parent:HasTalent("modifier_antimage_break_4") and mana_k <= self.low_mana/100  and not target:HasModifier("modifier_antimage_mana_break_custom_stun_cd") then
+
+	target:AddNewModifier(self.parent, self.parent:BkbAbility(self.ability, true), "modifier_bashed", {duration = self.stun_duration*(1 - target:GetStatusResistance())})
+	target:AddNewModifier(self.parent, self.ability, "modifier_antimage_mana_break_custom_stun_cd", {duration = self.stun_cd})
+
+	target:EmitSound("Antimage.Break_stun")
+	sound = "Antimage.Break_stun2"
+    local immortal_particle = ParticleManager:CreateParticle("particles/am_no_mana.vpcf", PATTACH_OVERHEAD_FOLLOW, target)
+    ParticleManager:SetParticleControl(immortal_particle, 0, target:GetAbsOrigin())
+    ParticleManager:SetParticleControl(immortal_particle, 1, self.parent:GetAbsOrigin() )
+    ParticleManager:Delete(immortal_particle, 1)
 end
 
 target:EmitSound(sound)
 
-
-
-
-if target:GetMana()/target:GetMaxMana() <= self:GetCaster():GetTalentValue("modifier_antimage_break_6", "mana")/100 then
-	if self:GetParent():HasModifier("modifier_antimage_break_6") then 
-
-		target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_antimage_mana_break_custom_heal_reduce", {duration = self:GetCaster():GetTalentValue("modifier_antimage_break_6", "duration")})
-
-
-		if not target:HasModifier("modifier_antimage_mana_break_custom_damage_cd") then 
-			local duration = self:GetCaster():GetTalentValue("modifier_antimage_break_6", "break_duration")*(1 - target:GetStatusResistance())
-			target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_generic_break", {duration = duration})
-			target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_antimage_mana_break_custom_damage_cd", {duration = self:GetCaster():GetTalentValue("modifier_antimage_break_6", "cd")})
-
-			target:EmitSound("DOTA_Item.SilverEdge.Target")
-
-			local effect_cast = ParticleManager:CreateParticle( "particles/am_no_mana.vpcf", PATTACH_OVERHEAD_FOLLOW, target )
-			ParticleManager:SetParticleControl( effect_cast, 0,  target:GetOrigin() )
-			ParticleManager:SetParticleControl( effect_cast, 1, target:GetOrigin() )
-			ParticleManager:ReleaseParticleIndex(effect_cast)
-		end 
-	end
+if legendary_mod then
+	legendary_mod:ManaBurn(target)
+	return
 end
 
+if target:IsDebuffImmune() and not self.parent:HasTalent("modifier_antimage_hero_8") then return end
 
-if target:GetMana() <= 1 then
-	target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_antimage_mana_break_custom_slow", {duration = slow_duration*(1 - target:GetStatusResistance())})
-end	
-
-
-
-return mana_burn * percent_damage_per_burn + bonus_damage
-
+local damage_bonus = target:IsCreep() and self.creeps_bonus*self.percent_damage_per_burn or self.percent_damage_per_burn
+return mana_burn * damage_bonus
 end
 
 
 
+modifier_antimage_mana_break_custom_target_effect = class(mod_hidden)
+function modifier_antimage_mana_break_custom_target_effect:IsHidden() return true end
+function modifier_antimage_mana_break_custom_target_effect:IsPurgable() return false end
+function modifier_antimage_mana_break_custom_target_effect:OnCreated(table)
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
 
+self.armor = self.caster:GetTalentValue("modifier_antimage_break_1", "armor")
 
-modifier_antimage_mana_break_custom_slow = class({})
-
-function modifier_antimage_mana_break_custom_slow:IsPurgable() return false end
-
-function modifier_antimage_mana_break_custom_slow:OnCreated()
-self.movespeed_slow = self:GetAbility():GetSpecialValueFor("move_slow") * -1
+self.heal_mana = self.caster:GetTalentValue("modifier_antimage_break_4", "mana", true)
+self.heal_reduce = self.caster:GetTalentValue("modifier_antimage_break_4", "heal_reduce")
 
 if not IsServer() then return end
-local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_antimage/antimage_manabreak_slow.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
-ParticleManager:SetParticleControlEnt( particle, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetOrigin(), true )
-ParticleManager:SetParticleControlEnt( particle, 1, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetOrigin(), true )
-ParticleManager:ReleaseParticleIndex(particle)
-end
-
-
-function modifier_antimage_mana_break_custom_slow:OnRefresh()
-self:OnCreated()
+self:SetStackCount(table.mana_k*100)
 end 
 
-function modifier_antimage_mana_break_custom_slow:DeclareFunctions()
-	return {
-		MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-	}
+function modifier_antimage_mana_break_custom_target_effect:OnRefresh(table)
+if not IsServer() then return end
+self:SetStackCount(table.mana_k*100)
 end
 
-function modifier_antimage_mana_break_custom_slow:GetModifierMoveSpeedBonus_Percentage()
-	return self.movespeed_slow
-end
-
-
-
-modifier_antimage_mana_break_custom_slow_legendary = class({})
-
-function modifier_antimage_mana_break_custom_slow_legendary:IsPurgable() return false end
-function modifier_antimage_mana_break_custom_slow_legendary:IsHidden() return true end
-
-function modifier_antimage_mana_break_custom_slow_legendary:OnCreated()
-self.movespeed_slow = self:GetCaster():GetTalentValue("modifier_antimage_break_7", 'slow')
-end
-
-function modifier_antimage_mana_break_custom_slow_legendary:DeclareFunctions()
-	return {
-		MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-	}
-end
-
-function modifier_antimage_mana_break_custom_slow_legendary:GetModifierMoveSpeedBonus_Percentage()
-	return self.movespeed_slow
-end
-
-
-
-
-modifier_antimage_mana_break_custom_heal_reduce = class({})
-function modifier_antimage_mana_break_custom_heal_reduce:IsHidden() return true end
-function modifier_antimage_mana_break_custom_heal_reduce:IsPurgable() return false end
-function modifier_antimage_mana_break_custom_heal_reduce:OnCreated()
-
-self.heal_reduce = self:GetCaster():GetTalentValue("modifier_antimage_break_6", "heal_reduce")
-end 
-
-function modifier_antimage_mana_break_custom_heal_reduce:DeclareFunctions()
-return {
+function modifier_antimage_mana_break_custom_target_effect:DeclareFunctions()
+return 
+{
 	MODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET,
 	MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE,
+	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
 	MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE
-	}
-end
-function modifier_antimage_mana_break_custom_heal_reduce:GetModifierLifestealRegenAmplify_Percentage() 
-    return self.heal_reduce
-end
-function modifier_antimage_mana_break_custom_heal_reduce:GetModifierHealAmplify_PercentageTarget() 
-    return self.heal_reduce
-end
-function modifier_antimage_mana_break_custom_heal_reduce:GetModifierHPRegenAmplify_Percentage() 
-    return self.heal_reduce
-end
-
-
-modifier_antimage_mana_break_custom_silence = class({})
-
-function modifier_antimage_mana_break_custom_silence:IsHidden() return false end
-
-function modifier_antimage_mana_break_custom_silence:IsPurgable() return true end
-
-function modifier_antimage_mana_break_custom_silence:GetTexture() return "silencer_last_word" end
-
-function modifier_antimage_mana_break_custom_silence:CheckState() return {[MODIFIER_STATE_SILENCED] = true} end
-
-
-function modifier_antimage_mana_break_custom_silence:GetEffectName() return "particles/econ/items/death_prophet/death_prophet_ti9/death_prophet_silence_custom_ti9_overhead_model.vpcf" end
- 
-function modifier_antimage_mana_break_custom_silence:GetEffectAttachType() return PATTACH_OVERHEAD_FOLLOW end
-
-
-
-modifier_antimage_mana_break_custom_anim = class({}) 
-function modifier_antimage_mana_break_custom_anim:IsHidden() return true end
-function modifier_antimage_mana_break_custom_anim:IsPurgable() return false end
-function modifier_antimage_mana_break_custom_anim:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS
 }
 end
 
-function modifier_antimage_mana_break_custom_anim:GetActivityTranslationModifiers()
-	return "basher"
+function modifier_antimage_mana_break_custom_target_effect:GetModifierPhysicalArmorBonus()
+return self.armor*(1 - self:GetStackCount()/100)
+end
+
+function modifier_antimage_mana_break_custom_target_effect:GetModifierLifestealRegenAmplify_Percentage() 
+return self:GetStackCount() <= self.heal_mana and self.heal_reduce or 0
+end
+
+function modifier_antimage_mana_break_custom_target_effect:GetModifierHealAmplify_PercentageTarget() 
+return self:GetStackCount() <= self.heal_mana and self.heal_reduce or 0
+end
+
+function modifier_antimage_mana_break_custom_target_effect:GetModifierHPRegenAmplify_Percentage() 
+return self:GetStackCount() <= self.heal_mana and self.heal_reduce or 0
 end
 
 
@@ -415,126 +455,183 @@ modifier_antimage_mana_break_custom_legendary = class({})
 function modifier_antimage_mana_break_custom_legendary:IsHidden() return false end
 function modifier_antimage_mana_break_custom_legendary:IsPurgable() return false end
 function modifier_antimage_mana_break_custom_legendary:OnCreated(table)
-if not IsServer() then return end
+self.parent = self:GetParent()
 
-
-
-self.particle_peffect = ParticleManager:CreateParticle("particles/am_break_2.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())	
-ParticleManager:SetParticleControl(self.particle_peffect, 0, self:GetParent():GetAbsOrigin())
-self:AddParticle(self.particle_peffect, false, false, -1, false, true)
-
-end
-
-
-function modifier_antimage_mana_break_custom_legendary:GetEffectName() return "particles/am_break_legendary.vpcf" end
-
-
-
-
-
-
-modifier_antimage_mana_break_custom_silence_cd = class({})
-function modifier_antimage_mana_break_custom_silence_cd:IsHidden() return true end
-function modifier_antimage_mana_break_custom_silence_cd:IsPurgable() return false end
-
-
-
-modifier_antimage_mana_break_custom_damage_cd = class({})
-function modifier_antimage_mana_break_custom_damage_cd:IsHidden() return true end
-function modifier_antimage_mana_break_custom_damage_cd:IsPurgable() return false end
-
-
-
-modifier_antimage_mana_break_custom_shard = class({})
-function modifier_antimage_mana_break_custom_shard:IsHidden() return false end
-function modifier_antimage_mana_break_custom_shard:IsPurgable() return false end
-function modifier_antimage_mana_break_custom_shard:GetTexture() return "buffs/sunder_damage" end
-function modifier_antimage_mana_break_custom_shard:OnCreated(table)
-
-self.damage = self:GetCaster():GetTalentValue("modifier_antimage_break_3", "damage_reduce")
-self.max = self:GetCaster():GetTalentValue("modifier_antimage_break_3", "max")
+self.damage = self.parent:GetTalentValue("modifier_antimage_break_7", "damage")
 
 if not IsServer() then return end
+self.parent:Purge(false, true, false, false, false)
+self.parent:GenericParticle("particles/am_break_2.vpcf", self)
+self.parent:GenericParticle("particles/am_break_legendary.vpcf", self)
 
-self:SetStackCount(1)
+self.max_time = self:GetRemainingTime()
+
+self:OnIntervalThink()
+self:StartIntervalThink(0.1)
 end
 
-function modifier_antimage_mana_break_custom_shard:OnRefresh(table)
+function modifier_antimage_mana_break_custom_legendary:OnIntervalThink()
 if not IsServer() then return end
-if not self:GetAbility() then return end
-if self:GetStackCount() >= self.max then return end
-
-self:IncrementStackCount()
+self.parent:UpdateUIshort({max_time = self.max_time, time = self:GetRemainingTime(), stack = "+"..self:GetStackCount().."%", style = "AntimageManabreak"})
 end
 
-function modifier_antimage_mana_break_custom_shard:DeclareFunctions()
-return
+function modifier_antimage_mana_break_custom_legendary:SetStack(stack)
+if not IsServer() then return end
+self:SetStackCount(self.damage*(1 - stack))
+end
+
+function modifier_antimage_mana_break_custom_legendary:OnDestroy()
+if not IsServer() then return end
+self.parent:UpdateUIshort({hide = 1, hide_full = 1, style = "AntimageManabreak"})
+end
+
+function modifier_antimage_mana_break_custom_legendary:DeclareFunctions()
+return 
 {
-	MODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE
+    MODIFIER_PROPERTY_MODEL_SCALE,
+    MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE
 }
 end
 
+function modifier_antimage_mana_break_custom_legendary:GetModifierModelScale()
+return 15
+end
 
-
-function modifier_antimage_mana_break_custom_shard:GetModifierTotalDamageOutgoing_Percentage()
-return self:GetStackCount()*self.damage
+function modifier_antimage_mana_break_custom_legendary:GetModifierDamageOutgoing_Percentage()
+return self:GetStackCount()
 end
 
 
-modifier_antimage_mana_break_custom_armor = class({})
-function modifier_antimage_mana_break_custom_armor:IsHidden() return false end
-function modifier_antimage_mana_break_custom_armor:IsPurgable() return false end
-function modifier_antimage_mana_break_custom_armor:GetTexture() return "buffs/manabreak_damage" end
-function modifier_antimage_mana_break_custom_armor:OnCreated(table)
-self.armor =  self:GetCaster():GetTalentValue("modifier_antimage_break_1", "armor")
+modifier_antimage_mana_break_custom_caster_effect = class(mod_visible)
+function modifier_antimage_mana_break_custom_caster_effect:GetTexture() return "buffs/antimage/manabreak_3" end
+function modifier_antimage_mana_break_custom_caster_effect:OnCreated(table)
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.armor = self.parent:GetTalentValue("modifier_antimage_break_1", "armor")*-1
+self.speed = self.parent:GetTalentValue("modifier_antimage_break_3", "speed")
+
+if not IsServer() then return end
+self:SetStackCount(table.mana_k*100)
 end 
 
 
-function modifier_antimage_mana_break_custom_armor:DeclareFunctions()
+function modifier_antimage_mana_break_custom_caster_effect:OnRefresh(table)
+if not IsServer() then return end
+self:SetStackCount(table.mana_k*100)
+end
+
+function modifier_antimage_mana_break_custom_caster_effect:DeclareFunctions()
 return
 {
 	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
+	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
 }
 end
 
-function modifier_antimage_mana_break_custom_armor:GetModifierPhysicalArmorBonus()
-local mana_k = 1 - self:GetParent():GetMana()/self:GetParent():GetMaxMana()
+function modifier_antimage_mana_break_custom_caster_effect:GetModifierPhysicalArmorBonus()
+return self.armor*(1 - self:GetStackCount()/100)
+end
 
-
-return self.armor*mana_k
+function modifier_antimage_mana_break_custom_caster_effect:GetModifierAttackSpeedBonus_Constant()
+return self.speed*(1 - self:GetStackCount()/100)
 end
 
 
 
-modifier_antimage_mana_break_custom_agility = class({})
-function modifier_antimage_mana_break_custom_agility:IsHidden() return false end
-function modifier_antimage_mana_break_custom_agility:IsPurgable() return false end
-function modifier_antimage_mana_break_custom_agility:GetTexture() return "buffs/manabreak_agility" end
-function modifier_antimage_mana_break_custom_agility:OnCreated(table)
-if not IsServer() then return end 
-
-local mana_k = 1 - table.mana_k
-
-self:SetStackCount(mana_k * self:GetCaster():GetTalentValue("modifier_antimage_break_4", "agility"))
-self:GetCaster():CalculateStatBonus(true)
-end 
-
-
-function modifier_antimage_mana_break_custom_agility:OnRefresh(table)
-if not IsServer() then return end  
-
-self:OnCreated(table)
-end 
+modifier_antimage_mana_break_custom_stun_cd = class(mod_hidden)
+function modifier_antimage_mana_break_custom_stun_cd:OnCreated()
+self.RemoveForDuel = true
+end
 
 
 
-function modifier_antimage_mana_break_custom_agility:DeclareFunctions()
+modifier_antimage_mana_break_custom_stats = class(mod_visible)
+function modifier_antimage_mana_break_custom_stats:GetTexture() return "buffs/antimage/hero_3" end
+function modifier_antimage_mana_break_custom_stats:OnCreated()
+self.parent = self:GetParent()
+self.max = self.parent:GetTalentValue("modifier_antimage_hero_3", "max")
+if not IsServer() then return end
+self:SetStackCount(1)
+end
+
+function modifier_antimage_mana_break_custom_stats:OnRefresh()
+if not IsServer() then return end
+if self:GetStackCount() >= self.max then return end
+self:IncrementStackCount()
+end
+
+
+function modifier_antimage_mana_break_custom_stats:OnStackCountChanged(iStackCount)
+if not IsServer() then return end
+self.parent:CalculateStatBonus(true)
+end
+
+
+modifier_antimage_mana_break_custom_haste = class(mod_visible)
+function modifier_antimage_mana_break_custom_haste:GetTexture() return "buffs/antimage/hero_8" end
+function modifier_antimage_mana_break_custom_haste:OnCreated()
+self.parent = self:GetParent()
+self.move = self.parent:GetTalentValue("modifier_antimage_hero_8", "move")
+
+self.activity = "haste"
+
+if self.parent:HasModifier("modifier_antimage_persona_custom_1") or self.parent:HasModifier("modifier_antimage_persona_custom_2") or self.parent:HasModifier("modifier_antimage_persona_custom_3") or self.parent:HasModifier("modifier_antimage_persona_custom_4") or self.parent:HasModifier("modifier_antimage_persona_custom_5") or self.parent:HasModifier("modifier_antimage_persona_custom_6") then
+    self.activity = "chase"
+end
+if not IsServer() then return end
+self.parent:GenericParticle("particles/anti-mage/nomana_haste.vpcf", self)
+end
+
+function modifier_antimage_mana_break_custom_haste:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_STATS_AGILITY_BONUS
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+	MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS
 }
 end
 
-function modifier_antimage_mana_break_custom_agility:GetModifierBonusStats_Agility()
-return self:GetStackCount()
-end 
+function modifier_antimage_mana_break_custom_haste:GetActivityTranslationModifiers()
+return self.activity
+end
+
+function modifier_antimage_mana_break_custom_haste:GetModifierMoveSpeedBonus_Percentage()
+return self.move
+end
+
+function modifier_antimage_mana_break_custom_haste:CheckState()
+return
+{
+	[MODIFIER_STATE_UNSLOWABLE] = true
+}
+end
+
+function modifier_antimage_mana_break_custom_haste:GetStatusEffectName()
+return "particles/units/heroes/hero_kez/status_effect_kez_afterimage_buff.vpcf"
+end
+ 
+function modifier_antimage_mana_break_custom_haste:StatusEffectPriority()
+return MODIFIER_PRIORITY_HIGH
+end
+
+
+modifier_antimage_mana_break_custom_haste_target = class(mod_hidden)
+function modifier_antimage_mana_break_custom_haste_target:GetEffectName()
+return "particles/units/heroes/hero_keeper_of_the_light/keeper_of_the_light_mana_leak.vpcf"
+end
+
+function modifier_antimage_mana_break_custom_haste_target:OnCreated()
+self.parent = self:GetParent()
+
+if not IsServer() then return end
+self:OnIntervalThink()
+self:StartIntervalThink(1)
+end
+
+
+function modifier_antimage_mana_break_custom_haste_target:OnIntervalThink()
+if not IsServer() then return end
+self.parent:GenericParticle("particles/units/heroes/hero_keeper_of_the_light/keeper_mana_leak.vpcf")
+end
+
+

@@ -3,12 +3,23 @@ LinkLuaModifier("modifier_item_butterfly_custom_speed", "abilities/items/item_bu
 
 item_butterfly_custom = class({})
 
+function item_butterfly_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/items2_fx/butterfly_active.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_morphling/morphling_morph_agi.vpcf", context ) 
+PrecacheResource( "particle","particles/items3_fx/blink_swift_buff.vpcf", context )
+PrecacheResource( "particle","particles/butterfly_status.vpcf", context ) 
+PrecacheResource( "particle","particles/butterfly_proc.vpcf", context )
+end
+
 function item_butterfly_custom:GetIntrinsicModifierName()
 	return "modifier_item_butterfly_custom"
 end
 
 function item_butterfly_custom:OnSpellStart()
 if not IsServer() then return end
+local caster = self:GetCaster()
+
 self:GetParent():EmitSound("Juggernaut.Omni_cd")
 self:GetParent():AddNewModifier(self:GetParent(), self, "modifier_item_butterfly_custom_speed", {duration = self:GetSpecialValueFor("duration")})
 
@@ -93,7 +104,7 @@ function modifier_item_butterfly_custom_speed:GetStatusEffectName()
 end
 
 function modifier_item_butterfly_custom_speed:StatusEffectPriority()
-  return 99999
+  return MODIFIER_PRIORITY_ULTRA 
 end
 
 
@@ -108,13 +119,12 @@ local random = RollPseudoRandomPercentage(chance,769,self:GetParent())
 
 if not random then return end
 
-self:GetParent():EmitSound("Hero_FacelessVoid.TimeDilation.Target") 
+self:GetParent():EmitSound("Butterfly.Attack_absorb") 
 
 local trail_pfx = ParticleManager:CreateParticle("particles/butterfly_proc.vpcf", PATTACH_ABSORIGIN, self:GetParent())
 ParticleManager:ReleaseParticleIndex(trail_pfx)
 
 return params.damage
-
 end
 
 

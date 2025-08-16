@@ -39,6 +39,8 @@ if not IsServer() then return end
 self.cast = false 
 self.silence = self:GetAbility():GetSpecialValueFor("silence")
 self.stun = self:GetAbility():GetSpecialValueFor("stun")
+
+self:GetParent():AddSpellEvent(self)
 end
 
 
@@ -58,7 +60,7 @@ if self.cast == true then
 	self:GetParent():EmitSound("Hero_Silencer.LastWord.Damage")
     local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_silencer/silencer_last_word_dmg.vpcf", PATTACH_POINT_FOLLOW, self:GetParent() )
 	ParticleManager:ReleaseParticleIndex(particle)
-	ApplyDamage({ victim = self:GetParent(), attacker = self:GetCaster(), ability = self:GetAbility(), damage = self:GetAbility():GetSpecialValueFor("damage"), damage_type = DAMAGE_TYPE_MAGICAL})
+	DoDamage({ victim = self:GetParent(), attacker = self:GetCaster(), ability = self:GetAbility(), damage = self:GetAbility():GetSpecialValueFor("damage"), damage_type = DAMAGE_TYPE_MAGICAL})
 
 
 end
@@ -68,14 +70,8 @@ end
 
 
 
-function modifier_silencer_lastword_debuff:DeclareFunctions()
-return
-{
-    MODIFIER_EVENT_ON_ABILITY_FULLY_CAST
-}
-end
 
-function modifier_silencer_lastword_debuff:OnAbilityFullyCast(params)
+function modifier_silencer_lastword_debuff:SpellEvent(params)
 if self:GetParent() ~= params.unit then return end
 if params.ability:IsItem() then return end
 

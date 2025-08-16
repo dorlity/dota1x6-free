@@ -3,6 +3,13 @@ LinkLuaModifier("modifier_werewolf_cd", "abilities/npc_werewolf_bloodrage", LUA_
 
 npc_werewolf_bloodrage = class({})
 
+function npc_werewolf_bloodrage:Precache(context)
+PrecacheResource( "particle", "particles/units/heroes/hero_bloodseeker/bloodseeker_rupture.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_bloodseeker/bloodseeker_rupture_nuke.vpcf", context )
+
+end
+
+
 function npc_werewolf_bloodrage:OnAbilityPhaseStart()
     self:GetCaster():StartGesture(ACT_DOTA_CAST_ABILITY_1)
     self:GetCaster():EmitSound("hero_bloodseeker.bloodRage")
@@ -30,10 +37,13 @@ function modifier_werewolf_bloodrage:IsHidden() return false end
 function modifier_werewolf_bloodrage:IsPurgable() return true end
 
 function modifier_werewolf_bloodrage:OnCreated(table)
-self.speed = self:GetAbility():GetSpecialValueFor("speed")
-    if not IsServer() then
-        return
-    end
+self.ability = self:GetAbility()
+
+self.speed = self.ability:GetSpecialValueFor("speed")
+self.heal = self.ability:GetSpecialValueFor("heal")/100
+
+self.parent = self:GetParent()
+self.parent:AddAttackEvent_out(self, true)
 end
 
 function modifier_werewolf_bloodrage:DeclareFunctions()
@@ -42,7 +52,6 @@ return
      MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
      MODIFIER_PROPERTY_TOOLTIP,
      MODIFIER_PROPERTY_TOOLTIP2
- 
 }
 end
 
@@ -55,17 +64,15 @@ function modifier_werewolf_bloodrage:CheckState() return {[MODIFIER_STATE_CANNOT
 function modifier_werewolf_bloodrage:GetModifierAttackSpeedBonus_Constant() return self.speed end
 
 function modifier_werewolf_bloodrage:GetEffectName() return "particles/units/heroes/hero_bloodseeker/bloodseeker_bloodrage.vpcf" end
- 
 function modifier_werewolf_bloodrage:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 
-function modifier_werewolf_bloodrage:DoScript()
-if not IsServer() then
-        return
-    end
-    local heal = self:GetAbility():GetSpecialValueFor("heal")
-    heal = self:GetParent():GetMaxHealth()*(heal/100)
-    self:GetParent():Heal(heal, self:GetParent())
 
+
+function modifier_werewolf_bloodrage:AttackEvent_out(params)
+if not IsServer() then return end
+if self.parent ~= params.attacker then return end
+
+self.parent:GenericHeal(self.parent:GetMaxHealth()*self.heal, self.ability)
 end
 
 

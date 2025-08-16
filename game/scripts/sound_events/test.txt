@@ -1,0 +1,4739 @@
+"data"
+{
+
+"UI.Pick_npc_dota_hero_zuus"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/zuus/zuus_spawn_01.vsnd"
+                              "value1"        "sounds/vo/zuus/zuus_spawn_04.vsnd"
+                              "value2"        "sounds/vo/zuus/zuus_spawn_08.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_zuus_alt1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/zuus/zuus_arc_spawn_01.vsnd"
+                              "value1"        "sounds/vo/zuus/zuus_arc_spawn_04.vsnd"
+                              "value2"        "sounds/vo/zuus/zuus_arc_spawn_08.vsnd"
+                              "value3"        "sounds/vo/zuus/zuus_arc_spawn_02.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_zuus"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/zuus/zuus_anger_03.vsnd"
+                              "value1"        "sounds/vo/zuus/zuus_anger_01.vsnd"
+                              "value1"        "sounds/vo/zuus/zuus_anger_06.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+"UI.Pick_npc_dota_hero_void_spirit"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/void_spirit/voidspir_spawn_01.vsnd"
+                              "value1"        "sounds/vo/void_spirit/voidspir_spawn_23.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_void_spirit"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/void_spirit/voidspir_anger_03.vsnd"
+                              "value1"        "sounds/vo/void_spirit/voidspir_anger_06.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_troll_warlord"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/troll_warlord/troll_anger_11.vsnd"
+                              "value1"        "sounds/vo/troll_warlord/troll_anger_12.vsnd"
+                              "value2"        "sounds/vo/troll_warlord/troll_anger_10.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Pick_npc_dota_hero_troll_warlord"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/troll_warlord/troll_spawn_01.vsnd"
+                              "value1"        "sounds/vo/troll_warlord/troll_spawn_04.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Pick_npc_dota_hero_terrorblade"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/terrorblade/terr_spawn_01.vsnd"
+                              "value1"        "sounds/vo/terrorblade/terr_spawn_03.vsnd"
+                              "value2"        "sounds/vo/terrorblade/terr_spawn_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_terrorblade_alt1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value1"        "sounds/vo/terrorblade/terr_shards_spawn_03.vsnd"
+                              "value2"        "sounds/vo/terrorblade/terr_shards_spawn_01.vsnd"
+                              "value0"        "sounds/vo/terrorblade/terr_shards_spawn_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+"UI.Ban_npc_dota_hero_terrorblade"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/terrorblade/terr_anger_03.vsnd"
+                              "value1"        "sounds/vo/terrorblade/terr_anger_04.vsnd"
+                              "value2"        "sounds/vo/terrorblade/terr_anger_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+"UI.Pick_npc_dota_hero_templar_assassin"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/templar_assassin/temp_spawn_02.vsnd"
+                              "value1"        "sounds/vo/templar_assassin/temp_spawn_03.vsnd"
+                              "value2"        "sounds/vo/templar_assassin/temp_spawn_04.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Ban_npc_dota_hero_templar_assassin"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/templar_assassin/temp_anger_02.vsnd"
+                              "value1"        "sounds/vo/templar_assassin/temp_anger_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+"UI.Pick_npc_dota_hero_sven"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/sven/sven_spawn_03.vsnd"
+                              "value1"        "sounds/vo/sven/sven_spawn_01.vsnd"
+                              "value2"        "sounds/vo/sven/sven_spawn_07.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.8000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_sven"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/sven/sven_anger_03.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+"UI.Pick_npc_dota_hero_sniper"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/sniper/snip_spawn_01.vsnd"
+                              "value1"        "sounds/vo/sniper/snip_spawn_06.vsnd"
+                              "value2"        "sounds/vo/sniper/snip_spawn_03.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.8000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+"UI.Ban_npc_dota_hero_sniper"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/sniper/snip_anger_02.vsnd"
+                              "value1"        "sounds/vo/sniper/snip_anger_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Pick_npc_dota_hero_snapfire"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/snapfire/snapfire_spawn_01.vsnd"
+                              "value1"        "sounds/vo/snapfire/snapfire_spawn_02.vsnd"
+                              "value2"        "sounds/vo/snapfire/snapfire_spawn_08.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.8000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_snapfire"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/snapfire/snapfire_anger_01.vsnd"
+                              "value1"        "sounds/vo/snapfire/snapfire_anger_03.vsnd"
+                              "value2"        "sounds/vo/snapfire/snapfire_anger_07.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+"UI.Pick_npc_dota_hero_slark"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                          "value0"        "sounds/vo/slark/slark_spawn_01.vsnd"
+                          "value1"        "sounds/vo/slark/slark_spawn_02.vsnd"
+                          "value2"        "sounds/vo/slark/slark_spawn_04.vsnd"
+                          "value3"        "sounds/vo/slark/slark_spawn_03.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_slark"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                          "value0"        "sounds/vo/slark/slark_anger_01.vsnd"
+                          "value1"        "sounds/vo/slark/slark_anger_04.vsnd"
+                          "value2"        "sounds/vo/slark/slark_anger_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Pick_npc_dota_hero_skywrath_mage"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                          "value0"        "sounds/vo/skywrath_mage/drag_spawn_01.vsnd"
+                          "value1"        "sounds/vo/skywrath_mage/drag_spawn_02.vsnd"
+                          "value2"        "sounds/vo/skywrath_mage/drag_spawn_03.vsnd"
+                          "value3"        "sounds/vo/skywrath_mage/drag_spawn_04.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+"UI.Pick_npc_dota_hero_skywrath_mage_alt1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                          "value0"        "sounds/vo/skywrath_mage/skywrath_crown_spawn_01.vsnd"
+                          "value1"        "sounds/vo/skywrath_mage/skywrath_crown_spawn_02.vsnd"
+                          "value2"        "sounds/vo/skywrath_mage/skywrath_crown_spawn_10.vsnd"
+                          "value3"        "sounds/vo/skywrath_mage/skywrath_crown_spawn_08.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_skywrath_mage_alt2"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                          "value0"        "sounds/vo/skywrath_mage/skywrath_crown_spawn_01.vsnd"
+                          "value1"        "sounds/vo/skywrath_mage/skywrath_crown_spawn_02.vsnd"
+                          "value2"        "sounds/vo/skywrath_mage/skywrath_crown_spawn_10.vsnd"
+                          "value3"        "sounds/vo/skywrath_mage/skywrath_crown_spawn_08.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+"UI.Ban_npc_dota_hero_skywrath_mage"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                          "value0"        "sounds/vo/skywrath_mage/drag_anger_10.vsnd"
+                          "value1"        "sounds/vo/skywrath_mage/drag_anger_12.vsnd"
+                          "value2"        "sounds/vo/skywrath_mage/drag_anger_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+"UI.Ban_npc_dota_hero_skeleton_king"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/skeleton_king/wraith_anger_01.vsnd"
+                              "value1"        "sounds/vo/skeleton_king/wraith_anger_02.vsnd"
+                              "value2"        "sounds/vo/skeleton_king/wraith_anger_04.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_skeleton_king"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/skeleton_king/wraith_spawn_01.vsnd"
+                              "value1"        "sounds/vo/skeleton_king/wraith_spawn_04.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+"UI.Pick_npc_dota_hero_skeleton_king_alt1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/skeleton_king/skel_arc_spawn_01.vsnd"
+                              "value1"        "sounds/vo/skeleton_king/skel_arc_spawn_03.vsnd"
+                              "value2"        "sounds/vo/skeleton_king/skel_arc_spawn_05.vsnd"
+                              "value3"        "sounds/vo/skeleton_king/skel_arc_spawn_011.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+"UI.Pick_npc_dota_hero_skeleton_king_alt2"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/skeleton_king/skel_arc_spawn_01.vsnd"
+                              "value1"        "sounds/vo/skeleton_king/skel_arc_spawn_03.vsnd"
+                              "value2"        "sounds/vo/skeleton_king/skel_arc_spawn_05.vsnd"
+                              "value3"        "sounds/vo/skeleton_king/skel_arc_spawn_011.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_sand_king"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/sandking/skg_spawn_02.vsnd"
+                              "value1"        "sounds/vo/sandking/skg_spawn_04.vsnd"
+                              "value2"        "sounds/vo/sandking/skg_spawn_07.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_sand_king"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/sandking/skg_anger_01.vsnd"
+                              "value1"        "sounds/vo/sandking/skg_anger_04.vsnd"
+                              "value2"        "sounds/vo/sandking/skg_anger_06.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+"UI.Pick_npc_dota_hero_razor"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/razor/raz_spawn_01.vsnd"
+                              "value1"        "sounds/vo/razor/raz_spawn_06.vsnd"
+                              "value2"        "sounds/vo/razor/raz_spawn_03.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+"UI.Pick_npc_dota_hero_razor_alt1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/razor/rz_vsa_spawn_01.vsnd"
+                              "value1"        "sounds/vo/razor/rz_vsa_spawn_06.vsnd"
+                              "value2"        "sounds/vo/razor/rz_vsa_spawn_13.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Pick_npc_dota_hero_razor_alt2"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/razor/rz_vsa_spawn_01.vsnd"
+                              "value1"        "sounds/vo/razor/rz_vsa_spawn_06.vsnd"
+                              "value2"        "sounds/vo/razor/rz_vsa_spawn_13.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Ban_npc_dota_hero_razor"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/razor/raz_anger_04.vsnd"
+                              "value1"        "sounds/vo/razor/raz_anger_06.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_queenofpain"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/queenofpain/pain_spawn_04.vsnd"
+                              "value1"        "sounds/vo/queenofpain/pain_spawn_01.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Pick_npc_dota_hero_queenofpain_alt1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/queenofpain/qop_arc_spawn_01.vsnd"
+                              "value1"        "sounds/vo/queenofpain/qop_arc_spawn_04.vsnd"
+                              "value2"        "sounds/vo/queenofpain/qop_arc_spawn_17.vsnd"
+                              "value3"        "sounds/vo/queenofpain/qop_arc_spawn_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+"UI.Pick_npc_dota_hero_queenofpain_alt2"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/queenofpain/qop_arc_spawn_01.vsnd"
+                              "value1"        "sounds/vo/queenofpain/qop_arc_spawn_04.vsnd"
+                              "value2"        "sounds/vo/queenofpain/qop_arc_spawn_17.vsnd"
+                              "value3"        "sounds/vo/queenofpain/qop_arc_spawn_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Ban_npc_dota_hero_queenofpain"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/queenofpain/pain_anger_01.vsnd"
+                              "value1"        "sounds/vo/queenofpain/pain_anger_02.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_pudge"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/pudge/pud_spawn_01.vsnd"
+                              "value1"        "sounds/vo/pudge/pud_spawn_06.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_pudge_alt1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/pudge/pud_arc_spawn_01_01.vsnd"
+                              "value1"        "sounds/vo/pudge/pud_arc_spawn_06.vsnd"
+                              "value2"        "sounds/vo/pudge/pud_arc_spawn_17.vsnd"
+                              "value3"        "sounds/vo/pudge/pud_arc_spawn_02_02.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_pudge_alt2"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/pudge/pud_arc_spawn_01_01.vsnd"
+                              "value1"        "sounds/vo/pudge/pud_arc_spawn_06.vsnd"
+                              "value2"        "sounds/vo/pudge/pud_arc_spawn_17.vsnd"
+                              "value3"        "sounds/vo/pudge/pud_arc_spawn_02_02.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_pudge_persona1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/pudge/toy_pug_spawn_02.vsnd"
+                              "value1"        "sounds/vo/pudge/toy_pug_spawn_04.vsnd"
+                              "value2"        "sounds/vo/pudge/toy_pug_spawn_06.vsnd"
+                              "value3"        "sounds/vo/pudge/toy_pug_spawn_09.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+"UI.Ban_npc_dota_hero_pudge"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/pudge/pud_anger_05.vsnd"
+                              "value1"        "sounds/vo/pudge/pud_anger_01.vsnd"
+                              "value2"        "sounds/vo/pudge/pud_anger_02.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+"UI.Pick_npc_dota_hero_puck"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/puck/puck_spawn_01.vsnd"
+                              "value1"        "sounds/vo/puck/puck_spawn_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+"UI.Ban_npc_dota_hero_puck"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/puck/puck_anger_01.vsnd"
+                              "value1"        "sounds/vo/puck/puck_anger_02.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_primal_beast"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/primal_beast/primal_spawn_03.vsnd"
+                              "value1"        "sounds/vo/primal_beast/primal_spawn_04.vsnd"
+                              
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_primal_beast"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/primal_beast/primal_anger_01.vsnd"
+                              "value1"        "sounds/vo/primal_beast/primal_anger_03.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Pick_npc_dota_hero_phantom_assassin"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/phantom_assassin/phass_spawn_01.vsnd"
+                              "value1"        "sounds/vo/phantom_assassin/phass_spawn_04.vsnd"
+                              "value1"        "sounds/vo/phantom_assassin/phass_spawn_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Pick_npc_dota_hero_phantom_assassin_alt1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/phantom_assassin/phass_arc_spawn_01.vsnd"
+                              "value1"        "sounds/vo/phantom_assassin/phass_arc_spawn_04.vsnd"
+                              "value1"        "sounds/vo/phantom_assassin/phass_arc_spawn_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_phantom_assassin_persona1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/phantom_assassin/pa_asan_spawn_13.vsnd"
+                              "value1"        "sounds/vo/phantom_assassin/pa_asan_spawn_03.vsnd"
+                              "value1"        "sounds/vo/phantom_assassin/pa_asan_spawn_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_phantom_assassin"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/phantom_assassin/phass_anger_03.vsnd"
+                              "value1"        "sounds/vo/phantom_assassin/phass_anger_02.vsnd"
+                              "value2"        "sounds/vo/phantom_assassin/phass_anger_07.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+"UI.Ban_npc_dota_hero_pangolier"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/pangolin/pangolin_anger_02.vsnd"
+                              "value1"        "sounds/vo/pangolin/pangolin_anger_08.vsnd"
+                              "value2"        "sounds/vo/pangolin/pangolin_anger_15.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Pick_npc_dota_hero_pangolier"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/pangolin/pangolin_spawn_21.vsnd"
+                              "value1"        "sounds/vo/pangolin/pangolin_spawn_01.vsnd"
+                              "value2"        "sounds/vo/pangolin/pangolin_spawn_14.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.8000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+"UI.Pick_npc_dota_hero_ogre_magi"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/ogre_magi/ogmag_spawn_01.vsnd"
+                              "value1"        "sounds/vo/ogre_magi/ogmag_spawn_02.vsnd"
+                              
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_ogre_magi_alt1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/ogre_magi/ogm_arc_spawn_01.vsnd"
+                              "value1"        "sounds/vo/ogre_magi/ogm_arc_spawn_04.vsnd"
+                              "value2"        "sounds/vo/ogre_magi/ogm_arc_spawn_09_02.vsnd"
+                              
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Pick_npc_dota_hero_ogre_magi_alt2"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/ogre_magi/ogm_arc_spawn_01.vsnd"
+                              "value1"        "sounds/vo/ogre_magi/ogm_arc_spawn_04.vsnd"
+                              "value2"        "sounds/vo/ogre_magi/ogm_arc_spawn_09_02.vsnd"
+                              
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Ban_npc_dota_hero_ogre_magi"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/ogre_magi/ogmag_anger_01.vsnd"
+                              "value1"        "sounds/vo/ogre_magi/ogmag_anger_04.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Pick_npc_dota_hero_nevermore"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/nevermore/nev_spawn_11.vsnd"
+                              "value0"        "sounds/vo/nevermore/nev_spawn_01.vsnd"
+                              "value0"        "sounds/vo/nevermore/nev_spawn_03.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+"UI.Pick_npc_dota_hero_nevermore_alt1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/nevermore/nev_arc_spawn_01.vsnd"
+                              "value0"        "sounds/vo/nevermore/nev_arc_spawn_11.vsnd"
+                              "value0"        "ssounds/vo/nevermore/nev_arc_spawn_03.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Ban_npc_dota_hero_nevermore"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/nevermore/nev_anger_02.vsnd"
+                              "value1"        "sounds/vo/nevermore/nev_anger_04.vsnd"
+                              "value2"        "sounds/vo/nevermore/nev_anger_08.vsnds"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_muerta"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/muerta/muerta_spawn_01.vsnd"
+                              "value1"        "sounds/vo/muerta/muerta_spawn_03.vsnd"
+                              "value2"        "sounds/vo/muerta/muerta_spawn_16.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.8000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_muerta"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/muerta/muerta_anger_04.vsnd"
+                              "value1"        "sounds/vo/muerta/muerta_anger_08.vsnd"
+                              "value2"        "sounds/vo/muerta/muerta_anger_12.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Pick_npc_dota_hero_monkey_king"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/monkey_king/monkey_spawn_01.vsnd"
+                              "value1"        "sounds/vo/monkey_king/monkey_spawn_17.vsnd"
+                              "value2"        "sounds/vo/monkey_king/monkey_spawn_18.vsnd"
+                              "value3"        "sounds/vo/monkey_king/monkey_spawn_13.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Pick_npc_dota_hero_monkey_king_alt1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/monkey_king/monkey_crown_spawn_01.vsnd"
+                              "value1"        "sounds/vo/monkey_king/monkey_crown_spawn_17.vsnd"
+                              "value2"        "sounds/vo/monkey_king/monkey_crown_spawn_18.vsnd"
+                              "value3"        "sounds/vo/monkey_king/monkey_crown_spawn_08.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+"UI.Ban_npc_dota_hero_monkey_king"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/monkey_king/monkey_anger_08.vsnd"
+                              "value1"        "sounds/vo/monkey_king/monkey_anger_09.vsnd"
+                              "value1"        "sounds/vo/monkey_king/monkey_anger_15.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+"UI.Pick_npc_dota_hero_mars"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/mars/mars_spawn_01.vsnd"
+                              "value1"        "sounds/vo/mars/mars_spawn_10.vsnd"
+                              "value2"        "sounds/vo/mars/mars_spawn_05_03.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_mars"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/mars/mars_anger_01.vsnd"
+                              "value1"        "sounds/vo/mars/mars_anger_03.vsnd"
+                              "value1"        "sounds/vo/mars/mars_anger_06.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+"UI.Pick_npc_dota_hero_marci"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/marci/marci_immortality.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+"UI.Ban_npc_dota_hero_marci"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/marci/marci_sad.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Pick_npc_dota_hero_lina"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/lina/lina_spawn_01.vsnd"
+                              "value1"        "sounds/vo/lina/lina_spawn_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_lina_alt1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/lina/lina_spawn_01.vsnd"
+                              "value1"        "sounds/vo/lina/lina_spawn_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Ban_npc_dota_hero_lina"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/lina/lina_anger_01.vsnd"
+                              "value1"        "sounds/vo/lina/lina_anger_02.vsnd"
+                              "value2"        "sounds/vo/lina/lina_anger_04.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+"UI.Pick_npc_dota_hero_leshrac"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/leshrac/lesh_spawn_01.vsnd"
+                              "value1"        "sounds/vo/leshrac/lesh_spawn_03.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.8000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+"UI.Ban_npc_dota_hero_leshrac"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/leshrac/lesh_anger_01.vsnd"
+                              "value1"        "sounds/vo/leshrac/lesh_anger_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Pick_npc_dota_hero_legion_commander"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/legion_commander/legcom_spawn_01.vsnd"
+                              "value1"        "sounds/vo/legion_commander/legcom_spawn_02.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_legion_commander_alt1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/legion_commander/legcom_dem_econ_spawn_02.vsnd"
+                              "value1"        "sounds/vo/legion_commander/legcom_dem_spawn_01.vsnd"
+                              "value2"        "sounds/vo/legion_commander/legcom_dem_spawn_02.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_legion_commander"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/legion_commander/legcom_anger_01.vsnd"
+                              "value1"        "sounds/vo/legion_commander/legcom_anger_02.vsnd"
+                              "value2"        "sounds/vo/legion_commander/legcom_anger_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+"UI.Pick_npc_dota_hero_juggernaut"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/juggernaut/jug_spawn_03.vsnd"
+                              "value1"        "sounds/vo/juggernaut/jug_spawn_01.vsnd"
+
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_juggernaut_alt1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/juggernaut/jug_arc_spawn_02.vsnd"
+                              "value1"        "sounds/vo/juggernaut/jug_arc_spawn_04.vsnd"
+                              "value2"        "sounds/vo/juggernaut/jug_arc_spawn_07.vsnd"
+                              "value3"        "sounds/vo/juggernaut/jug_arc_spawn_09.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Pick_npc_dota_hero_juggernaut_alt2"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/juggernaut/jug_arc_spawn_02.vsnd"
+                              "value1"        "sounds/vo/juggernaut/jug_arc_spawn_04.vsnd"
+                              "value2"        "sounds/vo/juggernaut/jug_arc_spawn_07.vsnd"
+                              "value3"        "sounds/vo/juggernaut/jug_arc_spawn_09.vsnd"
+
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Ban_npc_dota_hero_juggernaut"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/juggernaut/jug_anger_01.vsnd"
+                              "value1"        "sounds/vo/juggernaut/jug_anger_03.vsnd"
+                              "value2"        "sounds/vo/juggernaut/jug_anger_04.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+"UI.Ban_npc_dota_hero_invoker"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/invoker/invo_anger_02.vsnd"
+                              "value1"        "sounds/vo/invoker/invo_anger_04.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Pick_npc_dota_hero_invoker"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/invoker/invo_spawn_02.vsnd"
+                              "value1"        "sounds/vo/invoker/invo_spawn_05.vsnd"
+                              "value2"        "sounds/vo/invoker/invo_spawn_01.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.8000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Pick_npc_dota_hero_invoker_persona1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/invoker/kidvoker_spawn_02.vsnd"
+                              "value0"        "sounds/vo/invoker/kidvoker_spawn_14.vsnd"
+                              "value0"        "sounds/vo/invoker/kidvoker_spawn_15_02.vsnd"
+                              "value0"        "sounds/vo/invoker/kidvo_la_spawn_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.8000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Pick_npc_dota_hero_huskar"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/huskar/husk_spawn_01.vsnd"
+                              "value1"        "sounds/vo/huskar/husk_spawn_02.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_huskar"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/huskar/husk_anger_02.vsnd"
+                              "value1"        "sounds/vo/huskar/husk_anger_03.vsnd"
+                              "value2"        "sounds/vo/huskar/husk_anger_04.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Pick_npc_dota_hero_hoodwink"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/hoodwink/hoodwink_spawn_01_81.vsnd"
+                              "value1"        "sounds/vo/hoodwink/hoodwink_spawn_09.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Ban_npc_dota_hero_hoodwink"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/hoodwink/hoodwink_anger_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+"UI.Pick_npc_dota_hero_furion"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/furion/furi_spawn_01.vsnd"
+                              "value1"        "sounds/vo/furion/furi_spawn_02.vsnd"
+                              "value2"        "sounds/vo/furion/furi_spawn_03.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_furion"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/furion/furi_anger_01.vsnd"
+                              "value1"        "sounds/vo/furion/furi_anger_02.vsnd"
+                              "value2"        "sounds/vo/furion/furi_anger_03.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_enigma"
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                          "value0"        "sounds/vo/enigma/enig_spawn_01.vsnd"
+                          "value1"        "sounds/vo/enigma/enig_spawn_08.vsnd"
+                          "value2"        "sounds/vo/enigma/enig_spawn_06.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Ban_npc_dota_hero_enigma"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                          "value0"        "sounds/vo/enigma/enig_anger_01.vsnd"
+                          "value1"        "sounds/vo/enigma/enig_anger_04.vsnd"
+                          "value2"        "sounds/vo/enigma/enig_anger_06.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_ember_spirit"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/ember_spirit/embr_spawn_01.vsnd"
+                              "value1"        "sounds/vo/ember_spirit/embr_spawn_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_ember_spirit"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/ember_spirit/embr_anger_06.vsnd"
+                              "value1"        "sounds/vo/ember_spirit/embr_anger_02.vsnd"
+                              "value2"        "sounds/vo/ember_spirit/embr_anger_04.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Pick_npc_dota_hero_drow_ranger"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/drowranger/dro_spawn_03.vsnd"
+                              "value1"        "sounds/vo/drowranger/dro_spawn_06.vsnd"
+                              "value2"        "sounds/vo/drowranger/dro_spawn_01.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Pick_npc_dota_hero_drow_ranger_alt1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/drowranger/drow_arc_spawn_01.vsnd"
+                              "value1"        "sounds/vo/drowranger/drow_arc_spawn_14.vsnd"
+                              "value2"        "sounds/vo/drowranger/drow_arc_intro_05.vsnd"
+                              "value2"        "sounds/vo/drowranger/drow_arc_spawn_19.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+"UI.Pick_npc_dota_hero_drow_ranger_alt2"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/drowranger/drow_arc_spawn_01.vsnd"
+                              "value1"        "sounds/vo/drowranger/drow_arc_spawn_14.vsnd"
+                              "value2"        "sounds/vo/drowranger/drow_arc_intro_05.vsnd"
+                              "value2"        "sounds/vo/drowranger/drow_arc_spawn_19.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Ban_npc_dota_hero_drow_ranger"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/drowranger/dro_anger_01.vsnd"
+                              "value1"        "sounds/vo/drowranger/dro_anger_02.vsnd"
+                              "value2"        "sounds/vo/drowranger/dro_anger_03.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+"UI.Pick_npc_dota_hero_crystal_maiden"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/crystalmaiden/cm_spawn_01.vsnd"
+                              "value1"        "sounds/vo/crystalmaiden/cm_spawn_03.vsnd"
+                              "value1"        "sounds/vo/crystalmaiden/cm_spawn_02.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.8000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+"UI.Pick_npc_dota_hero_crystal_maiden_alt1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/crystalmaiden/cm_spawn_01.vsnd"
+                              "value1"        "sounds/vo/crystalmaiden/cm_spawn_03.vsnd"
+                              "value1"        "sounds/vo/crystalmaiden/cm_spawn_02.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.8000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+"UI.Pick_npc_dota_hero_crystal_maiden_persona1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/crystalmaiden/cm_wolf_spawn_09.vsnd"
+                              "value1"        "sounds/vo/crystalmaiden/cm_wolf_spawn_11.vsnd"
+                              "value1"        "sounds/vo/crystalmaiden/cm_wolf_spawn_01.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.8000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Ban_npc_dota_hero_crystal_maiden"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/crystalmaiden/cm_anger_12.vsnd"
+                              "value1"        "sounds/vo/crystalmaiden/cm_anger_09.vsnd"
+                              "value2"        "sounds/vo/crystalmaiden/cm_anger_14.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Pick_npc_dota_hero_centaur"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                          "value0"        "sounds/vo/centaur/cent_spawn_01.vsnd"
+                          "value1"        "sounds/vo/centaur/cent_spawn_02.vsnd"
+                          "value2"        "sounds/vo/centaur/cent_spawn_06.vsnd"
+                          "value3"        "sounds/vo/centaur/cent_spawn_07.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_centaur"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                          "value0"        "sounds/vo/centaur/cent_anger_03.vsnd"
+                          "value1"        "sounds/vo/centaur/cent_anger_13.vsnd"
+                          "value2"        "sounds/vo/centaur/cent_anger_07.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+"UI.Pick_npc_dota_hero_bristleback"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/bristleback/bristle_spawn_01.vsnd"
+                              "value0"        "sounds/vo/bristleback/bristle_spawn_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+"UI.Ban_npc_dota_hero_bristleback"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/bristleback/bristle_anger_02.vsnd"
+                              "value1"        "sounds/vo/bristleback/bristle_anger_03.vsnd"
+                              "value2"        "sounds/vo/bristleback/bristle_anger_09.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+"UI.Pick_npc_dota_hero_bloodseeker"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/bloodseeker/blod_spawn_01.vsnd"
+                              "value1"        "sounds/vo/bloodseeker/blod_spawn_07.vsnd"
+                              "value2"        "sounds/vo/bloodseeker/blod_spawn_03.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_bloodseeker"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/bloodseeker/blod_anger_01.vsnd"
+                              "value1"        "sounds/vo/bloodseeker/blod_anger_03.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+"UI.Ban_npc_dota_hero_bane"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                          "value0"        "sounds/vo/bane/bane_anger_01.vsnd"
+                          "value1"        "sounds/vo/bane/bane_anger_06.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Pick_npc_dota_hero_bane"
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                          "value0"        "sounds/vo/bane/bane_spawn_01.vsnd"
+                          "value1"        "sounds/vo/bane/bane_spawn_06.vsnd"
+                          "value2"        "sounds/vo/bane/bane_spawn_04.vsnd"
+                          "value3"        "sounds/vo/bane/bane_spawn_03.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Pick_npc_dota_hero_axe"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/axe/axe_spawn_01.vsnd"
+                              "value1"        "sounds/vo/axe/axe_spawn_04.vsnd"
+                              
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Pick_npc_dota_hero_axe_alt"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/axe/jung_axe_spawn_03.vsnd"
+                              "value1"        "sounds/vo/axe/jung_axe_spawn_04.vsnd"
+                              "value1"        "sounds/vo/axe/jung_axe_spawn_08.vsnd"
+                              
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+"UI.Ban_npc_dota_hero_axe"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/axe/axe_anger_01.vsnd"
+                              "value1"        "sounds/vo/axe/axe_anger_02.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Pick_npc_dota_hero_arc_warden"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/arc_warden/arcwar_spawn_01.vsnd"
+                              "value1"        "sounds/vo/arc_warden/arcwar_spawn_02.vsnd"
+                              "value2"        "sounds/vo/arc_warden/arcwar_spawn_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.8000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_arc_warden"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/arc_warden/arcwar_anger_01.vsnd"
+                              "value1"        "sounds/vo/arc_warden/arcwar_anger_02.vsnd"
+                              "value2"        "sounds/vo/arc_warden/arcwar_anger_03.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+"UI.Pick_npc_dota_hero_antimage"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/antimage/anti_spawn_01.vsnd"
+                              "value1"        "sounds/vo/antimage/anti_spawn_03.vsnd"
+                              
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+"UI.Pick_npc_dota_hero_antimage_persona1"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/antimage/amp_wei_spawn_03.vsnd"
+                              "value1"        "sounds/vo/antimage/amp_wei_spawn_10.vsnd"
+                              "value2"        "sounds/vo/antimage/amp_wei_spawn_01_02.vsnd"
+                              
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Ban_npc_dota_hero_antimage"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/antimage/anti_anger_01.vsnd"
+                              "value1"        "sounds/vo/antimage/anti_anger_04.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+"UI.Pick_npc_dota_hero_alchemist"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/alchemist/alch_spawn_01.vsnd"
+                              "value1"        "sounds/vo/alchemist/alch_spawn_05.vsnd"
+                              
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+"UI.Ban_npc_dota_hero_alchemist"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/alchemist/alch_anger_02.vsnd"
+                              "value1"        "sounds/vo/alchemist/alch_anger_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+"UI.Pick_npc_dota_hero_abaddon"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/abaddon/abad_spawn_01.vsnd"
+                              "value1"        "sounds/vo/abaddon/abad_spawn_02.vsnd"
+                              "value2"        "sounds/vo/abaddon/abad_spawn_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+"UI.Ban_npc_dota_hero_abaddon"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/abaddon/abad_anger_01.vsnd"
+                              "value1"        "sounds/vo/abaddon/abad_anger_03.vsnd"
+                              "value2"        "sounds/vo/abaddon/abad_anger_04.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+"UI.Pick_npc_dota_hero_morphling"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/morphling/mrph_spawn_01.vsnd"
+                              "value1"        "sounds/vo/morphling/mrph_spawn_05.vsnd"
+                              "value2"        "sounds/vo/morphling/mrph_spawn_06.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Ban_npc_dota_hero_morphling"
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/morphling/mrph_anger_02.vsnd"
+                              "value1"        "sounds/vo/morphling/mrph_anger_01.vsnd"
+                              "value2"        "sounds/vo/morphling/mrph_anger_05.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+"UI.Pick_npc_dota_hero_life_stealer"
+
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/life_stealer/lifest_spawn_01.vsnd"
+                              "value1"        "sounds/vo/life_stealer/lifest_spawn_02.vsnd"
+                              "value2"        "sounds/vo/life_stealer/lifest_spawn_03.vsnd"
+                              "value3"        "sounds/vo/life_stealer/lifest_spawn_04.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "2.0000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+
+
+"UI.Ban_npc_dota_hero_life_stealer"
+{
+    "operator_stacks"
+    {
+        "update_stack"
+        {
+            "reference_operator"
+            {
+                "operator"              "sos_reference_stack"
+                "reference_stack"       "dota_src1_3d"
+                "operator_variables"
+                {
+                    "vsnd_files"
+                    {
+                        "value"
+                        {
+                              "value0"        "sounds/vo/life_stealer/lifest_anger_04.vsnd"
+                              "value1"        "sounds/vo/life_stealer/lifest_anger_03.vsnd"
+                              "value2"        "sounds/vo/life_stealer/lifest_anger_02.vsnd"
+                        }
+                    }
+                    "volume"            {   "value"     "1.5000"  }
+                    "pitch_rand_min"    {   "value"     "-0.05000"  }
+                    "pitch_rand_max"    {   "value"     "0.050000"  }
+                    "pitch"             {   "value"     "1.000000"  }
+                    "soundlevel"        {   "value"     "100.00000" }
+                    "distance_max"      {   "value"     "1600.000"  }
+                    "event_type"        {   "value"     "1.000000"  }
+                }
+            }
+        }
+    }
+}
+}

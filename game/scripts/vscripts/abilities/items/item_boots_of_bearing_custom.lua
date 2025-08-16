@@ -5,6 +5,12 @@ LinkLuaModifier("modifier_item_boots_of_bearing_custom_aura", "abilities/items/i
 
 item_boots_of_bearing_custom = class({})
 
+function item_boots_of_bearing_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/items_fx/drum_of_endurance_buff.vpcf", context )
+end
+
+
 function item_boots_of_bearing_custom:GetIntrinsicModifierName()
 	return "modifier_item_boots_of_bearing_custom"
 end
@@ -31,7 +37,7 @@ function modifier_item_boots_of_bearing_custom:DeclareFunctions()
     local funcs = {
         MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
         MODIFIER_PROPERTY_STATS_INTELLECT_BONUS,
-        MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT, 
+        MODIFIER_PROPERTY_MOVESPEED_BONUS_UNIQUE, 
     }
 
     return funcs
@@ -54,12 +60,9 @@ end
 
 
 
-
-function modifier_item_boots_of_bearing_custom:GetModifierMoveSpeedBonus_Constant()
+function modifier_item_boots_of_bearing_custom:GetModifierMoveSpeedBonus_Special_Boots()
     if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_movement_speed") end
 end
-
-
 
 
 

@@ -1,14 +1,15 @@
-LinkLuaModifier("modifier_neutral_cast", "modifiers/modifier_neutral_cast", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_bird_tornado", "abilities/neutral_bird_tornado", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_bird_tornado_cd", "abilities/neutral_bird_tornado", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_tornado_kill", "abilities/neutral_bird_tornado", LUA_MODIFIER_MOTION_NONE)
-
+LinkLuaModifier("modifier_tornado_think", "abilities/neutral_bird_tornado", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_tornado_think_slow", "abilities/neutral_bird_tornado", LUA_MODIFIER_MOTION_NONE)
 
 
 
 neutral_bird_tornado = class({})
 
-function neutral_bird_tornado:GetIntrinsicModifierName() return "modifier_bird_tornado" end
+function neutral_bird_tornado:GetIntrinsicModifierName()
+if not self:GetCaster():IsCreep() then return end  
+return "modifier_bird_tornado" 
+end
 
 
 
@@ -21,112 +22,141 @@ function modifier_bird_tornado:IsPurgable() return false end
 function modifier_bird_tornado:IsHidden() return true end
 
 function modifier_bird_tornado:OnCreated(table)
-    if not IsServer() then
-        return
-    end
-	local ability = self:GetAbility()
-	if not IsValidEntity(ability) then return end
-    self.cd = self:GetAbility():GetSpecialValueFor("cd")
-    self.health = self:GetAbility():GetSpecialValueFor("health")
-    self.duration = self:GetAbility():GetSpecialValueFor("duration")
-    self.target = nil
-    self.timer = nil
-    self:StartIntervalThink(FrameTime())
+
+self.health = self:GetAbility():GetSpecialValueFor("health")
+self.duration = self:GetAbility():GetSpecialValueFor("duration")
+
 end
 
 
-function modifier_bird_tornado:OnIntervalThink()
-    if not IsServer() then return end
-
-	local parent = self:GetParent()
-	if not IsValidEntity(parent) then return end
-
-	if not self:GetParent():IsCreep() then 
-		self:Destroy()
-		return
-	end 
-
-    if parent:IsSilenced() or parent:IsStunned() or not parent:IsAlive() then
-        if self.timer ~= nil then
-            Timers:RemoveTimer(self.timer)
-            self.timer = nil
-            parent:FadeGesture(ACT_DOTA_CAST_ABILITY_1)
-            parent:RemoveModifierByName("modifier_neutral_cast")
-        end
-        return
-    end
-
-	self.target = parent:GetAttackTarget()
-
-	if parent:IsSilenced() or not IsValidEntity(self.target) then return end
-	if parent:HasModifier("modifier_bird_tornado_cd") then return end
-	if parent:HasModifier("modifier_neutral_cast") then return end
-	if self.target:IsMagicImmune() then return end
-	if parent:GetMana() < self:GetAbility():GetManaCost(1) then return end
-
-	parent:StartGestureWithPlaybackRate(ACT_DOTA_CAST_ABILITY_1, 1)
-	parent:AddNewModifier(parent, self:GetAbility(), "modifier_neutral_cast", {})
-
-
-	self.timer = Timers:CreateTimer(0.4, function()
-
-
-	--print(IsValidEntity(self.target), self.target:IsAlive())
-
-
-		if not IsValidEntity(parent) or not parent:IsAlive() then return end
-		parent:RemoveModifierByName("modifier_neutral_cast")
-
-	--	if not IsValidEntity(self.target) or not self.target:IsAlive() then return end
-		if parent:GetMana() < self:GetAbility():GetManaCost(1) then return end
-
-
-      	self:GetParent():CheckCastMods(self:GetAbility())
-
-
-		parent:EmitSound("n_creep_Wildkin.SummonTornado")
-		parent:AddNewModifier(parent, self:GetAbility(), "modifier_bird_tornado_cd", {
-			duration = self.cd
-		})
-		parent:SpendMana(self:GetAbility():GetManaCost(1), self:GetAbility())
-
-		local tornado = CreateUnitByName("npc_dota_enraged_wildkin_tornado", self:GetParent():GetAbsOrigin() + 100*self:GetParent():GetForwardVector(), true,
-			nil, nil, DOTA_TEAM_NEUTRALS)
-		tornado:SetOwner(parent)
-		tornado:AddNewModifier(parent, self:GetAbility(), "modifier_tornado_kill", {
-			duration = self.duration
-		})
-		local ab = tornado:FindAbilityByName("neutral_tornado_damage")
-		ab:SetLevel(1)
-
-		self.timer = nil
-		Timers:CreateTimer(0.7, function()
-			if not IsValidEntity(parent) or not parent:IsAlive() then return end
-			parent:SetForceAttackTarget(nil)
-		end)
-
-	end)
-end
-
-
-
-
-
-modifier_bird_tornado_cd = class({})
-
-function modifier_bird_tornado_cd:IsPurgable() return false end
-
-function modifier_bird_tornado_cd:IsHidden() return false end
-
-
-
-modifier_tornado_kill = class({})
-
-function modifier_tornado_kill:IsHidden() return true end
-function modifier_tornado_kill:IsPurgable() return false end
-function modifier_tornado_kill:IsDebuff() return true end
-
-function modifier_tornado_kill:OnDestroy()
+function modifier_bird_tornado:StartCast(target)
 if not IsServer() then return end
-    self:GetParent():Destroy()
+local array_target = nil
+
+if target then 
+  array_target = target:entindex()
+end
+
+self:GetParent():AddNewModifier(self.parent, self:GetAbility(), "modifier_neutral_cast", {target = array_target, duration = 0.4, anim = ACT_DOTA_CAST_ABILITY_1, parent_mod = self:GetName()})
+end
+
+
+
+function modifier_bird_tornado:EndCast()
+if not IsServer() then return end
+
+local parent = self:GetParent()
+
+parent:EmitSound("n_creep_Wildkin.SummonTornado")
+
+local tornado = CreateUnitByName("npc_dota_enraged_wildkin_tornado", self:GetParent():GetAbsOrigin() + 250*self:GetParent():GetForwardVector(), true, nil, nil, DOTA_TEAM_NEUTRALS)
+tornado:SetOwner(parent)
+tornado:AddNewModifier(tornado, self:GetAbility(), "modifier_kill", {duration = self.duration})
+tornado:AddNewModifier(tornado, self:GetAbility(), "modifier_tornado_think", {})
+
+end
+
+
+
+
+
+modifier_tornado_think = class({})
+
+function modifier_tornado_think:IsPurgable() return false end
+function modifier_tornado_think:IsHidden() return true end
+
+
+function modifier_tornado_think:CheckState()
+return
+{
+	[MODIFIER_STATE_STUNNED] = true,
+	[MODIFIER_STATE_NO_UNIT_COLLISION] = true
+}
+end
+
+function modifier_tornado_think:DeclareFunctions() 
+return 
+{
+	MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_MAGICAL,
+	MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PHYSICAL,
+	MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PURE,
+} 
+end
+
+function modifier_tornado_think:GetAbsoluteNoDamageMagical() return 1 end
+function modifier_tornado_think:GetAbsoluteNoDamagePhysical() return 1 end
+function modifier_tornado_think:GetAbsoluteNoDamagePure() return 1 end
+
+function modifier_tornado_think:AttackEvent_inc( param )
+if not IsServer() then return end
+if self:GetParent() ~= param.target then return end
+
+self.health = self.health - 1
+
+if self.health <= 0 then
+	self:GetParent():Kill(nil, param.attacker)
+else 
+	self:GetParent():SetHealth(self.health)
+end
+
+end
+
+
+function modifier_tornado_think:OnCreated(table)
+if not IsServer() then return end
+self.parent = self:GetParent()
+self.parent:AddAttackEvent_inc(self, true)
+
+self.damage = self:GetAbility():GetSpecialValueFor("damage")
+self.health = self:GetAbility():GetSpecialValueFor("health")
+self.aoe = self:GetAbility():GetSpecialValueFor("aoe")
+self.illusion = self:GetAbility():GetSpecialValueFor("illusion")
+
+self.interval = 0.2
+
+self.effect = ParticleManager:CreateParticle( "particles/creatures/enraged_wildkin/enraged_wildkin_tornado.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+self:AddParticle(self.effect,false, false, -1, false, false)
+
+self:StartIntervalThink(self.interval)
+end
+
+function modifier_tornado_think:OnIntervalThink()
+if not IsServer() then return end
+
+for _,target in pairs(self:GetParent():FindTargets(self.aoe)) do
+  
+	local damage = self.damage
+	if target:IsIllusion() then 
+	    damage = target:GetMaxHealth()*self.illusion/100
+	end
+	DoDamage({victim = target, attacker = self:GetParent(), damage = damage*self.interval, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility()})
+
+	target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_tornado_think_slow", {duration = 0.5})
+end 
+
+end
+
+
+
+
+
+modifier_tornado_think_slow = class({})
+function modifier_tornado_think_slow:IsHidden() return false  end
+function modifier_tornado_think_slow:GetTexture() return "enraged_wildkin_tornado" end
+function modifier_tornado_think_slow:IsPurgable() return true end
+
+function modifier_tornado_think_slow:OnCreated(table)
+self.slow = self:GetAbility():GetSpecialValueFor("slow")
+end
+
+function modifier_tornado_think_slow:DeclareFunctions()
+return 
+{
+   MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+}
+end
+
+
+function modifier_tornado_think_slow:GetModifierAttackSpeedBonus_Constant() 
+return self.slow
 end

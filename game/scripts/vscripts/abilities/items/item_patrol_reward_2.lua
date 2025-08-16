@@ -20,8 +20,10 @@ function item_patrol_reward_2:OnSpellStart()
 if not IsServer() then return end
 
 
+self.parent = self:GetParent()
 
-upgrade:init_upgrade(self:GetCaster(),12,nil,after_legen)
-self:SpendCharge()
+upgrade:init_upgrade(self.parent, nil, nil, after_legen, nil, nil, "patrol_2")
+
+self:SpendCharge(0)
 
 end

@@ -1,0 +1,576 @@
+
+"DOTAAbilities"
+{
+
+"Version"		"1"
+
+
+
+
+
+
+"marci_grapple_custom"
+{
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/marci/marci_grapple_custom"	
+	"AbilityTextureName"			"marci_grapple"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_AOE"
+	"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+	"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+	"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	"SpellDispellableType"			"SPELL_DISPELLABLE_YES_STRONG"
+	"FightRecapLevel"				"1"
+	"AbilitySound"					"Hero_Marci.Grapple.Cast"
+	"LinkedAbility"					"marci_dispose_hits"
+	"HasShardUpgrade"				"1"
+
+	// Casting
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCastPoint"				"0.2"
+	"AbilityCastRange"				"175"
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_5"
+
+	// Time
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"16 14 12 10"
+
+	// Cost
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityManaCost"				"80"
+	
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"landing_radius"	"300"
+		"air_duration"		"0.5"
+		"air_height"		"150"
+		"pull_offset"		"75"
+		"throw_distance_behind"	"250"
+		"pull_angle"		"230"
+		"slow_duration"			"3"
+		"impact_damage"		"60 150 240 330"
+		"slow_move"			"20 30 40 50"
+		"shard_damage"		"-40"
+		"shard_duration"	"3"
+	}
+}
+
+
+"marci_unleash_custom"
+{
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/marci/marci_unleash_custom"	
+	"AbilityTextureName"			"marci_unleash"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+	"AbilityType"					"ABILITY_TYPE_ULTIMATE"
+	"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"	
+	"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
+	"FightRecapLevel"				"2"
+	"AbilitySound"					"Hero_Marci.Unleash.Cast"
+	"HasScepterUpgrade"				"1"
+	"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_4"
+
+	// Casting
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCastPoint"				"0.2"
+
+	// Time		
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"28"
+
+	// Cost
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityManaCost"				"100 125 150"
+
+
+	"AbilityValues"
+	{
+		"duration"				"12"
+		"charges_per_flurry"	"5"
+		"flurry_bonus_attack_speed"	"700 975 1325"
+		"time_between_flurries"	"1.5"
+		"pulse_radius"			"800"
+		"pulse_debuff_duration"	"2.0"
+		"pulse_damage"			"50 100 150"
+		"pulse_move_slow_pct"	"30.0"
+		"pulse_attack_slow_pct"	"60.0 80.0 100.0"
+		"max_time_window_per_hit"	"1.0"
+		"bonus_movespeed"		"15"
+		"recovery_fixed_attack_rate"	"2.0"
+		"shard_push_length"		"300"
+		"damage_reduction"		"-30"
+		"scepter_silence"		"2"
+		"scepter_count"			"3"
+	}
+}
+
+"marci_companion_run_custom"
+{
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/marci/marci_companion_run_custom"	
+	"AbilityTextureName"			"marci_companion_run"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_VECTOR_TARGETING | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_MOVEMENT | DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES"
+	"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_BOTH"
+	"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_CREEP"
+	"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
+	"FightRecapLevel"				"1"
+	"AbilitySound"					"Hero_Marci.Rebound.Cast"
+	"LinkedAbility"					"marci_rebound_bounce_legendary"
+
+	// Casting
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCastPoint"				"0.1"
+	"AbilityCastRange"				"450 550 650 750"
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_2"
+
+	// Time
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"15 14 13 12"
+
+	// Cost
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityManaCost"				"70 80 90 100"
+
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"move_speed"			"1700"
+		"min_jump_distance"		"0"
+		"max_jump_distance"		"450 550 650 750"
+		"landing_radius"		"275"
+		"impact_damage"			"75 150 225 300"
+		"stun_duration"			"0.8 1.1 1.4 1.7"
+		"min_lob_travel_time"	"0.1"
+		"max_lob_travel_time"	"0.2"
+		"min_height_above_lowest"	"250.0"
+		"min_height_above_highest"	"200.0"
+		"min_acceleration"		"6000.0"
+		"max_acceleration"		"6000.0"
+		"vector_preview_radius"	"100"
+		"ally_buff_duration"	"5.0"
+		"ally_movespeed_pct"	"35.0"
+		"impact_position_offset"	"64"
+		
+	}
+}
+
+
+
+
+"marci_rebound_bounce_legendary"
+{
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/marci/marci_companion_run_custom"	
+	"AbilityTextureName"			"marci_companion_run"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_AOE|  DOTA_ABILITY_BEHAVIOR_IMMEDIATE  | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_HIDDEN"
+
+	"FightRecapLevel"				"1"
+	"MaxLevel"						"1"
+	"AbilityCastRange"				"700"
+
+
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"radius"				"325"
+		"range"					"850"
+	}
+}
+
+
+
+
+
+"marci_guardian_custom"
+{
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/marci/marci_guardian_custom"	
+	"AbilityTextureName"			"marci_guardian"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+	"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
+	"FightRecapLevel"				"1"
+	"AbilitySound"					"Hero_Marci.Guardian.Applied"
+	"LinkedAbility"					"marci_summon_mirana"
+
+	// Casting
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCastPoint"				"0.0"
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_3"
+	"AbilityCastGestureSlot"		"DEFAULT"
+
+	// Time		
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"12 10 8 6"
+
+	// Cost
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityManaCost"				"45 40 35 30"
+
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"buff_duration"				"7"
+		"lifesteal_pct"				"30 35 40 45"
+		"bonus_damage"				"15 20 25 30"
+		"cleave_damage"				"40"
+	}
+}
+
+
+
+
+
+
+
+"marci_summon_dragon_knight"
+{
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/marci/marci_summon"	
+	"AbilityTextureName"			"dragon_knight_dragon_blood"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+
+	"MaxLevel"				"1"
+	"AbilityManaCost"		"0"
+	"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
+
+	"AbilityCooldown"		"1"
+
+	"AbilityValues"
+	{
+		"stats_damage"								"2.8"
+		"stats_health"								"210"
+		"stats_speed"								"5"
+		"stats_status"								"40"
+		"stats_bva"									"1.4"
+		"armor"										"70"
+	}
+}	
+
+
+
+"marci_summon_mirana"
+{
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/marci/marci_summon"	
+	"AbilityTextureName"			"marci_mirana"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+
+	"MaxLevel"				"1"
+	"AbilityManaCost"		"0"
+	"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
+	"LinkedAbility"			"marci_summon_luna"
+
+	"AbilityCooldown"		"1"
+
+	"AbilityValues"
+	{
+		"stats_damage"								"3.2"
+		"stats_health"								"160"
+		"stats_speed"								"8"
+		"stats_status"								"40"
+		"stats_bva"									"1.4"
+		"armor"										"70"
+	}
+}	
+
+
+
+"marci_summon_luna"
+{
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/marci/marci_summon"	
+	"AbilityTextureName"			"marci_luna"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+
+	"MaxLevel"				"1"
+	"AbilityManaCost"		"0"
+	"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
+	"LinkedAbility"			"marci_summon_dragon_knight"
+
+	"AbilityCooldown"		"1"
+
+	"AbilityValues"
+	{
+		"stats_damage"								"2.8"
+		"stats_health"								"135"
+		"stats_speed"								"12"
+		"stats_status"								"40"
+		"stats_bva"									"1.4"
+		"armor"										"70"
+	}
+}	
+
+
+
+
+"marci_summon_luna_aura"
+{
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/marci/marci_summon"	
+	"AbilityTextureName"			"luna_lunar_blessing"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_AURA"
+
+	"MaxLevel"				"1"
+
+
+	"AbilityValues"
+	{
+		"aura_radius"								"700"
+		"aura_speed"								"20"
+	}
+}	
+
+
+
+
+"marci_summon_luna_glaive"
+{
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/marci/marci_summon"	
+	"AbilityTextureName"			"luna_moon_glaive"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+	"MaxLevel"				"1"
+
+
+	"AbilityValues"
+	{
+		"damage"								"80"
+		"targets"								"2"
+		"radius"								"250"
+	}
+}	
+
+
+
+
+
+"marci_summon_dragon_knight_blood"
+{
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/marci/marci_summon"	
+	"AbilityTextureName"			"dragon_knight_dragon_blood"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+	"MaxLevel"				"1"
+
+	"AbilityValues"
+	{
+		"reduction"								"-25"
+		"duration"								"5"
+	}
+}	
+
+
+
+"marci_summon_mirana_starfall"
+{
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/marci/marci_summon"	
+	"AbilityTextureName"			"mirana_starfall"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+	"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+
+	"MaxLevel"				"1"
+
+	"AbilityValues"
+	{
+		"cdr"								"15"
+		"chance"							"40"
+		"damage"							"50"
+		"radius"							"700"
+	}
+}	
+
+
+
+
+
+"marci_summon_dragon_knight_dispell"
+{
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/marci/marci_summon"	
+	"AbilityTextureName"			"Marci_dragon_knight_dispell"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET"		
+	"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
+	"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
+
+	"MaxLevel"				"1"
+	"AbilityCooldown"				"12"
+	"AbilityCastRange"				"350"
+	"AbilityCastPoint"				"0.1"
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_2"
+
+
+	"AbilityValues"
+	{
+		"heal"								"25"
+	}
+}	
+
+
+
+"marci_summon_mirana_arrow"
+{
+	//-------------------------------------------------------------------------------------------------------------
+	"BaseClass"						"ability_lua"
+	"ScriptFile"					"abilities/marci/marci_summon"
+	"AbilityTextureName"			"mirana_arrow"
+	"FightRecapLevel"				"1"
+	"MaxLevel"						"1"
+
+	
+	// Ability General
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityType"					"DOTA_ABILITY_TYPE_BASIC"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_DIRECTIONAL | DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING"
+	"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+	"SpellDispellableType"			"SPELL_DISPELLABLE_YES_STRONG"
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+
+	// Ability Casting
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCastRange"				"3000"
+	"AbilityCastPoint"				"0.2"
+
+	// Ability Resource
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"10.0"
+
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"arrow_speed"		"857.0"
+		"arrow_width"		"115"
+		"arrow_range"		"3000"
+		"arrow_max_stunrange"	"2000"
+		"arrow_min_stun"	"1.5"
+		"arrow_max_stun"	"4.0"
+		"arrow_vision"		"500"
+		"damage"			"150"
+		
+	}
+}
+
+
+
+
+
+
+
+
+
+
+"marci_dispose_hits"
+{
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/marci/marci_grapple_custom"	
+	"AbilityTextureName"			"dispose_hits"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_CHANNELLED | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"	
+	"LinkedAbility"						"marci_dispose_jump"
+	"AbilityCastRange"					"600"
+
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"1"
+	"AbilityManaCost"				"30"
+
+	"AbilityValues"
+	{
+		"duration"				    	"1.8"
+		"distance"				    	"600"
+		"width"				    		"200"
+		"slow"				    		"-100"
+		"slow_attack"				    "-200"
+		"slow_duration"				    "1"
+		"attacks"						"10"
+	}
+}	
+
+
+
+"marci_dispose_jump"
+{
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/marci/marci_grapple_custom"	
+	"AbilityTextureName"			"dispose_jump"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_AOE | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"	
+	"LinkedAbility"						"marci_dispose_knockback"
+
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"1"
+	"AbilityManaCost"				"30"
+	"AbilityValues"
+	{
+		"distance"				    	"500"
+		"duration_jump"				    "0.3"
+		"radius"				    	"250"
+		"attacks"						"1"
+	}
+}	
+
+
+
+
+"marci_dispose_knockback"
+{
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/marci/marci_grapple_custom"	
+	"AbilityTextureName"			"dispose_knockback"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"	
+	"AbilityUnitTargetTeam"				"DOTA_UNIT_TARGET_TEAM_ENEMY"
+	"AbilityUnitTargetType"				"DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_HERO"
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"1"
+
+	"AbilityCastAnimation"				"ACT_DOTA_ATTACK"
+	"AbilityCastPoint"					"0.2"
+	"AbilityCastRange"				"300"
+	"AbilityManaCost"				"30"
+
+	"AbilityValues"
+	{
+		"distance"				    	"500"
+		"duration"				    	"0.25"
+		"stun"				    		"1.5"
+		"radius"				    	"300"
+		"attacks"						"1"
+	}
+}	
+
+
+
+
+
+"marci_innate_custom"
+{
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/marci/marci_innate_custom"  
+
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+    "MaxLevel"                      "1"
+    "Innate"                        "1"
+
+    "AbilityValues"
+    {
+        "level"       "6"
+    }
+}
+
+
+
+
+
+
+
+
+}

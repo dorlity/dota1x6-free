@@ -1,81 +1,7 @@
  
-
-my_game.heroes_particles = 
-{
-   -- "hero_juggernaut",
-  --  "hero_phantom_assassin",
- --   "hero_huskar",
-   -- "hero_nevermore",
- --   "hero_queenofpain",
-  --  "hero_terrorblade",
-   -- "hero_bristleback",
- --   "hero_puck",
---    "hero_legion_commander",
- --   "hero_void_spirit",
---    "hero_ember_spirit",
- --   "hero_pudge",
---    "hero_pudge_cute",
- --   "hero_hoodwink",
---    "hero_skeletonking",
---    "hero_lina",
---    "hero_troll_warlord",
---    "hero_axe",
- --   "hero_alchemist",
---    "hero_anti_mage",
---    "hero_ogre_magi",
- --   "hero_primal_beast",
- --   "hero_marci",
- --   "hero_templar_assassin",
- --   "hero_bloodseeker",
---    "hero_monkey_king",
---    "hero_mars",
---    "hero_zuus",
---    "hero_leshrac",
- --   "hero_crystalmaiden",
- --   "hero_snapfire",
- --   "hero_sven"
-
-}
-
-
-
-
-my_game.heroes_items_particles = 
-{
-  --  "juggernaut",
- --   "phantom_assassin",
- --   "huskar",
- --   "shadow_fiend",
- --   "queen_of_pain",
- --   "terrorblade",
- --   "bristleback",
-  --  "puck",
-    --"legion",
---    "void_spirit",
- --   "ember_spirit",
---    "pudge",
---    "wraith_king",
---    "lina",
---    "troll_warlord",
---    "axe",
- --   "alchemist",
-  --  "ogre_magi",
- --   "anti_mage",
---    "primal_beast",
---    "marci",
---    "templar_assassin",
---    "bloodseeker",
- --   "monkey_king",
---    "mars",
---    "zeus",
- --   "leshrac",
---    "crystal_maiden",
---    "snapfire",
- --   "sven"
-}
-
-
-
+if resources == nil then
+    _G.resources = class({})
+end
 
 local usefull = 
 {
@@ -89,20 +15,104 @@ local usefull =
 
 }
 
-
-
-
-
-my_game.Particles = 
+resources.Couriers =
 {
+"particles/units/heroes/hero_troll_warlord/troll_warlord_bersekers_net_projectile.vpcf",
+"models/courier/minipudge/minipudge.vmdl",
+"models/courier/donkey_trio/mesh/donkey_trio.vmdl",
+"models/items/courier/duskie/duskie.vmdl",
+"models/items/courier/snaggletooth_red_panda/snaggletooth_red_panda.vmdl",
+"models/items/courier/beaverknight_s2/beaverknight_s2.vmdl",
+"models/items/courier/shagbark/shagbark.vmdl",
+"models/courier/baby_rosh/babyroshan.vmdl",
+"models/items/courier/mighty_chicken/mighty_chicken.vmdl",
+"models/props_gameplay/donkey.vmdl",
+"models/items/courier/wabbit_the_mighty_courier_of_heroes/wabbit_the_mighty_courier_of_heroes.vmdl",
+"models/items/courier/shibe_dog_cat/shibe_dog_cat.vmdl",
+"models/items/courier/butch_pudge_dog/butch_pudge_dog.vmdl",
+"models/props_gameplay/donkey.vmdl",
+"models/items/courier/captain_bamboo/captain_bamboo.vmdl",
+"models/items/courier/el_gato_beyond_the_summit/el_gato_beyond_the_summit.vmdl",
+"models/items/courier/itsy/itsy.vmdl",
+"models/pets/icewrack_wolf/icewrack_wolf.vmdl",
+"models/pets/icewrack_wolf_alt/icewrack_wolf_alt.vmdl",
+"models/pets/armadillo/armadillo.vmdl",
+"models/props_gameplay/donkey_dire.vmdl",
+"models/items/courier/krobeling/krobeling_flying.vmdl",
+"models/courier/baby_rosh/babyroshan_ti9.vmdl",
+"models/courier/baby_rosh/babyroshan_winter18.vmdl",
+"models/courier/baby_rosh/babyroshan.vmdl",
+"models/courier/baby_rosh/babyroshan_elemental.vmdl",
+"models/courier/baby_rosh/babyroshan_elemental.vmdl",
+"models/courier/doom_demihero_courier/doom_demihero_courier.vmdl",
+"models/courier/baby_rosh/babyroshan.vmdl",
+"models/courier/baby_rosh/babyroshan_ti10_dire.vmdl",
+"models/items/courier/courier_ti10_radiant/courier_ti10_radiant_lvl4/courier_ti10_radiant_lvl4.vmdl",
+"models/items/courier/courier_ti10_radiant/courier_ti10_radiant_lvl2/courier_ti10_radiant_lvl2.vmdl",
+"models/items/courier/courier_ti10_radiant/courier_ti10_radiant_lvl3/courier_ti10_radiant_lvl3.vmdl",
+"models/items/courier/courier_ti10_radiant/courier_ti10_radiant_lvl5/courier_ti10_radiant_lvl5.vmdl",
+"models/items/courier/courier_ti10_radiant/courier_ti10_radiant_lvl6/courier_ti10_radiant_lvl6.vmdl",
+"models/items/courier/courier_ti10_radiant/courier_ti10_radiant_lvl7/courier_ti10_radiant_lvl7.vmdl",
+"models/courier/huntling/huntling.vmdl",
+"models/items/courier/hamster_courier/hamster_courier_lv1.vmdl",
+"models/courier/seekling/seekling.vmdl",
+"models/courier/venoling/venoling.vmdl",
+"models/items/courier/faceless_rex/faceless_rex.vmdl",
+"models/items/courier/courier_mvp_redkita/courier_mvp_redkita.vmdl",
+"models/items/courier/bearzky/bearzky.vmdl",
+"models/items/courier/coco_the_courageous/coco_the_courageous.vmdl",
+"models/items/courier/tinkbot/tinkbot.vmdl",
+"models/courier/navi_courier/navi_courier.vmdl",
+"models/courier/frog/frog.vmdl",
+"models/items/courier/waldi_the_faithful/waldi_the_faithful.vmdl",
+"models/courier/baby_winter_wyvern/baby_winter_wyvern.vmdl",
+"models/items/courier/amaterasu/amaterasu.vmdl",
+"models/courier/octopus/octopus.vmdl",
+"models/items/courier/hand_courier/hand_courier_radiant_lv6.vmdl",
+"models/items/courier/hand_courier/hand_courier_radiant_lv3.vmdl",
+"models/items/courier/hand_courier/hand_courier_radiant_lv5.vmdl",
+"models/items/courier/hand_courier/hand_courier_radiant_lv4.vmdl",
+"models/items/courier/hand_courier/hand_courier_radiant_lv7.vmdl",
+"models/items/courier/kanyu_shark/kanyu_shark.vmdl",
+}
 
+
+resources.Particles = 
+{
+"particles/neutral_fx/satyr_trickster_projectile.vpcf",
+"particles/neutral_fx/black_drake_attack.vpcf",
+"particles/neutral_fx/thunderlizard_base_attack.vpcf",
+"particles/neutral_fx/black_dragon_attack.vpcf",
+"particles/neutral_fx/gnoll_base_attack.vpcf",
+"particles/map/edge_portal_glow.vpcf",
+
+"particles/ui/purple_orb_point.vpcf",
+
+"particles/dragon_fireball.vpcf",
+"particles/patrol/reward_drop_head.vpcf",
+"particles/general/patrol_refresh.vpcf",
+"particles/patrol/razor_friendly_shield.vpcf",
+"particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf",
+"particles/radiant_fx2/radiant_building_damage_minor.vpcf",
+"particles/radiant_fx2/radiant_building_damage_major.vpcf",
+"particles/patrol/fortifier_stack.vpcf",
+"particles/patrol/fortifier_stack_tower.vpcf",
+"particles/patrol/fortifier_effect.vpcf",
+"particles/patrol/fortifier_effect_damage.vpcf",
+"particles/patrol/fortifier_slow.vpcf",
+"particles/generic_gameplay/illusion_killed.vpcf",
+"particles/general/illusion_created.vpcf",
+
+"particles/hero_capture_icon/hero_capture_icon.vpcf",
+"particles/hero_capture_icon/hero_capture_icon_ward.vpcf",
 "particles/items3_fx/blink_swift_buff.vpcf",
 "particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf",
 "particles/items2_fx/sange_maim.vpcf",
 "particles/generic_gameplay/generic_break.vpcf",
 "particles/items3_fx/silver_edge.vpcf",
-"particles/items3_fx/star_emblem.vpcf",
+"particles/general/generic_armor_reduction.vpcf",
 "particles/items3_fx/star_emblem_friend_shield.vpcf",
+"particles/general/generic_shield.vpcf",
 "particles/items4_fx/ascetic_cap.vpcf",
 "particles/lc_odd_charge_mark.vpcf",
 "particles/status_fx/status_effect_forcestaff.vpcf",
@@ -135,6 +145,15 @@ my_game.Particles =
 "particles/econ/events/ti5/teleport_end_lvl2_ti5.vpcf",
 "particles/econ/events/ti10/teleport/teleport_start_ti10_lvl1_rewardline.vpcf",
 "particles/econ/events/ti9/shovel_smoke_cloud.vpcf",
+"particles/units/heroes/hero_legion_commander/legion_commander_duel_victory.vpcf",
+"particles/units/heroes/hero_brewmaster/brewmaster_dispel_magic.vpcf",
+"particles/units/heroes/hero_alchemist/alchemist_lasthit_coins.vpcf",
+"particles/neutral_fx/neutral_item_drop.vpcf",
+"particles/neutral_fx/neutral_item_drop_lvl2.vpcf",
+"particles/neutral_fx/neutral_item_drop_lvl3.vpcf",
+"particles/neutral_fx/neutral_item_drop_lvl4.vpcf",
+"particles/neutral_fx/neutral_item_drop_lvl5.vpcf",
+"particles/units/heroes/hero_alchemist/alchemist_lasthit_msg_gold.vpcf",
 
 "particles/red_zone.vpcf",
 "particles/lina_timer.vpcf",
@@ -145,7 +164,7 @@ my_game.Particles =
 
 "particles/rare_orb_patrol.vpcf",
 "particles/cleance_blade.vpcf",
-"particles/spell_breaker.vpcf", 
+"particles/spell_breaker.vpcf",
 "particles/items2_fx/satanic_buff.vpcf",
 "particles/roshan_meteor_.vpcf",
 "particles/roshan_meteor_cast_.vpcf",
@@ -249,7 +268,109 @@ my_game.Particles =
 "particles/shrine/capture_point_ring_overthrow.vpcf",
 "particles/shrine/capture_point_ring_clock_overthrow.vpcf",
 "particles/econ/items/items_fx/lantern_of_sight_controlled.vpcf",
-"particles/shrine/haste_zone.vpcf"
+"particles/shrine/haste_zone.vpcf",
+"particles/neutral_fx/generic_creep_sleep.vpcf",
+"particles/econ/events/ti9/shovel_dig.vpcf",
+
+"particles/units/heroes/hero_lone_druid/lone_druid_bear_blink_end.vpcf",
+"particles/units/heroes/hero_lone_druid/lone_druid_bear_blink_start.vpcf",
+"particles/items2_fx/refresher.vpcf",
+"particles/portal_ring.vpcf",
+"particles/base_static/team_portal_active.vpcf",
+"particles/items2_fx/teleport_end.vpcf",
+"particles/econ/events/fall_2021/blink_dagger_fall_2021_end.vpcf",
+"particles/base_static/team_portal_pull.vpcf",
+"particles/items_fx/glyph.vpcf",
+"particles/items_fx/immunity_sphere.vpcf",
+"particles/units/heroes/hero_demonartist/demonartist_engulf_disarm/items2_fx/heavens_halberd.vpcf",
+"particles/items_fx/backdoor_protection.vpcf",
+"particles/items2_fx/vindicators_axe_armor.vpcf",
+"particles/huskar_timer.vpcf",
+"particles/jugg_damage.vpcf",
+"particles/units/heroes/hero_troll_warlord/troll_warlord_bersekers_net.vpcf",
+"particles/units/heroes/hero_pudge/pudge_fleshheap_block_shield_model.vpcf",
 
 
+"particles/econ/events/plus/high_five/high_five_impact.vpcf",
+"particles/econ/events/plus/high_five/high_five_lvl1_travel.vpcf",
+"particles/econ/events/plus/high_five/high_five_lvl1_overhead.vpcf",
+
+"particles/econ/events/diretide_2020/high_five/high_five_impact.vpcf",
+"particles/econ/events/diretide_2020/high_five/high_five_lvl1_travel.vpcf",
+"particles/econ/events/diretide_2020/high_five/high_five_lvl1_overhead.vpcf",
+
+"particles/econ/misc/high_five/aghanim_puppet_2021/high_five_agh_2021_impact.vpcf",
+"particles/econ/misc/high_five/aghanim_puppet_2021/high_five_agh_2021_travel.vpcf",
+"particles/econ/misc/high_five/aghanim_puppet_2021/high_five_agh_2021_overhead.vpcf",
+
+"particles/econ/events/fall_2022/high_five/high_five_fall2022_impact.vpcf",
+"particles/econ/events/fall_2022/high_five/high_five_fall2022_travel.vpcf",
+"particles/econ/events/fall_2022/high_five/high_five_fall_2022_overhead.vpcf",
+
+"particles/econ/events/fall_2022/high_five/high_five_foam_hand_impact.vpcf",
+"particles/econ/events/fall_2022/high_five/high_five_foam_hand_travel.vpcf",
+"particles/econ/events/fall_2022/high_five/high_five_foam_hand_overhead.vpcf",
+
+"particles/econ/events/frostivus_2023/high_five_mug_impact.vpcf",
+"particles/econ/events/frostivus_2023/high_five_mug_travel.vpcf",
+"particles/econ/events/frostivus_2023/high_five_mug_overhead.vpcf",
+
+"particles/econ/events/newbloom_2020/high_five_newbloom_impact.vpcf",
+"particles/econ/events/newbloom_2020/high_five_newbloom_travel.vpcf",
+"particles/econ/events/newbloom_2020/high_five_newbloom_overhead.vpcf",
+
+"particles/econ/events/plus/high_five/high_five_lvl2_impact.vpcf",
+"particles/econ/events/plus/high_five/high_five_lvl2_travel.vpcf",
+"particles/econ/events/plus/high_five/high_five_lvl2_overhead.vpcf",
+
+"particles/econ/events/spring_2021/high_five_spring_2021_impact.vpcf",
+"particles/econ/events/spring_2021/high_five_spring_2021_travel.vpcf",
+"particles/econ/events/spring_2021/high_five_spring_2021_overhead.vpcf",
+
+"particles/econ/events/spring_2021/high_five_spring_2021_impact.vpcf",
+"particles/econ/events/plus/high_five/high_five_lvl3_travel.vpcf",
+"particles/econ/events/plus/high_five/high_five_lvl3_overhead.vpcf",
+
+"particles/econ/events/newbloom_2020/high_five_newbloom_impact.vpcf",
+"particles/econ/events/ti9/high_five/high_five_lvl3_travel.vpcf",
+"particles/econ/events/ti9/high_five/high_five_lvl3_overhead.vpcf",
+
+"particles/econ/courier/courier_minipudge/courier_minipudge_lvl2_ambient.vpcf",
+"particles/econ/courier/courier_shibe/courier_shibe_ambient.vpcf",
+"particles/econ/courier/courier_butch/courier_butch_ambient.vpcf",
+"particles/econ/courier/courier_krobeling/courier_krobeling_ambient_hair.vpcf",
+"particles/econ/courier/courier_babyroshan_ti9/courier_babyroshan_ti9_ambient.vpcf",
+"particles/econ/courier/courier_babyroshan_winter18/courier_babyroshan_winter18_ambient.vpcf",
+"particles/econ/courier/courier_roshan_ti8/courier_roshan_ti8.vpcf",
+"particles/econ/courier/courier_roshan_frost/courier_roshan_frost_ambient.vpcf",
+"particles/econ/courier/courier_roshan_lava/courier_roshan_lava.vpcf",
+"particles/econ/courier/courier_doomling/courier_doomling_ambient.vpcf",
+"particles/econ/courier/courier_platinum_roshan/platinum_roshan_ambient.vpcf",
+"particles/econ/courier/courier_babyroshan_ti10/courier_babyroshan_ti10_dire_ambient.vpcf",
+"particles/econ/courier/courier_ti10/courier_ti10_lvl4_ambient.vpcf",
+"particles/econ/courier/courier_ti10/courier_ti10_lvl2_ambient.vpcf",
+"particles/econ/courier/courier_ti10/courier_ti10_lvl3_ambient.vpcf",
+"particles/econ/courier/courier_ti10/courier_ti10_lvl5_ambient.vpcf",
+"particles/econ/courier/courier_ti10/courier_ti10_lvl6_ambient.vpcf",
+"particles/econ/courier/courier_ti10/courier_ti10_lvl7_ambient.vpcf",
+"particles/econ/courier/courier_venoling/courier_venoling_ambient.vpcf",
+"particles/econ/courier/courier_wyvern_hatchling/courier_wyvern_hatchling_ice.vpcf",
+"particles/econ/courier/courier_amaterasu/courier_amaterasu_ambient.vpcf",
+"particles/econ/courier/courier_oculopus/courier_oculopus_ambient.vpcf",
+"particles/econ/courier/hand_courier/hand_courier_dire_lv6/hand_courier_dire_lv6_ambient.vpcf",
+"particles/econ/courier/hand_courier/hand_courier_dire_lv3/hand_courier_dire_lv3_ambient.vpcf",
+"particles/econ/courier/hand_courier/hand_courier_dire_lv5/hand_courier_dire_lv5_ambient.vpcf",
+"particles/econ/courier/hand_courier/hand_courier_dire_lv4/hand_courier_dire_lv4_ambient.vpcf",
+"particles/econ/courier/hand_courier/hand_courier_dire_lv7/hand_courier_dire_lv7_ambient.vpcf",
+"particles/econ/courier/courier_doomling/courier_doomling_ambient.vpcf",
+"particles/econ/courier/courier_faceless_rex/cour_rex_flying.vpcf",
+
+
+
+"particles/econ/events/ti9/ti9_emblem_effect.vpcf",
+"particles/econ/events/ti7/ti7_hero_effect.vpcf",
 }
+
+
+
+

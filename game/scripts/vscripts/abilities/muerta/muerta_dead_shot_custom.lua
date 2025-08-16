@@ -6,33 +6,20 @@ LinkLuaModifier("modifier_muerta_dead_shot_custom_legendary_target", "abilities/
 LinkLuaModifier("modifier_muerta_dead_shot_custom_damage_cd", "abilities/muerta/muerta_dead_shot_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_muerta_dead_shot_custom_second", "abilities/muerta/muerta_dead_shot_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_muerta_dead_shot_custom_speed", "abilities/muerta/muerta_dead_shot_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_muerta_dead_shot_custom_tracker", "abilities/muerta/muerta_dead_shot_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_muerta_dead_shot_custom_incoming", "abilities/muerta/muerta_dead_shot_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_muerta_dead_shot_custom_slow", "abilities/muerta/muerta_dead_shot_custom", LUA_MODIFIER_MOTION_NONE)
 
 
 
 
 muerta_dead_shot_custom = class({})
 
-muerta_dead_shot_custom.triple_angle = 20
-muerta_dead_shot_custom.triple_damage = 0.4
-muerta_dead_shot_custom.triple_count = 2
-muerta_dead_shot_custom.triple_range = 200
 
 
-muerta_dead_shot_custom.cd_inc = -1.5
-muerta_dead_shot_custom.cd_speed = 1.2
 
-muerta_dead_shot_custom.range_inc = {100, 150, 200}
-muerta_dead_shot_custom.fear_inc = {0.3, 0.45, 0.6}
-
-muerta_dead_shot_custom.proc_duration = 4
-
-muerta_dead_shot_custom.speed_duration = 4
-muerta_dead_shot_custom.speed_attack = {40, 60, 80}
-muerta_dead_shot_custom.speed_move = {10, 15, 20}
 
 muerta_dead_shot_custom.projs = {}
-
-
 
 function RotateVector2D(vector, theta)
     local xp = vector.x*math.cos(theta)-vector.y*math.sin(theta)
@@ -57,147 +44,160 @@ end
 
 
 
-function muerta_dead_shot_custom:Precache(context)
 
-    
+function muerta_dead_shot_custom:CreateTalent(name)
+
+local caster = self:GetCaster()
+
+if not caster:FindAbilityByName("muerta_dead_shot_custom_legendary") then return end
+caster:FindAbilityByName("muerta_dead_shot_custom_legendary"):SetHidden(false)
+end
+
+
+
+
+function muerta_dead_shot_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+
+PrecacheResource( "particle", "particles/units/heroes/hero_muerta/muerta_deadshot_tracking_proj.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_muerta/muerta_deadshot_creep_impact.vpcf", context )
+PrecacheResource( "particle", "particles/muerta/muerta_deadshot_linear.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_muerta/muerta_spell_fear_debuff.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_muerta/muerta_spell_fear_debuff_status.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_muerta/muerta_spell_fear_debuff.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_muerta/muerta_parting_shot_projectile.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_muerta/muerta_parting_shot_soul.vpcf", context )
+PrecacheResource( "particle", "particles/status_fx/status_effect_muerta_parting_shot.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_muerta/muerta_parting_shot_soul.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_muerta/muerta_parting_shot_tether.vpcf", context )
 PrecacheResource( "particle", "particles/muerta/dead_legendary_stun.vpcf", context )
 PrecacheResource( "particle", "particles/muerta/dead_refresh.vpcf", context )
 PrecacheResource( "particle", "particles/muerta/dead_proc_proj.vpcf", context )
 PrecacheResource( "particle", "particles/muerta/gun_evasion.vpcf", context )
+PrecacheResource( "particle", "particles/muerta/dead_shot_stack.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_muerta/muerta_spell_fear_debuff.vpcf", context )
 
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_muerta.vsndevts", context )
+dota1x6:PrecacheShopItems("npc_dota_hero_muerta", context)
 end
 
 
 
-
-function muerta_dead_shot_custom:GetCastRange(vLocation, hTarget)
-
-local upgrade = 0
-if self:GetCaster():HasModifier("modifier_muerta_dead_2") then 
-  upgrade = self.range_inc[self:GetCaster():GetUpgradeStack("modifier_muerta_dead_2")]
+function muerta_dead_shot_custom:GetIntrinsicModifierName()
+return "modifier_muerta_dead_shot_custom_tracker"
 end
 
-return self.BaseClass.GetCastRange(self , vLocation , hTarget) + upgrade 
-end
 
 
 function muerta_dead_shot_custom:GetAbilityTargetFlags()
-if self:GetCaster():HasModifier("modifier_muerta_dead_5") then 
+if self:GetCaster():HasTalent("modifier_muerta_dead_5") then 
     return DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES
 else 
     return DOTA_UNIT_TARGET_FLAG_NONE
 end
-
 end
 
 
 
 
 function muerta_dead_shot_custom:GetCooldown(level)
-    local bonus = 0
-    if self:GetCaster():HasModifier("modifier_muerta_dead_5") then
-        bonus = self.cd_inc
-    end
-    return self.BaseClass.GetCooldown( self, level ) + bonus
+local bonus = 0
+if self:GetCaster():HasTalent("modifier_muerta_dead_1") then
+    bonus = self:GetCaster():GetTalentValue("modifier_muerta_dead_1", "cd")
 end
+return self.BaseClass.GetCooldown( self, level ) + bonus
+end
+
 
 function muerta_dead_shot_custom:CastFilterResultTarget( hTarget )
-	if self:GetCaster() == hTarget then
-		return UF_FAIL_CUSTOM
-	end
-
-	local nResult = UnitFilter(
-		hTarget,
-		DOTA_UNIT_TARGET_TEAM_ENEMY,
-		DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_TREE,
-		DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES,
-		self:GetCaster():GetTeamNumber()
-	)
-
-	if nResult ~= UF_SUCCESS then
-		return nResult
-	end
-
-	self.targetcast = hTarget
-
-	return UF_SUCCESS
+if self:GetCaster() == hTarget then
+	return UF_FAIL_CUSTOM
 end
 
+local nResult = UnitFilter(
+	hTarget,
+	DOTA_UNIT_TARGET_TEAM_ENEMY,
+	DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_TREE,
+	DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES,
+	self:GetCaster():GetTeamNumber()
+)
 
+if nResult ~= UF_SUCCESS then
+	return nResult
+end
+
+self.targetcast = hTarget
+return UF_SUCCESS
+end
 
 function muerta_dead_shot_custom:OnAbilityPhaseInterrupted()
-
 self.targetcast = nil
-
 end
-
 
 
 function muerta_dead_shot_custom:OnVectorCastStart(vStartLocation, vDirection)
-	if not IsServer() then return end
+if not IsServer() then return end
+
+local caster = self:GetCaster()
+local point = self:GetVector2Position()
+
+local point_check = self:GetTargetPositionCheck()
+
+local target = self.targetcast
+
+if self.targetcast == nil then
+	target = self:GetCursorTarget()
+end
+
+if target == nil then return end
+
+if not target:IsBaseNPC() then
+	local dummy = CreateUnitByName("npc_dota_companion", target:GetAbsOrigin(), false, nil, nil, caster:GetTeamNumber())
+    dummy:AddNewModifier(caster, self, "modifier_muerta_dead_shot_custom_thinker", {})
+    dummy:SetAbsOrigin(dummy:GetAbsOrigin() + Vector(0,0,100))
+    dummy.tree = target
+    target = dummy
+    point_check = target:GetAbsOrigin()
+end
+
+local vel = point - point_check
+vel.z = 0
+vel = vel:Normalized()
+
+local speed = self:GetSpecialValueFor("speed") * (1 + caster:GetTalentValue("modifier_muerta_dead_5", "speed")/100)
+
+local info = 
+{
+    EffectName = "particles/units/heroes/hero_muerta/muerta_deadshot_tracking_proj.vpcf",
+    Ability = self,
+    iMoveSpeed = speed,
+    Source = caster,
+    Target = target,
+    iSourceAttachment = DOTA_PROJECTILE_ATTACHMENT_ATTACK_1,
+    ExtraData = { x = vel.x, y = vel.y, tracking = 1 }
+}
+
+if caster:HasTalent("modifier_muerta_dead_4") then 
+    caster:AddNewModifier(caster, self, "modifier_muerta_dead_shot_custom_second", {duration = caster:GetTalentValue("modifier_muerta_dead_4", "duration")})
+end
 
 
-
-	local point = self:GetVector2Position()
-
-	local point_check = self:GetTargetPositionCheck()
-
-	local target = self.targetcast
-
-	if self.targetcast == nil then
-		target = self:GetCursorTarget()
-	end
-
-	if target == nil then return end
-
-	if not target:IsBaseNPC() then
-		local dummy = CreateUnitByName("npc_dota_companion", target:GetAbsOrigin(), false, nil, nil, self:GetCaster():GetTeamNumber())
-        dummy:AddNewModifier(self:GetCaster(), self, "modifier_muerta_dead_shot_custom_thinker", {})
-        dummy.tree = target
-        target = dummy
-        point_check = target:GetAbsOrigin()
-	end
-
-	local vel = point - point_check
-	vel.z = 0
-	vel = vel:Normalized()
-
-    local speed = self:GetSpecialValueFor("speed")
-
-    if self:GetCaster():HasModifier("modifier_muerta_dead_5") then 
-        speed = speed*self.cd_speed
-    end
-
-    local info = 
-    {
-        EffectName = "particles/units/heroes/hero_muerta/muerta_deadshot_tracking_proj.vpcf",
-        Ability = self,
-        iMoveSpeed = speed,
-        Source = self:GetCaster(),
-        Target = target,
-        iSourceAttachment = DOTA_PROJECTILE_ATTACHMENT_ATTACK_1,
-        ExtraData = { x = vel.x, y = vel.y, tracking = 1 }
-    }
-
-    if self:GetCaster():HasModifier("modifier_muerta_dead_4") then 
-        self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_muerta_dead_shot_custom_second", {duration = self.proc_duration})
-    end
-
-
-    self:GetCaster():EmitSound("Hero_Muerta.DeadShot.Cast")
-
-    ProjectileManager:CreateTrackingProjectile( info )
-
-    self.targetcast = nil
+caster:EmitSound("Hero_Muerta.DeadShot.Cast")
+ProjectileManager:CreateTrackingProjectile( info )
+self.targetcast = nil
 end
 
 
 
-
-
-
-function muerta_dead_shot_custom:DealDamage(target, triple, damage_k)
+function muerta_dead_shot_custom:DealDamage(target, triple, damage_k, damage_ability)
 if not IsServer() then return end
+
+local ability = nil
+if damage_ability then 
+    ability = damage_ability
+end 
+
+local caster = self:GetCaster()
 
 target:EmitSound("Hero_Muerta.DeadShot.Damage")
 
@@ -205,46 +205,30 @@ local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_mue
 ParticleManager:SetParticleControlEnt( particle, 0, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetOrigin(), true )
 ParticleManager:ReleaseParticleIndex(particle)
 
-local damage = self:GetSpecialValueFor("damage")
-
-if self:GetCaster():HasModifier("modifier_muerta_dead_1") then 
-    damage = damage + self:GetCaster():GetTalentValue("modifier_muerta_dead_1", "damage")*self:GetCaster():GetIntellect()/100
-end
-
---if target:HasModifier("modifier_muerta_dead_shot_custom_damage_cd") and triple then 
-    --damage = damage*self.triple_damage
-   -- SendOverheadEventMessage(target, 6, target, damage, nil)
---end
+local damage = self:GetSpecialValueFor("damage") + caster:GetTalentValue("modifier_muerta_dead_1", "damage")*caster:GetIntellect(false)/100
 
 if damage_k then 
     damage = damage*damage_k
 end
 
-ApplyDamage({ victim = target, attacker = self:GetCaster(), ability = self, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL })
+if target:IsCreep() then 
+    damage = damage*(1 + self:GetSpecialValueFor("creeps_damage")/100)
+end 
 
---target:AddNewModifier(self:GetCaster(), self, "modifier_muerta_dead_shot_custom_damage_cd", {duration = 0.3})
+target:AddNewModifier(caster, self, "modifier_muerta_dead_shot_custom_damage_cd", {duration = 0.3})
 
+DoDamage({ victim = target, attacker = caster, ability = self, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL }, ability)
 end
-
-
-
-
-
 
 
 
 function muerta_dead_shot_custom:RicochetShot(x, y, target, damage_k)
 if not IsServer() then return end
 
+local caster = self:GetCaster()
 local vel = Vector(x, y, 0)
-
-local effect = "particles/units/heroes/hero_muerta/muerta_deadshot_linear.vpcf"
-
+local effect = "particles/muerta/muerta_deadshot_linear.vpcf"
 local speed = self:GetSpecialValueFor("speed")
-
-if self:GetCaster():HasModifier("modifier_muerta_dead_5") then 
-    speed = speed*self.cd_speed
-end
 
 local damage = 1
 
@@ -257,19 +241,14 @@ else
     self.projs[proj_number] = false
 end
 
-local bonus = 0
-if self:GetCaster():HasModifier("modifier_muerta_dead_6") then 
-    bonus = self.triple_range
-end
-
 local info = 
 {
     ExtraData = {proj_number = proj_number, x = vel.x, y = vel.y, tracking = 0, source = target:entindex(), source_x = target:GetAbsOrigin().x, source_y = target:GetAbsOrigin().y, damage_k = damage },
-    Source = self:GetCaster(),
+    Source = caster,
     Ability = self,
     EffectName = effect,
     vSpawnOrigin = target:GetAbsOrigin(),
-    fDistance = self:GetSpecialValueFor("range") + bonus,
+    fDistance = self:GetSpecialValueFor("range"),
     vVelocity = vel * speed,
     fStartRadius = self:GetSpecialValueFor("ricochet_radius_start"),
     fEndRadius = self:GetSpecialValueFor("ricochet_radius_end"),
@@ -277,118 +256,123 @@ local info =
     iUnitTargetType = DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,
     bProvidesVision = true,
     iVisionRadius = 115,
-    iVisionTeamNumber = self:GetCaster():GetTeamNumber(),
+    iVisionTeamNumber = caster:GetTeamNumber(),
     fExpireTime         = GameRules:GetGameTime() + 5.0,
     bDeleteOnHit        = false,
 }
 
-
 ProjectileManager:CreateLinearProjectile( info )
-
 end
 
 
 
 
 function muerta_dead_shot_custom:OnProjectileHit_ExtraData( target, location, data )
-    if not IsServer() then return end
+if not IsServer() then return end
 
-    if target and data.tracking == 1 then
+local caster = self:GetCaster()
 
-        if target:TriggerSpellAbsorb(self) then return end
+if target and data.tracking == 1 then
 
-        target:AddNewModifier(self:GetCaster(), self:GetCaster():BkbAbility(self, self:GetCaster():HasModifier("modifier_muerta_dead_5")), "modifier_muerta_dead_shot_custom_debuff", {duration = self:GetSpecialValueFor("impact_slow_duration") * (1-target:GetStatusResistance())})
+    if target:TriggerSpellAbsorb(self) then return end
 
-        self:DealDamage(target)
+    target:AddNewModifier(caster, caster:BkbAbility(self, caster:HasTalent("modifier_muerta_dead_5")), "modifier_muerta_dead_shot_custom_debuff", {duration = self:GetSpecialValueFor("impact_slow_duration") * (1-target:GetStatusResistance())})
 
-        target:EmitSound("Hero_Muerta.DeadShot.Ricochet")
-        target:EmitSound("Hero_Muerta.DeadShot.Slow")
+    self:DealDamage(target)
 
-        self:RicochetShot(data.x, data.y, target)
+    target:EmitSound("Hero_Muerta.DeadShot.Ricochet")
+    target:EmitSound("Hero_Muerta.DeadShot.Slow")
 
-        if self:GetCaster():HasModifier("modifier_muerta_dead_6") then 
+    self:RicochetShot(data.x, data.y, target)
 
-            for i = 1, self.triple_count do
-                local newAngle = self.triple_angle * math.ceil(i / 2) * (-1)^i
-                local newDir = RotateVector2D( Vector(data.x, data.y, 0), ToRadians( newAngle ) )
-                
-                self:RicochetShot(newDir.x, newDir.y, target, self.triple_damage)
-            end
+    if caster:HasTalent("modifier_muerta_dead_5") then 
+        local angle = caster:GetTalentValue("modifier_muerta_dead_5", "angle")
 
+        for i = 1, caster:GetTalentValue("modifier_muerta_dead_5", "count") - 1 do
+            local newAngle = angle * math.ceil(i / 2) * (-1)^i
+            local newDir = RotateVector2D( Vector(data.x, data.y, 0), ToRadians( newAngle ) )
+            
+            self:RicochetShot(newDir.x, newDir.y, target)
         end
 
-        if target:GetUnitName() == "npc_dota_companion" then
-            target:RemoveModifierByName("modifier_muerta_dead_shot_custom_thinker")
-        	target:ForceKill(false)
-        end
     end
 
-
-
-    if target and data.tracking == 0 and target:entindex() ~= data.source and not target:HasModifier("modifier_muerta_dead_shot_custom_legendary") then
-    	target:EmitSound("Hero_Muerta.DeadShot.Fear")
-    	target:EmitSound("Hero_Muerta.DeadShot.Impact")
-    	target:EmitSound("Hero_Muerta.DeadShot.Ricochet.Impact")
-    	target:EmitSound("Hero_Muerta.Impact")
-
-    	if data.proj_number ~= nil and self.projs[data.proj_number] == false then 
-
-            local ult = self:GetCaster():FindAbilityByName("muerta_pierce_the_veil_custom")
-            if ult and ult:GetLevel() > 0 and self:GetCaster():HasModifier("modifier_muerta_veil_7") then 
-              --  ult:LegendaryProc(1)
-            end
-
-            self.projs[data.proj_number] = true
-        end
-
-
-        local new_x = target:GetAbsOrigin() + target:GetForwardVector()
-        
-        local new_y = new_x.y
-        new_x = new_x.x
-
-        if data.source_x then 
-            new_x = data.source_x
-        end
-        if data.source_y then 
-            new_y = data.source_y
-        end
-
-        local duration = self:GetSpecialValueFor("ricochet_fear_duration")
-
-        if self:GetCaster():HasModifier("modifier_muerta_dead_2") then 
-            duration = duration + self.fear_inc[self:GetCaster():GetUpgradeStack("modifier_muerta_dead_2")]
-        end
-
-        target:AddNewModifier(self:GetCaster(),  self:GetCaster():BkbAbility(self, self:GetCaster():HasModifier("modifier_muerta_dead_5")), "modifier_muerta_dead_shot_custom_fear", {duration = duration * (1-target:GetStatusResistance()), x = new_x, y = new_y})
-
-        local damage_k = 1 
-        if data.damage_k then 
-            damage_k = data.damage_k
-        end
-
-        if self:GetCaster():HasModifier("modifier_muerta_dead_3") then 
-            self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_muerta_dead_shot_custom_speed", {duration = self.speed_duration})
-        end
-
-        self:DealDamage(target, true, damage_k)
-
-        if target:IsHero() then 
-
-            if self:GetCaster():GetQuest() == "Muerta.Quest_5" and target:IsRealHero() then 
-                self:GetCaster():UpdateQuest(1)
-            end
-
-            return true
-        end
+    if target:GetUnitName() == "npc_dota_companion" then
+        target:RemoveModifierByName("modifier_muerta_dead_shot_custom_thinker")
+    	target:ForceKill(false)
     end
 end
 
+
+
+if target and data.tracking == 0 and target:entindex() ~= data.source and not target:HasModifier("modifier_muerta_dead_shot_custom_legendary") and not target:HasModifier("modifier_muerta_dead_shot_custom_damage_cd") then
+	target:EmitSound("Hero_Muerta.DeadShot.Fear")
+	target:EmitSound("Hero_Muerta.DeadShot.Impact")
+	target:EmitSound("Hero_Muerta.DeadShot.Ricochet.Impact")
+	target:EmitSound("Hero_Muerta.Impact")
+
+	if data.proj_number ~= nil and self.projs[data.proj_number] == false then 
+
+        local ult = caster:FindAbilityByName("muerta_pierce_the_veil_custom")
+        if ult and ult:GetLevel() > 0 and caster:HasModifier("modifier_muerta_veil_7") then 
+          --  ult:LegendaryProc(1)
+        end
+
+        self.projs[data.proj_number] = true
+    end
+
+
+    local new_x = target:GetAbsOrigin() + target:GetForwardVector()
+    
+    local new_y = new_x.y
+    new_x = new_x.x
+
+    if data.source_x then 
+        new_x = data.source_x
+    end
+    if data.source_y then 
+        new_y = data.source_y
+    end
+
+    local duration = self:GetSpecialValueFor("ricochet_fear_duration") + caster:GetTalentValue("modifier_muerta_dead_2", "fear")
+    target:AddNewModifier(caster,  caster:BkbAbility(self, caster:HasTalent("modifier_muerta_dead_5")), "modifier_muerta_dead_shot_custom_fear", {duration = duration * (1-target:GetStatusResistance()), x = new_x, y = new_y})
+
+    local damage_k = 1 
+    if data.damage_k then 
+        damage_k = data.damage_k
+    end
+
+    if caster:HasTalent("modifier_muerta_dead_3") then 
+        caster:AddNewModifier(caster, self, "modifier_muerta_dead_shot_custom_speed", {duration = caster:GetTalentValue("modifier_muerta_dead_3", "duration")})
+    end
+
+    self:DealDamage(target, true, damage_k)
+
+    if target:IsHero() then 
+
+        if caster:GetQuest() == "Muerta.Quest_5" and target:IsRealHero() then 
+            caster:UpdateQuest(1)
+        end
+
+        return true
+    end
+end
+
+end
+
+
+
 modifier_muerta_dead_shot_custom_debuff = class({})
 
-
 function modifier_muerta_dead_shot_custom_debuff:OnCreated(table)
-self.main = self:GetCaster():FindAbilityByName("muerta_dead_shot_custom")
+self.caster = self:GetCaster()
+self.parent = self:GetParent()
+self.main = self.caster:FindAbilityByName("muerta_dead_shot_custom")
+
+self.slow = 0
+if self.main then 
+    self.slow = self.main:GetSpecialValueFor("impact_slow_percent")
+end 
 
 if not IsServer() then return end
 
@@ -397,38 +381,36 @@ end
 
 function modifier_muerta_dead_shot_custom_debuff:OnIntervalThink()
 if not IsServer() then return end
-
-AddFOWViewer(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), 10, 0.1, false)
+AddFOWViewer(self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), 10, 0.1, false)
 end
 
-
 function modifier_muerta_dead_shot_custom_debuff:DeclareFunctions()
-	return 
-	{
-		MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
-	}
+return 
+{
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
+}
 end
 
 function modifier_muerta_dead_shot_custom_debuff:GetModifierMoveSpeedBonus_Percentage()
-if not self.main then return end
-	return self.main:GetSpecialValueFor("impact_slow_percent")
+return self.slow
 end
 
 function modifier_muerta_dead_shot_custom_debuff:GetEffectName()
-    return "particles/units/heroes/hero_muerta/muerta_spell_fear_debuff.vpcf"
+return "particles/units/heroes/hero_muerta/muerta_spell_fear_debuff.vpcf"
 end
 
 function modifier_muerta_dead_shot_custom_debuff:StatusEffectPriority()
-    return 10
+return MODIFIER_PRIORITY_HIGH 
 end
 
 function modifier_muerta_dead_shot_custom_debuff:GetStatusEffectName()
-    return "particles/units/heroes/hero_muerta/muerta_spell_fear_debuff_status.vpcf"
+return "particles/units/heroes/hero_muerta/muerta_spell_fear_debuff_status.vpcf"
 end
 
 function modifier_muerta_dead_shot_custom_debuff:GetEffectAttachType()
-    return PATTACH_ABSORIGIN_FOLLOW
+return PATTACH_ABSORIGIN_FOLLOW
 end
+
 
 
 
@@ -439,23 +421,23 @@ function modifier_muerta_dead_shot_custom_thinker:IsHidden() return true end
 function modifier_muerta_dead_shot_custom_thinker:IsPurgable() return false end
 
 function modifier_muerta_dead_shot_custom_thinker:CheckState()
-    return 
-    {
-        [MODIFIER_STATE_INVULNERABLE] = true,
-        [MODIFIER_STATE_NO_HEALTH_BAR] = true,
-        [MODIFIER_STATE_NOT_ON_MINIMAP] = true,
-        [MODIFIER_STATE_STUNNED] = true,
-        [MODIFIER_STATE_UNSELECTABLE] = true,
-        [MODIFIER_STATE_NO_UNIT_COLLISION] = true,
-    }
+return 
+{
+    [MODIFIER_STATE_INVULNERABLE] = true,
+    [MODIFIER_STATE_NO_HEALTH_BAR] = true,
+    [MODIFIER_STATE_NOT_ON_MINIMAP] = true,
+    [MODIFIER_STATE_STUNNED] = true,
+    [MODIFIER_STATE_UNSELECTABLE] = true,
+    [MODIFIER_STATE_NO_UNIT_COLLISION] = true,
+}
 end
 
 function modifier_muerta_dead_shot_custom_thinker:OnDestroy()
-    if not IsServer() then return end
-    if self:GetParent().tree then
-        self:GetParent().tree:CutDown(self:GetCaster():GetTeamNumber())
-    end
-    GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), 25, true)
+if not IsServer() then return end
+if self:GetParent().tree then
+    self:GetParent().tree:CutDown(self:GetCaster():GetTeamNumber())
+end
+GridNav:DestroyTreesAroundPoint(self:GetParent():GetAbsOrigin(), 25, true)
 end
 
 
@@ -472,26 +454,25 @@ function modifier_muerta_dead_shot_custom_fear:GetTexture() return "muerta_dead_
 function modifier_muerta_dead_shot_custom_fear:OnCreated(data)
 if not IsServer() then return end
 
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+
 local source_point = Vector(data.x, data.y, 0)
 
 source_point = GetGroundPosition(source_point, nil)
 
+local vec = (self.parent:GetAbsOrigin() - source_point):Normalized()
 
-local vec = (self:GetParent():GetAbsOrigin() - source_point):Normalized()
-
-self.position = self:GetParent():GetAbsOrigin() + vec * 500
-
+self.position = self.parent:GetAbsOrigin() + vec * 500
 self.position = GetGroundPosition(self.position, nil)
 
-
-
-if not self:GetParent():IsHero() then
-	self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_disarmed", {duration = 0.1})
-	--self:GetParent():SetAggroTarget(nil)
+if not self.parent:IsHero() then
+	self.parent:AddNewModifier(self.caster, self.ability, "modifier_disarmed", {duration = 0.1})
 end
 
-if not self:GetParent():IsDebuffImmune() or self:GetCaster():HasModifier("modifier_muerta_dead_5") then 
-	self:GetParent():MoveToPosition( self.position )
+if not self.parent:IsDebuffImmune() or self.caster:HasTalent("modifier_muerta_dead_5") then 
+	self.parent:MoveToPosition( self.position )
 end
 
 end
@@ -499,44 +480,47 @@ end
 
 function modifier_muerta_dead_shot_custom_fear:OnRefresh(table)
 if not IsServer() then return end
---if self:GetParent():HasModifier("modifier_muerta_dead_shot_custom_damage_cd") then return end
-
 self:OnCreated(table)
 end
 
 
 
 function modifier_muerta_dead_shot_custom_fear:GetEffectName()
-    return "particles/units/heroes/hero_muerta/muerta_spell_fear_debuff.vpcf"
+return "particles/units/heroes/hero_muerta/muerta_spell_fear_debuff.vpcf"
 end
 
 function modifier_muerta_dead_shot_custom_fear:StatusEffectPriority()
-    return 10
+return MODIFIER_PRIORITY_HIGH 
 end
 
 function modifier_muerta_dead_shot_custom_fear:GetStatusEffectName()
-    return "particles/units/heroes/hero_muerta/muerta_spell_fear_debuff_status.vpcf"
+return "particles/units/heroes/hero_muerta/muerta_spell_fear_debuff_status.vpcf"
 end
 
 function modifier_muerta_dead_shot_custom_fear:GetEffectAttachType()
-    return PATTACH_ABSORIGIN_FOLLOW
+return PATTACH_ABSORIGIN_FOLLOW
 end
 
 function modifier_muerta_dead_shot_custom_fear:CheckState()
-    local state = 
-    {
-        [MODIFIER_STATE_COMMAND_RESTRICTED] = true,
-        [MODIFIER_STATE_FEARED] = true,
-        [MODIFIER_STATE_DISARMED] = true,
-        [MODIFIER_STATE_SILENCED] = true,
-        [MODIFIER_STATE_UNSLOWABLE] = true,
-    }
-    return state
+local state = 
+{
+    [MODIFIER_STATE_COMMAND_RESTRICTED] = true,
+    [MODIFIER_STATE_FEARED] = true,
+    [MODIFIER_STATE_DISARMED] = true,
+    [MODIFIER_STATE_SILENCED] = true,
+    [MODIFIER_STATE_UNSLOWABLE] = true,
+}
+return state
 end
 
 function modifier_muerta_dead_shot_custom_fear:OnDestroy()
-    if not IsServer() then return end
-    self:GetParent():Stop()
+if not IsServer() then return end
+self.parent:Stop()
+
+if self.caster:HasTalent("modifier_muerta_dead_6") then 
+    self.parent:AddNewModifier(self.caster, self.ability, "modifier_muerta_dead_shot_custom_slow", {duration = self.caster:GetTalentValue("modifier_muerta_dead_6", "duration")})
+end 
+
 end
 
 
@@ -549,9 +533,7 @@ muerta_dead_shot_custom_legendary = class({})
 
 
 function muerta_dead_shot_custom_legendary:OnAbilityPhaseStart()
-
 self:GetCaster():EmitSound("Hero_Muerta.PartingShot.Start")
-
 return true
 end
 
@@ -559,7 +541,7 @@ end
 function muerta_dead_shot_custom_legendary:OnSpellStart()
 if not IsServer() then return end
 
-
+local caster = self:GetCaster()
 local target = self:GetCursorTarget()
 
 local info = 
@@ -567,49 +549,44 @@ local info =
     EffectName = "particles/units/heroes/hero_muerta/muerta_parting_shot_projectile.vpcf",
     Ability = self,
     iMoveSpeed = self:GetSpecialValueFor("speed"),
-    Source = self:GetCaster(),
+    Source = caster,
     Target = target,
     iSourceAttachment = DOTA_PROJECTILE_ATTACHMENT_ATTACK_1,
-    ExtraData = {x = self:GetCaster():GetAbsOrigin().x, y = self:GetCaster():GetAbsOrigin().y }
+    ExtraData = {x = caster:GetAbsOrigin().x, y = caster:GetAbsOrigin().y }
 }
 
-self:GetCaster():EmitSound("Hero_Muerta.PartingShot.Cast")
+caster:EmitSound("Hero_Muerta.PartingShot.Cast")
 
 ProjectileManager:CreateTrackingProjectile( info )
-
-
-
 end
 
 
 function muerta_dead_shot_custom_legendary:OnProjectileHit_ExtraData(hTarget, vLocation, table)
 if not IsServer() then return end
 if not hTarget then return end
-
 if hTarget:TriggerSpellAbsorb(self) then return end
 
+local caster = self:GetCaster()
 hTarget:EmitSound("Hero_Muerta.PartingShot.Soul")
 
 local source = Vector(table.x, table.y, 0)
-
 local vec = (hTarget:GetAbsOrigin() - source)
 vec.z = 0
 
 vec = vec:Normalized()
 
-hTarget:AddNewModifier(self:GetCaster(), self, "modifier_muerta_dead_shot_custom_debuff", {duration = self:GetSpecialValueFor("impact_slow_duration") * (1 - hTarget:GetStatusResistance())})
-
+hTarget:AddNewModifier(caster, self, "modifier_muerta_dead_shot_custom_debuff", {duration = self:GetSpecialValueFor("impact_slow_duration") * (1 - hTarget:GetStatusResistance())})
 
 local point = hTarget:GetAbsOrigin() + vec*50
 
 local target = hTarget
 if target:IsCreep() then 
-    target = self:GetCaster()
+    target = caster
 end
 
-local duration = self:GetCaster():GetTalentValue("modifier_muerta_dead_7", "duration")
+local duration = caster:GetTalentValue("modifier_muerta_dead_7", "duration")
 
-local illusion = CreateIllusions( hTarget, target, {duration = self:GetSpecialValueFor('duration'), outgoing_damage = -100 ,incoming_damage = 0}, 1, 1, false, true )
+local illusion = CreateIllusions( hTarget, target, {duration = self:GetSpecialValueFor("duration"), outgoing_damage = -100 ,incoming_damage = 0}, 1, 1, false, true )
 for _,i in pairs(illusion) do
 
     i:Stop()
@@ -619,8 +596,7 @@ for _,i in pairs(illusion) do
     i:AddNewModifier(i, nil, "modifier_chaos_knight_phantasm_illusion", {})
     i:AddNewModifier(i, nil, "modifier_muerta_dead_shot_custom_legendary", {duration = duration} )
 
-    hTarget:AddNewModifier(self:GetCaster(), self, "modifier_muerta_dead_shot_custom_legendary_target", {duration = duration, soul = i:entindex()})
-
+    hTarget:AddNewModifier(caster, self, "modifier_muerta_dead_shot_custom_legendary_target", {duration = duration, soul = i:entindex()})
 
     i:SetAbsOrigin(point)
     FindClearSpaceForUnit(i, point, true)
@@ -648,30 +624,30 @@ for _,i in pairs(illusion) do
           i:UpgradeIllusion(mod:GetName(), mod:GetStackCount() )
       end
     end
+end
 
 end
 
 
 
-end
 
 
 modifier_muerta_dead_shot_custom_legendary = class({})
 
 function modifier_muerta_dead_shot_custom_legendary:IsHidden() return true end
 function modifier_muerta_dead_shot_custom_legendary:IsPurgable() return false end
-
 function modifier_muerta_dead_shot_custom_legendary:OnCreated(table)
 if not IsServer() then return end
 
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
 
-
-self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_muerta/muerta_parting_shot_soul.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-ParticleManager:SetParticleControlEnt( self.particle, 0, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetParent():GetOrigin(), true )
-ParticleManager:SetParticleControlEnt( self.particle, 1, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetOrigin(), true )
+self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_muerta/muerta_parting_shot_soul.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt( self.particle, 0, self.parent, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self.parent:GetOrigin(), true )
+ParticleManager:SetParticleControlEnt( self.particle, 1, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetOrigin(), true )
 self:AddParticle(self.particle, false, false, -1, false, false)
 
-self:GetParent():StartGesture(ACT_DOTA_DISABLED)
+self.parent:StartGesture(ACT_DOTA_DISABLED)
 end
 
 function modifier_muerta_dead_shot_custom_legendary:CheckState()
@@ -687,12 +663,11 @@ return
 end
 
 function modifier_muerta_dead_shot_custom_legendary:GetStatusEffectName()
-    return "particles/status_fx/status_effect_muerta_parting_shot.vpcf"
+return "particles/status_fx/status_effect_muerta_parting_shot.vpcf"
 end
 function modifier_muerta_dead_shot_custom_legendary:StatusEffectPriority()
- return 9999999
+ return MODIFIER_PRIORITY_ILLUSION
 end
-
 
 function modifier_muerta_dead_shot_custom_legendary:GetEffectName()
     --return "particles/units/heroes/hero_muerta/muerta_parting_shot_soul.vpcf"
@@ -712,11 +687,9 @@ return
 }
 end
 
-
 function modifier_muerta_dead_shot_custom_legendary:GetActivityTranslationModifiers()
 return ACT_DOTA_DISABLED
 end
-
 
 function modifier_muerta_dead_shot_custom_legendary:GetAbsoluteNoDamagePhysical()
 return 1
@@ -739,17 +712,24 @@ function modifier_muerta_dead_shot_custom_legendary_target:OnCreated(table)
 if not IsServer() then return end
 if not table.soul then return end
 
-self.damage = self:GetCaster():GetTalentValue("modifier_muerta_dead_7", "damage")/100
-self.heal = self:GetCaster():GetTalentValue("modifier_muerta_dead_7", "heal")/100
+self.caster = self:GetCaster()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.stun = self.ability:GetSpecialValueFor("impact_stun")
+self.duration = self.ability:GetSpecialValueFor("debuff_duration")
+self.max_range = self.ability:GetSpecialValueFor("max_range")
+self.creep_radius = self.ability:GetSpecialValueFor("creep_radius")
+
+self.damage = self.caster:GetTalentValue("modifier_muerta_dead_7", "damage")/100
 
 self.soul = EntIndexToHScript(table.soul)
 
-self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_muerta/muerta_parting_shot_tether.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-ParticleManager:SetParticleControlEnt( self.particle, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetOrigin(), true )
+self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_muerta/muerta_parting_shot_tether.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt( self.particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetOrigin(), true )
 ParticleManager:SetParticleControlEnt( self.particle, 1, self.soul, PATTACH_POINT_FOLLOW, "attach_hitloc", self.soul:GetOrigin(), true )
 self:AddParticle(self.particle, false, false, -1, false, false)
 
-self.max_range = self:GetAbility():GetSpecialValueFor("max_range")
 
 self:StartIntervalThink(0.1)
 end
@@ -762,60 +742,35 @@ if not self.soul or self.soul:IsNull() or not self.soul:IsAlive() then
     self:Destroy()
 end
 
-AddFOWViewer(self:GetCaster():GetTeamNumber(), self.soul:GetAbsOrigin(), 50, 0.2, false)
+AddFOWViewer(self.caster:GetTeamNumber(), self.soul:GetAbsOrigin(), 50, 0.2, false)
+
+if (self.soul:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D() <= self.max_range then return end 
+
+local part = ParticleManager:CreateParticle("particles/muerta/dead_legendary_stun.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.soul)
+ParticleManager:ReleaseParticleIndex(part)
 
 
-if (self.soul:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Length2D() > self.max_range then 
 
-    local part = ParticleManager:CreateParticle("particles/muerta/dead_legendary_stun.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.soul)
-    ParticleManager:ReleaseParticleIndex(part)
+for _,creep in pairs(self.caster:FindTargets(self.creep_radius, self.parent:GetAbsOrigin())) do 
+    local part_2 = ParticleManager:CreateParticle("particles/muerta/dead_legendary_stun.vpcf", PATTACH_ABSORIGIN_FOLLOW, creep)
+    ParticleManager:ReleaseParticleIndex(part_2)
 
-    local vect = (self.soul:GetAbsOrigin() - self:GetParent():GetAbsOrigin())
-    local dist = self.max_range * 0.7
-    local new_point = self:GetParent():GetAbsOrigin() + vect:Normalized()*dist
-    --[[
-    self:GetParent():AddNewModifier( self:GetCaster(),  nil,  "modifier_generic_arc",  
-    {
-      target_x = new_point.x,
-      target_y = new_point.y,
-      distance = dist,
-      duration = 0.4,
-      height = 0,
-      fix_end = false,
-      isStun = false,
-      activity = ACT_DOTA_FLAIL,
-    })
-    ]]--
+    creep:AddNewModifier(self.caster, self.ability, "modifier_stunned", {duration = self.stun})
+    creep:AddNewModifier(self.caster, self.ability, "modifier_muerta_dead_shot_custom_incoming", {duration = self.duration})
+end 
 
-    self.soul:Kill(nil, nil)
+self.parent:EmitSound("Hero_Muerta.PartingShot.Stun")
 
-    part = ParticleManager:CreateParticle("particles/muerta/dead_legendary_stun.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-    ParticleManager:ReleaseParticleIndex(part)
+local particle = ParticleManager:CreateParticle("particles/muerta/dead_refresh.vpcf", PATTACH_CUSTOMORIGIN, self.caster)
+ParticleManager:SetParticleControlEnt( particle, 0, self.caster, PATTACH_POINT_FOLLOW, "attach_hitloc", self.caster:GetOrigin(), true )
+ParticleManager:ReleaseParticleIndex(particle)
 
-    self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_stunned", {duration = self:GetAbility():GetSpecialValueFor("impact_stun")})
-    self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_muerta_dead_shot_custom_debuff", {duration = self:GetAbility():GetSpecialValueFor("break_slow_duration")})
+self.ability:EndCooldown()
+self.caster:EmitSound("Sniper.Shrapnel_legendary")
 
-    self:GetParent():EmitSound("Hero_Muerta.PartingShot.Stun")
-
-    local ability = self:GetCaster():FindAbilityByName("muerta_dead_shot_custom")
-    if ability then 
-        ability:DealDamage(self:GetParent(), false, self.damage)
-    end
-
-    local particle = ParticleManager:CreateParticle("particles/muerta/dead_refresh.vpcf", PATTACH_CUSTOMORIGIN, self:GetCaster())
-    ParticleManager:SetParticleControlEnt( particle, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetCaster():GetOrigin(), true )
-    ParticleManager:ReleaseParticleIndex(particle)
-
-
-    self:GetAbility():EndCooldown()
-    self:GetCaster():EmitSound("Sniper.Shrapnel_legendary")
-
-
-    self:Destroy()
+self.soul:Kill(nil, nil)
+self:Destroy()
 end
-
-end
-
 
 function modifier_muerta_dead_shot_custom_legendary_target:CheckState()
 return
@@ -825,24 +780,8 @@ return
 end
 
 
-function modifier_muerta_dead_shot_custom_legendary_target:DeclareFunctions()
-return
-{
-    MODIFIER_EVENT_ON_TAKEDAMAGE
-}
-end
 
-function modifier_muerta_dead_shot_custom_legendary_target:OnTakeDamage(params)
-if not IsServer() then return end 
-if self:GetCaster() ~= params.attacker then return end
-if params.unit ~= self:GetParent() then return end
-if params.unit:IsIllusion() then return end
-if not params.unit:IsCreep() and not params.unit:IsHero() then return end
-if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end
 
-self:GetCaster():GenericHeal(params.damage*self.heal, self:GetAbility(), true)
-
-end 
 
 
 modifier_muerta_dead_shot_custom_damage_cd = class({})
@@ -867,38 +806,35 @@ end
 
 function muerta_dead_shot_custom_proc:OnSpellStart()
 if not IsServer() then return end
+local caster = self:GetCaster()
 
-self.main = self:GetCaster():FindAbilityByName("muerta_dead_shot_custom")
+self.main = caster:FindAbilityByName("muerta_dead_shot_custom")
 if not self.main then return end
 
-self:GetCaster():RemoveModifierByName("modifier_muerta_dead_shot_custom_second")
+caster:RemoveModifierByName("modifier_muerta_dead_shot_custom_second")
 
 local point = self:GetCursorPosition()
 
-if self:GetCursorPosition() == self:GetCaster():GetAbsOrigin() then 
-    point = self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector()*10
+if self:GetCursorPosition() == caster:GetAbsOrigin() then 
+    point = caster:GetAbsOrigin() + caster:GetForwardVector()*10
 end
 
-local dir = (point - self:GetCaster():GetAbsOrigin()):Normalized()
+local dir = (point - caster:GetAbsOrigin()):Normalized()
 
-local real_point = self:GetCaster():GetAbsOrigin() + dir*self:GetSpecialValueFor("range")
-local vel = (real_point - self:GetCaster():GetAbsOrigin()):Normalized()
+local real_point = caster:GetAbsOrigin() + dir*self:GetSpecialValueFor("range")
+local vel = (real_point - caster:GetAbsOrigin()):Normalized()
 
 local effect = "particles/muerta/dead_proc_proj.vpcf"
 
-self.speed = self:GetSpecialValueFor("speed")
-
-if self:GetCaster():HasModifier("modifier_muerta_dead_5") then 
-    self.speed = self.speed * self.main.cd_speed
-end
+self.speed = self:GetSpecialValueFor("speed") * (1 + caster:GetTalentValue("modifier_muerta_dead_5", "speed")/100)
 
 local info = 
 {
     ExtraData = { x = vel.x, y = vel.y, tracking = 0},
-    Source = self:GetCaster(),
+    Source = caster,
     Ability = self,
     EffectName = effect,
-    vSpawnOrigin = self:GetCaster():GetAbsOrigin(),
+    vSpawnOrigin = caster:GetAbsOrigin(),
     fDistance = self:GetSpecialValueFor("range"),
     vVelocity = vel * self.speed,
     fStartRadius = self:GetSpecialValueFor("ricochet_radius_start"),
@@ -907,13 +843,13 @@ local info =
     iUnitTargetType = DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,
     bProvidesVision = true,
     iVisionRadius = 115,
-    iVisionTeamNumber = self:GetCaster():GetTeamNumber(),
+    iVisionTeamNumber = caster:GetTeamNumber(),
     fExpireTime         = GameRules:GetGameTime() + 5.0,
     bDeleteOnHit        = false,
 }
 
 
-self:GetCaster():EmitSound("Muerta.Dead_proc")
+caster:EmitSound("Muerta.Dead_proc")
 ProjectileManager:CreateLinearProjectile( info )
 
 end
@@ -924,9 +860,9 @@ function muerta_dead_shot_custom_proc:OnProjectileHit_ExtraData(hTarget, vLocati
 if not IsServer() then return end
 if not table.tracking then return end
 
+local caster = self:GetCaster()
 
 if table.tracking == 0 and hTarget == nil then 
-
 
     local vel = Vector(table.x, table.y, 0)*-1
     local effect = "particles/muerta/dead_proc_proj.vpcf"
@@ -934,7 +870,7 @@ if table.tracking == 0 and hTarget == nil then
     local info = 
     {
         ExtraData = { x = vel.x, y = vel.y, tracking = 1, source_x = vLocation.x, source_y = vLocation.y},
-        Source = self:GetCaster(),
+        Source = caster,
         Ability = self,
         EffectName = effect,
         vSpawnOrigin = vLocation,
@@ -946,7 +882,7 @@ if table.tracking == 0 and hTarget == nil then
         iUnitTargetType = DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,
         bProvidesVision = true,
         iVisionRadius = 115,
-        iVisionTeamNumber = self:GetCaster():GetTeamNumber(),
+        iVisionTeamNumber = caster:GetTeamNumber(),
         fExpireTime         = GameRules:GetGameTime() + 5.0,
         bDeleteOnHit        = false,
     }
@@ -954,24 +890,22 @@ if table.tracking == 0 and hTarget == nil then
     ProjectileManager:CreateLinearProjectile( info )
 
 
-    EmitSoundOnLocationWithCaster(vLocation, "Muerta.Dead_proc_rec", self:GetCaster())
-    EmitSoundOnLocationWithCaster(vLocation, "Hero_Muerta.DeadShot.Slow", self:GetCaster())
+    EmitSoundOnLocationWithCaster(vLocation, "Muerta.Dead_proc_rec", caster)
+    EmitSoundOnLocationWithCaster(vLocation, "Hero_Muerta.DeadShot.Slow", caster)
 end
 
 
 if not hTarget then return end
 
-local ability = self:GetCaster():FindAbilityByName("muerta_dead_shot_custom")
+local ability = caster:FindAbilityByName("muerta_dead_shot_custom")
 if not ability then return end
 
 local target = hTarget
 
-ability:DealDamage(hTarget, false, self:GetSpecialValueFor("damage_"..self:GetCaster():GetUpgradeStack("modifier_muerta_dead_4"))/100)
 
 if table.tracking == 1 then 
 
-    local duration = self:GetSpecialValueFor("fear_"..self:GetCaster():GetUpgradeStack("modifier_muerta_dead_4"))
-
+    local duration = caster:GetTalentValue("modifier_muerta_dead_4", "fear")
     local new_x = target:GetAbsOrigin() + target:GetForwardVector()
     
     local new_y = new_x.y
@@ -984,13 +918,11 @@ if table.tracking == 1 then
         new_y = table.source_y
     end
 
-
-    if self:GetCaster():HasModifier("modifier_muerta_dead_3") then 
-        self:GetCaster():AddNewModifier(self:GetCaster(), ability, "modifier_muerta_dead_shot_custom_speed", {duration = ability.speed_duration})
+    if caster:HasTalent("modifier_muerta_dead_3") then 
+        caster:AddNewModifier(caster, ability, "modifier_muerta_dead_shot_custom_speed", {duration = caster:GetTalentValue("modifier_muerta_dead_3", "duration")})
     end
 
-
-    target:AddNewModifier(self:GetCaster(),  self:GetCaster():BkbAbility(self, self:GetCaster():HasModifier("modifier_muerta_dead_5")), "modifier_muerta_dead_shot_custom_fear", {duration = duration * (1-target:GetStatusResistance()), x = new_x, y = new_y})
+    target:AddNewModifier(caster,  caster:BkbAbility(self, caster:HasTalent("modifier_muerta_dead_5")), "modifier_muerta_dead_shot_custom_fear", {duration = duration * (1-target:GetStatusResistance()), x = new_x, y = new_y})
 
     target:EmitSound("Hero_Muerta.DeadShot.Fear")
     target:EmitSound("Hero_Muerta.DeadShot.Impact")
@@ -999,15 +931,14 @@ if table.tracking == 1 then
 end
 
 if table.tracking == 0 then 
-
-    hTarget:AddNewModifier(self:GetCaster(),  self:GetCaster():BkbAbility(self, self:GetCaster():HasModifier("modifier_muerta_dead_5")), "modifier_muerta_dead_shot_custom_debuff", {duration = self:GetSpecialValueFor("impact_slow_duration") * (1-hTarget:GetStatusResistance())})
-
+    hTarget:AddNewModifier(caster,  caster:BkbAbility(self, caster:HasTalent("modifier_muerta_dead_5")), "modifier_muerta_dead_shot_custom_debuff", {duration = caster:GetTalentValue("modifier_muerta_dead_4", "slow_duration") * (1-hTarget:GetStatusResistance())})
     hTarget:EmitSound("Hero_Muerta.DeadShot.Slow")
+end
 
+ability:DealDamage(hTarget, false, (caster:GetTalentValue("modifier_muerta_dead_4", "damage")/100)/2, "modifier_muerta_dead_4")
 end
 
 
-end
 
 
 
@@ -1019,13 +950,17 @@ function modifier_muerta_dead_shot_custom_second:GetTexture() return "dead_shot_
 function modifier_muerta_dead_shot_custom_second:OnCreated(table)
 if not IsServer() then return end
 
-self.ability = self:GetCaster():FindAbilityByName("muerta_dead_shot_custom")
-self.ability_proc = self:GetCaster():FindAbilityByName("muerta_dead_shot_custom_proc")
+self.caster = self:GetCaster()
+
+self.ability = self.caster:FindAbilityByName("muerta_dead_shot_custom")
+self.ability_proc = self.caster:FindAbilityByName("muerta_dead_shot_custom_proc")
+
+self.ability:EndCooldown()
+self.ability:SetActivated(false)
 
 if self.ability and self.ability_proc and self.ability_proc:IsHidden() then 
-
-    self:GetParent():SwapAbilities(self.ability:GetName(), self.ability_proc:GetName(), false, true)
-    self.ability_proc:StartCooldown(0.3)
+    self.caster:SwapAbilities(self.ability:GetName(), self.ability_proc:GetName(), false, true)
+    self.ability_proc:StartCooldown(0.2)
 end
 
 end
@@ -1034,11 +969,11 @@ end
 function modifier_muerta_dead_shot_custom_second:OnDestroy()
 if not IsServer() then return end
 
+self.ability:SetActivated(true)
+self.ability:UseResources(false, false, false, true)
 
 if self.ability and self.ability_proc and not self.ability_proc:IsHidden() then 
-
-    self:GetParent():SwapAbilities(self.ability:GetName(), self.ability_proc:GetName(), true, false)
-
+    self.caster:SwapAbilities(self.ability:GetName(), self.ability_proc:GetName(), true, false)
 end
 
 end
@@ -1054,11 +989,16 @@ function modifier_muerta_dead_shot_custom_speed:IsPurgable() return false end
 function modifier_muerta_dead_shot_custom_speed:GetTexture() return "buffs/reflection_speed" end
 
 function modifier_muerta_dead_shot_custom_speed:GetEffectName() 
-  return "particles/muerta/gun_evasion.vpcf"
+return "particles/muerta/gun_evasion.vpcf"
 end
 
-function modifier_muerta_dead_shot_custom_speed:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
+function modifier_muerta_dead_shot_custom_speed:OnCreated()
+self.parent = self:GetParent()
+self.move = self.parent:GetTalentValue("modifier_muerta_dead_3", "move")
+self.speed = self.parent:GetTalentValue("modifier_muerta_dead_3", "speed")
+end 
 
+function modifier_muerta_dead_shot_custom_speed:GetEffectAttachType() return PATTACH_ABSORIGIN_FOLLOW end
 function modifier_muerta_dead_shot_custom_speed:DeclareFunctions()
 return
 {
@@ -1067,14 +1007,158 @@ return
 }
 end
 
-
-
 function modifier_muerta_dead_shot_custom_speed:GetModifierAttackSpeedBonus_Constant()
-return self:GetAbility().speed_attack[self:GetCaster():GetUpgradeStack("modifier_muerta_dead_3")]
+return self.speed
 end
-
-
 
 function modifier_muerta_dead_shot_custom_speed:GetModifierMoveSpeedBonus_Percentage()
-return self:GetAbility().speed_move[self:GetCaster():GetUpgradeStack("modifier_muerta_dead_3")]
+return self.move
 end
+
+
+
+
+
+modifier_muerta_dead_shot_custom_tracker = class({})
+function modifier_muerta_dead_shot_custom_tracker:IsHidden() return true end
+function modifier_muerta_dead_shot_custom_tracker:IsPurgable() return false end
+function modifier_muerta_dead_shot_custom_tracker:OnCreated()
+self.parent = self:GetParent()
+
+if self.parent:IsRealHero() then 
+    self.parent:AddDamageEvent_out(self)
+end 
+
+self.heal = self.parent:GetTalentValue("modifier_muerta_dead_6", "heal", true)/100
+self.heal_creeps = self.parent:GetTalentValue("modifier_muerta_dead_6", "heal_creeps", true)
+end
+
+function modifier_muerta_dead_shot_custom_tracker:DeclareFunctions()
+return
+{
+  MODIFIER_PROPERTY_CAST_RANGE_BONUS_STACKING,
+}
+end
+
+function modifier_muerta_dead_shot_custom_tracker:GetModifierCastRangeBonusStacking()
+if not self.parent:HasTalent("modifier_muerta_dead_2") then return end 
+return self.parent:GetTalentValue("modifier_muerta_dead_2", "range")
+end
+
+
+
+function modifier_muerta_dead_shot_custom_tracker:DamageEvent_out(params)
+if not IsServer() then return end 
+if not self.parent:HasTalent("modifier_muerta_dead_6") then return end 
+if not params.unit:HasModifier("modifier_muerta_dead_shot_custom_slow") and not params.unit:HasModifier("modifier_muerta_dead_shot_custom_fear") then return end 
+if self.parent ~= params.attacker then return end
+if params.unit:IsIllusion() then return end
+if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end
+
+local heal = self.heal*params.damage
+if params.unit:IsCreep() then 
+  heal = heal/self.heal_creeps
+end
+
+self.parent:GenericHeal(heal, self.ability, true, nil, "modifier_muerta_dead_6")
+end
+
+
+
+
+modifier_muerta_dead_shot_custom_incoming = class({})
+function modifier_muerta_dead_shot_custom_incoming:IsHidden() return false end
+function modifier_muerta_dead_shot_custom_incoming:IsPurgable() return false end
+function modifier_muerta_dead_shot_custom_incoming:OnCreated()
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.max = self.caster:GetTalentValue("modifier_muerta_dead_7", "max")
+self.damage = self.caster:GetTalentValue("modifier_muerta_dead_7", "damage")
+
+if not IsServer() then return end 
+
+self:SetStackCount(1)
+end
+
+function modifier_muerta_dead_shot_custom_incoming:OnRefresh()
+if not IsServer() then return end 
+if self:GetStackCount() >= self.max then return end 
+
+self:IncrementStackCount()
+end 
+
+function modifier_muerta_dead_shot_custom_incoming:DeclareFunctions()
+return
+{
+    MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE
+}
+end
+
+function modifier_muerta_dead_shot_custom_incoming:GetModifierIncomingDamage_Percentage()
+return self:GetStackCount()*self.damage
+end
+
+function modifier_muerta_dead_shot_custom_incoming:OnStackCountChanged(iStackCount)
+if not IsServer() then return end
+
+if not self.pfx then
+    self.pfx = ParticleManager:CreateParticle("particles/muerta/dead_shot_stack.vpcf", PATTACH_OVERHEAD_FOLLOW, self.parent)
+    self:AddParticle( self.pfx, false, false, -1, false, false )
+end
+
+ParticleManager:SetParticleControl(self.pfx, 1, Vector(0, self:GetStackCount(), 0))
+end
+
+
+
+
+modifier_muerta_dead_shot_custom_slow = class({})
+function modifier_muerta_dead_shot_custom_slow:IsHidden() return false end
+function modifier_muerta_dead_shot_custom_slow:IsPurgable() return false end
+function modifier_muerta_dead_shot_custom_slow:OnCreated()
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.slow = self.caster:GetTalentValue("modifier_muerta_dead_6", "slow")
+self.damage_reduce = self.caster:GetTalentValue("modifier_muerta_dead_6", "damage_reduce")
+ 
+end
+
+function modifier_muerta_dead_shot_custom_slow:DeclareFunctions()
+return
+{
+    MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+    MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
+    MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
+}
+
+end
+
+function modifier_muerta_dead_shot_custom_slow:GetModifierDamageOutgoing_Percentage()
+return self.damage_reduce
+end
+
+function modifier_muerta_dead_shot_custom_slow:GetModifierSpellAmplify_Percentage()
+return self.damage_reduce
+end
+
+function modifier_muerta_dead_shot_custom_slow:GetModifierMoveSpeedBonus_Percentage()
+return self.slow
+end
+
+
+function modifier_muerta_dead_shot_custom_slow:GetEffectName()
+return "particles/units/heroes/hero_muerta/muerta_spell_fear_debuff.vpcf"
+end
+
+function modifier_muerta_dead_shot_custom_slow:StatusEffectPriority()
+return MODIFIER_PRIORITY_HIGH 
+end
+
+function modifier_muerta_dead_shot_custom_slow:GetStatusEffectName()
+return "particles/units/heroes/hero_muerta/muerta_spell_fear_debuff_status.vpcf"
+end
+
+function modifier_muerta_dead_shot_custom_slow:GetEffectAttachType()
+return PATTACH_ABSORIGIN_FOLLOW
+end
+

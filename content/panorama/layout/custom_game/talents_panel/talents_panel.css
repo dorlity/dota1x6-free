@@ -1,0 +1,664 @@
+/* Prettified by Source 2 Viewer 14.1.0.0 - https://valveresourceformat.github.io */
+
+@keyframes 'CardAnimationPurple'
+{
+	0%
+	{
+		box-shadow: fill #a943eb 0px 0px 3px -1px;
+	}
+	
+	50%
+	{
+		box-shadow: fill #a943eb 0px 0px 6px -1px;
+	}
+	
+	100%
+	{
+		box-shadow: fill #a943eb 0px 0px 3px -1px;
+	}
+	
+}
+
+@keyframes 'CardAnimationBlue'
+{
+	0%
+	{
+		box-shadow: fill #3485f2 0px 0px 3px -1px;
+	}
+	
+	50%
+	{
+		box-shadow: fill #3485f2 0px 0px 6px -1px;
+	}
+	
+	100%
+	{
+		box-shadow: fill #3485f2 0px 0px 3px -1px;
+	}
+	
+}
+
+@keyframes 'CardAnimationOrange'
+{
+	0%
+	{
+		box-shadow: fill #f7942b 0px 0px 3px -1px;
+	}
+	
+	50%
+	{
+		box-shadow: fill #f7942b 0px 0px 6px -1px;
+	}
+	
+	100%
+	{
+		box-shadow: fill #f7942b 0px 0px 3px -1px;
+	}
+	
+}
+
+@keyframes 'CardAnimationOpen'
+{
+	0%
+	{
+		transform: translate3d( 0, 0, 0px );
+		opacity: 1;
+	}
+	
+	100%
+	{
+		transform: translate3d( 0, 10%, 0px );
+		opacity: 0;
+	}
+	
+	80%
+	{
+		opacity: 0;
+	}
+	
+}
+
+@keyframes 'CardAnimationClose'
+{
+	100%
+	{
+		transform: translate3d( 0, 0, 0px );
+		opacity: 1;
+	}
+	
+	0%
+	{
+		transform: translate3d( 0, 10%, 0px );
+		opacity: 0;
+	}
+	
+	20%
+	{
+		opacity: 0;
+	}
+	
+}
+
+@keyframes 'GrayAnimationOpen'
+{
+	0%
+	{
+		transform: translate3d( 0, 0, 0px );
+		opacity: 1;
+	}
+	
+	100%
+	{
+		transform: translate3d( -10%, 0, 0px );
+		opacity: 0;
+	}
+	
+	80%
+	{
+		opacity: 0;
+	}
+	
+}
+
+@keyframes 'GrayAnimationClose'
+{
+	100%
+	{
+		transform: translate3d( 0, 0, 0px );
+		opacity: 1;
+	}
+	
+	0%
+	{
+		transform: translate3d( -10%, 0, 0px );
+		opacity: 0;
+	}
+	
+	20%
+	{
+		opacity: 0;
+	}
+	
+}
+
+.talents_panel_main
+{
+	width: 100%;
+	height: 100%;
+}
+
+.talents_panel_hidden
+{
+	visibility: collapse;
+}
+
+#LayerGeneral
+{
+	width: 950px;
+	height: 308.7px;
+	z-index: 10;
+	flow-children: right;
+}
+
+.LayerGeneral_Game
+{
+	align: center center;
+	margin-top: 29%;
+	margin-right: 5%;
+}
+
+.LayerPlayer_Skills
+{
+	align: center center;
+	background-image: url("s2r://panorama/images/custom_game/talents_png.vtex");
+	background-size: contain;
+	flow-children: down;
+}
+
+.LayerPlayer_Skills_Normal
+{
+	width: 74.74%;
+	height: 100%;
+}
+
+.LayerPlayer_Skills_PickStage
+{
+	width: 100%;
+	height: 100%;
+}
+
+.LayerGray_left
+{
+	width: 119.89px;
+	height: 100%;
+	z-index: 5;
+	flow-children: left;
+	background-image: url("s2r://panorama/images/custom_game/layergray_left_png.vtex");
+}
+
+.LayerGray_right
+{
+	width: 12.62%;
+	height: 100%;
+	z-index: 5;
+	flow-children: right;
+	background-image: url("s2r://panorama/images/custom_game/layergray_right_png.vtex");
+}
+
+.LayerOrange
+{
+	width: 100%;
+	height: 40%;
+	margin-top: 0%;
+	margin-right: 0%;
+	visibility: visible;
+	z-index: 5;
+	flow-children: right;
+}
+
+.LayerPurple
+{
+	width: 100%;
+	height: 30%;
+	margin-top: 0%;
+	margin-right: 0%;
+	visibility: visible;
+	z-index: 5;
+	flow-children: right;
+}
+
+.LayerBlue
+{
+	width: 100%;
+	height: 30%;
+	margin-top: 0%;
+	margin-right: 0%;
+	visibility: visible;
+	z-index: 6;
+	flow-children: right;
+}
+
+.LayerGeneralClose
+{
+	animation-name: CardAnimationClose;
+	animation-duration: 0.45s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: 1;
+	animation-direction: reverse;
+}
+
+.LayerGeneralOpen
+{
+	animation-name: CardAnimationOpen;
+	animation-duration: 0.45s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: 1;
+	animation-direction: reverse;
+}
+
+.orange_card
+{
+	width: 13%;
+	height: 90%;
+	z-index: 5;
+	margin-left: 6%;
+	margin-right: 5.5%;
+	margin-top: 10%;
+}
+
+.orange_content_anim
+{
+	animation-name: CardAnimationOrange;
+	animation-iteration-count: infinite;
+	animation-duration: 4s;
+	transition-property: opacity, transform;
+	transition-duration: .24s;
+}
+
+.orange_content
+{
+	width: 82%;
+	height: 81%;
+	margin-left: 11%;
+	margin-top: 6%;
+	background-size: contain;
+	background-color: black;
+	box-shadow: fill #f7942b 0px 0px 2px -1px;
+}
+
+.card_icon_orange
+{
+	width: 78%;
+	height: 65%;
+	margin-top: 5%;
+	margin-left: 11%;
+	box-shadow: fill #3a3632 0px 0px 2px 0px;
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+
+.orange_lvl
+{
+	width: 90%;
+	height: 17%;
+	margin-top: 78%;
+	margin-left: 5%;
+	background-image: url("s2r://panorama/images/custom_game/olevel_0_png.vtex");
+	background-repeat: no-repeat;
+}
+
+.Skill
+{
+	width: 22%;
+	height: 100%;
+	margin-top: 0%;
+	margin-left: 2.4%;
+	visibility: visible;
+	z-index: 5;
+	flow-children: right;
+}
+
+.purple_card
+{
+	width: 33%;
+	height: 100%;
+	z-index: 13;
+	margin-top: 10%;
+}
+
+.card_content_purple
+{
+	width: 90%;
+	height: 82%;
+	margin-top: 6%;
+	background-color: black;
+	box-shadow: fill #a943eb 0px 0px 1px 0px;
+}
+
+.card_content_blue
+{
+	width: 90%;
+	height: 82%;
+	margin-top: 6%;
+	background-color: black;
+	box-shadow: fill #3485f2 0px 0px 1px 0px;
+}
+
+.card_content_purple_anim
+{
+	animation-name: CardAnimationPurple;
+	animation-iteration-count: infinite;
+	animation-duration: 4s;
+	transition-property: opacity, transform;
+	transition-duration: .24s;
+}
+
+.card_content_blue_anim
+{
+	animation-name: CardAnimationBlue;
+	animation-iteration-count: infinite;
+	animation-duration: 4s;
+	transition-property: opacity, transform;
+	transition-duration: .24s;
+}
+
+.card_icon
+{
+	width: 75%;
+	height: 52%;
+	margin-top: 12%;
+	margin-left: 12.5%;
+	background-repeat: no-repeat;
+}
+
+.card_lvl
+{
+	width: 90%;
+	height: 20%;
+	margin-top: 72%;
+	margin-left: 5%;
+	background-image: url("s2r://panorama/images/custom_game/epic_level_21_png.vtex");
+	background-repeat: no-repeat;
+}
+
+.Gray_Skill
+{
+	width: 50%;
+	height: 100%;
+	margin-top: 0%;
+	margin-left: 0%;
+	visibility: visible;
+	z-index: 5;
+	flow-children: down;
+}
+
+.general_border
+{
+	width: 100%;
+	height: 2%;
+	z-index: 5;
+}
+
+.general_border_right
+{
+	width: 3%;
+	height: 100%;
+	z-index: 5;
+}
+
+.general_card
+{
+	width: 82.35%;
+	height: 16%;
+	z-index: 5;
+	margin-left: 8.825%;
+	box-shadow: fill #00000099 0px 0px 4px 0px;
+}
+
+.general_image_gray
+{
+	width: 100%;
+	height: 100%;
+	margin-left: 2px;
+	margin-right: 2px;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	border: 3px solid #c2bfbc;
+	border-radius: 5%;
+	box-shadow: inset #000000aa 0px 2px 3px 2px;
+}
+
+.general_image_blue
+{
+	width: 100%;
+	height: 100%;
+	margin-left: 2px;
+	margin-right: 2px;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	border: 3px solid #57c2ee;
+	border-radius: 5%;
+	box-shadow: inset #000000aa 0px 2px 3px 2px;
+}
+
+.general_image_purple
+{
+	width: 100%;
+	height: 100%;
+	margin-left: 2px;
+	margin-right: 2px;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	border: 3px solid #b855dd;
+	border-radius: 5%;
+	box-shadow: inset #000000aa 0px 2px 3px 2px;
+}
+
+.general_shadow
+{
+	width: 100%;
+	height: 100%;
+}
+
+.general_color
+{
+	width: 100%;
+	height: 100%;
+	z-index: 5;
+	background-size: 100% 100%;
+}
+
+.general_stack
+{
+	text-shadow: 0px 0px 4px 6 #000000;
+	color: white;
+	margin-left: 2px;
+	margin-top: 2px;
+	horizontal-align: center;
+	vertical-align: center;
+	font-family: monospaceNumbersFont;
+	font-size: 25px;
+	overflow: noclip noclip;
+}
+
+.Panel_close
+{
+	width: 100%;
+	height: 100%;
+}
+
+.Talent_card_eye_orange
+{
+	width: 30px;
+	height: 30px;
+	align: right top;
+	background-image: url("s2r://panorama/images/custom_game/show_talent_png.vtex");
+	background-size: contain;
+}
+
+.Talent_card_eye
+{
+	width: 24px;
+	height: 24px;
+	align: right top;
+	background-image: url("s2r://panorama/images/custom_game/show_talent_png.vtex");
+	background-size: contain;
+}
+
+#LayerHeroTalents
+{
+	width: 800px;
+	height: 100%;
+	background-image: url("s2r://panorama/images/custom_game/talents_new_png.vtex");
+	background-size: 100%;
+	flow-children: right;
+}
+
+.LayerHeroTalents_Hero
+{
+	width: 30.8%;
+	height: 100%;
+	flow-children: down;
+}
+
+.LayerHeroTalents_Skill
+{
+	width: 17.3%;
+	height: 100%;
+	flow-children: right;
+	flow-children: down;
+}
+
+#talent_orange_card
+{
+	width: 76px;
+	height: 90px;
+	horizontal-align: center;
+	vertical-align: center;
+	background-color: black;
+	box-shadow: fill #f7942b 0px 0px 2px -1px;
+}
+
+#talent_orange_icon
+{
+	width: 59.25px;
+	height: 59.25px;
+	horizontal-align: center;
+	margin-top: 6px;
+	box-shadow: fill #3a3632 0px 0px 2px 0px;
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+
+#talent_orange_lvl
+{
+	width: 68.4px;
+	height: 15.47px;
+	vertical-align: bottom;
+	horizontal-align: center;
+	background-image: url("s2r://panorama/images/custom_game/olevel_0_png.vtex");
+	background-repeat: no-repeat;
+	background-size: 100%;
+	margin-bottom: 4.5px;
+}
+
+#orange_container
+{
+	horizontal-align: center;
+	height: 123px;
+}
+
+.purple_blue_container
+{
+	horizontal-align: center;
+	height: 93px;
+	flow-children: right;
+}
+
+.talent_purple_blue_card
+{
+	width: 48px;
+	height: 70px;
+	background-color: black;
+	vertical-align: center;
+	margin-left: 4px;
+	margin-right: 4px;
+}
+
+.talent_purple_card
+{
+	box-shadow: fill #a943eb 0px 0px 1px 0px;
+}
+
+.talent_blue_card
+{
+	box-shadow: fill #3485f2 0px 0px 1px 0px;
+}
+
+.talent_purple_blue_icon
+{
+	width: 36px;
+	height: 36px;
+	margin-top: 6px;
+	vertical-align: top;
+	background-color: gray;
+	horizontal-align: center;
+}
+
+.talent_purple_blue_level
+{
+	width: 42px;
+	height: 14px;
+	vertical-align: bottom;
+	horizontal-align: center;
+	background-image: url("s2r://panorama/images/custom_game/epic_level_21_png.vtex");
+	background-repeat: no-repeat;
+	margin-bottom: 5px;
+}
+
+#hero_talent_hero
+{
+	width: 132px;
+	height: 75px;
+	align: center center;
+	border: 1px solid #555;
+	border-radius: 2px;
+}
+
+#hero_talent_hero_info
+{
+	width: 24px;
+	height: 24px;
+	align: right top;
+	background-color: #212121;
+	z-index: 2;
+	ignore-parent-flow: true;
+	margin-top: 3px;
+	margin-right: 3px;
+	border-radius: 50%;
+	box-shadow: fill #f7942b 0px 0px 5px -1px;
+	border: 1px solid #666;
+}
+
+#hero_talent_hero_info_text
+{
+	text-shadow: 0px 0px 4px 3 #000000;
+	color: white;
+	horizontal-align: center;
+	vertical-align: center;
+	font-family: Reaver;
+	font-size: 19px;
+	margin-left: 3.5px;
+	margin-top: 1px;
+	overflow: noclip noclip;
+}
+
+#hero_talent_hero_container
+{
+	width: 143px;
+	height: 87px;
+	border-radius: 2px;
+	vertical-align: center;
+	background-color: black;
+}
+

@@ -32,7 +32,7 @@ if not thisEntity.init then
     thisEntity.init = true
 
     local tower = FindUnitsInRadius(thisEntity:GetTeamNumber(), thisEntity:GetAbsOrigin(), nil, FIND_UNITS_EVERYWHERE, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_BUILDING, 0, FIND_CLOSEST, false)   
-    for _,t in ipairs(tower) do
+    for _,t in pairs(tower) do
         if t:GetUnitName() == "npc_towerradiant" or t:GetUnitName() == "npc_towerdire" then
             thisEntity.tower_location = t:GetAbsOrigin()
             thisEntity.tower = t

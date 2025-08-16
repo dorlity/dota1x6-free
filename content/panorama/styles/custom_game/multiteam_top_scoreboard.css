@@ -1,4 +1,4 @@
-/* Prettified by Source 2 Viewer 7.0.0.0 - https://valveresourceformat.github.io */
+/* Prettified by Source 2 Viewer 14.1.0.0 - https://valveresourceformat.github.io */
 
 @define ANIM_TIME: 0.75s;
 @define EXTRA_PADDING: 50px;
@@ -33,14 +33,14 @@
 
 .LevelIndicator
 {
-	width: 20px;
-	height: 20px;
+	width: 22px;
+	height: 22px;
 	background-image: url("s2r://panorama/images/custom_game/hero_level_0_png.vtex");
 	background-size: contain;
 	visibility: collapse;
-	align: right center;
+	align: right bottom;
 	z-index: 933999;
-	margin-top: 12px;
+	margin-bottom: 0px;
 }
 
 #PurpleIndicator
@@ -57,20 +57,20 @@
 {
 	width: 100%;
 	height: 100%;
-	visibility: collapse;
+	visibility: visible;
 }
 
 @keyframes 'TopBarShow'
 {
 	0%
 	{
-		transform: translate3d( 0, 0, 0px );
+		transform: translate3d(0, 0, 0px);
 		opacity: 1;
 	}
 	
 	100%
 	{
-		transform: translate3d( 0%, -30%, 0px );
+		transform: translate3d(0%, -30%, 0px);
 		opacity: 0;
 	}
 	
@@ -96,7 +96,7 @@
 
 .AspectRatio4x3 .TopBarScoreboard
 {
-	margin-left: 225px;
+	margin-left: 100px;
 }
 
 #ScoreboardContainer
@@ -234,7 +234,7 @@
 	width: 100%;
 	height: 42px;
 	visibility: collapse;
-	background-color: gradient( linear, 25px 0%, 40px 0%, from( black ), to( transparent ) );
+	background-color: gradient(linear, 25px 0%, 40px 0%, from(black), to(transparent));
 }
 
 #TeamStatus
@@ -462,5 +462,78 @@
 .GreenText
 {
 	color: green;
+}
+
+.IsDuoMode .TopBarScoreboard
+{
+	margin-left: 150px;
+}
+
+.AspectRatio16x10 .IsDuoMode .TopBarScoreboard
+{
+	margin-left: 120px;
+	ui-scale: 90%;
+}
+
+.AspectRatio4x3 .IsDuoMode .TopBarScoreboard
+{
+	margin-left: 120px;
+	ui-scale: 75%;
+}
+
+.TeamNetworthSummary
+{
+	width: 100%;
+	height: 18px;
+	margin-top: 47px;
+	background-color: rgb(0, 0, 0);
+	background-image: url("s2r://panorama/images/custom_game/blacklayer_png.vtex");
+	background-size: 100% 150%;
+	visibility: collapse;
+}
+
+.IsDuoMode .TeamNetworthSummary
+{
+	visibility: visible;
+}
+
+.TeamNetworthCenter
+{
+	align: center center;
+	flow-children: right;
+}
+
+.GoldIconTeamNetworth
+{
+	background-image: url("s2r://panorama/images/custom_game/gold-logo_png.vtex");
+	background-size: contain;
+	width: 18px;
+	height: 18px;
+	align: left top;
+	z-index: 10;
+	margin-top: 0px;
+}
+
+.GoldTeamNetworth
+{
+	vertical-align: bottom;
+	vertical-align: center;
+	font-size: 16px;
+	font-weight: bold;
+	color: #ffc600;
+	font-family: defaultFont;
+	text-shadow: 2px 2px 2px black;
+	margin-left: 3px;
+	text-overflow: clip;
+}
+
+.IsAltDown .TeamNetworthSummary
+{
+	opacity: 0;
+}
+
+.TeamNetworthSummary_hidden
+{
+	opacity: 0;
 }
 

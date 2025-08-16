@@ -1,0 +1,8 @@
+dota2x8
+{
+	material materials/overviews/dota2x8.vmat
+	pos_x -8960
+	pos_y 8960
+	scale 17.500
+}
+

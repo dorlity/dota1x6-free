@@ -41,3 +41,21 @@ function SetText(panel, text) {
 	});
 }
 
+if (IsSpectator())
+{
+    $("#TipPanel").style.opacity = "0"
+}
+
+
+function IsSpectator() {
+	const localPlayer = Players.GetLocalPlayer()
+	if (Players.IsSpectator(localPlayer))
+		return true
+	const localTeam = Players.GetTeam(localPlayer)
+	return localTeam !== 2 &&
+		localTeam !== 3 &&
+		localTeam !== 6 &&
+		localTeam !== 7 &&
+		localTeam !== 8 &&
+		localTeam !== 9
+}

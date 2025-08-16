@@ -1,4 +1,4 @@
-/* Prettified by Source 2 Viewer 7.0.0.0 - https://valveresourceformat.github.io */
+/* Prettified by Source 2 Viewer 14.1.0.0 - https://valveresourceformat.github.io */
 
 .MainWall
 {
@@ -854,11 +854,12 @@
 {
 	width: 100%;
 	height: 340px;
-	background-image: url("s2r://panorama/images/custom_game/shop/plus_1_png.vtex");
+	background-image: url("s2r://panorama/images/custom_game/shop/plus_10_png.vtex");
 	background-size: contain;
 	border-top: 1px solid #ccc;
-	background-repeat: no-repeat;
 	border-bottom: 1px solid #ccc;
+	box-shadow: fill black 0px 0px 20px -2px;
+	background-repeat: no-repeat;
 	z-index: 5;
 }
 
@@ -866,7 +867,7 @@
 {
 	width: 100%;
 	height: 340px;
-	background-image: url("s2r://panorama/images/custom_game/shop/plus_2_png.vtex");
+	background-image: url("s2r://panorama/images/custom_game/shop/plus_8_png.vtex");
 	background-size: contain;
 	border-top: 1px solid #ccc;
 	background-repeat: no-repeat;
@@ -878,11 +879,11 @@
 {
 	width: 100%;
 	height: 340px;
-	background-image: url("s2r://panorama/images/custom_game/shop/plus_7_png.vtex");
+	background-image: url("s2r://panorama/images/custom_game/shop/plus_2_png.vtex");
 	background-size: contain;
 	border-top: 1px solid #ccc;
-	border-bottom: 1px solid #ccc;
 	background-repeat: no-repeat;
+	border-bottom: 1px solid #ccc;
 	z-index: 5;
 }
 
@@ -890,7 +891,7 @@
 {
 	width: 100%;
 	height: 340px;
-	background-image: url("s2r://panorama/images/custom_game/shop/plus_4_png.vtex");
+	background-image: url("s2r://panorama/images/custom_game/shop/plus_1_png.vtex");
 	background-size: contain;
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
@@ -902,7 +903,7 @@
 {
 	width: 100%;
 	height: 340px;
-	background-image: url("s2r://panorama/images/custom_game/shop/plus_3_png.vtex");
+	background-image: url("s2r://panorama/images/custom_game/shop/plus_9_png.vtex");
 	background-size: contain;
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
@@ -914,7 +915,7 @@
 {
 	width: 100%;
 	height: 340px;
-	background-image: url("s2r://panorama/images/custom_game/shop/plus_6_png.vtex");
+	background-image: url("s2r://panorama/images/custom_game/shop/plus_7_png.vtex");
 	background-size: contain;
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
@@ -923,6 +924,42 @@
 }
 
 .pass_window_7
+{
+	width: 100%;
+	height: 340px;
+	background-image: url("s2r://panorama/images/custom_game/shop/plus_4_png.vtex");
+	background-size: contain;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	background-repeat: no-repeat;
+	z-index: 5;
+}
+
+.pass_window_8
+{
+	width: 100%;
+	height: 340px;
+	background-image: url("s2r://panorama/images/custom_game/shop/plus_3_png.vtex");
+	background-size: contain;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	background-repeat: no-repeat;
+	z-index: 5;
+}
+
+.pass_window_9
+{
+	width: 100%;
+	height: 340px;
+	background-image: url("s2r://panorama/images/custom_game/shop/plus_6_png.vtex");
+	background-size: contain;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	background-repeat: no-repeat;
+	z-index: 5;
+}
+
+.pass_window_10
 {
 	width: 100%;
 	height: 340px;
@@ -936,11 +973,10 @@
 
 .TextInfoPassLeft
 {
-	vertical-align: center;
-	horizontal-align: left;
 	width: 440px;
 	font-size: 20px;
 	color: #ccc;
+	align: left center;
 	text-shadow: 0px 0px 10px 2 black;
 	font-family: Reaver;
 	margin-left: 40px;
@@ -1086,17 +1122,17 @@
 
 .slider_controller
 {
-	width: 40%;
-	height: 70%;
+	width: 450px;
+	height: 61px;
 	align: center center;
 	flow-children: right;
 }
 
 .controller_dot
 {
-	height: 50%;
-	width: 7.2%;
-	margin-left: 2%;
+	height: 28px;
+	width: 28px;
+	margin-left: 3px;
 	vertical-align: center;
 	background-image: url("s2r://panorama/images/custom_game/shop/slider_dot_png.vtex");
 	background-size: contain;

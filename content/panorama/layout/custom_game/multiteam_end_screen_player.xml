@@ -1,12 +1,9 @@
-<!-- xml reconstructed by Source 2 Viewer 7.0.0.0 - https://valveresourceformat.github.io -->
+<!-- xml reconstructed by Source 2 Viewer 14.1.0.0 - https://valveresourceformat.github.io -->
 <root>
 	<styles>
 		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
 		<include src="s2r://panorama/styles/custom_game/multiteam_end_screen.vcss_c" />
 	</styles>
-	<scripts>
-		<include src="s2r://panorama/scripts/custom_game/endtalents.vjs_c" />
-	</scripts>
 	<Panel class="PlayerRow">
 		<Button id="TalentButton" class="TalentButton" />
 		<Panel id="PlayerRowContainer">

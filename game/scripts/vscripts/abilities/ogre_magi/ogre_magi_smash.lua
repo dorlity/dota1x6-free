@@ -2,143 +2,130 @@ LinkLuaModifier( "modifier_ogre_magi_smash_custom_buff", "abilities/ogre_magi/og
 
 ogre_magi_smash_custom = class({})
 
-
-
-
 function ogre_magi_smash_custom:Precache(context)
-
-PrecacheResource( "particle", 'particles/units/heroes/hero_ogre_magi/ogre_magi_fire_shield.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_ogre_magi/ogre_magi_fire_shield_projectile.vpcf', context )
-
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/units/heroes/hero_ogre_magi/ogre_magi_fire_shield.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_ogre_magi/ogre_magi_fire_shield_projectile.vpcf", context )
 end
 
 
-
-function ogre_magi_smash_custom:OnInventoryContentsChanged()
-    if self:GetCaster():HasShard() then
-        self:SetHidden(false)        
-        if not self:IsTrained() then
-            self:SetLevel(1)
-        end
-    else
-        self:SetHidden(true)
-    end
+function ogre_magi_smash_custom:GetBehavior()
+local base = DOTA_ABILITY_BEHAVIOR_NO_TARGET
+if not IsSoloMode() then 
+  base = DOTA_ABILITY_BEHAVIOR_UNIT_TARGET
+end
+return base
 end
 
-function ogre_magi_smash_custom:OnHeroCalculateStatBonus()
-    self:OnInventoryContentsChanged()
+
+function ogre_magi_smash_custom:OnSpellStart(new_target)
+local caster = self:GetCaster()
+local target = caster
+
+if self:GetCursorTarget() then
+	target = self:GetCursorTarget()
+end
+if new_target then
+	target = new_target
 end
 
-function ogre_magi_smash_custom:OnSpellStart(multi)
-	if not IsServer() then return end
-	
-	self:GetCaster():EmitSound("Hero_OgreMagi.FireShield.Target")
-	if self:GetCaster():HasModifier("modifier_ogre_magi_bloodlust_custom_legendary_5") then 
-		local ability = self:GetCaster():FindAbilityByName("ogre_magi_bloodlust_custom")
-		self:GetCaster():AddNewModifier(self:GetCaster(), ability, "modifier_ogre_magi_bloodlust_custom_legendary_resist", {duration = ability.legendary_resist_duration})
-	end
+target:EmitSound("Hero_OgreMagi.FireShield.Target")
 
-	if self:GetCaster():HasModifier("modifier_ogremagi_multi_2") then 
-		local ability = self:GetCaster():FindAbilityByName("ogre_magi_multicast_custom")
-		self:GetCaster():AddNewModifier(self:GetCaster(), ability, "modifier_ogre_magi_multicast_custom_spell", {duration = ability.spell_duration[self:GetCaster():GetUpgradeStack("modifier_ogremagi_multi_2")]})
-		self:GetCaster():AddNewModifier(self:GetCaster(), ability, "modifier_ogre_magi_multicast_custom_spell_count", {duration = ability.spell_duration[self:GetCaster():GetUpgradeStack("modifier_ogremagi_multi_2")]})
-	end
-
-
-	local duration = self:GetSpecialValueFor("duration")
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_ogre_magi_smash_custom_buff", {duration = duration})
+local duration = self:GetSpecialValueFor("duration")
+target:AddNewModifier(caster, self, "modifier_ogre_magi_smash_custom_buff", {duration = duration})
 end
+
+function ogre_magi_smash_custom:OnProjectileHit(target, vLocation)
+if not target then return end
+
+local damage = self:GetSpecialValueFor("damage")
+target:EmitSound("Hero_OgreMagi.FireShield.Damage")
+DoDamage( { victim = target, attacker = self:GetCaster(), damage = damage, damage_type = self:GetAbilityDamageType(), ability = self } )
+end
+
+
 
 modifier_ogre_magi_smash_custom_buff = class({})
 
 function modifier_ogre_magi_smash_custom_buff:IsPurgable() return false end
-
+function modifier_ogre_magi_smash_custom_buff:IsHidden() return false end
 
 function modifier_ogre_magi_smash_custom_buff:OnCreated()
-	if not IsServer() then return end
-	self.max_stacks = self:GetAbility():GetSpecialValueFor("attacks")
-	self.add_stacks = self:GetAbility():GetSpecialValueFor("attacks_multi")
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
+self.speed = self.ability:GetSpecialValueFor("projectile_speed")
+self.damage_reduce = self.ability:GetSpecialValueFor("damage_reduce")
+self.max_stacks = self.ability:GetSpecialValueFor("attacks")
+self.add_stacks = self.ability:GetSpecialValueFor("attacks_multi")
+self.max = self.ability:GetSpecialValueFor("max")
 
-	self.particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_ogre_magi/ogre_magi_fire_shield.vpcf", PATTACH_CENTER_FOLLOW , self:GetParent() )
-	ParticleManager:SetParticleControlEnt(  self.particle, 0, self:GetParent(), PATTACH_CENTER_FOLLOW , nil, self:GetParent():GetOrigin(), true )
-	ParticleManager:SetParticleControl( self.particle, 1, Vector( 3, 0, 0 ) )
-	ParticleManager:SetParticleControl( self.particle, 9, Vector( 1, 0, 0 ) )
-	ParticleManager:SetParticleControl( self.particle, 10, Vector( 1, 0, 0 ) )
-	ParticleManager:SetParticleControl( self.particle, 11, Vector( 1, 0, 0 ) )
+if not IsServer() then return end
 
-	self:SetStackCount(self.max_stacks)
+self.RemoveForDuel = true
+
+self.particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_ogre_magi/ogre_magi_fire_shield.vpcf", PATTACH_CENTER_FOLLOW, self.parent )
+ParticleManager:SetParticleControlEnt(  self.particle, 0, self.parent, PATTACH_CENTER_FOLLOW , nil, self.parent:GetOrigin(), true )
+ParticleManager:SetParticleControl( self.particle, 1, Vector( 3, 0, 0 ) )
+ParticleManager:SetParticleControl( self.particle, 9, Vector( 1, 0, 0 ) )
+ParticleManager:SetParticleControl( self.particle, 10, Vector( 1, 0, 0 ) )
+ParticleManager:SetParticleControl( self.particle, 11, Vector( 1, 0, 0 ) )
+self:AddParticle(self.particle,false, false, -1, false, false)
+
+self:SetStackCount(self.max_stacks)
 end
 
-function modifier_ogre_magi_smash_custom_buff:OnStackCountChanged(iStackCount)
-	if not IsServer() then return end
-	ParticleManager:SetParticleControl( self.particle, 1, Vector( 3, 0, 0 ) )
-	if self:GetStackCount() <= 0 then
-		self:Destroy()
-	end
-end
+
 
 function modifier_ogre_magi_smash_custom_buff:OnRefresh()
-	if not IsServer() then return end
-	self:SetStackCount(self:GetStackCount() + self.add_stacks)
-	ParticleManager:SetParticleControl( self.particle, 1, Vector( 3, 0, 0 ) )	
+if not IsServer() then return end
+if self:GetStackCount() >= self.max then return end
+
+self:SetStackCount(self:GetStackCount() + self.add_stacks)
 end
 
-function modifier_ogre_magi_smash_custom_buff:OnDestroy()
-	if not IsServer() then return end
-	if not self.particle then return end
-  	ParticleManager:DestroyParticle(self.particle, true)
-  	ParticleManager:ReleaseParticleIndex(self.particle) 
-end
 
 function modifier_ogre_magi_smash_custom_buff:DeclareFunctions()
-	local funcs = {
-		MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
-	}
-
-	return funcs
+return 
+{
+	MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
+}
 end
 
 function modifier_ogre_magi_smash_custom_buff:GetModifierIncomingDamage_Percentage(params)
-	if not IsServer() then return end
-	if params.attacker and params.inflictor == nil and params.damage then	
-		if self:GetParent():FindAllModifiersByName(self:GetName())[1] == self then 	
-			self:DecrementStackCount()
-			self:RemoveStack(params.attacker)
-			return -70
-		end
-	end
+if not IsServer() then return end
+if not params.attacker then return end
+if params.inflictor then return end 
+if not params.attacker:IsHero() then return end
+
+self:RemoveStack(params.attacker)
+return self.damage_reduce
 end
+
+
 
 function modifier_ogre_magi_smash_custom_buff:RemoveStack(target)
-	if not IsServer() then return end
+if not IsServer() then return end
 
-	if self:GetStackCount() <= 2 then
-		ParticleManager:SetParticleControl( self.particle, 9, Vector( 0, 0, 0 ) )
-	end
 
-	if self:GetStackCount() <= 1 then
-		ParticleManager:SetParticleControl( self.particle, 10, Vector( 0, 0, 0 ) )
-	end
+local info = {
+	Target = target,
+	Source = self.parent,
+	Ability = self.ability,	
+	EffectName = "particles/units/heroes/hero_ogre_magi/ogre_magi_fire_shield_projectile.vpcf",
+	iMoveSpeed = self.speed,
+	bReplaceExisting = false,
+	bProvidesVision = true,
+	iVisionRadius = 50,
+	iVisionTeamNumber = self.parent:GetTeamNumber(),			
+}
+ProjectileManager:CreateTrackingProjectile(info)
+self:DecrementStackCount()
 
-	local info = {
-		Target = target,
-		Source = self:GetCaster(),
-		Ability = self:GetAbility(),	
-		EffectName = "particles/units/heroes/hero_ogre_magi/ogre_magi_fire_shield_projectile.vpcf",
-		iMoveSpeed = self:GetAbility():GetSpecialValueFor("projectile_speed"),
-		bReplaceExisting = false,
-		bProvidesVision = true,
-		iVisionRadius = 50,
-		iVisionTeamNumber = self:GetCaster():GetTeamNumber(),			
-	}
-	ProjectileManager:CreateTrackingProjectile(info)
+if self:GetStackCount() <= 0 then 
+	self:Destroy()
 end
 
-function ogre_magi_smash_custom:OnProjectileHit(target, vLocation)
-	if target then
-		local damage = self:GetSpecialValueFor("damage")
-		target:EmitSound("Hero_OgreMagi.FireShield.Damage")
-		ApplyDamage( { victim = target, attacker = self:GetCaster(), damage = damage, damage_type = self:GetAbilityDamageType(), ability = self } )
-	end
 end
+
+

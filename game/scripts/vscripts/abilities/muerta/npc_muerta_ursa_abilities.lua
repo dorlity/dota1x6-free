@@ -8,6 +8,21 @@ npc_muerta_ursa_speed = class({})
 
 
 
+function npc_muerta_ursa_speed:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle", "particles/units/heroes/hero_ursa/ursa_overpower_buff.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_ursa/ursa_fury_swipes.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_ursa/ursa_fury_swipes_debuff.vpcf", context )
+PrecacheResource( "particle", "particles/generic_gameplay/generic_has_quest.vpcf", context )
+PrecacheResource( "particle", "particles/red_zone.vpcf", context )
+PrecacheResource( "particle", "particles/neutral_fx/ursa_thunderclap.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_snapfire/hero_snapfire_shotgun_debuff.vpcf", context )
+PrecacheResource( "particle", "particles/status_fx/status_effect_snapfire_slow.vpcf", context )
+
+end
+
+
+
 function npc_muerta_ursa_speed:OnSpellStart()
 if not IsServer() then return end
 
@@ -36,6 +51,9 @@ self.speed = self:GetAbility():GetSpecialValueFor("speed")
 if not IsServer() then return end
 
 self.caster = self:GetCaster()
+self.parent = self:GetParent()
+self.parent:AddAttackStartEvent_out(self)
+
 self.ability = self:GetAbility()
 self.ursa_overpower_buff_particle = "particles/units/heroes/hero_ursa/ursa_overpower_buff.vpcf"
 
@@ -54,7 +72,6 @@ return
 {
     MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
     MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-    MODIFIER_EVENT_ON_ATTACK
 }
 end
 
@@ -70,7 +87,7 @@ return self.speed
 end
 
 
-function modifier_npc_muerta_ursa_speed:OnAttack(params)
+function modifier_npc_muerta_ursa_speed:AttackStartEvent_out(params)
 if not IsServer() then return end
 if params.attacker ~= self:GetParent() then return end
 if self:GetStackCount() == 0 then return end

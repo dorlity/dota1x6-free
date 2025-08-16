@@ -1,356 +1,225 @@
-LinkLuaModifier("modifier_zuus_lightning_bolt_custom_true_sight", "abilities/zuus/zuus_lightning_bolt_custom" , LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_zuus_lightning_bolt_custom_dummy", "abilities/zuus/zuus_lightning_bolt_custom" , LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_zuus_lightning_bolt_custom_magic", "abilities/zuus/zuus_lightning_bolt_custom" , LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_zuus_lightning_bolt_custom_aoe_thinker", "abilities/zuus/zuus_lightning_bolt_custom" , LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_zuus_lightning_bolt_custom_tracker", "abilities/zuus/zuus_lightning_bolt_custom" , LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_zuus_lightning_bolt_custom_item_stack", "abilities/zuus/zuus_lightning_bolt_custom" , LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_zuus_lightning_bolt_custom_legendary", "abilities/zuus/zuus_lightning_bolt_custom" , LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_zuus_lightning_bolt_custom_legendary_stack", "abilities/zuus/zuus_lightning_bolt_custom" , LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_zuus_lightning_bolt_custom_legendary_stack_count", "abilities/zuus/zuus_lightning_bolt_custom" , LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_zuus_lightning_bolt_custom_legendary_stack_visual", "abilities/zuus/zuus_lightning_bolt_custom" , LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_zuus_lightning_bolt_custom_root", "abilities/zuus/zuus_lightning_bolt_custom" , LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_zuus_lightning_bolt_custom_root_cd", "abilities/zuus/zuus_lightning_bolt_custom" , LUA_MODIFIER_MOTION_NONE)
 
 zuus_lightning_bolt_custom = class({})
 
-zuus_lightning_bolt_custom.stun_range = {100, 150, 200}
-zuus_lightning_bolt_custom.stun_duration = {0.2, 0.3, 0.4}
 
-zuus_lightning_bolt_custom.resist_magic = {-4, -6, -8}
-zuus_lightning_bolt_custom.resist_max = 4
-zuus_lightning_bolt_custom.resist_duration = 8
-
-zuus_lightning_bolt_custom.cd_reduction = {-1, -1.5, -2}
-
-
-zuus_lightning_bolt_custom.aoe_radius = 220
-zuus_lightning_bolt_custom.aoe_delay = 1.5
-zuus_lightning_bolt_custom.aoe_damage = {0.5, 0.8}
-zuus_lightning_bolt_custom.aoe_stun = {0.2, 0.4}
-
-zuus_lightning_bolt_custom.near_heal = 0.3
-zuus_lightning_bolt_custom.near_creeps = 0.33
-zuus_lightning_bolt_custom.near_range = 325
-zuus_lightning_bolt_custom.near_move = 40
-zuus_lightning_bolt_custom.near_duration = 3
-
-zuus_lightning_bolt_custom.item_cd = 1.2
-zuus_lightning_bolt_custom.cd_range = 900
-zuus_lightning_bolt_custom.cd_max = 3
-
-
-zuus_lightning_bolt_custom.bad_items = 
-{
-	["item_soul_ring"] = true,
-	["item_bracer_custom"] = true,
-	["item_wraith_band_custom"] = true,
-	["item_null_talisman_custom"] = true,
-	["item_power_treads"] = true,
-	["item_phase_boots"] = true,
-	["item_branches"] = true,
-	["item_quelling_blade"] = true,
-	["item_radiance_custom"] = true,
-	["item_bfury"] = true,
-	["item_vambrace"] = true,
-	["item_flicker"] = true,	
-	["item_havoc_hammer"] = true,
-}
+function zuus_lightning_bolt_custom:GetAbilityTextureName()
+if self:GetCaster():HasModifier("modifier_zuus_lightning_weapon_custom") then
+    return "zuus_lightning_bolt_immortal"
+end 
+return "zuus_lightning_bolt"
+end
 
 
 function zuus_lightning_bolt_custom:Precache(context)
-
-PrecacheResource( "particle", 'particles/units/heroes/hero_zeus/zeus_cloud_strike.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_zuus/zuus_lightning_bolt.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_zuus/zuus_lightning_bolt_glow_fx.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_zuus/zuus_arc_lightning_impact.vpcf', context )
-PrecacheResource( "particle", 'particles/zeus_resist_stack.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_zeus/zeus_cloud.vpcf', context )
-PrecacheResource( "particle", 'particles/econ/items/omniknight/hammer_ti6_immortal/zeus_heal_bolt.vpcf', context )
-PrecacheResource( "particle", 'particles/zuus_speed.vpcf', context )
-PrecacheResource( "particle", 'particles/zuus_attack_stack.vpcf', context )
-
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/units/heroes/hero_zeus/zeus_cloud_strike.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_zuus/zuus_lightning_bolt_glow_fx.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_zuus/zuus_lightning_bolt.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_zuus/zuus_arc_lightning_impact.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_zeus/zeus_cloud.vpcf", context )
+PrecacheResource( "particle","particles/zuus_attack_stack.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_zuus/zuus_lightning_bolt_aoe.vpcf", context )
+PrecacheResource( "particle","particles/zeus/bolt_disarm.vpcf", context )
 end
-
-
-
-
 
 
 function zuus_lightning_bolt_custom:GetIntrinsicModifierName()
+if not self:GetCaster():IsRealHero() then return end
 return "modifier_zuus_lightning_bolt_custom_tracker"
 end
 
-function zuus_lightning_bolt_custom:GetAOERadius()
-if self:GetCaster():HasModifier("modifier_zuus_bolt_5") then 
-	return self.near_range
-end
-	return 0
-end
-
-
 
 function zuus_lightning_bolt_custom:OnAbilityPhaseStart()
-	self:GetCaster():EmitSound("Hero_Zuus.LightningBolt.Cast")
-	return true
+local caster = self:GetCaster()
+local sound = "Hero_Zuus.LightningBolt.Cast"
+if caster:HasModifier("modifier_zuus_lightning_weapon_custom") then
+    sound = "Hero_Zuus.LightningBolt.Cast.Righteous"
+end
+caster:EmitSound(sound)
+return true
 end
 
 function zuus_lightning_bolt_custom:GetCooldown(iLevel)
-
 local bonus = 0
-if self:GetCaster():HasModifier("modifier_zuus_bolt_3") then 
-  bonus = self.cd_reduction[self:GetCaster():GetUpgradeStack("modifier_zuus_bolt_3")]
+if self:GetCaster():HasTalent("modifier_zuus_bolt_1") then 
+  bonus = self:GetCaster():GetTalentValue("modifier_zuus_bolt_1", "cd")
+end
+return self.BaseClass.GetCooldown(self, iLevel) + bonus
 end
 
- return self.BaseClass.GetCooldown(self, iLevel) + bonus
- 
-end
 
-
-function zuus_lightning_bolt_custom:GetCastRange(vLocation, hTarget)
-
-local upgrade = 0
-if self:GetCaster():HasModifier("modifier_zuus_bolt_1") then 
-  upgrade = self.stun_range[self:GetCaster():GetUpgradeStack("modifier_zuus_bolt_1")]
-end
-return self.BaseClass.GetCastRange(self , vLocation , hTarget) + upgrade 
+function zuus_lightning_bolt_custom:OnSpellStart()
+local caster = self:GetCaster()
+local target = self:GetCursorTarget()
+local point = target and target:GetAbsOrigin() or self:GetCursorPosition()
+self:CastLightningBolt(point, false)
 end
 
 
 
-function zuus_lightning_bolt_custom:OnSpellStart(new_target)
-	if not IsServer() then return end
-	local target = self:GetCursorTarget()
-	if new_target then 
-		target = new_target
-	end
-
-	local point = self:GetCursorPosition()
-
-	self:CastLightningBolt(self:GetCaster(), target, point, false, false, false, false)
-end
-
-function zuus_lightning_bolt_custom:CastLightningBolt(caster, target, target_point, not_cast, nimbus, hand, delayed)
+function zuus_lightning_bolt_custom:CastLightningBolt(point, nimbus, aoe)
 if not IsServer() then return end
+local caster = self:GetCaster()
+local spread_aoe = self:GetSpecialValueFor("spread_aoe")
+local true_sight_radius = self:GetSpecialValueFor("true_sight_radius")
+local sight_duration = self:GetSpecialValueFor("sight_duration")
+local stun_duration = self:GetSpecialValueFor("stun_duration") + caster:GetTalentValue("modifier_zuus_hero_1", "stun")
+local damage = self:GetSpecialValueFor("damage")
 
-local spread_aoe 			= self:GetSpecialValueFor("spread_aoe")
-local true_sight_radius 	= self:GetSpecialValueFor("true_sight_radius")
-local sight_radius_day  	= self:GetSpecialValueFor("sight_radius_day")
-local sight_radius_night  	= self:GetSpecialValueFor("sight_radius_night")
-local sight_duration 		= self:GetSpecialValueFor("sight_duration")
-local stun_duration 		= 0.35
+local root_duration = caster:GetTalentValue("modifier_zuus_bolt_4", "root")
+local root_cd = caster:GetTalentValue("modifier_zuus_bolt_4", "talent_cd")
 
+local legendary_damage = caster:GetTalentValue("modifier_zuus_bolt_7", "damage_inc", true)/100
 
-local z_pos 				= 3000
+local damage_ability = aoe and "modifier_zuus_bolt_3" or nil
+local z_pos = 3000
 
-if nimbus then
-	nimbus:EmitSound("Hero_Zuus.LightningBolt")
-end
+local target_point = point
+local target = not aoe and caster:RandomTarget(spread_aoe, target_point, 0) or nil
+local targets = aoe and caster:FindTargets(spread_aoe, target_point) or {}
 
-AddFOWViewer(caster:GetTeam(), target_point, true_sight_radius, sight_duration, false)
-
-if target ~= nil then
+if target then
+	table.insert(targets, target)
 	target_point = target:GetAbsOrigin()
-	if target == caster then
-		z_pos = 2050
-	end
 end
 
-if target == nil then
-
-	local nearby_enemy_units = FindUnitsInRadius( caster:GetTeamNumber(),  target_point,  nil,  spread_aoe,  DOTA_UNIT_TARGET_TEAM_ENEMY,  DOTA_UNIT_TARGET_HERO,  DOTA_UNIT_TARGET_FLAG_NONE,  FIND_CLOSEST,  false )
-	
-	for i,unit in pairs(nearby_enemy_units) do
-			target = unit
-			break
-	end
-
+local sound = "Hero_Zuus.LightningBolt"
+if caster:HasModifier("modifier_zuus_lightning_weapon_custom") then
+    sound = "Hero_Zuus.LightningBolt.Righteous"
 end
-
-
-if target == nil then
-	local nearby_enemy_units = FindUnitsInRadius( caster:GetTeamNumber(),  target_point,  nil,  spread_aoe,  DOTA_UNIT_TARGET_TEAM_ENEMY,  self:GetAbilityTargetType(), DOTA_UNIT_TARGET_FLAG_NONE, FIND_CLOSEST, false )
-	for i,unit in pairs(nearby_enemy_units) do
-		target = unit
-		break
-	end
-end
-
-
-if self:GetCaster():HasModifier("modifier_zuus_jump_4") and not_cast == false and target ~= nil then 
-	local ability = self:GetCaster():FindAbilityByName("zuus_heavenly_jump_custom")
-
-	if ability and ability:GetLevel() > 0 then 
-		self:GetCaster():AddNewModifier(self:GetCaster(), ability, "modifier_zuus_heavenly_jump_custom_attack_speed", {duration = ability.speed_duration})
-	end
-end
+AddFOWViewer(caster:GetTeamNumber(), target_point, true_sight_radius, sight_duration, false)
 
 
 if not nimbus and target then
-	if target:GetTeam() ~= caster:GetTeam() then
-		if target:TriggerSpellAbsorb(self) then
-			return nil
-		end
-	end
+	if target:TriggerSpellAbsorb(self) then return end
 end
-
 
 if nimbus then
 	if target then
-		local nimbus_point = nimbus:GetAbsOrigin()
-		local target_point = target:GetAbsOrigin()
-
-
 		local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_zeus/zeus_cloud_strike.vpcf", PATTACH_ABSORIGIN_FOLLOW, nimbus)
 		ParticleManager:SetParticleControl(particle, 0, nimbus:GetAbsOrigin())
 		ParticleManager:SetParticleControlEnt(particle, 1, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true)
-		EmitSoundOnLocationWithCaster(target_point, "Hero_Zuus.LightningBolt", nimbus)
+        ParticleManager:ReleaseParticleIndex(particle)	
+
+		EmitSoundOnLocationWithCaster(target_point, sound, nimbus)
 	end
 else
+    if caster:HasModifier("modifier_zuus_lightning_weapon_custom") then
+        local particle = ParticleManager:CreateParticle("particles/econ/items/zeus/lightning_weapon_fx/zuus_lightning_bolt_immortal_lightning.vpcf", PATTACH_WORLDORIGIN, nil)
+        ParticleManager:SetParticleControl(particle, 0, Vector(target_point.x, target_point.y, z_pos))
+        ParticleManager:SetParticleControl(particle, 1, Vector(target_point.x, target_point.y, target_point.z))
+        ParticleManager:SetParticleControl(particle, 3, Vector(target_point.x, target_point.y, target_point.z))
+        ParticleManager:ReleaseParticleIndex(particle)
 
-	local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_zuus/zuus_lightning_bolt.vpcf", PATTACH_WORLDORIGIN, nil)
-	local particle2 = ParticleManager:CreateParticle("particles/units/heroes/hero_zuus/zuus_lightning_bolt_glow_fx.vpcf", PATTACH_WORLDORIGIN, nil)
-		
-	if target and not target:IsMagicImmune() then 
-		target_point = target:GetAbsOrigin()
-	end
+        local particle3 = ParticleManager:CreateParticle("particles/econ/items/zeus/lightning_weapon_fx/zuus_lb_cfx_il.vpcf", PATTACH_WORLDORIGIN, nil)
+        ParticleManager:SetParticleControl(particle3, 0, Vector(target_point.x, target_point.y, target_point.z))
+        ParticleManager:ReleaseParticleIndex(particle3)
+    else
+        local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_zuus/zuus_lightning_bolt.vpcf", PATTACH_WORLDORIGIN, nil)
+        ParticleManager:SetParticleControl(particle, 0, Vector(target_point.x, target_point.y, z_pos))
+        ParticleManager:SetParticleControl(particle, 1, Vector(target_point.x, target_point.y, target_point.z))
+        ParticleManager:ReleaseParticleIndex(particle)
+    end
 
-	ParticleManager:SetParticleControl(particle, 0, Vector(target_point.x, target_point.y, z_pos))
-	ParticleManager:SetParticleControl(particle, 1, Vector(target_point.x, target_point.y, target_point.z))
-	ParticleManager:ReleaseParticleIndex(particle)
+    local particle2 = ParticleManager:CreateParticle("particles/units/heroes/hero_zuus/zuus_lightning_bolt_glow_fx.vpcf", PATTACH_WORLDORIGIN, nil)
+    ParticleManager:SetParticleControl(particle2, 0, Vector(target_point.x, target_point.y, z_pos))
+    ParticleManager:SetParticleControl(particle2, 1, Vector(target_point.x, target_point.y, target_point.z))
+    ParticleManager:ReleaseParticleIndex(particle2)
 
-	ParticleManager:SetParticleControl(particle2, 0, Vector(target_point.x, target_point.y, z_pos))
-	ParticleManager:SetParticleControl(particle2, 1, Vector(target_point.x, target_point.y, target_point.z))
-	ParticleManager:ReleaseParticleIndex(particle2)
-
-
-	if self:GetCaster():HasModifier("modifier_zuus_bolt_1") then 
-		stun_duration = stun_duration + self.stun_duration[self:GetCaster():GetUpgradeStack("modifier_zuus_bolt_1")]
-	end
-
-	if self:GetCaster():HasModifier("modifier_zuus_bolt_4") and not_cast == false then 
-		CreateModifierThinker(self:GetCaster(), self, "modifier_zuus_lightning_bolt_custom_aoe_thinker", {duration = self.aoe_delay, radius = self.aoe_radius}, target_point, self:GetCaster():GetTeamNumber(), false)
-	end
-
-	EmitSoundOnLocationWithCaster(target_point, "Hero_Zuus.LightningBolt", caster)
-
+	EmitSoundOnLocationWithCaster(target_point, sound, caster)
 end
 
-AddFOWViewer(self:GetCaster():GetTeamNumber(), target_point, sight_radius_day, sight_duration, false)
 
-if target ~= nil and target:GetTeam() ~= caster:GetTeam() then
+if caster:HasTalent("modifier_zuus_bolt_3") then 
+	caster:CdItems(caster:GetTalentValue("modifier_zuus_bolt_3", "cd_items"))
+end
+if aoe then
+	damage = damage * caster:GetTalentValue("modifier_zuus_bolt_3", "damage")/100
+    local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_zuus/zuus_lightning_bolt_aoe.vpcf", PATTACH_WORLDORIGIN, nil)
+    ParticleManager:SetParticleControl(particle, 0, target_point)
+    ParticleManager:SetParticleControl(particle, 1, Vector(spread_aoe, 0, 0))
+    ParticleManager:ReleaseParticleIndex(particle)
+end
 
+local hit = false
+local mod = caster:FindModifierByName("modifier_zuus_heavenly_jump_custom_passive")
 
-	local ifx = ParticleManager:CreateParticle("particles/units/heroes/hero_zuus/zuus_arc_lightning_impact.vpcf",PATTACH_ABSORIGIN_FOLLOW,target)
-	ParticleManager:SetParticleControlEnt(ifx,1,target,PATTACH_ABSORIGIN_FOLLOW,nil,target:GetAbsOrigin(),true)
-	ParticleManager:ReleaseParticleIndex(ifx)
+for _,unit in pairs(targets) do
 
-	target:AddNewModifier(caster, self, "modifier_zuus_lightning_bolt_custom_true_sight", {duration = sight_duration})
-	--target:AddNewModifier(caster, self, "modifier_item_dustofappearance", {duration = sight_duration})
-
-	local k = 1
-	if delayed == true then 
-		k = self.aoe_damage[self:GetCaster():GetUpgradeStack("modifier_zuus_bolt_4")]
-		stun_duration = self.aoe_stun[self:GetCaster():GetUpgradeStack("modifier_zuus_bolt_4")]
-	end
-
-
-	if hand == true then 
-		stun_duration = 0.1
-	else 
-		if self:GetCaster():HasModifier("modifier_zuus_bolt_7") then 
-			self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_zuus_lightning_bolt_custom_legendary_stack", {})
+	if mod then
+		if not hit then
+			hit = true
+			mod:LegendaryStack(unit:IsRealHero())
 		end
+		mod:PassiveProc(unit)
 	end
 
-	local damage = self:GetSpecialValueFor("damage")*k
+	unit:GenericParticle("particles/units/heroes/hero_zuus/zuus_arc_lightning_impact.vpcf")
+	unit:AddNewModifier(caster, self, "modifier_generic_vision", {duration = sight_duration})
+	unit:AddNewModifier(caster, self, "modifier_truesight", {duration = sight_duration})
 
-
-	local legendary_mod = target:FindModifierByName("modifier_zuus_lightning_bolt_custom_legendary_stack_count")
-	if legendary_mod and caster:HasAbility("zuus_stormkeeper_custom") then 
-		damage = damage*(1 +  legendary_mod:GetStackCount()*caster:FindAbilityByName("zuus_stormkeeper_custom"):GetSpecialValueFor("damage_inc")/100)
-	end
+	local legendary_mod = unit:FindModifierByName("modifier_zuus_lightning_bolt_custom_legendary_stack_count")
+	local legendary_stack = legendary_mod and legendary_mod:GetStackCount() or 0
 
 	local creeps_k = 1
-	if target:IsCreep() then 
+	if unit:IsCreep() then 
 		creeps_k = self:GetSpecialValueFor("creeps_damage")
 	end 
 
-	
-	target:AddNewModifier(caster, self, "modifier_stunned", {duration = stun_duration * (1 - target:GetStatusResistance())})
-	ApplyDamage({attacker = caster, ability = self, damage_type = self:GetAbilityDamageType(), damage = damage*creeps_k, victim = target})
-
-	if self:GetCaster():HasModifier("modifier_zuus_bolt_2") then 
-		target:AddNewModifier(self:GetCaster(), self, "modifier_zuus_lightning_bolt_custom_magic", {duration = self.resist_duration})
+	local static = caster:FindModifierByName("modifier_zuus_innate_custom") 
+	if static then 
+		static:DealDamage(unit)
 	end
 
-	if self:GetCaster():HasModifier("modifier_zuus_bolt_6") then 
-		for i = 0, 8 do
-	        local current_item = self:GetCaster():GetItemInSlot(i)
-	  
+	local damage = damage*(1 + legendary_stack*legendary_damage) *creeps_k
 
-	        if current_item and not NoCdItems[current_item:GetName()] then  
-	          local cd = current_item:GetCooldownTimeRemaining()
-	          current_item:EndCooldown()
-	          if cd > self.item_cd then 
-	            current_item:StartCooldown(cd - self.item_cd)
-	          end
-	 
-	        end
-	    end
+	if caster:HasTalent("modifier_zuus_bolt_2") then 
+		unit:AddNewModifier(caster, self, "modifier_zuus_lightning_bolt_custom_magic", {duration = caster:GetTalentValue("modifier_zuus_bolt_2", "duration")})
+	end
+	local stun = (1 - unit:GetStatusResistance())*stun_duration
+	unit:AddNewModifier(caster, self, "modifier_stunned", {duration = stun})
 
+	if caster:HasTalent("modifier_zuus_bolt_4") and not unit:HasModifier("modifier_zuus_lightning_bolt_custom_root_cd") and not unit:IsDebuffImmune() then
+		unit:AddNewModifier(caster, self, "modifier_zuus_lightning_bolt_custom_root", {duration = stun + (1 - unit:GetStatusResistance())*root_duration})
+		unit:AddNewModifier(caster, self, "modifier_zuus_lightning_bolt_custom_root_cd", {duration = root_cd})
 	end
 
+	local real_damage = DoDamage({attacker = caster, ability = self, damage_type = DAMAGE_TYPE_MAGICAL, damage = damage, victim = unit}, damage_ability)
+	if legendary_stack >= 6 then
+		unit:SendNumber(24, real_damage)
+	end
 
 end
 
 end
-
-
-
-modifier_zuus_lightning_bolt_custom_true_sight = class({})
-
-
-function modifier_zuus_lightning_bolt_custom_true_sight:IsHidden() return true end
-function modifier_zuus_lightning_bolt_custom_true_sight:IsPurgable() return false end
-function modifier_zuus_lightning_bolt_custom_true_sight:OnCreated(table)
-if not IsServer() then return end
-self:StartIntervalThink(0.1)
---self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_truesight", {duration = self:GetRemainingTime()})
-end
-
-function modifier_zuus_lightning_bolt_custom_true_sight:OnRefresh(table)
-if not IsServer() then return end
-self:OnCreated(table)
-end
-
-function modifier_zuus_lightning_bolt_custom_true_sight:OnIntervalThink()
-if not IsServer() then return end
-AddFOWViewer(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), 10, 0.2, false)
-end
-
-
 
 
 
 modifier_zuus_lightning_bolt_custom_magic = class({})
 function modifier_zuus_lightning_bolt_custom_magic:IsHidden() return false end
-function modifier_zuus_lightning_bolt_custom_magic:IsPurgable() return true end
+function modifier_zuus_lightning_bolt_custom_magic:IsPurgable() return false end
 function modifier_zuus_lightning_bolt_custom_magic:GetTexture() return "buffs/remnant_lowhp" end
 function modifier_zuus_lightning_bolt_custom_magic:OnCreated(table)
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+
+self.max = self.caster:GetTalentValue("modifier_zuus_bolt_2", "max")
+self.magic = self.caster:GetTalentValue("modifier_zuus_bolt_2", "magic")
 if not IsServer() then return end
 self:SetStackCount(1)
 end
 
 function modifier_zuus_lightning_bolt_custom_magic:OnRefresh(table)
 if not IsServer() then return end
-if self:GetStackCount() >= self:GetAbility().resist_max then return end
+if self:GetStackCount() >= self.max then return end
 self:IncrementStackCount()
-
-if self:GetStackCount() >= self:GetAbility().resist_max then 
-
-	self.particle_peffect = ParticleManager:CreateParticle("particles/zeus_resist_stack.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())   
-	ParticleManager:SetParticleControl(self.particle_peffect, 0, self:GetParent():GetAbsOrigin())
-	self:AddParticle(self.particle_peffect, false, false, -1, false, true)
-end
-
 end
 
 function modifier_zuus_lightning_bolt_custom_magic:DeclareFunctions()
@@ -361,186 +230,123 @@ return
 end
 
 function modifier_zuus_lightning_bolt_custom_magic:GetModifierMagicalResistanceBonus()
-return self:GetStackCount()*self:GetAbility().resist_magic[self:GetCaster():GetUpgradeStack("modifier_zuus_bolt_2")]
+return self:GetStackCount()*self.magic
 end
 
-
-modifier_zuus_lightning_bolt_custom_aoe_thinker = class({})
-function modifier_zuus_lightning_bolt_custom_aoe_thinker:IsHidden() return true end
-function modifier_zuus_lightning_bolt_custom_aoe_thinker:IsPurgable() return false end
-function modifier_zuus_lightning_bolt_custom_aoe_thinker:OnCreated(table)
-if not IsServer() then return end
-
-	local target_point = self:GetParent():GetAbsOrigin()
-	self.zuus_nimbus_particle = ParticleManager:CreateParticle("particles/units/heroes/hero_zeus/zeus_cloud.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-	ParticleManager:SetParticleControl(self.zuus_nimbus_particle, 0, Vector(target_point.x, target_point.y, 350))
-	ParticleManager:SetParticleControl(self.zuus_nimbus_particle, 1, Vector(self:GetAbility().aoe_radius, 0, 0))
-	ParticleManager:SetParticleControl(self.zuus_nimbus_particle, 2, Vector(target_point.x, target_point.y, target_point.z + 350))	
-	self:AddParticle(self.zuus_nimbus_particle, false, false, -1, false, false)
-
-end
-
-function modifier_zuus_lightning_bolt_custom_aoe_thinker:OnDestroy()
-if not IsServer() then return end
-
-local units = FindUnitsInRadius( self:GetCaster():GetTeamNumber(),  self:GetParent():GetAbsOrigin(),  nil,  self:GetAbility().aoe_radius,  DOTA_UNIT_TARGET_TEAM_ENEMY,  DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,  0,  FIND_CLOSEST,  false )
-
-for _,unit in pairs(units) do 
-	self:GetAbility():CastLightningBolt(self:GetCaster(), unit, unit:GetAbsOrigin(), true, false, false, true)
-end
-
-if #units == 0 then 
-	EmitSoundOnLocationWithCaster(self:GetParent():GetAbsOrigin(), "Hero_Zuus.LightningBolt", self:GetCaster())
-end
-
-end
 
 
 
 modifier_zuus_lightning_bolt_custom_tracker = class({})
 function modifier_zuus_lightning_bolt_custom_tracker:IsHidden() return true end
 function modifier_zuus_lightning_bolt_custom_tracker:IsPurgable() return false end
-function modifier_zuus_lightning_bolt_custom_tracker:DeclareFunctions()
-return
-{
-	MODIFIER_EVENT_ON_TAKEDAMAGE,
-    MODIFIER_EVENT_ON_ABILITY_EXECUTED,
-}
+function modifier_zuus_lightning_bolt_custom_tracker:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.items_duration = self.parent:GetTalentValue("modifier_zuus_bolt_3", "duration", true)
+self.items_delay = self.parent:GetTalentValue("modifier_zuus_bolt_3", "delay", true)
+self:UpdateTalent()
+end 
+
+
+function modifier_zuus_lightning_bolt_custom_tracker:UpdateTalent(name)
+
+if name == "modifier_zuus_bolt_3" or self.parent:HasTalent("modifier_zuus_bolt_3") then
+	self.parent:AddSpellEvent(self, true)
 end
 
-function modifier_zuus_lightning_bolt_custom_tracker:OnAbilityExecuted( params )
+end
+
+function modifier_zuus_lightning_bolt_custom_tracker:SpellEvent( params )
 if not IsServer() then return end
-if params.unit~=self:GetParent() then return end
-if not params.ability then return end
-if not params.ability:IsItem() or params.ability:IsToggle() then return end
-if UnvalidAbilities[params.ability:GetName()] then return end
-if UnvalidItems[params.ability:GetName()] then return end
-if params.ability:GetCurrentCharges() > 0 then return end
-if not self:GetParent():HasModifier("modifier_zuus_bolt_6") then return end
+if not self.parent:HasTalent("modifier_zuus_bolt_3") then return end
+if params.unit ~= self.parent then return end
 
-
-
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_zuus_lightning_bolt_custom_item_stack", {})
-
+local index = nil
+local delay = nil
+if params.target then
+	index = params.target:entindex()
+end
+if params.ability == self.ability then
+	delay = self.items_delay
 end
 
-
-function modifier_zuus_lightning_bolt_custom_tracker:OnTakeDamage(params)
-if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end
-if not params.inflictor then return end
-if not self:GetParent():HasModifier("modifier_zuus_bolt_5") then return end
-if params.inflictor ~= self:GetAbility() then return end
-
-local heal = params.damage*self:GetAbility().near_heal
-if params.unit:IsCreep() then 
-	heal = self:GetAbility().near_creeps*heal
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_zuus_lightning_bolt_custom_item_stack", {target = index, delay = delay, duration = self.items_duration})
 end
 
 
 
-my_game:GenericHeal(self:GetCaster(), heal, self:GetAbility())
 
-
-if (self:GetParent():GetAbsOrigin() - params.unit:GetAbsOrigin()):Length2D() > self:GetAbility().near_range then return end
-
-self:GetParent():EmitSound("Zuus.Bolt_heal")
-
-local effect_target = ParticleManager:CreateParticle( "particles/econ/items/omniknight/hammer_ti6_immortal/zeus_heal_bolt.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-ParticleManager:SetParticleControl( effect_target, 1, Vector( 200, 100, 100 ) )
-ParticleManager:ReleaseParticleIndex( effect_target )
-
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_generic_movespeed", {movespeed = self:GetAbility().near_move, duration = self:GetAbility().near_duration, effect = "particles/zuus_speed.vpcf"})
-
-end
-
-modifier_zuus_lightning_bolt_custom_item_stack = class({})
-function modifier_zuus_lightning_bolt_custom_item_stack:IsHidden() return false end
-function modifier_zuus_lightning_bolt_custom_item_stack:IsPurgable() return false end
-function modifier_zuus_lightning_bolt_custom_item_stack:RemoveOnDeath() return false end
+modifier_zuus_lightning_bolt_custom_item_stack = class(mod_visible)
 function modifier_zuus_lightning_bolt_custom_item_stack:GetTexture() return "buffs/bolt_items" end
 function modifier_zuus_lightning_bolt_custom_item_stack:OnCreated(table)
 if not IsServer() then return end
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.max = self.parent:GetTalentValue("modifier_zuus_bolt_3", "count")
+self.radius = self.parent:GetTalentValue("modifier_zuus_bolt_3", "radius")
+
+self.RemoveForDuel = true
+
 self:SetStackCount(1)
 end
 
 function modifier_zuus_lightning_bolt_custom_item_stack:OnRefresh(table)
 if not IsServer() then return end
+if self:GetStackCount() >= self.max then return end
 self:IncrementStackCount()
 
-if self:GetStackCount() >= self:GetAbility().cd_max then 
-	local units_heroes = FindUnitsInRadius( self:GetParent():GetTeamNumber(),  self:GetParent():GetAbsOrigin(),  nil, self:GetAbility().cd_range,  DOTA_UNIT_TARGET_TEAM_ENEMY,  DOTA_UNIT_TARGET_HERO,  DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE,  FIND_CLOSEST,  false )
-	local units_creeps = FindUnitsInRadius( self:GetParent():GetTeamNumber(),  self:GetParent():GetAbsOrigin(),  nil, self:GetAbility().cd_range,  DOTA_UNIT_TARGET_TEAM_ENEMY,  DOTA_UNIT_TARGET_BASIC,  DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE,  FIND_CLOSEST,  false )
-				
-	local units = units_heroes
+if self:GetStackCount() < self.max then return end
 
-	if #units == 0 then 
-		units = units_creeps
-	end
+self.target = table.target and EntIndexToHScript(table.target) or nil
+local delay = table.delay and table.delay or 0
 
-	if #units > 0 then 
-		local unit = units[1]
-		self:GetAbility():CastLightningBolt(self:GetCaster(), unit, unit:GetAbsOrigin(), true, false, false, false)
-	end
-
-	self:Destroy()
-end
-
-end
-
-function modifier_zuus_lightning_bolt_custom_item_stack:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_TOOLTIP
-}
-end
-
-function modifier_zuus_lightning_bolt_custom_item_stack:OnTooltip()
- return self:GetAbility().cd_max
+self:StartIntervalThink(delay)
 end
 
 
+function modifier_zuus_lightning_bolt_custom_item_stack:OnIntervalThink()
+if not IsServer() then return end
 
+local point = nil
+if not self.target or self.target:IsNull() then
+	self.target = self.parent:RandomTarget(self.radius)
+end
+if self.target then
+	point = self.target:GetAbsOrigin()
+else
+	point = self.parent:GetAbsOrigin() + RandomVector(350)
+end
 
-
-
-
-
-
-
+self.ability:CastLightningBolt(point, false, true)
+self:Destroy()
+end
 
 
 
 zuus_stormkeeper_custom = class({})
 
+function zuus_stormkeeper_custom:CreateTalent()
+self:SetHidden(false)
+end
+
 function zuus_stormkeeper_custom:GetAOERadius()
 return self:GetSpecialValueFor("aoe")
 end
 
---function zuus_stormkeeper_custom:GetChannelTime()
---if not IsServer() then return end
---local mod = self:GetCaster():FindModifierByName("modifier_zuus_lightning_bolt_custom_legendary_stack")
---if mod then 
-	--return self:GetSpecialValueFor("cast_delay")*mod:GetStackCount() + FrameTime()*3
---end
---return
---end
-
-
-
-
-function zuus_stormkeeper_custom:GetCastRange(vLocation, hTarget)
-return self:GetSpecialValueFor("cast_range")
+function zuus_stormkeeper_custom:GetChannelTime()
+return self:GetSpecialValueFor("AbilityChannelTime")
 end
 
+function zuus_stormkeeper_custom:GetCooldown()
+return self:GetCaster():GetTalentValue("modifier_zuus_bolt_7", "talent_cd")
+end
 
 function zuus_stormkeeper_custom:OnSpellStart()
-if not IsServer() then return end
-
+local caster = self:GetCaster()
 local point = self:GetCursorPosition()
-
-local mod_cast = self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_zuus_lightning_bolt_custom_legendary", {x = point.x, y = point.y, z = point.z, stack = self:GetSpecialValueFor("strikes")})
-
+caster:AddNewModifier(caster, self, "modifier_zuus_lightning_bolt_custom_legendary", {x = point.x, y = point.y})
 end
 
 
@@ -552,86 +358,69 @@ end
 
 
 
-
-
-modifier_zuus_lightning_bolt_custom_legendary = class({})
-function modifier_zuus_lightning_bolt_custom_legendary:IsHidden() return false end
-function modifier_zuus_lightning_bolt_custom_legendary:IsPurgable() return false end
-
-
-function modifier_zuus_lightning_bolt_custom_legendary:OnDestroy()
-if not IsServer() then return end
-self:GetCaster():FadeGesture(ACT_DOTA_GENERIC_CHANNEL_1)
-self:GetCaster():RemoveModifierByName("modifier_zuus_lightning_bolt_custom_legendary_stack")
-end
-
+modifier_zuus_lightning_bolt_custom_legendary = class(mod_hidden)
 function modifier_zuus_lightning_bolt_custom_legendary:OnCreated(table)
 if not IsServer() then return end
-self:GetCaster():StartGesture(ACT_DOTA_GENERIC_CHANNEL_1)
 
-self:SetStackCount(table.stack)
-self.target_point = Vector(table.x, table.y, table.z)
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
+self.parent:StartGesture(ACT_DOTA_GENERIC_CHANNEL_1)
+self.radius = self.ability:GetSpecialValueFor("aoe")
+self.max = self.parent:GetTalentValue("modifier_zuus_bolt_7", "max")
+self.damage = self.parent:GetTalentValue("modifier_zuus_bolt_7", "damage")
+self.stun = self.parent:GetTalentValue("modifier_zuus_bolt_7", "stun")
 
-AddFOWViewer(self:GetParent():GetTeamNumber(), self.target_point, self:GetAbility():GetSpecialValueFor("aoe"), 3, false)
+self.channel = self.ability:GetSpecialValueFor("AbilityChannelTime")
+self.duration = self.ability:GetSpecialValueFor("duration")
+
+self:SetStackCount(self.max)
+self.target_point = GetGroundPosition(Vector(table.x, table.y, 0), nil)
+
+self.damageTable = {attacker = self.parent, ability = self.ability, damage_type = DAMAGE_TYPE_MAGICAL, damage = self.damage}
+
+AddFOWViewer(self.parent:GetTeamNumber(), self.target_point, self.radius, self.channel, false)
 
 self.zuus_nimbus_particle = ParticleManager:CreateParticle("particles/units/heroes/hero_zeus/zeus_cloud.vpcf", PATTACH_WORLDORIGIN, nil)
 ParticleManager:SetParticleControl(self.zuus_nimbus_particle, 0, self.target_point)
-ParticleManager:SetParticleControl(self.zuus_nimbus_particle, 1, Vector(self:GetAbility():GetSpecialValueFor("aoe"), 0, 0))
+ParticleManager:SetParticleControl(self.zuus_nimbus_particle, 1, Vector(self.radius, 0, 0))
 self:AddParticle(self.zuus_nimbus_particle, false, false, -1, false, false)
 
+self.interval = self.channel/(self.max - 1) - FrameTime()
+
 self:OnIntervalThink()
-self:StartIntervalThink(self:GetAbility():GetSpecialValueFor("cast_delay"))
+self:StartIntervalThink(self.interval)
 end
-
-
-
-
-
 
 
 function modifier_zuus_lightning_bolt_custom_legendary:OnIntervalThink()
 if not IsServer() then return end
 
-
-local units = FindUnitsInRadius( self:GetCaster():GetTeamNumber(),  self.target_point,  nil,  self:GetAbility():GetSpecialValueFor("aoe"),  DOTA_UNIT_TARGET_TEAM_ENEMY,  DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC ,  0,  FIND_CLOSEST,  false )
-
-local target_point = self.target_point
+local units = self.parent:FindTargets(self.radius, self.target_point)
 
 if #units == 0 then 
-	target_point = self.target_point + RandomVector(RandomInt(1, self:GetAbility():GetSpecialValueFor("aoe")))
+	local target_point = self.target_point + RandomVector(RandomInt(1, self.radius))
 
-	local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_zeus/zeus_cloud_strike.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-
-	local n = RandomInt(1, 2)
-
-	ParticleManager:SetParticleControlEnt(particle, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_attack"..n, self:GetCaster():GetAbsOrigin(), true)
+	local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_zeus/zeus_cloud_strike.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+	ParticleManager:SetParticleControlEnt(particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_attack"..RandomInt(1, 2), self.parent:GetAbsOrigin(), true)
 	ParticleManager:SetParticleControl(particle, 1, target_point)
-
+	ParticleManager:ReleaseParticleIndex(particle)
 else 
-
-
 	for _,unit in pairs(units) do 
 		local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_zeus/zeus_cloud_strike.vpcf", PATTACH_ABSORIGIN_FOLLOW, unit)
-		local n = RandomInt(1, 2)
-		ParticleManager:SetParticleControlEnt(particle, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_attack"..n, self:GetCaster():GetAbsOrigin(), true)
+		ParticleManager:SetParticleControlEnt(particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_attack"..RandomInt(1, 2), self.parent:GetAbsOrigin(), true)
 		ParticleManager:SetParticleControlEnt(particle, 1, unit, PATTACH_POINT_FOLLOW, "attach_hitloc", unit:GetAbsOrigin(), true)
+		ParticleManager:ReleaseParticleIndex(particle)
 		
-		unit:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_zuus_lightning_bolt_custom_legendary_stack", {duration = self:GetAbility():GetSpecialValueFor("duration")})
-		unit:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_zuus_lightning_bolt_custom_legendary_stack_count", {duration = self:GetAbility():GetSpecialValueFor("duration")})
-		unit:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_stunned", {duration = self:GetAbility():GetSpecialValueFor("stun") * (1 - unit:GetStatusResistance())})
-		ApplyDamage({attacker = self:GetCaster(), ability = self:GetAbility(), damage_type = DAMAGE_TYPE_MAGICAL, damage = self:GetAbility():GetSpecialValueFor("damage"), victim = unit})
-	
+		unit:AddNewModifier(self.parent, self.ability, "modifier_zuus_lightning_bolt_custom_legendary_stack_count", {duration = self.duration})
+		unit:AddNewModifier(self.parent, self.ability, "modifier_stunned", {duration = self.stun})
 
-
+		self.damageTable.victim = unit
+		DoDamage(self.damageTable)
 	end
 end
 
-
-
-
-
-EmitSoundOnLocationWithCaster(target_point, "Hero_Zuus.LightningBolt", self:GetParent())
+EmitSoundOnLocationWithCaster(self.target_point, "Hero_Zuus.LightningBolt", self.parent)
 
 self:DecrementStackCount()
 if self:GetStackCount() == 0 then 
@@ -641,41 +430,51 @@ end
 end
 
 
-
-
-modifier_zuus_lightning_bolt_custom_legendary_stack_count = class({})
-function modifier_zuus_lightning_bolt_custom_legendary_stack_count:IsHidden() return false end
-function modifier_zuus_lightning_bolt_custom_legendary_stack_count:IsPurgable() return false end
-function modifier_zuus_lightning_bolt_custom_legendary_stack_count:OnCreated(table)
-self.damage = self:GetAbility():GetSpecialValueFor("damage_inc")
+function modifier_zuus_lightning_bolt_custom_legendary:OnDestroy()
 if not IsServer() then return end
-self.RemoveForDuel = true
-
-local particle_cast = "particles/zuus_attack_stack.vpcf"
-
-self.effect_cast = ParticleManager:CreateParticle( particle_cast, PATTACH_OVERHEAD_FOLLOW, self:GetParent() )
-
-self:AddParticle(self.effect_cast,false, false, -1, false, false)
-
-self:SetStackCount(1)
-
+self.parent:FadeGesture(ACT_DOTA_GENERIC_CHANNEL_1)
 end
 
 
-function modifier_zuus_lightning_bolt_custom_legendary_stack_count:OnRefresh(table)
+
+modifier_zuus_lightning_bolt_custom_legendary_stack_count = class(mod_visible)
+function modifier_zuus_lightning_bolt_custom_legendary_stack_count:OnCreated(table)
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.damage = self.caster:GetTalentValue("modifier_zuus_bolt_7", "damage_inc")
+
 if not IsServer() then return end
+self.duration = self:GetRemainingTime()
+self.RemoveForDuel = true
+self.particle = self.parent:GenericParticle("particles/zuus_attack_stack.vpcf", self, true)
+self:AddStack()
+end
+
+
+function modifier_zuus_lightning_bolt_custom_legendary_stack_count:OnRefresh()
+if not IsServer() then return end
+self:AddStack()
+end
+
+function modifier_zuus_lightning_bolt_custom_legendary_stack_count:AddStack()
+if not IsServer() then return end
+
+Timers:CreateTimer(self.duration, function() 
+  if self and not self:IsNull() then 
+    self:DecrementStackCount()
+    if self:GetStackCount() <= 0 then 
+      self:Destroy()
+    end 
+  end 
+end)
+
 self:IncrementStackCount()
 end
 
 
 function modifier_zuus_lightning_bolt_custom_legendary_stack_count:OnStackCountChanged(iStackCount)
-if self:GetStackCount() == 0 then return end
-
-if self.effect_cast then 
-   ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( 0, self:GetStackCount(), 0 ) )
-end
-
-
+if not self.particle then return end
+ParticleManager:SetParticleControl( self.particle, 1, Vector( 0, self:GetStackCount(), 0 ) )
 end
 
 
@@ -692,28 +491,30 @@ return self.damage*self:GetStackCount()
 end
 
 
-modifier_zuus_lightning_bolt_custom_legendary_stack = class({})
-function modifier_zuus_lightning_bolt_custom_legendary_stack:IsHidden() return true end
-function modifier_zuus_lightning_bolt_custom_legendary_stack:IsPurgable() return false end
-function modifier_zuus_lightning_bolt_custom_legendary_stack:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-function modifier_zuus_lightning_bolt_custom_legendary_stack:OnCreated(table)
-if not IsServer() then return end
+
+
+
+modifier_zuus_lightning_bolt_custom_root_cd = class(mod_hidden)
+function modifier_zuus_lightning_bolt_custom_root_cd:RemoveOnDeath() return false end
+function modifier_zuus_lightning_bolt_custom_root_cd:OnCreated()
 self.RemoveForDuel = true
 end
 
-function modifier_zuus_lightning_bolt_custom_legendary_stack:OnDestroy()
+
+
+modifier_zuus_lightning_bolt_custom_root = class({})
+function modifier_zuus_lightning_bolt_custom_root:IsHidden() return true end
+function modifier_zuus_lightning_bolt_custom_root:IsPurgable() return true end
+function modifier_zuus_lightning_bolt_custom_root:CheckState()
+return
+{
+	[MODIFIER_STATE_ROOTED] = true,
+	[MODIFIER_STATE_DISARMED] = true
+}
+end
+function modifier_zuus_lightning_bolt_custom_root:GetEffectName() return "particles/items3_fx/gleipnir_root.vpcf" end
+function modifier_zuus_lightning_bolt_custom_root:OnCreated()
 if not IsServer() then return end
-local mod = self:GetParent():FindModifierByName("modifier_zuus_lightning_bolt_custom_legendary_stack_count")
-
-if mod then 
-	mod:DecrementStackCount()
-	if mod:GetStackCount() == 0 then 
-		mod:Destroy()
-	end
+self.parent = self:GetParent()
+self.parent:GenericParticle("particles/zeus/bolt_disarm.vpcf", self, true)
 end
-
-end
-
-
-
-

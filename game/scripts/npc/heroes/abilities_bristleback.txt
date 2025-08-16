@@ -1,0 +1,284 @@
+
+"DOTAAbilities"
+{
+
+"Version"		"1"
+
+
+
+
+"bristleback_viscous_nasal_goo_custom"
+{
+	// General
+	//-------------------------------------------------------------------------------------------------------------
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/bristleback/bristleback_viscous_nasal_goo_custom"
+	"AbilityTextureName"			"bristleback_viscous_nasal_goo"																			// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING | DOTA_ABILITY_BEHAVIOR_AOE"
+	"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+	"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
+	"FightRecapLevel"				"1"
+	"AbilitySound"					"Hero_Bristleback.ViscousGoo.Cast"
+
+	"HasShardUpgrade"			"1"
+
+	// Casting
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCastRange"				"650"
+	"AbilityCastPoint"				"0.3"
+	
+	// Time		
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"1.75"
+
+	// Cost
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityManaCost"				"24"
+
+
+
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"goo_speed"				"1000"
+		"goo_duration"			"6.0"
+		"armor_per_stack"		"-1 -1.5 -2 -2.5"
+		"move_slow_per_stack"	"-7 -8 -9 -10"
+		"stack_limit"			"4"
+		"cast_shard"			"0.1"
+		"aoe_radius"			"220"		
+	}
+	"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
+}
+
+
+
+"bristleback_quill_spray_custom"
+{
+	// General
+	//-------------------------------------------------------------------------------------------------------------
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/bristleback/bristleback_quill_spray_custom"
+	"AbilityTextureName"			"bristleback_quill_spray"																// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+	"AbilityUnitDamageType"			"DAMAGE_TYPE_PHYSICAL"	
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_YES"
+	"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES"
+	"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
+	"FightRecapLevel"				"1"
+	"AbilitySound"					"Hero_Bristleback.QuillSpray"
+
+	// Casting
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCastAnimation"			"ACT_DOTA_SPAWN"
+	"AbilityCastPoint"				"0.3"
+	"AbilityCastRange"				"650"
+	
+	// Time		
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"3.0 3.0 3.0 3.0"
+
+	// Cost
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityManaCost"				"35"
+
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"radius"				"700"
+		"quill_base_damage"		"25 45 65 85"
+		"quill_stack_damage"	"30"
+		"quill_stack_duration"	"14.0"
+		"max_damage"			"500.0"
+		"projectile_speed"		"2400"
+		
+	}
+}
+
+//=================================================================================================================
+// Bristleback: Bristleback
+//=================================================================================================================
+"bristleback_bristleback_custom"
+{
+	// General
+	//-------------------------------------------------------------------------------------------------------------
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/bristleback/bristleback_bristleback_custom"
+	"AbilityTextureName"			"bristleback_bristleback"																// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+	"AbilitySound"					"Hero_Bristleback.Bristleback"
+
+	"HasScepterUpgrade"				"1"
+	"IsBreakable"					"1"
+
+	"LinkedAbility"					"bristleback_bristleback_custom_legendary"
+
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"side_damage_reduction"			"8 12 16 20"
+		"back_damage_reduction"			"16 24 32 40"
+		"side_angle"					"110"
+		"back_angle"					"70"
+		"quill_release_threshold"				"275 250 225 200"
+
+
+		"activation_cooldown"					"18"
+		"activation_manacost"					"125"
+		"activation_delay"						"0.5"
+		"activation_num_quill_sprays"			"5"
+		"activation_spray_interval"				"0.4"
+		"activation_angle"						"45"
+		"cast_range_bonus"						"0"
+		"activation_movement_speed_pct"			"-40"
+		"activation_turn_rate_pct"				"-100"
+		"activation_disable_turning"			"1"
+		"activation_ignore_cast_angle"			"1"
+		"activation_turn_rate"					"500"
+	}
+	"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
+}
+
+"bristleback_bristleback_custom_legendary"
+{
+	// General
+	//-------------------------------------------------------------------------------------------------------------
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/bristleback/bristleback_bristleback_custom"
+	"AbilityTextureName"			"flawless_protection"																// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_IGNORE_PSEUDO_QUEUE | DOTA_ABILITY_BEHAVIOR_IGNORE_SILENCE"
+	"AbilitySound"					"Hero_Bristleback.Bristleback"
+	"MaxLevel"						"1"
+
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"duration"		"4"
+		"spray_damage"		"-40"
+	}
+	"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
+}
+
+
+//=================================================================================================================
+// Bristleback: Warpath
+//=================================================================================================================
+"bristleback_warpath_custom"
+{
+	// General
+	//-------------------------------------------------------------------------------------------------------------
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/bristleback/bristleback_warpath_custom"
+	"AbilityTextureName"			"bristleback_warpath"																// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+	"AbilityType"					"ABILITY_TYPE_ULTIMATE"
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+	"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_4"
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_YES"
+	"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES"
+
+	"AbilityCastPoint"				"1"
+	"MaxLevel"						"3"
+	
+
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"damage_per_stack"					"15 20 25"
+		"move_speed_per_stack"				"2 3 4"
+		"stack_duration"				"16 18 20"
+		"max_stacks"					"8 10 12"
+	}
+}
+
+
+
+
+"bristleback_hairball_custom"
+{
+	// General
+	//-------------------------------------------------------------------------------------------------------------
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/bristleback/bristleback_hairball_custom"
+	"AbilityTextureName"			"bristleback_hairball"																// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_AOE"
+	"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+	"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+	"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"	
+	"SpellImmunityType"				"SPELL_IMMUNITY_ALLIES_YES"
+	"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
+	"MaxLevel"						"1"
+	"FightRecapLevel"				"1"
+	"IsGrantedByShard"			    "1"
+
+	// Casting
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCastRange"				"750"
+	"AbilityCastPoint"				"0.1"
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_4"
+	
+	
+	// Time		
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"13"
+
+	// Cost
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityManaCost"				"60"
+	
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"projectile_speed"		"1200"
+		"radius"				"700"
+		"quill_count"			"1"
+		"goo_count"				"2"
+		
+	}
+}
+
+
+
+
+
+
+
+"bristleback_innate_custom"
+{
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/bristleback/bristleback_innate_custom"  
+
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+    "MaxLevel"                      "1"
+    "Innate"                        "1"
+	"IsBreakable"					"1"
+
+    // Special  
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+    	"heal"		"10"
+    	"creeps"	"3"
+    	"damage"	"10"
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+}

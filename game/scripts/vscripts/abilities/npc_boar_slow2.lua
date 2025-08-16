@@ -12,11 +12,11 @@ function modifier_boar_passive2:IsPurgable()
  return false end
 function modifier_boar_passive2:DeclareFunctions() return {
 
-    MODIFIER_EVENT_ON_ATTACK_LANDED
+    MODIFIER_PROPERTY_PROCATTACK_FEEDBACK
 
 } end
 
-function modifier_boar_passive2:OnAttackLanded( param )
+function modifier_boar_passive2:GetModifierProcAttack_Feedback( param )
     if not IsServer() then end 
     if self:GetParent() == param.attacker and not param.target:IsMagicImmune()  then
     

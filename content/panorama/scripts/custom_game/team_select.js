@@ -15,7 +15,10 @@ var g_TEAM_SPECATOR = 1;
 //--------------------------------------------------------------------------------------------------
 function OnLeaveTeamPressed()
 {
+    let gameTime = Game.GetGameTime();
+	let transitionTime = Game.GetStateTransitionTime();
 	Game.PlayerJoinTeam( DOTATeam_t.DOTA_TEAM_NOTEAM );
+    Game.SetRemainingSetupTime( Math.max( 0, Math.floor( transitionTime - gameTime ) ) ); 
 }
 
 

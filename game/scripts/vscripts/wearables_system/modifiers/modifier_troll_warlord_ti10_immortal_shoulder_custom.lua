@@ -1,0 +1,5 @@
+modifier_troll_warlord_ti10_immortal_shoulder_custom = class({})
+function modifier_troll_warlord_ti10_immortal_shoulder_custom:IsHidden() return true end
+function modifier_troll_warlord_ti10_immortal_shoulder_custom:IsPurgable() return false end
+function modifier_troll_warlord_ti10_immortal_shoulder_custom:IsPurgeException() return false end
+function modifier_troll_warlord_ti10_immortal_shoulder_custom:RemoveOnDeath() return false end

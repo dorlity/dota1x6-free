@@ -2,6 +2,7 @@ var favourites = new Array();
 var nowrings = 8;
 var selected_sound_current = undefined;
 var nowselect = 0;
+var current_button
 
 var rings = new Array(
     new Array(//0 start
@@ -134,10 +135,15 @@ function OnMouseOut(num) {
 
 (function() {
 	GameUI.CustomUIConfig().chatWheelLoaded = true;
-   const name_bind = "DefaultWheelButton" + Math.floor(Math.random() * 99999999);
-Game.AddCommand("+" + name_bind, StartWheel, "", 0);
-Game.AddCommand("-" + name_bind, StopWheel, "", 0);
-Game.CreateCustomKeyBind(GetGameKeybind(DOTAKeybindCommand_t.DOTA_KEYBIND_CHAT_WHEEL), '+' + name_bind);
+    const name_bind = "DefaultWheelButton" + Math.floor(Math.random() * 99999999);
+    Game.AddCommand("+" + name_bind, StartWheel, "", 0);
+    Game.AddCommand("-" + name_bind, StopWheel, "", 0);
+    Game.CreateCustomKeyBind(GetGameKeybind(DOTAKeybindCommand_t.DOTA_KEYBIND_CHAT_WHEEL), '+' + name_bind);
+
+
+    current_button = GetGameKeybind(DOTAKeybindCommand_t.DOTA_KEYBIND_CHAT_WHEEL)
+    SetBindInterval()
+
 
     $("#Wheel").visible = false;
     $("#Bubble").visible = false;
@@ -146,4 +152,20 @@ Game.CreateCustomKeyBind(GetGameKeybind(DOTAKeybindCommand_t.DOTA_KEYBIND_CHAT_W
 
 function GetGameKeybind(command) {
     return Game.GetKeybindForCommand(command);
+}
+
+
+
+
+function SetBindInterval()
+{
+    if (GetGameKeybind(DOTAKeybindCommand_t.DOTA_KEYBIND_CHAT_WHEEL) != current_button)
+    {
+        const name_bind = "DefaultWheelButton" + Math.floor(Math.random() * 99999999);
+        Game.AddCommand("+" + name_bind, StartWheel, "", 0);
+        Game.AddCommand("-" + name_bind, StopWheel, "", 0);
+        Game.CreateCustomKeyBind(GetGameKeybind(DOTAKeybindCommand_t.DOTA_KEYBIND_CHAT_WHEEL), '+' + name_bind);
+        current_button = GetGameKeybind(DOTAKeybindCommand_t.DOTA_KEYBIND_CHAT_WHEEL)
+    }
+    $.Schedule( 1, SetBindInterval );
 }

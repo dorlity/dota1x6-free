@@ -3,147 +3,119 @@ LinkLuaModifier("modifier_zuus_cloud_custom", "abilities/zuus/zuus_cloud_custom"
 zuus_cloud_custom = class({})
 
 
-
-
 function zuus_cloud_custom:Precache(context)
-
-PrecacheResource( "particle", 'particles/units/heroes/hero_zeus/zeus_cloud.vpcf', context )
-
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle", "particles/units/heroes/hero_zeus/zeus_cloud.vpcf", context )
 end
 
 
 function zuus_cloud_custom:GetAOERadius()
-	return self:GetSpecialValueFor("cloud_radius")
+return self:GetSpecialValueFor("cloud_radius")
 end
 
-function zuus_cloud_custom:OnInventoryContentsChanged()
-    if self:GetCaster():HasScepter() then
-        self:SetHidden(false)       
-        if not self:IsTrained() then
-            self:SetLevel(1)
-        end
-    else
-        self:SetHidden(true)
-    end
-end
-
-function zuus_cloud_custom:OnHeroCalculateStatBonus()
-    self:OnInventoryContentsChanged()
-end
 
 function zuus_cloud_custom:OnSpellStart()
-	if not IsServer() then return end
-	self.target_point 			= self:GetCursorPosition()
-	local caster 				= self:GetCaster()
-	local cloud_bolt_interval 	= self:GetSpecialValueFor("cloud_bolt_interval")
-	local cloud_duration 		= self:GetSpecialValueFor("cloud_duration")
-	local cloud_radius 			= self:GetSpecialValueFor("cloud_radius")
 
+local caster = self:GetCaster()
+local target_point 	= self:GetCursorPosition()
+local cloud_duration = self:GetSpecialValueFor("cloud_duration")
 
+EmitSoundOnLocationWithCaster(target_point, "Hero_Zuus.Cloud.Cast", caster)
 
-	EmitSoundOnLocationWithCaster(self.target_point, "Hero_Zuus.Cloud.Cast", caster)
+self.zuus_nimbus_unit = CreateUnitByName("npc_dota_zeus_cloud", target_point + Vector(0, 0, 450), false, caster, nil, caster:GetTeamNumber())
 
-	self.zuus_nimbus_unit = CreateUnitByName("npc_dota_zeus_cloud", Vector(self.target_point.x, self.target_point.y, 450), false, caster, nil, caster:GetTeam())
-	self.zuus_nimbus_unit:SetControllableByPlayer(caster:GetPlayerID(), true)
-	self.zuus_nimbus_unit:SetModelScale(0.7)
-	self.zuus_nimbus_unit:AddNewModifier(self.zuus_nimbus_unit, self, "modifier_phased", {})
-	self.zuus_nimbus_unit:AddNewModifier(caster, self, "modifier_zuus_cloud_custom", {duration = cloud_duration, cloud_bolt_interval = cloud_bolt_interval, cloud_radius = cloud_radius})
-	self.zuus_nimbus_unit:AddNewModifier(caster, nil, "modifier_kill", {duration = cloud_duration})
-
-
+self.zuus_nimbus_unit:SetControllableByPlayer(caster:GetPlayerID(), true)
+self.zuus_nimbus_unit:SetModelScale(0.7)
+self.zuus_nimbus_unit:AddNewModifier(self.zuus_nimbus_unit, self, "modifier_phased", {})
+self.zuus_nimbus_unit:AddNewModifier(caster, self, "modifier_zuus_cloud_custom", {duration = cloud_duration})
+self.zuus_nimbus_unit:AddNewModifier(caster, nil, "modifier_kill", {duration = cloud_duration})
 end
 
-modifier_zuus_cloud_custom = class({})
-
-function modifier_zuus_cloud_custom:IsHidden() return true end
-
-function modifier_zuus_cloud_custom:OnCreated(keys)
-	if not IsServer() then return end
-	self.ability = self
-	self.cloud_radius = keys.cloud_radius
-	self.cloud_bolt_interval = keys.cloud_bolt_interval
-	self.lightning_bolt = self:GetCaster():FindAbilityByName("zuus_lightning_bolt_custom")
-	local target_point 	= GetGroundPosition(self:GetParent():GetAbsOrigin(), self:GetParent())
+modifier_zuus_cloud_custom = class(mod_hidden)
 
 
-	self.melee_damage = self:GetParent():GetMaxHealth()/self:GetAbility():GetSpecialValueFor("hits_to_kill_melee")
-	self.range_damage = self:GetParent():GetMaxHealth()/self:GetAbility():GetSpecialValueFor("hits_to_kill_range")
+function modifier_zuus_cloud_custom:OnCreated()
+self.ability = self:GetAbility()
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
 
-	self.original_z = target_point.z
-	self:SetStackCount(self.original_z)
+self:SetStackCount(450)
+self.strike_delay = self.ability:GetSpecialValueFor("cloud_bolt_interval")
+self.radius = self.ability:GetSpecialValueFor("cloud_radius")
+self.hits_to_kill = self.ability:GetSpecialValueFor("hits_to_kill")
 
-	self.counter = self.cloud_bolt_interval
-	self.zuus_nimbus_particle = ParticleManager:CreateParticle("particles/units/heroes/hero_zeus/zeus_cloud.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-	ParticleManager:SetParticleControl(self.zuus_nimbus_particle, 0, Vector(target_point.x, target_point.y, 450))
-	ParticleManager:SetParticleControl(self.zuus_nimbus_particle, 1, Vector(self.cloud_radius, 0, 0))
-	ParticleManager:SetParticleControl(self.zuus_nimbus_particle, 2, Vector(target_point.x, target_point.y, target_point.z + 450))	
-	self:AddParticle(self.zuus_nimbus_particle, false, false, -1, false, false)
+if not IsServer() then return end
 
-	self:StartIntervalThink(FrameTime())
+self.ability:EndCd()
+self.parent:AddAttackEvent_inc(self, true)
+
+self.lightning_bolt =self.caster:FindAbilityByName("zuus_lightning_bolt_custom")
+self.point = GetGroundPosition(self.parent:GetAbsOrigin(), nil)
+
+self.zuus_nimbus_particle = ParticleManager:CreateParticle("particles/units/heroes/hero_zeus/zeus_cloud.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControl(self.zuus_nimbus_particle, 0, self.point)
+ParticleManager:SetParticleControl(self.zuus_nimbus_particle, 1, Vector(self.radius, 0, 0))
+ParticleManager:SetParticleControl(self.zuus_nimbus_particle, 2, self.point + Vector(0, 0, self:GetStackCount()))	
+self:AddParticle(self.zuus_nimbus_particle, false, false, -1, false, false)
+
+self.count = self.strike_delay
+self.interval = 0.1
+self:StartIntervalThink(self.interval)
 end
+
+function modifier_zuus_cloud_custom:OnDestroy()
+if not IsServer() then return end
+self.ability:StartCd()
+end
+
 
 function modifier_zuus_cloud_custom:DeclareFunctions()
-	local funcs = {
-		MODIFIER_PROPERTY_VISUAL_Z_DELTA,
-		MODIFIER_EVENT_ON_ATTACKED,
-		MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PHYSICAL,
-		MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_MAGICAL,
-		MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PURE,
-	}
-
-	return funcs
+return
+{
+	MODIFIER_PROPERTY_VISUAL_Z_DELTA,
+	MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PHYSICAL,
+	MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_MAGICAL,
+	MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PURE,
+    MODIFIER_PROPERTY_HEALTHBAR_PIPS,
+}
 end
 
+function modifier_zuus_cloud_custom:GetModifierHealthBarPips() return self.hits_to_kill end
+
 function modifier_zuus_cloud_custom:GetVisualZDelta()
-	return 450
+return self:GetStackCount()
 end
 
 function modifier_zuus_cloud_custom:OnIntervalThink()
-	if not IsServer() then return end
-	if self.lightning_bolt:GetLevel() > 0 and self.counter >= self.cloud_bolt_interval then
-		local nearby_enemy_units = FindUnitsInRadius( self:GetCaster():GetTeamNumber(),  self:GetParent():GetAbsOrigin(),  nil,  self.cloud_radius,  DOTA_UNIT_TARGET_TEAM_ENEMY,  self.lightning_bolt:GetAbilityTargetType(), DOTA_UNIT_TARGET_FLAG_NONE, FIND_CLOSEST, false )
-		for _,unit in pairs(nearby_enemy_units) do
-			if unit:IsAlive() then
-				self.lightning_bolt:CastLightningBolt(self:GetCaster(), unit, unit:GetAbsOrigin(), true, self:GetParent(), false, false)
-				self.counter = 0
-				break
-			end
-		end
-	end
-	self.counter = self.counter + FrameTime()
+if not IsServer() then return end
+if not self.lightning_bolt or self.lightning_bolt:IsNull() or not self.lightning_bolt:IsTrained() then return end
+
+if self.count < self.strike_delay then
+	self.count = self.count + self.interval
+	return
 end
 
-function modifier_zuus_cloud_custom:OnAttacked(params)
-	if params.target == self:GetParent() then
-		local damage = self.melee_damage
-
-		if params.attacker:IsRangedAttacker() then 
-			damage = self.range_damage
-		end 
-
-		if self:GetParent():GetHealth() > damage then 
-			self:GetParent():SetHealth(self:GetParent():GetHealth() - damage)
-		else 
-			self:GetParent():Kill(nil, params.attacker)
-		end
-	end
+for _,unit in pairs(self.caster:FindTargets(self.radius, self.point)) do
+	self.lightning_bolt:CastLightningBolt(unit:GetAbsOrigin(), self.parent)
+	self.count = 0
+	break
 end
 
-function modifier_zuus_cloud_custom:GetAbsoluteNoDamagePhysical()
-	return 1
 end
 
-function modifier_zuus_cloud_custom:GetAbsoluteNoDamageMagical()
-	return 1
+
+function modifier_zuus_cloud_custom:AttackEvent_inc(params)
+if params.target ~= self:GetParent() then return end
+
+if self.parent:GetHealth() > 1 then 
+	self.parent:SetHealth(self.parent:GetHealth() - 1)
+else 
+	self.parent:Kill(nil, params.attacker)
 end
 
-function modifier_zuus_cloud_custom:GetAbsoluteNoDamagePure()
-	return 1
 end
 
-function modifier_zuus_cloud_custom:OnRemoved()
-	if not IsServer() then return end
-	if self.zuus_nimbus_particle then
-		ParticleManager:DestroyParticle(self.zuus_nimbus_particle, false)
-	end
-end
+function modifier_zuus_cloud_custom:GetAbsoluteNoDamagePhysical() return 1 end
+function modifier_zuus_cloud_custom:GetAbsoluteNoDamageMagical() return 1 end
+function modifier_zuus_cloud_custom:GetAbsoluteNoDamagePure() return 1 end
+

@@ -1,216 +1,302 @@
 LinkLuaModifier("modifier_custom_ability_teleport", "abilities/items/item_tpscroll", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_ability_teleport_glyph", "abilities/items/item_tpscroll", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_ability_teleport_tracker", "abilities/items/item_tpscroll", LUA_MODIFIER_MOTION_NONE)
 
 item_tpscroll_custom = class({})
 
-function item_tpscroll_custom:GetChannelTime() 
+function item_tpscroll_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/items2_fx/teleport_start.vpcf", context )
+PrecacheResource( "particle","particles/items2_fx/teleport_end.vpcf", context )
+PrecacheResource( "particle","particles/items_fx/glyph.vpcf", context ) 
 
-    if self:GetCaster():HasModifier("modifier_item_travel_boots_custom") then 
-    	return self:GetSpecialValueFor("channel_time_travel_1") 
-    end
-
-    if self:GetCaster():HasModifier("modifier_item_travel_boots_2_custom") then 
-    	return self:GetSpecialValueFor("channel_time_travel_2") 
-    end
-	return self:GetSpecialValueFor("channel_time") 
+PrecacheResource( "particle","particles/econ/events/ti10/teleport/teleport_start_ti10_lvl1_rewardline.vpcf", context )
+PrecacheResource( "particle","particles/econ/events/ti5/teleport_end_lvl2_ti5.vpcf", context )
+PrecacheResource( "particle","particles/items2_fx/smoke_of_deceit.vpcf", context )
+PrecacheResource( "particle","particles/econ/items/tinker/boots_of_travel/teleport_start_bots.vpcf", context )
+PrecacheResource( "particle","particles/tinker/teleport_end_bots.vpcf", context )
 end
+
+function item_tpscroll_custom:GlobalTeleport()
+local caster = self:GetCaster()
+return caster:HasModifier("modifier_patrol_reward_2_portal") or (caster:HasModifier("modifier_tinker_innate_custom") and caster:HasScepter())
+end
+
+function item_tpscroll_custom:GetIntrinsicModifierName()
+if not self:GetCaster():IsRealHero() then return end
+return "modifier_custom_ability_teleport_tracker"
+end
+
+
+function item_tpscroll_custom:GetAbilityTextureName()
+if not self or not self:GetCaster() then return end 
+local caster = self:GetCaster()
+if caster:HasModifier("modifier_patrol_reward_2_portal") then
+    return "items/warp_amulet"
+end
+if caster:HasModifier("modifier_tinker_innate_custom") and caster:HasScepter() then
+	return "items/tinker_keen_teleport"
+end
+return "item_tpscroll"
+end
+
+function item_tpscroll_custom:GetCastRange(vector, target)
+local caster = self:GetCaster()
+if IsClient() and caster:HasScepter() and caster:HasModifier("modifier_tinker_innate_custom") and self.tinker_range then
+	return self.tinker_range
+end
+
+if not IsServer() then return end
+return 99999
+end
+
+
+function item_tpscroll_custom:GetBehavior()
+local base = DOTA_ABILITY_BEHAVIOR_NO_TARGET 
+if self:GlobalTeleport() then
+	base = DOTA_ABILITY_BEHAVIOR_UNIT_TARGET + DOTA_ABILITY_BEHAVIOR_POINT
+end
+return base + DOTA_ABILITY_BEHAVIOR_CHANNELLED + DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES + 549755813888
+end
+
+function item_tpscroll_custom:GetChannelTime() 
+return self:GetCaster():GetUpgradeStack("modifier_custom_ability_teleport_tracker")/100
+end
+
 
 function item_tpscroll_custom:GetCooldown(level)
-    return self.BaseClass.GetCooldown( self, level )
+local caster = self:GetCaster()
+if caster:HasModifier("modifier_patrol_reward_2_portal") then
+	return caster:GetTalentValue("modifier_patrol_reward_portal", "cd", true)/caster:GetCooldownReduction()
 end
-
-
+return self.BaseClass.GetCooldown( self, level )
+end
 
 
 function item_tpscroll_custom:OnAbilityPhaseStart()
-
-
 return self:GetCaster():CanTeleport() 
 end
 
 
-
 function item_tpscroll_custom:OnSpellStart()
-	if not IsServer() then return end
-	
-	local boots = self:GetCaster():FindItemInInventory("item_travel_boots_2_custom")
-	if boots then 
-		boots:EndCooldown()
-		boots:StartCooldown(self:GetCooldownTimeRemaining())
-	end 
+local caster = self:GetCaster()
+local go_home = false
 
-	local hero = self:GetCaster()
+effect_start = "particles/items2_fx/teleport_start.vpcf"
+effect_end = "particles/items2_fx/teleport_end.vpcf"
 
-	self.point = towers[hero:GetTeamNumber()]:GetAbsOrigin() + RandomVector(220)
-	self.point = GetGroundPosition(self.point, nil)
-	self.point_start = self:GetCaster():GetAbsOrigin()
-
-	hero:StartGesture(ACT_DOTA_TELEPORT)
-
-	hero:AddNewModifier(self:GetCaster(), self, "modifier_custom_ability_teleport", {duration = self:GetChannelTime()})
- 	self.teleportFromEffect = ParticleManager:CreateParticle("particles/items2_fx/teleport_start.vpcf", PATTACH_WORLDORIGIN, nil)
-    ParticleManager:SetParticleControl(self.teleportFromEffect, 0, self:GetCaster():GetAbsOrigin())
-    ParticleManager:SetParticleControl(self.teleportFromEffect, 2, Vector(255, 255, 255))
-    self.teleport_center = CreateUnitByName("npc_dota_companion", self.point, false, nil, nil, 0)
-
-    self:GetCaster():EmitSound("Portal.Loop_Appear")
-    EmitSoundOn("Portal.Loop_Appear", self.teleport_center)
-
-    self.teleport_center:AddNewModifier(self.teleport_center, nil, "modifier_phased", {})
-    self.teleport_center:AddNewModifier(self.teleport_center, nil, "modifier_invulnerable", {})
-    self.teleport_center:SetAbsOrigin(self.point)
-
-    self.teleportToEffect = ParticleManager:CreateParticle("particles/items2_fx/teleport_end.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.teleport_center)
-    ParticleManager:SetParticleControlEnt(self.teleportToEffect, 1, self.teleport_center, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self.teleport_center:GetAbsOrigin(), true)
-    ParticleManager:SetParticleControlEnt(self.teleportToEffect, 3, self:GetCaster(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self.teleport_center:GetAbsOrigin(), true)
-    ParticleManager:SetParticleControl(self.teleportToEffect, 4, Vector(0.9, 0, 0))
-    ParticleManager:SetParticleControlEnt(self.teleportToEffect, 5, self.teleport_center, PATTACH_POINT_FOLLOW, "attach_hitloc", self.teleport_center:GetAbsOrigin(), true)
-
-
-    local modifier_travel_boots = self:GetCaster():FindModifierByName("modifier_item_travel_boots_custom")
-	local modiifer_travel_boots_2 = self:GetCaster():FindModifierByName("modifier_item_travel_boots_2_custom")
-
-	if modiifer_travel_boots_2 and false then
-		if modiifer_travel_boots_2:GetAbility() then
-
-
-			local towers = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), Vector(0, 0, 0), nil, FIND_UNITS_EVERYWHERE, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, 0, false )
-			
-			for _,tower in pairs(towers) do
-				tower:AddNewModifier(self:GetCaster(), nil, "modifier_custom_ability_teleport_glyph", {duration = modiifer_travel_boots_2:GetAbility():GetSpecialValueFor("glyph_duration")})
-			end
-
-		--	self:EndCooldown()
-			--self:StartCooldown( modiifer_travel_boots_2:GetAbility():GetSpecialValueFor("tp_cooldown") * self:GetCaster():GetCooldownReduction() )
-			return
-		end
+if self:GlobalTeleport() then
+	local unit = self:GetCursorTarget()
+	if unit and unit == caster then
+		go_home = true
 	end
+	self.point = self:GetCursorPosition()
 
-	if modifier_travel_boots then
-		if modifier_travel_boots:GetAbility() then
-		----	self:EndCooldown()
-		--	self:StartCooldown( modifier_travel_boots:GetAbility():GetSpecialValueFor("tp_cooldown") * self:GetCaster():GetCooldownReduction() )
-		end
+	if caster:HasModifier("modifier_patrol_reward_2_portal") then
+		effect_start = "particles/econ/events/ti10/teleport/teleport_start_ti10_lvl1_rewardline.vpcf"
+		effect_end = "particles/econ/events/ti5/teleport_end_lvl2_ti5.vpcf"
 	end
+else
+	go_home = true
 end
+
+if caster:HasModifier("modifier_tinker_boots_of_travel_custom") then
+	effect_start = "particles/econ/items/tinker/boots_of_travel/teleport_start_bots.vpcf"
+	effect_end = "particles/tinker/teleport_end_bots.vpcf"
+end
+
+if go_home then
+	self.point =  GetGroundPosition(towers[caster:GetTeamNumber()]:GetAbsOrigin() + RandomVector(220), nil)
+end
+
+self.point_start = caster:GetAbsOrigin()
+
+caster:StartGesture(ACT_DOTA_TELEPORT)
+
+self.teleport_center = CreateUnitByName("npc_dota_companion", self.point, false, nil, nil, 0)
+self.teleport_center:AddNewModifier(self.teleport_center, nil, "modifier_phased", {})
+self.teleport_center:AddNewModifier(self.teleport_center, nil, "modifier_invulnerable", {})
+self.teleport_center:SetAbsOrigin(self.point)
+
+AddFOWViewer(caster:GetTeamNumber(), self.point, 400, self:GetChannelTime() + 0.5, false)
+caster:AddNewModifier(caster, self, "modifier_custom_ability_teleport", {duration = self:GetChannelTime(), center = self.teleport_center:entindex()})
+
+self.teleportFromEffect = ParticleManager:CreateParticle(effect_start, PATTACH_WORLDORIGIN, nil)
+ParticleManager:SetParticleControl(self.teleportFromEffect, 0, caster:GetAbsOrigin())
+ParticleManager:SetParticleControl(self.teleportFromEffect, 2, Vector(255, 255, 255))
+
+self.teleportToEffect = ParticleManager:CreateParticle(effect_end, PATTACH_ABSORIGIN_FOLLOW, self.teleport_center)
+ParticleManager:SetParticleControlEnt(self.teleportToEffect, 1, self.teleport_center, PATTACH_ABSORIGIN_FOLLOW, nil, self.teleport_center:GetAbsOrigin(), true)
+ParticleManager:SetParticleControlEnt(self.teleportToEffect, 3, caster, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self.teleport_center:GetAbsOrigin(), true)
+ParticleManager:SetParticleControl(self.teleportToEffect, 4, Vector(0.9, 0, 0))
+ParticleManager:SetParticleControlEnt(self.teleportToEffect, 5, self.teleport_center, PATTACH_ABSORIGIN_FOLLOW, nil, self.teleport_center:GetAbsOrigin(), true)
+end
+
+
 
 function item_tpscroll_custom:OnChannelFinish(bInterrupted)
-	if not IsServer() then return end
-	self:GetCaster():RemoveModifierByName("modifier_custom_ability_teleport")
 
+local caster = self:GetCaster()
+caster:RemoveModifierByName("modifier_custom_ability_teleport")
 
-	if false then 
-		local towers = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), Vector(0, 0, 0), nil, FIND_UNITS_EVERYWHERE, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_BUILDING, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, 0, false )
-				
-		for _,tower in pairs(towers) do
-			tower:RemoveModifierByName("modifier_custom_ability_teleport_glyph")
-		end
-	end 
+if IsValid(self.teleport_center) then
+	self.teleport_center:StopSound("Portal.Loop_Appear")
+	self.teleport_center:StopSound("Hero_Tinker.MechaBoots.Loop")
+	UTIL_Remove(self.teleport_center)
+end
 
-	local hero = self:GetCaster()
+caster:RemoveGesture(ACT_DOTA_TELEPORT)
 
-	StopSoundOn("Portal.Loop_Appear", self.teleport_center)
-	self:GetCaster():StopSound("Portal.Loop_Appear")
-
-    self.teleport_center:Destroy()
-	self:GetCaster():RemoveGesture(ACT_DOTA_TELEPORT)
-
-	if bInterrupted then 
-		ParticleManager:DestroyParticle(self.teleportFromEffect, true)
-    	ParticleManager:ReleaseParticleIndex(self.teleportFromEffect)
-    	ParticleManager:DestroyParticle(self.teleportToEffect, true)
-   		ParticleManager:ReleaseParticleIndex(self.teleportToEffect)
-
-        return 
-    end   
-
+if self.teleportFromEffect then
 	ParticleManager:DestroyParticle(self.teleportFromEffect, false)
-    ParticleManager:ReleaseParticleIndex(self.teleportFromEffect)
-    ParticleManager:DestroyParticle(self.teleportToEffect, false)
-    ParticleManager:ReleaseParticleIndex(self.teleportToEffect)
+	ParticleManager:ReleaseParticleIndex(self.teleportFromEffect)
+end
 
-    EmitSoundOnLocationWithCaster(self.point_start, "Portal.Hero_Disappear", self:GetCaster())
-	self:GetCaster():SetAbsOrigin(self.point)
-	FindClearSpaceForUnit(self:GetCaster(), self.point, true)
-	self:GetCaster():Stop()
-	self:GetCaster():Interrupt()
-	EmitSoundOn("Portal.Hero_Disappear", self:GetCaster())
-	self:GetCaster():StartGesture(ACT_DOTA_TELEPORT_END)
+if self.teleportToEffect then
+	ParticleManager:DestroyParticle(self.teleportToEffect, false)
+	ParticleManager:ReleaseParticleIndex(self.teleportToEffect)
+end
 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_invun", {duration = self:GetSpecialValueFor("invun")})
+if bInterrupted then 
+    return 
+end   
+
+EmitSoundOnLocationWithCaster(self.point_start, "Portal.Hero_Disappear", caster)
+
+caster:SetAbsOrigin(self.point)
+FindClearSpaceForUnit(caster, self.point, true)
+
+caster:Stop()
+caster:Interrupt()
+
+caster:EmitSound("Portal.Hero_Disappear")
+caster:StartGesture(ACT_DOTA_TELEPORT_END)
+
+if caster:HasModifier("modifier_patrol_reward_2_portal") then
+	caster:AddNewModifier(caster, self, "modifier_can_not_push", {duration = caster:GetTalentValue("modifier_patrol_reward_portal", "push_duration", true)})
+	caster:AddNewModifier(caster, self, "modifier_generic_debuff_immune", {duration = caster:GetTalentValue("modifier_patrol_reward_portal", "duration_bkb", true), effect = 1})
+	caster:AddNewModifier(caster, self, "modifier_patrol_reward_2_portal_speed", {duration = caster:GetTalentValue("modifier_patrol_reward_portal", "duration_bkb", true)})
+else
+	caster:AddNewModifier(caster, self, "modifier_invun", {duration = self:GetSpecialValueFor("invun")})
+end
+
+local tinker_innate = caster:FindAbilityByName("tinker_innate_custom")
+if tinker_innate and caster:HasScepter() then
+	caster:AddNewModifier(caster, tinker_innate, "modifier_tinker_innate_custom_scepter", {duration = tinker_innate:GetSpecialValueFor("scepter_duration")})
+	caster:AddNewModifier(caster, self, "modifier_can_not_push", {duration = 5})
+end
 
 end
+
 
 function item_tpscroll_custom:OnChannelThink(fInterval)
 
 if not self:GetCaster():TeleportThink() then 
-	
     self:GetCaster():Stop()
     self:GetCaster():Interrupt() 
 end 
 
 end
 
-modifier_custom_ability_teleport = class({})
+modifier_custom_ability_teleport_tracker = class(mod_hidden)
+function modifier_custom_ability_teleport_tracker:OnCreated()
+self.ability = self:GetAbility()
+self.parent = self:GetParent()
 
+self.tinker_innate = self.parent:FindAbilityByName("tinker_innate_custom")
+self.channel_time = self.ability:GetSpecialValueFor("channel_time")
+self.channel_bonus = self.ability:GetSpecialValueFor("channel_time_bonus")
+
+if self.tinker_innate then
+	self.tinker_bonus = self.tinker_innate:GetSpecialValueFor("scepter_cast")
+	self.tinker_range = self.tinker_innate:GetSpecialValueFor("scepter_range")
+	self.ability.tinker_range = self.tinker_range
+end
+
+end
+
+function modifier_custom_ability_teleport_tracker:SpellEvent(params)
+if not IsServer() then return end
+if params.ability ~= self.ability then return end
+if self.parent ~= params.unit then return end
+
+local cast = self.channel_time
+
+if self.parent:HasModifier("modifier_item_travel_boots_custom") or self.parent:HasModifier("modifier_item_travel_boots_2_custom") or self.parent:HasModifier("modifier_item_travel_boots_2_perma") then 
+	cast = cast + self.channel_bonus
+end
+
+if self.tinker_bonus and self.parent:HasScepter() then
+	local point = self.ability:GetCursorPosition()
+	if self.ability:GetCursorTarget() and self.ability:GetCursorTarget() == self.parent and towers[self.parent:GetTeamNumber()] then
+		point = towers[self.parent:GetTeamNumber()]:GetAbsOrigin()
+	end
+ 	if ((point - self.parent:GetAbsOrigin()):Length2D() <= self.tinker_range + self.parent:GetCastRangeBonus()) then
+		cast = cast/self.tinker_bonus
+	end
+end
+self:SetStackCount(cast*100)
+end
+
+
+
+
+
+
+modifier_custom_ability_teleport = class({})
 function modifier_custom_ability_teleport:IsHidden() return false end
 function modifier_custom_ability_teleport:IsPurgable() return false end
-
-
-
+function modifier_custom_ability_teleport:GetTexture()
+if self:GetCaster():HasModifier("modifier_patrol_reward_2_portal") then
+    return "buffs/warp_amulet"
+end
+return "item_tpscroll"
+end
 
 function modifier_custom_ability_teleport:DeclareFunctions()
-	return 
-	{
-		MODIFIER_PROPERTY_OVERRIDE_ANIMATION
-    }
-end
-
-function modifier_custom_ability_teleport:GetOverrideAnimation()
-	return ACT_DOTA_TELEPORT
-end
-
-
-
-
-
-modifier_custom_ability_teleport_glyph = class({})
-function modifier_custom_ability_teleport_glyph:IsHidden() return true end
-function modifier_custom_ability_teleport_glyph:IsPurgable() return false end
-
-
-function modifier_custom_ability_teleport_glyph:OnCreated(table)
-if not IsServer() then return end
-self.particle = ParticleManager:CreateParticle("particles/items_fx/glyph.vpcf" , PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-ParticleManager:SetParticleControl(self.particle, 0, self:GetParent():GetAbsOrigin())
-ParticleManager:SetParticleControl(self.particle, 1, Vector(170,1,1))
-self:AddParticle(self.particle, false, false, -1, false, false)
-end
-
-
-
-
-
-
-function modifier_custom_ability_teleport_glyph:DeclareFunctions()
-return
+return 
 {
-	MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PHYSICAL,
-	MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_MAGICAL,
-	MODIFIER_PROPERTY_ABSOLUTE_NO_DAMAGE_PURE,
+	MODIFIER_PROPERTY_OVERRIDE_ANIMATION
 }
 end
 
-
-
-function modifier_custom_ability_teleport_glyph:GetAbsoluteNoDamagePhysical()
-return 1
+function modifier_custom_ability_teleport:GetOverrideAnimation()
+return ACT_DOTA_TELEPORT
 end
 
-function modifier_custom_ability_teleport_glyph:GetAbsoluteNoDamageMagical()
-return 1
+
+function modifier_custom_ability_teleport:OnCreated(table)
+if not IsServer() then return end
+self.parent = self:GetParent()
+self.center = EntIndexToHScript(table.center)
+
+self.sound = "Portal.Loop_Appear"
+if self.parent:HasModifier("modifier_tinker_boots_of_travel_custom") then
+	self.sound = "Hero_Tinker.MechaBoots.Loop"
 end
 
-function modifier_custom_ability_teleport_glyph:GetAbsoluteNoDamagePure()
-return 1
+self:StartIntervalThink(0.2)
+end
+
+function modifier_custom_ability_teleport:OnIntervalThink()
+if not IsServer() then return end
+self.parent:EmitSound(self.sound)
+
+if self.center and not self.center:IsNull() then
+	self.center:EmitSound(self.sound)
+end
+
+self:StartIntervalThink(-1)
+end
+
+function modifier_custom_ability_teleport:OnDestroy()
+if not IsServer() then return end
+
+self.parent:StopSound("Portal.Loop_Appear")
+self.parent:StopSound("Hero_Tinker.MechaBoots.Loop")
+
+if IsValdid(self.center) then
+	self.center:StopSound("Portal.Loop_Appear")
+	self.center:StopSound("Hero_Tinker.MechaBoots.Loop")
+end
+
 end

@@ -1,0 +1,291 @@
+
+"DOTAAbilities"
+{
+
+"Version"		"1"
+
+
+
+
+
+
+
+"custom_legion_commander_overwhelming_odds"
+{
+	// General
+	//-------------------------------------------------------------------------------------------------------------
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/legion_commander/custom_legion_commander_overwhelming_odds"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING"
+	"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
+	"AbilityTextureName"			"legion_commander_overwhelming_odds"
+	"FightRecapLevel"				"1"
+	"AbilitySound"					"Hero_LegionCommander.Overwhelming.Location"
+
+	// Time		
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"15"
+
+	// Casting
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCastRange"				"600"
+	"AbilityCastPoint"				"0.3 0.3 0.3 0.3"
+
+	// Cost
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityManaCost"				"90 105 120 135"
+
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{			
+
+		"damage"				"75 150 225 300"
+		"illusion_dmg_pct"		"25"
+		"attack_speed"			"50 75 100 125"
+		"duration"				"5.0"
+		"radius"				"600"
+		"move_slow"				"-25 -30 -35 -40"
+	}
+	"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_1"
+}
+
+
+
+
+
+
+"custom_legion_commander_press_the_attack"
+{
+	// General
+	//-------------------------------------------------------------------------------------------------------------
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/legion_commander/custom_legion_commander_press_the_attack"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+	"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
+    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_FRIENDLY"
+    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO"
+	"AbilityTextureName"			"legion_commander_press_the_attack"
+	"AbilitySound"					"Hero_LegionCommander.PressTheAttack"
+
+	"AbilityCastPoint"				"0.2"
+	
+	// Time		
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"11 10 9 8"
+	"AbilityCastRange"              "700"
+
+	// Cost
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityManaCost"				"110"
+
+	// Stats
+	//-------------------------------------------------------------------------------------------------------------
+
+
+	
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"duration"				"5.0"
+		"movespeed"				"10 14 18 22"
+		"hp_regen"				"24 36 48 60"
+		
+	}
+	"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
+}
+
+
+
+"custom_legion_commander_moment_of_courage"
+{
+	// General
+	//-------------------------------------------------------------------------------------------------------------
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/legion_commander/custom_legion_commander_moment_of_courage"													// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+	"AbilitySound"					"Hero_LegionCommander.Courage"
+	"AbilityTextureName"			"legion_commander_moment_of_courage"
+
+	// Time		
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"1.9 1.5 1.1 0.7"
+
+
+	"MaxLevel"                      "4"
+	"IsBreakable"					"1"
+
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"trigger_chance"			"25"		
+		"buff_duration"				"1.0"
+		"hp_leech_percent"			"55 65 75 85"
+		
+	}
+	"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_3"
+}
+
+
+
+
+"custom_legion_commander_duel"
+{
+	// General
+	//-------------------------------------------------------------------------------------------------------------
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/legion_commander/custom_legion_commander_duel"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET"
+	"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+	"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+	"AbilityType"					"ABILITY_TYPE_ULTIMATE"
+	"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES | DOTA_UNIT_TARGET_FLAG_NOT_CREEP_HERO"
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_YES"
+	"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
+	"FightRecapLevel"				"2"
+	"AbilitySound"					"Hero_LegionCommander.Duel"
+	"AbilityTextureName"			"legion_commander_duel"
+	"LinkedAbility"					"custom_legion_commander_duel_double"
+
+	"HasShardUpgrade"			"1"
+
+	// Casting
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCastRange"				"200"
+	"AbilityCastPoint"				"0.3 0.3 0.3 0.3"
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_4"
+	
+	// Time		
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"50"
+	
+	// Cost
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityManaCost"				"75 75 75"
+
+
+	
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"duration"				"3"
+		"reward_damage"			"15 20 25"
+		"victory_range"			"2000"
+		"creeps_damage"			"4 5 6"
+		"scepter_heal"			"50"
+		"shard_slow"				"-50"
+		"shard_duration"		"4"
+		"shard_speed"			"20"
+		"max_damage"			"250"
+	}
+}
+
+
+
+
+
+"custom_legion_commander_duel_scepter"
+{
+	// General
+	//-------------------------------------------------------------------------------------------------------------
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/legion_commander/custom_legion_commander_duel"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET"
+	"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+	"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
+	"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES | DOTA_UNIT_TARGET_FLAG_NOT_CREEP_HERO"
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_YES"
+	"SpellDispellableType"			"SPELL_DISPELLABLE_NO"
+	"FightRecapLevel"				"2"
+	"AbilitySound"					"Hero_LegionCommander.Duel"
+	"AbilityTextureName"			"duel_double"
+
+	"IsGrantedByScepter"			"1"
+	"MaxLevel"						"1"
+	// Casting
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCastRange"				"400"
+	"AbilityCastPoint"				"0.3 0.3 0.3 0.3"
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_4"
+	
+	// Time		
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"30"
+	
+	// Cost
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityManaCost"				"75 75 75"
+
+
+	
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"duration"			"5"
+		"radius"			"500"
+		"damage"			"100"
+	}
+}
+
+
+
+
+
+
+
+"custom_legion_commander_duel_double"
+{
+	// General
+	//-------------------------------------------------------------------------------------------------------------
+	"BaseClass"             		"ability_lua"
+	"ScriptFile"					"abilities/legion_commander/custom_legion_commander_duel"														// unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_HIDDEN"
+	"AbilityTextureName"			"greater_duel"
+
+
+
+	"AbilityCastPoint"				"0.2"
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_1"
+	"MaxLevel"						"1"
+	
+
+	
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"timer"				"10"
+		"damage"			"15"
+		"amp"				"3"
+
+	}
+}
+
+
+"legion_commander_innate_custom"
+{
+	// General
+	//-------------------------------------------------------------------------------------------------------------
+	"BaseClass"						"ability_lua"
+	"ScriptFile"					"abilities/legion_commander/legion_commander_innate_custom"	
+
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_SKIP_FOR_KEYBINDS | DOTA_ABILITY_BEHAVIOR_INNATE_UI"
+	"Innate"						"1"
+	"MaxLevel"						"1"
+	"IsBreakable"					"1"
+
+	"AbilityValues"
+	{
+		"duration"		"2"
+		"heal"			"20"	
+	}
+}
+
+
+}

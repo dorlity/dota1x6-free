@@ -24,16 +24,15 @@ function modifier_item_tranquil_boots_custom:IsPurgable() return false end
 function modifier_item_tranquil_boots_custom:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_item_tranquil_boots_custom:DeclareFunctions()
     local funcs = {
-        MODIFIER_EVENT_ON_TAKEDAMAGE,
         MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT,
-        MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT, 
+        MODIFIER_PROPERTY_MOVESPEED_BONUS_UNIQUE, 
     }
 
     return funcs
 end
 
 function modifier_item_tranquil_boots_custom:OnCreated(table)
-
+self.ability = self:GetAbility()
 self.damage_min = self:GetAbility():GetSpecialValueFor("break_threshold")
 self.cd = self:GetAbility():GetSpecialValueFor("break_time")
 
@@ -42,18 +41,22 @@ self.break_heal = self:GetAbility():GetSpecialValueFor("bonus_health_regen")*-1
 
 self.move = self:GetAbility():GetSpecialValueFor("bonus_movement_speed")
 self.break_move = self:GetAbility():GetSpecialValueFor("broken_movement_speed")
+
+self.parent = self:GetParent()
+self.parent:AddDamageEvent_inc(self, true)
+
 end
 
-function modifier_item_tranquil_boots_custom:OnTakeDamage(params)
+function modifier_item_tranquil_boots_custom:DamageEvent_inc(params)
 if not IsServer() then return end 
 if not params.attacker then return end 
+if not IsValid(self.ability) then return end
 if params.attacker == self:GetParent() then return end 
 if self:GetParent() ~= params.unit then return end 
 if params.damage < self.damage_min then return end 
 
 self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_item_tranquil_boots_custom_broken", {duration = self.cd})
 self:GetAbility():StartCooldown(self.cd)
-
 end 
 
 
@@ -72,7 +75,7 @@ end
 
 
 
-function modifier_item_tranquil_boots_custom:GetModifierMoveSpeedBonus_Constant()
+function modifier_item_tranquil_boots_custom:GetModifierMoveSpeedBonus_Special_Boots()
 
 
 if self:GetCaster():HasModifier("modifier_item_tranquil_boots_custom_broken") then 

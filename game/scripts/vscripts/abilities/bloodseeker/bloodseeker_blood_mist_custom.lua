@@ -7,28 +7,17 @@ bloodseeker_blood_mist_custom = class({})
 
 
 function bloodseeker_blood_mist_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-PrecacheResource( "particle", 'particles/units/heroes/hero_bloodseeker/bloodseeker_scepter_blood_mist_aoe.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_bloodseeker/bloodseeker_scepter_blood_mist_spray_initial.vpcf', context )
+
+PrecacheResource( "particle", "particles/units/heroes/hero_bloodseeker/bloodseeker_scepter_blood_mist_aoe.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_bloodseeker/bloodseeker_scepter_blood_mist_spray_initial.vpcf", context )
+PrecacheResource( "particle", "particles/status_fx/status_effect_life_stealer_open_wounds.vpcf", context )
+PrecacheResource( "particle", "particles/bloodseeker/bloodrage_shield.vpcf", context )
 
 end
 
 
-
-function bloodseeker_blood_mist_custom:OnInventoryContentsChanged()
-    if self:GetCaster():HasScepter() then
-        self:SetHidden(false)
-        if not self:IsTrained() then
-        	self:SetLevel(1)
-        end
-    else
-        self:SetHidden(true)
-    end
-end
-
-function bloodseeker_blood_mist_custom:OnHeroCalculateStatBonus()
-    self:OnInventoryContentsChanged()
-end
 
 function bloodseeker_blood_mist_custom:OnToggle()
     local caster = self:GetCaster()
@@ -107,7 +96,7 @@ if self.parent:IsMagicImmune() then return end
 if self.parent:GetHealth() <= 1 then return end
 
 self.self_table.damage = self.parent:GetMaxHealth() * self.hp_cost_per_second * self.interval
-ApplyDamage(self.self_table)
+DoDamage(self.self_table)
 end
 
 
@@ -125,7 +114,7 @@ for _, target in pairs(targets) do
 		self.target_table.damage = self.damage_creeps * self.interval
 	end
 
-    ApplyDamage(self.target_table)
+    DoDamage(self.target_table)
 end
 
 end
@@ -133,15 +122,15 @@ end
 function modifier_bloodseeker_blood_mist_custom:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_ATTACK_LANDED
+	MODIFIER_PROPERTY_PROCATTACK_FEEDBACK
 }
 end
 
 
-function modifier_bloodseeker_blood_mist_custom:OnAttackLanded(params)
+function modifier_bloodseeker_blood_mist_custom:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end 
 if self.parent ~= params.attacker then return end 
-if not params.target:IsHero() and not params.target:IsCreep() then return end
+if not params.target:IsUnit() then return end
 if self.parent:HasModifier("modifier_bloodseeker_blood_mist_custom_shield") then return end
 
 self:IncrementStackCount()
@@ -209,7 +198,7 @@ end
 
 
 function modifier_bloodseeker_blood_mist_custom_slow:StatusEffectPriority()
-return 10000
+return MODIFIER_PRIORITY_NORMAL 
 end
 
 
@@ -234,9 +223,9 @@ function modifier_bloodseeker_blood_mist_custom_shield:OnCreated(table)
 self.RemoveForDuel = true
 
 self.max_shield = self:GetAbility():GetSpecialValueFor("shield")*self:GetParent():GetMaxHealth()/100
-
-
+self.parent = self:GetParent()
 if not IsServer() then return end
+
 self:SetStackCount(self.max_shield )
 self:GetParent():EmitSound("BS.Bloodrage_shield")
 end
@@ -266,16 +255,13 @@ end
 
 if not IsServer() then return end
 
-if self:GetStackCount() > params.damage then
-    self:SetStackCount(self:GetStackCount() - params.damage)
-    local i = params.damage
-    return -i
-else
-    
-    local i = self:GetStackCount()
-    self:SetStackCount(0)
-    self:Destroy()
-    return -i
+local damage = math.min(params.damage, self:GetStackCount())
+self.parent:AddShieldInfo({shield_mod = self, healing = damage, healing_type = "shield"})
+
+self:SetStackCount(self:GetStackCount() - damage)
+if self:GetStackCount() <= 0 then
+  self:Destroy()
 end
 
+return -damage
 end

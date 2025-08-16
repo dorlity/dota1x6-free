@@ -5,21 +5,22 @@ item_patrol_trap                = class({})
 
 function item_patrol_trap:OnAbilityPhaseStart()
 local player = self:GetCaster()
+local tower = towers[self:GetCaster():GetTeamNumber()]
 
-if player == nil then return false end
+if tower == nil then return false end
 
 
-if player.trap_wave == true  then 
+if tower.trap_wave == true  then 
     CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), "CreateIngameErrorMessage", {message = "#active_trap"}) 
     return false
 end
 
-if duel_data[player.duel_data] and duel_data[player.duel_data].finished == 0 then 
+if duel_data[tower.duel_data] and duel_data[tower.duel_data].finished == 0 then 
     CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), "CreateIngameErrorMessage", {message = "#active_duel"}) 
     return false
 end
 
-if player.active_necro == false then 
+if tower.can_use_trap == false then 
     CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), "CreateIngameErrorMessage", {message = "#active_necro"}) 
     return false
 end
@@ -33,15 +34,25 @@ function item_patrol_trap:OnSpellStart()
 if not IsServer() then return end
 
 local player = self:GetCaster()
+local team = player:GetTeamNumber()
+local tower = towers[self:GetCaster():GetTeamNumber()]
 
-CustomGameEventManager:Send_ServerToAllClients('TrapAlert',  {victim = self:GetCaster():GetUnitName()})
+if not tower then return end
 
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), 'TrapAlert_start',  {})
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), 'TrapAlert_think',  {time = Trap_Duration, max = Trap_Duration})
+--CustomGameEventManager:Send_ServerToAllClients("TrapAlert",  {victim = self:GetCaster():GetUnitName()})
 
-player.trap_wave = true
+CustomGameEventManager:Send_ServerToAllClients("mini_alert_event",  {hero_1 = player:GetUnitName(), event_type = "trap"})
 
-self:SpendCharge()
+local ids = dota1x6:FindPlayers(team)
+if ids then
+    for _,id in pairs(ids) do
+        CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(id), "TrapAlert_start",  {})
+        CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(id), "TrapAlert_think",  {time = Trap_Duration, max = Trap_Duration})
+    end
+end
 
 
+tower.trap_wave = true
+
+self:SpendCharge(0)
 end

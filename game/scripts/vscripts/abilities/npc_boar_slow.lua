@@ -10,19 +10,21 @@ modifier_boar_passive = class ({})
 function modifier_boar_passive:IsHidden() return true end
 function modifier_boar_passive:IsPurgable()
  return false end
-function modifier_boar_passive:DeclareFunctions() return {
+function modifier_boar_passive:DeclareFunctions() 
+return 
+{
 
-    MODIFIER_EVENT_ON_ATTACK_LANDED
+    MODIFIER_PROPERTY_PROCATTACK_FEEDBACK
+} 
+end
 
-} end
-
-function modifier_boar_passive:OnAttackLanded( param )
+function modifier_boar_passive:GetModifierProcAttack_Feedback( param )
     if not IsServer() then end 
     if self:GetParent() == param.attacker and not param.target:IsMagicImmune()  then
     
-            local duration = self:GetAbility():GetSpecialValueFor("duration")
-            param.target:AddNewModifier(param.attacker, self:GetAbility(), "modifier_boar_slow_debuf", { duration = duration*(1 - param.target:GetStatusResistance()) })  
-   
+        local duration = self:GetAbility():GetSpecialValueFor("duration")
+        param.target:AddNewModifier(param.attacker, self:GetAbility(), "modifier_boar_slow_debuf", { duration = duration*(1 - param.target:GetStatusResistance()) })  
+
     end
 end
 

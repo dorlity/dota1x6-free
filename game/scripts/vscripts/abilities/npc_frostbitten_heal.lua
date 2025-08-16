@@ -24,7 +24,7 @@ function modifier_frostbitten_heal:IsHidden() return false end
 function modifier_frostbitten_heal:OnCreated(table)
 
 if not IsServer() then return end
-  self:GetParent():EmitSound("Hero_Winter_Wyvern.ColdEmbrace") 
+  self:GetParent():EmitSound("Creep.Wyvern_heal") 
   self.shallow_grave_particle = ParticleManager:CreateParticle("particles/units/heroes/hero_winter_wyvern/wyvern_cold_embrace_buff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
   ParticleManager:SetParticleControl( self.shallow_grave_particle, 0, self:GetParent():GetOrigin() ) 
   ParticleManager:SetParticleControl( self.shallow_grave_particle, 1, self:GetParent():GetOrigin() ) 

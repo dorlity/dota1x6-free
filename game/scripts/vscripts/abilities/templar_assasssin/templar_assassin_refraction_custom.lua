@@ -1,638 +1,529 @@
 LinkLuaModifier( "modifier_templar_assassin_refraction_custom_damage", "abilities/templar_assasssin/templar_assassin_refraction_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_templar_assassin_refraction_custom_absorb", "abilities/templar_assasssin/templar_assassin_refraction_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_templar_assassin_refraction_custom_reflect_cd", "abilities/templar_assasssin/templar_assassin_refraction_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_templar_assassin_refraction_custom_knockback", "abilities/templar_assasssin/templar_assassin_refraction_custom", LUA_MODIFIER_MOTION_HORIZONTAL)
-LinkLuaModifier( "modifier_templar_assassin_refraction_custom_rooted", "abilities/templar_assasssin/templar_assassin_refraction_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_templar_assassin_refraction_custom_legendary_cd", "abilities/templar_assasssin/templar_assassin_refraction_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_templar_assassin_refraction_custom_legendary_stack", "abilities/templar_assasssin/templar_assassin_refraction_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_templar_assassin_refraction_custom_silence", "abilities/templar_assasssin/templar_assassin_refraction_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_templar_assassin_refraction_custom_legendary_attack", "abilities/templar_assasssin/templar_assassin_refraction_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_templar_assassin_refraction_custom_shield_speed", "abilities/templar_assasssin/templar_assassin_refraction_custom", LUA_MODIFIER_MOTION_NONE )
-
-
+LinkLuaModifier( "modifier_templar_assassin_refraction_custom_tracker", "abilities/templar_assasssin/templar_assassin_refraction_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_templar_assassin_refraction_custom_speed_slow", "abilities/templar_assasssin/templar_assassin_refraction_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_templar_assassin_refraction_custom_shield_immune", "abilities/templar_assasssin/templar_assassin_refraction_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_templar_assassin_refraction_custom_recast", "abilities/templar_assasssin/templar_assassin_refraction_custom", LUA_MODIFIER_MOTION_NONE )
 
 
 templar_assassin_refraction_custom = class({})
 
-templar_assassin_refraction_custom.shield_heal = {0.01, 0.015, 0.02}
-
-templar_assassin_refraction_custom.resist_status = {10, 15, 20}
-templar_assassin_refraction_custom.resist_move = {8, 12, 16}
-
-templar_assassin_refraction_custom.cd = {2, 3 , 4}
-
-templar_assassin_refraction_custom.reflect_cd = 15
-
-templar_assassin_refraction_custom.knockback_duration = 0.3
-templar_assassin_refraction_custom.knockback_distance = 100
-templar_assassin_refraction_custom.knockback_range = 350
-templar_assassin_refraction_custom.knockback_root_duration = 1.2
-
-templar_assassin_refraction_custom.legendary_cd = 0.3
-templar_assassin_refraction_custom.legendary_damage = 0.12
-templar_assassin_refraction_custom.legendary_duration = 6
-
-templar_assassin_refraction_custom.shield_charges = {1,2}
-templar_assassin_refraction_custom.shield_speed = {10,15}
-templar_assassin_refraction_custom.shield_speed_duration = 3
-
-
-
 
 function templar_assassin_refraction_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/units/heroes/hero_templar_assassin/templar_assassin_refraction_dmg.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_templar_assassin/templar_assassin_refraction.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_antimage/antimage_spellshield_reflect.vpcf", context )
+PrecacheResource( "particle","particles/ta_wave.vpcf", context )
+PrecacheResource( "particle","particles/ta_shield_exp.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_templar_assassin/templar_assassin_refract_hit.vpcf", context )
+PrecacheResource( "particle","particles/ta_shield_roots.vpcf", context )
+PrecacheResource( "particle","particles/ta_shield_magic_2.vpcf", context )
+PrecacheResource( "particle","particles/ta_shield_magic.vpcf", context )
+PrecacheResource( "particle","particles/templar_assassin_magic_attack.vpcf", context )
+PrecacheResource( "particle","particles/status_fx/status_effect_omnislash.vpcf", context )
+PrecacheResource( "particle","particles/templar_assassin/shield_invun.vpcf", context )
+PrecacheResource( "particle","particles/templar_assassin/shield_invun_hit.vpcf", context )
 
-PrecacheResource( "particle", 'particles/units/heroes/hero_templar_assassin/templar_assassin_refraction_dmg.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_templar_assassin/templar_assassin_refraction.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_antimage/antimage_spellshield_reflect.vpcf', context )
-PrecacheResource( "particle", 'particles/ta_wave.vpcf', context )
-PrecacheResource( "particle", 'particles/ta_shield_exp.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_templar_assassin/templar_assassin_refract_hit.vpcf', context )
-PrecacheResource( "particle", 'particles/ta_shield_roots.vpcf', context )
-PrecacheResource( "particle", 'particles/ta_shield_magic_2.vpcf', context )
-PrecacheResource( "particle", 'particles/ta_shield_magic.vpcf', context )
-PrecacheResource( "particle", 'particles/templar_assassin_magic_attack.vpcf', context )
-PrecacheResource( "particle", 'particles/status_fx/status_effect_omnislash.vpcf', context )
+end
 
+function templar_assassin_refraction_custom:GetAbilityTextureName()
+if self:GetCaster():HasModifier("modifier_templar_assassin_refraction_custom_recast") then
+    return "templar_assassin_refraction_damage"
+end 
+return "templar_assassin_refraction"
 end
 
 
 
 
+function templar_assassin_refraction_custom:GetBehavior()
+local bonus = 0
+if self:GetCaster():HasTalent("modifier_templar_assassin_refraction_5") then 
+    bonus = DOTA_ABILITY_BEHAVIOR_IGNORE_PSEUDO_QUEUE
+end 
+return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IMMEDIATE + bonus
+end 
 
 
+function templar_assassin_refraction_custom:GetIntrinsicModifierName()
+if not self:GetCaster():IsRealHero() then return end
+return "modifier_templar_assassin_refraction_custom_tracker"
+end
 
 function templar_assassin_refraction_custom:GetCooldown(level)
 local bonus = 0
-if self:GetCaster():HasModifier("modifier_templar_assassin_refraction_3") then 
-    bonus = self.cd[self:GetCaster():GetUpgradeStack("modifier_templar_assassin_refraction_3")]
+if self:GetCaster():HasTalent("modifier_templar_assassin_refraction_3") then 
+	bonus = self:GetCaster():GetTalentValue("modifier_templar_assassin_refraction_3", "cd")
+end
+return self.BaseClass.GetCooldown( self, level ) + bonus
 end
 
-    return self.BaseClass.GetCooldown( self, level ) - bonus
+
+function templar_assassin_refraction_custom:GetManaCost(level)
+local bonus = 0
+if self:GetCaster():HasModifier("modifier_templar_assassin_refraction_custom_recast") then
+	return 0
+end
+if self:GetCaster():HasTalent("modifier_templar_assassin_refraction_2") then 
+	bonus = self:GetCaster():GetTalentValue("modifier_templar_assassin_refraction_2", "mana")
+end
+return self.BaseClass.GetManaCost(self,level) + bonus
+end
+
+function templar_assassin_refraction_custom:ProcHeal()
+local caster = self:GetCaster()
+if not caster:HasTalent("modifier_templar_assassin_refraction_2") then return end
+
+local heal = caster:GetMaxHealth()*caster:GetTalentValue("modifier_templar_assassin_refraction_2", "heal")/100
+caster:GenericHeal(heal, self, nil, nil, "modifier_templar_assassin_refraction_2")
 end
 
 
+function templar_assassin_refraction_custom:OnProjectileHit_ExtraData(hTarget, vLocation, table)
+if not IsServer() then return end
+if not hTarget then return end
+if not table or not table.damage then return end
+
+local caster = self:GetCaster()
+
+hTarget:EmitSound("TA.Shield_legendary_attack")
+
+local real_damage = DoDamage({victim = hTarget, attacker = caster, damage = table.damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self}, "modifier_templar_assassin_refraction_7")
+hTarget:SendNumber(4, real_damage)    
+end
 
 
 
 function templar_assassin_refraction_custom:OnSpellStart()
-	if not IsServer() then return end
-	local duration = self:GetSpecialValueFor("duration")
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_templar_assassin_refraction_custom_damage", {duration = duration})
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_templar_assassin_refraction_custom_absorb", {duration = duration})
-	self:GetCaster():EmitSound("Hero_TemplarAssassin.Refraction")
-	self:GetCaster():StartGesture(ACT_DOTA_CAST_REFRACTION)
 
+local caster = self:GetCaster()
+local duration = self:GetSpecialValueFor("duration")
+
+caster:StartGesture(ACT_DOTA_CAST_REFRACTION)
+
+local mod = caster:FindModifierByName("modifier_templar_assassin_refraction_custom_recast")
+if mod then
+	caster:AddNewModifier(caster, self, "modifier_templar_assassin_refraction_custom_shield_immune", {duration = caster:GetTalentValue("modifier_templar_assassin_refraction_7", "invun")})
+	mod:Destroy()
+	caster:EmitSound("TA.Shield_invun")
+	self:EndCd()
+	return
+end
+
+caster:RemoveModifierByName("modifier_templar_assassin_refraction_custom_damage")
+caster:RemoveModifierByName("modifier_templar_assassin_refraction_custom_absorb")
+caster:RemoveModifierByName("modifier_templar_assassin_refraction_custom_legendary_attack")
+
+caster:AddNewModifier(caster, self, "modifier_templar_assassin_refraction_custom_damage", {duration = duration})
+caster:AddNewModifier(caster, self, "modifier_templar_assassin_refraction_custom_absorb", {duration = duration})
+
+if caster.templar_illusion then
+	local illusion = EntIndexToHScript(caster.templar_illusion)
+	if illusion and not illusion:IsNull() and illusion:IsAlive() then
+		illusion:StartGesture(ACT_DOTA_CAST_REFRACTION)
+		illusion:AddNewModifier(caster, self, "modifier_templar_assassin_refraction_custom_absorb", {})
+	end
+end
+
+if caster:HasTalent("modifier_templar_assassin_refraction_6") then
+	caster:AddNewModifier(caster, self, "modifier_templar_assassin_refraction_custom_shield_immune", {duration = caster:GetTalentValue("modifier_templar_assassin_refraction_6", "duration")})
+end
+
+if caster:HasTalent("modifier_templar_assassin_refraction_7") then
+	caster:AddNewModifier(caster, self, "modifier_templar_assassin_refraction_custom_recast", {duration = duration})
 	self:EndCooldown()
-	self:SetActivated(false)
+	self:StartCooldown(1)
+else
+	self:EndCd()
+end
+
+caster:EmitSound("Hero_TemplarAssassin.Refraction")
 end
 
 
--- Урон
 
 modifier_templar_assassin_refraction_custom_damage = class({})
-
-function modifier_templar_assassin_refraction_custom_damage:GetPriority()
-	return MODIFIER_PRIORITY_ULTRA
-end
-
 function modifier_templar_assassin_refraction_custom_damage:IsPurgable() return false end
-
+function modifier_templar_assassin_refraction_custom_damage:GetTexture() return "templar_assassin_refraction_damage" end
 function modifier_templar_assassin_refraction_custom_damage:OnCreated()
-	self.instances = self:GetAbility():GetSpecialValueFor("instances")
-	self.bonus_damage = self:GetAbility():GetSpecialValueFor("bonus_damage")
-	if not IsServer() then return end
-	self:SetStackCount(self.instances)
 
-	self.RemoveForDuel = true
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-	self.shield_procs = 0
+self.instances = self.ability:GetSpecialValueFor("instances") + self.parent:GetTalentValue("modifier_templar_assassin_refraction_3", "stack")
+self.bonus_damage = self.ability:GetSpecialValueFor("bonus_damage")
 
-	if self.particle then
-		ParticleManager:DestroyParticle(self.particle, false)
-		ParticleManager:ReleaseParticleIndex(self.particle)
-	end
-	self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_templar_assassin/templar_assassin_refraction_dmg.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-	ParticleManager:SetParticleControlEnt(self.particle, 2, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_attack1", self:GetParent():GetAbsOrigin(), true)
-	ParticleManager:SetParticleControlEnt(self.particle, 3, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_attack2", self:GetParent():GetAbsOrigin(), true)
-	self:AddParticle(self.particle, false, false, -1, true, false)
-end
+if not IsServer() then return end
 
-function modifier_templar_assassin_refraction_custom_damage:OnStackCountChanged()
-	if not IsServer() then return end
-	if self:GetStackCount() <= 0 then
-		self:Destroy()
+self:SetStackCount(self.instances)
 
-	
+self.RemoveForDuel = true
 
-	end
-end
-
-function modifier_templar_assassin_refraction_custom_damage:OnRefresh()
-	self.instances = self:GetAbility():GetSpecialValueFor("instances")
-	self.bonus_damage = self:GetAbility():GetSpecialValueFor("bonus_damage")
-	if not IsServer() then return end
-	self:SetStackCount(self.instances)
+self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_templar_assassin/templar_assassin_refraction_dmg.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt(self.particle, 2, self.parent, PATTACH_POINT_FOLLOW, "attach_attack1", self.parent:GetAbsOrigin(), true)
+ParticleManager:SetParticleControlEnt(self.particle, 3, self.parent, PATTACH_POINT_FOLLOW, "attach_attack2", self.parent:GetAbsOrigin(), true)
+self:AddParticle(self.particle, false, false, -1, true, false)
 end
 
 function modifier_templar_assassin_refraction_custom_damage:DeclareFunctions()
-	local funcs = {
-		MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
-		MODIFIER_EVENT_ON_ATTACK_LANDED
-	}
-
-	return funcs
+return
+{
+	MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
+	MODIFIER_PROPERTY_PROCATTACK_FEEDBACK
+}
 end
 
 function modifier_templar_assassin_refraction_custom_damage:GetModifierPreAttack_BonusDamage()
-local bonus = 0 
-
-	return self.bonus_damage + bonus
+return self.bonus_damage
 end
 
-function modifier_templar_assassin_refraction_custom_damage:OnAttackLanded(params)
-	if not IsServer() then return end
-	if params.attacker ~= self:GetParent() then return end
-	params.target:EmitSound("Hero_TemplarAssassin.Refraction.Damage")
-	self:DecrementStackCount()
+function modifier_templar_assassin_refraction_custom_damage:GetModifierProcAttack_Feedback(params)
+if not IsServer() then return end
+if params.attacker ~= self.parent then return end
+if not params.target:IsUnit() then return end
 
+params.target:EmitSound("Hero_TemplarAssassin.Refraction.Damage")
+self:DecrementStackCount()
 
+self.ability:ProcHeal()
 
-
-	if self:GetParent():HasModifier("modifier_templar_assassin_refraction_2") then 
-		local heal = self:GetAbility().shield_heal[self:GetParent():GetUpgradeStack("modifier_templar_assassin_refraction_2")]*self:GetParent():GetMaxHealth()
-
-		my_game:GenericHeal(self:GetParent(), heal, self:GetAbility())
+if self.parent:HasTalent("modifier_templar_assassin_refraction_7") then
+	local mod = self.parent:FindModifierByName("modifier_templar_assassin_refraction_custom_absorb") 
+	if mod then
+		mod:IncrementStackCount()
 	end
 end
 
-function modifier_templar_assassin_refraction_custom_damage:GetTexture()
-	return "templar_assassin_refraction_damage"
+if self:GetStackCount() <= 0 then
+	self:Destroy()
+	return
 end
 
--- Впитывание
-
-
-
-
-
-
-
-
-
-
-
-
-
+end
 
 
 
 
 modifier_templar_assassin_refraction_custom_absorb = class({})
-
-function modifier_templar_assassin_refraction_custom_absorb:GetPriority()
-	return MODIFIER_PRIORITY_ULTRA
-end
-
 function modifier_templar_assassin_refraction_custom_absorb:IsPurgable() return false end
+function modifier_templar_assassin_refraction_custom_absorb:GetTexture() return "templar_assassin_refraction" end
 
 function modifier_templar_assassin_refraction_custom_absorb:OnCreated()
-self.instances = self:GetAbility():GetSpecialValueFor("instances")
 
-if self:GetCaster():HasModifier("modifier_templar_assassin_refraction_4") then 
-	self.instances = self.instances + self:GetAbility().shield_charges[self:GetCaster():GetUpgradeStack("modifier_templar_assassin_refraction_4")]
-end
+self.ability = self:GetAbility()
+self.parent = self:GetParent()
 
-self.damage_threshold = self:GetAbility():GetSpecialValueFor("damage_threshold")
+self.instances = self.ability:GetSpecialValueFor("instances")
+self.max_shield = self.ability:GetSpecialValueFor("shield_per_instance") + self.parent:GetTalentValue("modifier_templar_assassin_refraction_6", "shield")
+self.shield = self.max_shield
+
+self.legendary_damage = self.parent:GetTalentValue("modifier_templar_assassin_refraction_7", "damage", true)/100
+self.legendary_duration = self.parent:GetTalentValue("modifier_templar_assassin_refraction_7", "duration", true)
+
 if not IsServer() then return end
 self:SetStackCount(self.instances)
-
 self.RemoveForDuel = true
-
-if self.particle then
-	ParticleManager:DestroyParticle(self.particle, false)
-	ParticleManager:ReleaseParticleIndex(self.particle)
-end
 
 self.damage_count = 0
 
-self.particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_templar_assassin/templar_assassin_refraction.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-ParticleManager:SetParticleControl( self.particle, 0, self:GetCaster():GetOrigin())
-ParticleManager:SetParticleControlEnt( self.particle, 1, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_origin", self:GetCaster():GetOrigin(), true );
-ParticleManager:SetParticleControl( self.particle, 5, self:GetCaster():GetOrigin())
+self.particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_templar_assassin/templar_assassin_refraction.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent )
+ParticleManager:SetParticleControl( self.particle, 0, self.parent:GetOrigin())
+ParticleManager:SetParticleControlEnt( self.particle, 1, self.parent, PATTACH_POINT_FOLLOW, "attach_origin", self.parent:GetOrigin(), true );
+ParticleManager:SetParticleControl( self.particle, 5, self.parent:GetOrigin())
 self:AddParticle(self.particle, false, false, -1, true, false)
+
+self:SetHasCustomTransmitterData(true)
+self:SendBuffRefreshToClients()
+
+if not self.parent:HasTalent("modifier_templar_assassin_refraction_7") then return end
+
+self.max_time = self:GetRemainingTime()
+
+self:OnIntervalThink()
+self:StartIntervalThink(0.1)
 end
 
-function modifier_templar_assassin_refraction_custom_absorb:OnRefresh()
-	self.instances = self:GetAbility():GetSpecialValueFor("instances")
-	
 
+function modifier_templar_assassin_refraction_custom_absorb:OnIntervalThink()
+if not IsServer() then return end
 
-	if self:GetCaster():HasModifier("modifier_templar_assassin_refraction_4") then 
-		self.instances = self.instances + self:GetAbility().shield_charges[self:GetCaster():GetUpgradeStack("modifier_templar_assassin_refraction_4")]
-	end
-	
-	if self:GetCaster():HasModifier("modifier_templar_assassin_refraction_3") then 
-		self.instances = self.instances + self:GetAbility().charge_shield[self:GetCaster():GetUpgradeStack("modifier_templar_assassin_refraction_3")]
-	end
-
-
-	self.damage_threshold = self:GetAbility():GetSpecialValueFor("damage_threshold")
-	if not IsServer() then return end
-	self:SetStackCount(self.instances)
+self.parent:UpdateUIshort({time = self:GetElapsedTime(), max_time = self.max_time, stack_icon = self:GetStackCount(), stack = "+"..tostring(math.floor(self.damage_count)), style = "TemplarRefraction"})
 end
+
+
+
+function modifier_templar_assassin_refraction_custom_absorb:AddCustomTransmitterData() 
+return 
+{
+    shield = self.shield,
+} 
+end
+
+function modifier_templar_assassin_refraction_custom_absorb:HandleCustomTransmitterData(data)
+self.shield = data.shield
+end
+
 
 function modifier_templar_assassin_refraction_custom_absorb:DeclareFunctions()
-    local funcs = {
-        MODIFIER_PROPERTY_TOTAL_CONSTANT_BLOCK,
-		MODIFIER_PROPERTY_REFLECT_SPELL,
-		MODIFIER_PROPERTY_ABSORB_SPELL,
-		MODIFIER_EVENT_ON_TAKEDAMAGE,
-		MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-		MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING
-    }
-    return funcs
+return
+{
+    MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
+	MODIFIER_PROPERTY_REFLECT_SPELL,
+	MODIFIER_PROPERTY_ABSORB_SPELL,
+}
 end
 
 
-function modifier_templar_assassin_refraction_custom_absorb:GetModifierMoveSpeedBonus_Percentage()
-local bonus = 0
-if self:GetCaster():HasModifier("modifier_templar_assassin_refraction_1") then 
-	bonus = self:GetAbility().resist_move[self:GetCaster():GetUpgradeStack("modifier_templar_assassin_refraction_1")]
+function modifier_templar_assassin_refraction_custom_absorb:ReduceStack(attacker)
+if not IsServer() then return end
+
+self:DecrementStackCount()
+self.ability:ProcHeal()
+self.parent:EmitSound("Hero_TemplarAssassin.Refraction.Absorb")
+
+self:ParticleProc(attacker, "particles/units/heroes/hero_templar_assassin/templar_assassin_refract_hit.vpcf")
+
+if self:GetStackCount() <= 0 then 
+	self:Destroy()
 end
 
-return bonus
 end
 
 
-function modifier_templar_assassin_refraction_custom_absorb:GetModifierStatusResistanceStacking()
-local bonus = 0
-if self:GetCaster():HasModifier("modifier_templar_assassin_refraction_1") then 
-	bonus = self:GetAbility().resist_status[self:GetCaster():GetUpgradeStack("modifier_templar_assassin_refraction_1")]
+function modifier_templar_assassin_refraction_custom_absorb:ParticleProc(attacker, name)
+if not IsServer() then return end
+local forward = self.parent:GetAbsOrigin() - attacker:GetAbsOrigin()
+forward.z = 0
+forward = forward:Normalized()
+
+local particle_2 = ParticleManager:CreateParticle(name, PATTACH_CUSTOMORIGIN, self.parent)
+ParticleManager:SetParticleControlEnt(particle_2, 0, self.parent, PATTACH_POINT, "attach_hitloc", self.parent:GetAbsOrigin(), true)
+ParticleManager:SetParticleControl(particle_2, 1, self.parent:GetAbsOrigin())
+ParticleManager:SetParticleControlForward(particle_2, 1, forward)
+ParticleManager:SetParticleControlEnt(particle_2, 2, self.parent, PATTACH_ABSORIGIN_FOLLOW, nil, self.parent:GetAbsOrigin(), false)
+ParticleManager:ReleaseParticleIndex(particle_2)
 end
 
-return bonus
+
+function modifier_templar_assassin_refraction_custom_absorb:GetModifierIncomingDamageConstant(params)
+
+if IsClient() then 
+	if params.report_max then 
+		return self.max_shield
+	else 
+     	return self.shield
+    end 
 end
 
+if not IsServer() then return end
+if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_HPLOSS) == DOTA_DAMAGE_FLAG_HPLOSS then return end
+if self.parent == params.attacker then return end
+
+if not self.parent:HasModifier("modifier_templar_assassin_refraction_custom_shield_immune") then 
+	if self.shield > params.damage then
+	    self.shield = self.shield - params.damage
+	else
+	 	self.shield = self.max_shield
+	 	self:ReduceStack(params.attacker)
+	end
+else
+	self:ParticleProc(params.attacker, "particles/templar_assassin/shield_invun_hit.vpcf")
+	self.parent:EmitSound("TA.Shield_invun_hit")
+end
+
+if self.parent:HasTalent("modifier_templar_assassin_refraction_7") then 
+	self.damage_count = self.damage_count + params.original_damage*self.legendary_damage
+end
+
+if self.parent:GetQuest() == "Templar.Quest_5" and params.attacker:IsRealHero() and not self.parent:QuestCompleted() then 
+	self.parent:UpdateQuest(math.floor(params.original_damage))
+end
+
+self:SendBuffRefreshToClients()
+self.parent:AddShieldInfo({shield_mod = self, healing = params.damage, healing_type = "shield"})
+return -params.damage
+end
 
 
 function modifier_templar_assassin_refraction_custom_absorb:GetAbsorbSpell( params )
 if not IsServer() then return end
-if params.ability and params.ability:GetCaster() == self:GetParent() then return end
-if not self:GetParent():HasModifier("modifier_templar_assassin_refraction_6") then return end
-if self:GetParent():HasModifier("modifier_templar_assassin_refraction_custom_reflect_cd") then return end
+if params.ability and params.ability:GetCaster() == self.parent then return end
+if self.blocked then return end
+if not self.parent:HasTalent("modifier_templar_assassin_refraction_6") then return end
 
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_templar_assassin_refraction_custom_reflect_cd", {duration = self:GetAbility().reflect_cd})
+self.blocked = true
 
-local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_antimage/antimage_spellshield_reflect.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-ParticleManager:SetParticleControlEnt( particle, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetOrigin(), true )
+local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_antimage/antimage_spellshield_reflect.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent )
+ParticleManager:SetParticleControlEnt( particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetOrigin(), true )
 ParticleManager:ReleaseParticleIndex( particle )
-self:GetParent():EmitSound("TA.Spell_block")
+self.parent:EmitSound("TA.Spell_block")
 
-	return 1
+return 1
 end
-
-
-
-
-
-
-
-
-function modifier_templar_assassin_refraction_custom_absorb:OnStackCountChanged()
-if not IsServer() then return end
-
-
-if self:GetStackCount() <= 0 then
-	self:Destroy()
-
-	if self:GetParent():HasModifier("modifier_templar_assassin_refraction_5") then 
-		local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetCaster():GetAbsOrigin(), nil, self:GetAbility().knockback_range, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false )
-
-		self:GetParent():EmitSound("TA.Shield_break")
-		
-
-		local wave_particle = ParticleManager:CreateParticle( "particles/ta_wave.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-		ParticleManager:SetParticleControl( wave_particle, 1, self:GetCaster():GetAbsOrigin() )
-		ParticleManager:ReleaseParticleIndex(wave_particle)
-
-		local particle = ParticleManager:CreateParticle("particles/ta_shield_exp.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-		ParticleManager:SetParticleControl(particle, 0, self:GetParent():GetAbsOrigin())
-
-
-		for _,enemy in pairs(enemies) do 
-			enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_templar_assassin_refraction_custom_knockback", {duration = self:GetAbility().knockback_duration, x = self:GetCaster():GetAbsOrigin().x, y = self:GetCaster():GetAbsOrigin().y})
-		end
-	end
-end
-end
-
-function modifier_templar_assassin_refraction_custom_absorb:GetModifierTotal_ConstantBlock(params)
-    if not IsServer() then return end
-    if params.damage < self.damage_threshold then return end
-    if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_HPLOSS) == DOTA_DAMAGE_FLAG_HPLOSS then return end
-
-	self:GetParent():EmitSound("Hero_TemplarAssassin.Refraction.Absorb")
-
-	local forward = self:GetParent():GetAbsOrigin() - params.attacker:GetAbsOrigin()
-	forward.z = 0
-	forward = forward:Normalized()
-
-	local particle_2 = ParticleManager:CreateParticle("particles/units/heroes/hero_templar_assassin/templar_assassin_refract_hit.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
-	ParticleManager:SetParticleControlEnt(particle_2, 0, self:GetParent(), PATTACH_POINT, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
-	ParticleManager:SetParticleControl(particle_2, 1, self:GetParent():GetAbsOrigin())
-	ParticleManager:SetParticleControlForward(particle_2, 1, forward)
-	ParticleManager:SetParticleControlEnt(particle_2, 2, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), false)
-	ParticleManager:ReleaseParticleIndex(particle_2)
-
-	local update_ui = false
-	local mod = self:GetCaster():FindModifierByName("modifier_templar_assassin_refraction_custom_legendary_stack")
-
-	if self:GetCaster():HasModifier("modifier_templar_assassin_refraction_7") then 
-
-		if mod then 
-			mod:SetStackCount(mod:GetStackCount() + params.original_damage*self:GetAbility().legendary_damage)
-			update_ui = true	
-
-			if not self:GetParent():HasModifier("modifier_templar_assassin_refraction_custom_legendary_attack") then 
-				CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'Templar_Refraction_shield',  {max = self.instances, charges = self:GetStackCount() - 1, damage = mod:GetStackCount()})
-			end
-		end
-
-		if not self:GetCaster():HasModifier("modifier_templar_assassin_refraction_custom_legendary_cd")  then 
-			self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_templar_assassin_refraction_custom_legendary_cd", {duration = self:GetAbility().legendary_cd})
-			self:DecrementStackCount()
-			if self:GetCaster():HasModifier("modifier_templar_assassin_refraction_4") then 
-				self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_templar_assassin_refraction_custom_shield_speed", {duration = self:GetAbility().shield_speed_duration})
-			end
-		end
-	else 
-    	self:DecrementStackCount()
-		if self:GetCaster():HasModifier("modifier_templar_assassin_refraction_4") then 
-			self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_templar_assassin_refraction_custom_shield_speed", {duration = self:GetAbility().shield_speed_duration})
-		end
-    end
-
-	if self:GetParent():HasModifier("modifier_templar_assassin_refraction_2") then 
-		local heal = self:GetAbility().shield_heal[self:GetParent():GetUpgradeStack("modifier_templar_assassin_refraction_2")]*self:GetParent():GetMaxHealth()
-
-		my_game:GenericHeal(self:GetParent(), heal, self:GetAbility())
-	end
-	if update_ui then 
-
-		local stack = self:GetStackCount()
-		if self:GetStackCount() == 0 then 
-			stack = self.instances
-		end
-	end
-
-
-	if self:GetCaster():GetQuest() == "Templar.Quest_5" and params.attacker:IsRealHero() and not self:GetCaster():QuestCompleted() then 
-		self:GetCaster():UpdateQuest(math.floor(params.original_damage))
-	end
-
-    return params.damage
-end
-
 
 
 function modifier_templar_assassin_refraction_custom_absorb:OnDestroy()
 if not IsServer() then return end
-self:GetAbility():SetActivated(true)
-self:GetAbility():UseResources(false, false, false, true)
+self.parent:RemoveModifierByName("modifier_templar_assassin_refraction_custom_recast")
+self.ability:StartCd()
 
-local mod = self:GetCaster():FindModifierByName("modifier_templar_assassin_refraction_custom_legendary_stack")
-
-if not mod then return end 
-
-local stack = mod:GetStackCount()
-mod:SetStackCount(0)
-	
-if stack == 0 then return end
-
-self:GetCaster():RemoveModifierByName("modifier_templar_assassin_refraction_custom_legendary_attack")
-
-local attack_mod = self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_templar_assassin_refraction_custom_legendary_attack", {duration = self:GetAbility().legendary_duration})
-attack_mod:SetStackCount(stack)
-
+if self.parent:HasTalent("modifier_templar_assassin_refraction_4") then 
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_templar_assassin_refraction_custom_shield_speed", {duration = self.parent:GetTalentValue("modifier_templar_assassin_refraction_4", "effect_duration")})
 end
 
 
+if self.parent:HasTalent("modifier_templar_assassin_refraction_5") then 
+	self.parent:EmitSound("TA.Shield_break")
+	self.parent:GenericParticle("particles/ta_wave.vpcf")
+	self.parent:GenericParticle("particles/ta_shield_exp.vpcf")
+	local radius = self.parent:GetTalentValue("modifier_templar_assassin_refraction_5", "radius")
+	local duration = self.parent:GetTalentValue("modifier_templar_assassin_refraction_5", "duration")
+	local silence = self.parent:GetTalentValue("modifier_templar_assassin_refraction_5", "silence")
 
+	for _,enemy in pairs(self.parent:FindTargets(radius)) do 
+		local direction = enemy:GetOrigin()-self.parent:GetOrigin()
+		direction.z = 0
+		direction = direction:Normalized()
 
+		local end_point = self.parent:GetAbsOrigin() + direction*(radius + 10)
+		local distance = (enemy:GetAbsOrigin() - end_point):Length2D()
 
-
-
-
-
-
-modifier_templar_assassin_refraction_custom_reflect_cd = class({})
-function modifier_templar_assassin_refraction_custom_reflect_cd:IsHidden() return false end
-function modifier_templar_assassin_refraction_custom_reflect_cd:IsDebuff() return true end
-function modifier_templar_assassin_refraction_custom_reflect_cd:IsPurgable() return false end
-function modifier_templar_assassin_refraction_custom_reflect_cd:OnCreated(table)
-self.RemoveForDuel = true
+		local knockbackProperties =
+		{
+			duration = duration,
+			distance = distance,
+			direction_x = direction.x,
+			direction_y = direction.y,
+		}
+		enemy:AddNewModifier( self.parent, self.ability, "modifier_generic_knockback", knockbackProperties )
+		enemy:AddNewModifier(self.parent, self.parent:BkbAbility(nil, false), "modifier_templar_assassin_refraction_custom_silence", {duration = (1 - enemy:GetStatusResistance())*silence})
+	end
 end
 
-function modifier_templar_assassin_refraction_custom_reflect_cd:GetTexture() return "buffs/refraction_reflect" end
-
-
-
-
-
-
-
-
-modifier_templar_assassin_refraction_custom_knockback = class({})
-
-function modifier_templar_assassin_refraction_custom_knockback:IsHidden() return true end
-
-function modifier_templar_assassin_refraction_custom_knockback:OnCreated(params)
-  if not IsServer() then return end
-  
-  self.ability        = self:GetAbility()
-  self.caster         = self:GetCaster()
-  self.parent         = self:GetParent()
-  self:GetParent():StartGesture(ACT_DOTA_FLAIL)
-  
-  self.knockback_duration   = self.ability.knockback_duration
-
-  self.knockback_distance   = math.max((self.ability.knockback_distance + self.ability.knockback_range)  - (self.caster:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D(),  self:GetAbility().knockback_distance)
-  
-  self.knockback_speed    = self.knockback_distance / self.knockback_duration
-  
-  self.position = GetGroundPosition(Vector(params.x, params.y, 0), nil)
-  
-  if self:ApplyHorizontalMotionController() == false then 
-    self:Destroy()
-    return
-  end
+if self.damage_count <= 0 then 
+	if self.parent:HasTalent("modifier_templar_assassin_refraction_7") then
+		self.parent:UpdateUIshort({hide = 1, style = "TemplarRefraction"})
+	end
+	return 
 end
 
-function modifier_templar_assassin_refraction_custom_knockback:UpdateHorizontalMotion( me, dt )
-  if not IsServer() then return end
-
-  local distance = (me:GetOrigin() - self.position):Normalized()
-  
-  me:SetOrigin( me:GetOrigin() + distance * self.knockback_speed * dt )
-
-  GridNav:DestroyTreesAroundPoint( self.parent:GetOrigin(), self.parent:GetHullRadius(), true )
+self.parent:RemoveModifierByName("modifier_templar_assassin_refraction_custom_legendary_attack")
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_templar_assassin_refraction_custom_legendary_attack", {duration = self.legendary_duration, stack = self.damage_count})
 end
-
-function modifier_templar_assassin_refraction_custom_knockback:DeclareFunctions()
-  local decFuncs = {
-    MODIFIER_PROPERTY_OVERRIDE_ANIMATION
-    }
-
-    return decFuncs
-end
-
-function modifier_templar_assassin_refraction_custom_knockback:GetOverrideAnimation()
-   return ACT_DOTA_FLAIL
-end
-
-
-function modifier_templar_assassin_refraction_custom_knockback:OnDestroy()
-  if not IsServer() then return end
- self.parent:RemoveHorizontalMotionController( self )
-  self:GetParent():FadeGesture(ACT_DOTA_FLAIL)
-  self:GetParent():EmitSound("TA.Shield_root")
-  self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_templar_assassin_refraction_custom_rooted", {duration = (1 - self:GetParent():GetStatusResistance())*self:GetAbility().knockback_root_duration})
-end
-
-
-
-
-
-
-
-
-modifier_templar_assassin_refraction_custom_rooted = class({})
-function modifier_templar_assassin_refraction_custom_rooted:IsHidden() return true end
-function modifier_templar_assassin_refraction_custom_rooted:IsPurgable() return true end
-function modifier_templar_assassin_refraction_custom_rooted:CheckState()
-return
-{
-	[MODIFIER_STATE_ROOTED] = true
-}
-end
-function modifier_templar_assassin_refraction_custom_rooted:GetEffectName() return "particles/ta_shield_roots.vpcf" end
-
-
-modifier_templar_assassin_refraction_custom_legendary_cd = class({})
-function modifier_templar_assassin_refraction_custom_legendary_cd:IsHidden() return true end
-function modifier_templar_assassin_refraction_custom_legendary_cd:IsPurgable() return false end
-
-
-
-modifier_templar_assassin_refraction_custom_legendary_stack = class({})
-function modifier_templar_assassin_refraction_custom_legendary_stack:IsHidden() return true end
-function modifier_templar_assassin_refraction_custom_legendary_stack:IsPurgable() return false end
-function modifier_templar_assassin_refraction_custom_legendary_stack:RemoveOnDeath() return false end
-function modifier_templar_assassin_refraction_custom_legendary_stack:OnCreated(table)
-if not IsServer() then return end
-self:SetStackCount(0)
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'Templar_Refraction_shield',  {max = 6, charges = 0, damage = 0})
-end
-
 
 
 
 modifier_templar_assassin_refraction_custom_legendary_attack = class({})
 function modifier_templar_assassin_refraction_custom_legendary_attack:IsHidden() return true end
 function modifier_templar_assassin_refraction_custom_legendary_attack:IsPurgable() return false end
-
-function modifier_templar_assassin_refraction_custom_legendary_attack:GetEffectName()
-return "particles/ta_shield_magic_2.vpcf"
-end
-
-
+function modifier_templar_assassin_refraction_custom_legendary_attack:GetEffectName() return "particles/ta_shield_magic_2.vpcf" end
 function modifier_templar_assassin_refraction_custom_legendary_attack:OnCreated(table)
 if not IsServer() then return end
 
+self.parent = self:GetParent()
+self.parent:AddAttackStartEvent_out(self)
 
-self:GetParent():EmitSound("TA.Shield_legendary")
-local particle_peffect = ParticleManager:CreateParticle("particles/ta_shield_magic.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-ParticleManager:SetParticleControl(particle_peffect, 0, self:GetCaster():GetAbsOrigin())
-ParticleManager:SetParticleControl(particle_peffect, 2, self:GetCaster():GetAbsOrigin())
+self.ability = self:GetAbility()
+
+self:SetStackCount(table.stack)
+self.parent:EmitSound("TA.Shield_legendary")
+
+local particle_peffect = ParticleManager:CreateParticle("particles/ta_shield_magic.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControl(particle_peffect, 0, self.parent:GetAbsOrigin())
+ParticleManager:SetParticleControl(particle_peffect, 2, self.parent:GetAbsOrigin())
 ParticleManager:ReleaseParticleIndex(particle_peffect)
 
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'Templar_Refraction_change',  {})
+self.max_time = self:GetRemainingTime()
+
+self:OnIntervalThink()
 self:StartIntervalThink(0.2)
-end
-
-function modifier_templar_assassin_refraction_custom_legendary_attack:OnDestroy()
-if not IsServer() then return end
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'Templar_Refraction_change',  {})
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'Templar_Refraction_shield',  {max = 6, charges = 0, damage = 0})
-
 end
 
 
 function modifier_templar_assassin_refraction_custom_legendary_attack:OnIntervalThink()
 if not IsServer() then return end
-if self:GetStackCount() == 0 then return end
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'Templar_Refraction_shield',  {max = self:GetAbility().legendary_duration, charges = self:GetAbility().legendary_duration - self:GetRemainingTime(), damage = self:GetStackCount()})
+
+self.parent:UpdateUIshort({time = self:GetRemainingTime(), max_time = self.max_time, stack = "+"..tostring(self:GetStackCount()), active = 1, style = "TemplarRefraction"})
 end
 
 
-
-
-function modifier_templar_assassin_refraction_custom_legendary_attack:DeclareFunctions()
-    local funcs = {
-		MODIFIER_PROPERTY_PROJECTILE_NAME,
-		MODIFIER_EVENT_ON_ATTACK_LANDED,
-		MODIFIER_EVENT_ON_ATTACK
-    }
-    return funcs
-end
-
-function modifier_templar_assassin_refraction_custom_legendary_attack:OnAttack(params)
-if self:GetParent() ~= params.attacker then return end
-
-        local projectile =
-        {
-            Target = params.target,
-            Source = self:GetParent(),
-            Ability = self:GetAbility(),
-            EffectName = "particles/templar_assassin_magic_attack.vpcf",
-            iMoveSpeed = self:GetParent():GetProjectileSpeed(),
-            vSourceLoc = self:GetParent():GetAbsOrigin(),
-            bDodgeable = false,
-            bProvidesVision = false,
-        }
-
-        local hProjectile = ProjectileManager:CreateTrackingProjectile( projectile )
-
-end
-
-
-
-
-function modifier_templar_assassin_refraction_custom_legendary_attack:OnAttackLanded(params)
+function modifier_templar_assassin_refraction_custom_legendary_attack:OnDestroy()
 if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end
-if params.target:IsBuilding() then return end
-if params.target:IsMagicImmune() then return end
 
-params.target:EmitSound("TA.Shield_legendary_attack")
-ApplyDamage({victim = params.target, attacker = self:GetCaster(), damage = self:GetStackCount(), damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility()})
-   
-SendOverheadEventMessage(params.target, 4, params.target, self:GetStackCount(), nil)         
+self.parent:UpdateUIshort({hide = 1, style = "TemplarRefraction"})
 end
 
 
 
+function modifier_templar_assassin_refraction_custom_legendary_attack:AttackStartEvent_out(params)
+if not IsServer() then return end
+if self.parent ~= params.attacker then return end
+if not params.target:IsUnit() then return end
 
-function modifier_templar_assassin_refraction_custom_legendary_attack:GetStatusEffectName()
-return "particles/status_fx/status_effect_omnislash.vpcf"
+local projectile =
+{
+    Target = params.target,
+    Source = self.parent,
+    Ability = self.ability,
+    EffectName = "particles/templar_assassin_magic_attack.vpcf",
+    iMoveSpeed = self.parent:GetProjectileSpeed(),
+    vSourceLoc = self.parent:GetAbsOrigin(),
+    bDodgeable = false,
+    bProvidesVision = false,
+    ExtraData = {damage = self:GetStackCount()}
+}
+
+ProjectileManager:CreateTrackingProjectile( projectile )
 end
-function modifier_templar_assassin_refraction_custom_legendary_attack:StatusEffectPriority() return
-11111
+
+
+
+function modifier_templar_assassin_refraction_custom_legendary_attack:GetStatusEffectName() return "particles/status_fx/status_effect_omnislash.vpcf" end
+function modifier_templar_assassin_refraction_custom_legendary_attack:StatusEffectPriority() return MODIFIER_PRIORITY_ULTRA  end
+
+
+
+
+
+
+modifier_templar_assassin_refraction_custom_silence = class({})
+function modifier_templar_assassin_refraction_custom_silence:IsHidden() return true end
+function modifier_templar_assassin_refraction_custom_silence:IsPurgable() return true end
+function modifier_templar_assassin_refraction_custom_silence:CheckState()
+return
+{
+	[MODIFIER_STATE_SILENCED] = true
+}
+end
+
+function modifier_templar_assassin_refraction_custom_silence:OnCreated()
+self.parent = self:GetParent()
+self.slow = self:GetCaster():GetTalentValue("modifier_templar_assassin_refraction_5", "slow")
+if not IsServer() then return end
+self.parent:GenericParticle("particles/void_astral_slow.vpcf", self)
+self.parent:EmitSound("Sf.Raze_Silence")
+end
+
+function modifier_templar_assassin_refraction_custom_silence:GetEffectName() return "particles/generic_gameplay/generic_silenced.vpcf" end
+function modifier_templar_assassin_refraction_custom_silence:ShouldUseOverheadOffset() return true end
+function modifier_templar_assassin_refraction_custom_silence:GetEffectAttachType() return PATTACH_OVERHEAD_FOLLOW end
+
+
+function modifier_templar_assassin_refraction_custom_silence:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
+}
 end
 
 
-
-
-
+function modifier_templar_assassin_refraction_custom_silence:GetModifierMoveSpeedBonus_Percentage()
+return self.slow
+end
 
 
 
@@ -641,25 +532,116 @@ modifier_templar_assassin_refraction_custom_shield_speed = class({})
 function modifier_templar_assassin_refraction_custom_shield_speed:IsHidden() return false end
 function modifier_templar_assassin_refraction_custom_shield_speed:IsPurgable() return false end
 function modifier_templar_assassin_refraction_custom_shield_speed:GetTexture() return "buffs/refraction_speed" end
-function modifier_templar_assassin_refraction_custom_shield_speed:OnCreated(table)
-if not IsServer() then return end
-self:SetStackCount(1) 
+
+
+
+modifier_templar_assassin_refraction_custom_tracker = class({})
+function modifier_templar_assassin_refraction_custom_tracker:IsHidden() return true end
+function modifier_templar_assassin_refraction_custom_tracker:IsPurgable() return false end
+function modifier_templar_assassin_refraction_custom_tracker:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.move_bonus = self.parent:GetTalentValue("modifier_templar_assassin_refraction_1", "bonus", true)
+
+self.speed_slow = self.parent:GetTalentValue("modifier_templar_assassin_refraction_4", "duration", true)
+
+self.parent:AddAttackEvent_out(self)
 end
 
-
-function modifier_templar_assassin_refraction_custom_shield_speed:OnRefresh(table)
-if not IsServer() then return end
-self:IncrementStackCount() 
-end
-
-function modifier_templar_assassin_refraction_custom_shield_speed:DeclareFunctions()
+function modifier_templar_assassin_refraction_custom_tracker:DeclareFunctions()
 return
 {
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT,
+	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
 	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
 }
 end
 
+function modifier_templar_assassin_refraction_custom_tracker:GetModifierAttackSpeedBonus_Constant()
+if not self.parent:HasTalent("modifier_templar_assassin_refraction_4") then return end 
+if not self.parent:HasModifier("modifier_templar_assassin_refraction_custom_damage") and not self.parent:HasModifier("modifier_templar_assassin_refraction_custom_shield_speed") then return end
 
-function modifier_templar_assassin_refraction_custom_shield_speed:GetModifierAttackSpeedBonus_Constant()
-return self:GetStackCount()*self:GetAbility().shield_speed[self:GetCaster():GetUpgradeStack("modifier_templar_assassin_refraction_4")]
+return self.parent:GetTalentValue("modifier_templar_assassin_refraction_4", "speed")
 end
+
+
+function modifier_templar_assassin_refraction_custom_tracker:GetModifierMoveSpeedBonus_Constant()
+if not self.parent:HasTalent("modifier_templar_assassin_refraction_1") then return end
+
+local bonus = self.parent:GetTalentValue("modifier_templar_assassin_refraction_1", "move")
+if self.parent:HasModifier("modifier_templar_assassin_refraction_custom_absorb") then 
+	bonus = bonus*self.move_bonus
+end
+return bonus
+end
+
+
+function modifier_templar_assassin_refraction_custom_tracker:GetModifierStatusResistanceStacking()
+if not self.parent:HasTalent("modifier_templar_assassin_refraction_1") then return end
+
+local bonus = self.parent:GetTalentValue("modifier_templar_assassin_refraction_1", "status")
+if self.parent:HasModifier("modifier_templar_assassin_refraction_custom_absorb") then 
+	bonus = bonus*self.move_bonus
+end
+return bonus
+end
+
+
+function modifier_templar_assassin_refraction_custom_tracker:AttackEvent_out(params)
+if not IsServer() then return end
+if self.parent ~= params.attacker then return end
+if not params.target:IsUnit() then return end
+
+if self.parent:HasTalent("modifier_templar_assassin_refraction_4") and (self.parent:HasModifier("modifier_templar_assassin_refraction_custom_damage") or self.parent:HasModifier("modifier_templar_assassin_refraction_custom_shield_speed")) then
+	params.target:AddNewModifier(self.parent, self.ability, "modifier_templar_assassin_refraction_custom_speed_slow", {duration = self.speed_slow})
+end
+
+end
+
+
+
+modifier_templar_assassin_refraction_custom_speed_slow = class({})
+function modifier_templar_assassin_refraction_custom_speed_slow:IsHidden() return true end
+function modifier_templar_assassin_refraction_custom_speed_slow:IsPurgable() return true end
+function modifier_templar_assassin_refraction_custom_speed_slow:GetTexture() return "buffs/psiblades_slow" end
+function modifier_templar_assassin_refraction_custom_speed_slow:GetEffectName() return "particles/void_astral_slow.vpcf" end
+function modifier_templar_assassin_refraction_custom_speed_slow:DeclareFunctions()
+return
+{
+    MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+}
+end
+
+function modifier_templar_assassin_refraction_custom_speed_slow:GetModifierMoveSpeedBonus_Percentage()
+return self.slow
+end
+
+function modifier_templar_assassin_refraction_custom_speed_slow:OnCreated()
+self.slow = self:GetCaster():GetTalentValue("modifier_templar_assassin_refraction_4", "slow")
+end
+
+
+modifier_templar_assassin_refraction_custom_shield_immune = class({})
+function modifier_templar_assassin_refraction_custom_shield_immune:IsHidden() return true end
+function modifier_templar_assassin_refraction_custom_shield_immune:IsPurgable() return false end
+function modifier_templar_assassin_refraction_custom_shield_immune:OnCreated()
+if not IsServer() then return end
+
+self.parent = self:GetParent()
+self.particle = ParticleManager:CreateParticle( "particles/templar_assassin/shield_invun.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent )
+ParticleManager:SetParticleControl( self.particle, 0, self.parent:GetOrigin())
+ParticleManager:SetParticleControlEnt( self.particle, 1, self.parent, PATTACH_POINT_FOLLOW, "attach_origin", self.parent:GetOrigin(), true );
+ParticleManager:SetParticleControl( self.particle, 5, self.parent:GetOrigin())
+self:AddParticle(self.particle, false, false, -1, true, false)
+end
+
+function modifier_templar_assassin_refraction_custom_shield_immune:GetStatusEffectName() return "particles/status_fx/status_effect_omnislash.vpcf" end
+function modifier_templar_assassin_refraction_custom_shield_immune:StatusEffectPriority() return MODIFIER_PRIORITY_SUPER_ULTRA  end
+
+
+
+
+modifier_templar_assassin_refraction_custom_recast = class({})
+function modifier_templar_assassin_refraction_custom_recast:IsHidden() return true end
+function modifier_templar_assassin_refraction_custom_recast:IsPurgable() return false end

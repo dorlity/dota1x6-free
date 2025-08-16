@@ -62,15 +62,11 @@ item_muerta_shovel_custom.items =
 	"item_ward_observer",
 	"item_smoke_of_deceit",
 	"item_mantle",
-	"item_faerie_fire",
-	"item_blood_grenade",
-	"item_enchanted_mango",
 	"item_dust",
 	"item_patrol_warp_amulet",
-	"item_contract",
+	--"item_contract",
 	"item_patrol_restrained_orb",
 	"item_patrol_midas",
-
 }
 
 
@@ -147,16 +143,16 @@ if found == true then
 	    local mercy = CreateItem("item_muerta_mercy_custom", caster, caster)
 	    caster:AddItem(mercy)
 
-		my_game:MuertaQuestPhase()
+		dota1x6:MuertaQuestPhase()
 
-		CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(caster:GetPlayerOwnerID()), 'muerta_quest_panel',  { max = 0, stack = 0, stage = 2})
+		CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(caster:GetPlayerOwnerID()), "muerta_quest_panel",  { max = 0, stack = 0, stage = 2})
 			
-		CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(caster:GetPlayerOwnerID()), 'muerta_quest_alert',  {type = 3})
+		CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(caster:GetPlayerOwnerID()), "muerta_quest_alert",  {type = 3})
 
 	else 
 
-		CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), 'muerta_quest_alert',  {type = 2, max = self:GetSpecialValueFor("goal"), stack = self:GetCurrentCharges()})
-		CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), 'muerta_quest_panel',  { max = self:GetSpecialValueFor("goal"), stack = self:GetCurrentCharges(), stage = 1})
+		CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), "muerta_quest_alert",  {type = 2, max = self:GetSpecialValueFor("goal"), stack = self:GetCurrentCharges()})
+		CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), "muerta_quest_panel",  { max = self:GetSpecialValueFor("goal"), stack = self:GetCurrentCharges(), stage = 1})
 	end
 else 
 

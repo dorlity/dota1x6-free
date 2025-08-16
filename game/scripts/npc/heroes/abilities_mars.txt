@@ -1,0 +1,320 @@
+
+"DOTAAbilities"
+{
+
+"Version"		"1"
+
+
+
+
+
+
+
+"mars_gods_rebuke_custom"
+{
+    // General
+    //-------------------------------------------------------------------------------------------------------------
+     "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/mars/mars_gods_rebuke_custom"  
+    "AbilityTextureName"            "mars_gods_rebuke"                                                  // unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_POINT"
+    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
+    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+    "AbilityUnitDamageType"         "DAMAGE_TYPE_PHYSICAL"  
+    "FightRecapLevel"               "1"
+    "AbilitySound"                  "Hero_Mars.Shield.Cast"
+
+    // Casting
+    "AbilityCastPoint"              "0.2"
+    "AbilityCastAnimation"              "ACT_DOTA_CAST_ABILITY_4"
+    "LinkedAbility"                 "mars_avatar_custom"
+
+    // Cost
+    //-------------------------------------------------------------------------------------------------------------
+        "AbilityManaCost"               "90"
+    "AbilityCastRange"              "500"
+    // Special
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+        "crit_mult"
+        {
+            "value"                             "150 200 250 300"
+            "DamageTypeTooltip"         "DAMAGE_TYPE_PHYSICAL"
+        }
+        "angle"                     "140"
+        "radius"                    "500"
+        "knockback_duration"        "0.3"
+        "knockback_distance"        "150"
+        "knockback_slow"            "40"
+        "knockback_slow_duration"   "2.5"
+        "activity_duration"         "2"
+        "bonus_damage_vs_heroes"    "10 15 20 25"
+        "AbilityCooldown"           "16 14 12 10"
+        
+    }
+}
+
+
+
+
+
+"mars_avatar_custom"
+{
+    // General
+    //-------------------------------------------------------------------------------------------------------------
+     "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/mars/mars_gods_rebuke_custom"  
+    "AbilityTextureName"            "avatar"                                                    // unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_HIDDEN"
+
+
+    // Casting
+    "AbilityCastAnimation"              "ACT_DOTA_CAST_ABILITY_4"
+    "MaxLevel"                      "1"
+    // Cost
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityManaCost"               "0"
+    "AbilityCooldown"               "20"
+    // Special
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+        "duration"              "10"
+        "shield_cd"             "1.5"
+        "resist"                "40"
+        "bva"                   "1.5"
+        
+    }
+}
+
+
+
+
+
+"mars_spear_custom"
+{
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/mars/mars_spear_custom" 
+    "AbilityTextureName"            "mars_spear"
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_DIRECTIONAL"
+    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"   
+    "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_NO"
+    "SpellDispellableType"          "SPELL_DISPELLABLE_YES_STRONG"
+    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
+    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+    "FightRecapLevel"               "1"
+    "AbilitySound"                  "Hero_Mars.Spear.Cast"
+    "HasShardUpgrade"             "1"
+
+    // Casting
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCastPoint"              "0.25"
+    // Time     
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCooldown"               "14.0 13.0 12.0 11.0"
+
+    // Cost
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityManaCost"               "100 110 120 130"
+
+    // Special
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+        "damage"                "100 175 250 325"
+        "spear_speed"           "1400"
+        "spear_width"           "125"
+        "spear_vision"          "300"
+        "spear_range"           "1000"
+        "activity_duration"     "1.7"
+        "stun_duration"         "1.3 1.6 1.9 2.2"
+        "knockback_duration"    "0.25"
+        "knockback_distance"    "75"
+        "shard_damage"           "200"
+        "shard_speed"            "25"                
+    }
+}
+
+"mars_bulwark_custom"
+{
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/mars/mars_bulwark_custom" 
+    "AbilityTextureName"            "mars_bulwark"
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_PASSIVE"
+    "IsBreakable"                   "1"
+
+    "AbilityValues"
+    {
+        "physical_damage_reduction"         "20 30 40 50"
+        "forward_angle"                     "140"
+        "physical_damage_reduction_side"    "10 15 20 25"
+        "side_angle"                        "240" 
+
+        "scepter_movement_slow_pct"          "0"
+        "scepter_movement_slow_duration"     "0"
+    }
+}
+
+
+
+"mars_bulwark"
+{
+    // General
+    //-------------------------------------------------------------------------------------------------------------
+    "ID"                        "6582"                                                      // unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_TOGGLE | DOTA_ABILITY_BEHAVIOR_HIDDEN"
+    "HasScepterUpgrade"         "0"
+
+    // Special
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+
+        "soldier_offset"                    "200"
+
+        "scepter_movement_slow_duration"        "0"
+        "scepter_movement_slow_pct"             "0"
+        "scepter_bonus_damage"              "0"
+
+        "soldier_attack_range"              "425"
+        "knockback_distance"                "0"
+
+        "physical_damage_reduction"     "0"
+        "forward_angle"                 "140"
+        "physical_damage_reduction_side" "0"
+        "side_angle"                    "240"
+
+        "redirect_speed_penatly"        "0"
+
+    }
+}
+
+
+
+
+"mars_revenge_custom"
+{
+    // General
+    //-------------------------------------------------------------------------------------------------------------
+     "BaseClass"                    "ability_lua"
+    "ScriptFile"                    "abilities/mars/mars_arena_of_blood_custom"  
+    "AbilityTextureName"            "revenge"                                                   // unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_HIDDEN"
+    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"  
+    "AbilityUnitTargetFlags"        "DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES"
+    "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_YES"
+
+
+    // Casting
+    "MaxLevel"                      "1"
+    "AbilityCastRange"              "460"
+    "AbilityCastPoint"              "0.4"
+    "AbilityManaCost"               "30"
+    // Special
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+
+        "radius"            "460"
+        "slow"              "-100"
+        "slow_duration"     "1"
+        "stack_max"         "7"
+        "duration"          "15"
+        "knock_duration"    "0.25"
+        "knock_distance"    "550"
+        "damage"            "100"
+        "damage_inc"        "70"
+        "cd_inc"            "2"
+    }
+}
+
+
+
+
+"mars_arena_of_blood_custom"
+{
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/mars/mars_arena_of_blood_custom" 
+    "AbilityTextureName"            "mars_arena_of_blood"
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_AOE"
+    "AbilityType"                   "ABILITY_TYPE_ULTIMATE"
+    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"   
+    "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_NO"
+    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
+    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+    "AbilitySound"                  "Hero_Mars.ArenaOfBlood.Start"
+
+    "LinkedAbility"                 "mars_revenge_custom"
+    "HasScepterUpgrade"         "1"
+
+    // Casting
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCastRange"              "400"
+    "AbilityCastPoint"              "0.2"
+    "AbilityCastAnimation"          "ACT_DOTA_CAST_ABILITY_1"
+
+    // Time     
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCooldown"               "40"
+    
+    // Cost
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityManaCost"               "150 200 250"
+    
+    // Special  
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+        "duration"                      "5 6 7"
+        "radius"                        "550"
+        "width"                         "100"
+        "spear_damage"                  "80 160 240"
+        "formation_time"                "0.1"
+        "spear_distance_from_wall"      "160"
+        "spear_attack_interval"         "1"
+        "warrior_count"                 "14"
+        "first_warrior_angle"           "0.0"
+        "warrior_fade_min_dist"         "350.0"
+        "warrior_fade_max_dist"         "450.0"
+        "scepter_cast"                  "0"
+    }
+}
+
+
+
+
+
+
+"mars_innate_custom"
+{
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/mars/mars_innate_custom"  
+
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+    "MaxLevel"                      "1"
+    "Innate"                        "1"
+    "IsBreakable"                   "1"
+
+    "AbilityValues"
+    {
+        "str"       "10"
+        "regen"     "6"
+        "duration"  "5"
+        "cd"        "10"
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

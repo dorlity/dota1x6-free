@@ -10,13 +10,13 @@ modifier_megacreep_bad_passive = class ({})
 
 function modifier_megacreep_bad_passive:IsHidden() return true end
 
-function modifier_megacreep_bad_passive:DeclareFunctions() return {
 
-    MODIFIER_EVENT_ON_DEATH
+function modifier_megacreep_bad_passive:OnCreated()
+self.parent = self:GetParent()
+self.parent:AddDeathEvent(self)
+end
 
-} end
-
-function modifier_megacreep_bad_passive:OnDeath( param )
+function modifier_megacreep_bad_passive:DeathEvent( param )
     if not IsServer() then end 
       
     if param.unit == self:GetParent() and not param.attacker:IsBuilding() and param.attacker:IsAlive() then
@@ -61,7 +61,7 @@ function modifier_megacreep_bad_debuf:OnIntervalThink()
     local duration = self:GetAbility():GetSpecialValueFor("duration")
     local interval = self:GetAbility():GetSpecialValueFor("interval")
     tik = self:GetParent():GetMaxHealth()*((total / (duration / interval) ) /100) * self:GetStackCount()
-    ApplyDamage({ victim = self:GetParent(), attacker = self:GetCaster(), ability = self:GetAbility(), damage = tik, damage_type = DAMAGE_TYPE_PURE, damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION})
+    DoDamage({ victim = self:GetParent(), attacker = self:GetCaster(), ability = self:GetAbility(), damage = tik, damage_type = DAMAGE_TYPE_PURE, damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION})
     SendOverheadEventMessage(self:GetParent(), 9, self:GetParent(), tik, nil)
 
 end

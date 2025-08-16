@@ -6,6 +6,12 @@ LinkLuaModifier("modifier_skeletaura_cd", "abilities/npc_skelet_aura.lua", LUA_M
 npc_skelet_aura = class({})
 
 
+function npc_skelet_aura:Precache(context)
+PrecacheResource( "particle", "particles/econ/items/ogre_magi/ogre_ti8_immortal_weapon/ogre_ti8_immortal_bloodlust_buff_hands_glow.vpcf", context )
+
+end
+
+
 function npc_skelet_aura:OnSpellStart()
 if not IsServer() then return end
 

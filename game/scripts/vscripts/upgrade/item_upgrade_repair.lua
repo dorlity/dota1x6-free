@@ -24,7 +24,7 @@ if not IsServer() then return end
 self:GetCursorTarget():AddNewModifier(self:GetCaster(), self, "modifier_upgrade_repair_cd", {duration = self:GetSpecialValueFor("cd")})
 self:GetCursorTarget():AddNewModifier(self:GetCaster(), self, "modifier_repair", {duration = self:GetSpecialValueFor("duration")})
 self:GetCursorTarget():EmitSound("DOTA_Item.RepairKit.Target")
-self:SpendCharge()
+self:SpendCharge(0)
 end
 
 

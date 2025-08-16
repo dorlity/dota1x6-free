@@ -4,6 +4,12 @@ LinkLuaModifier("modifier_item_midas_noblue", "abilities/items/item_midas_custom
 
 item_midas_custom = class({})
 
+
+function item_midas_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/items2_fx/hand_of_midas.vpcf", context )
+end
+
 function item_midas_custom:GetIntrinsicModifierName()
 	return "modifier_item_midas_custom"
 end
@@ -12,7 +18,7 @@ function item_midas_custom:CastFilterResultTarget(target)
   if IsServer() then
     local caster = self:GetCaster()
 
-    if target:GetTeamNumber() == DOTA_TEAM_CUSTOM_5 or target:IsAncient() or my_game:IsPatrol(target:GetUnitName()) then
+    if target:GetTeamNumber() == DOTA_TEAM_CUSTOM_5 or target:IsAncient() or dota1x6:IsPatrol(target:GetUnitName()) or target.is_patrol_creep then
       return UF_FAIL_OTHER
     end
 
@@ -48,79 +54,84 @@ end
 function item_midas_custom:GiveBonuses(target, givegold)
 if not IsServer() then return end
 
-local bonus_gold = self:GetSpecialValueFor("gold")
+local caster = self:GetCaster()
+local duo_bonus = 1
 
-if givegold == true then 
-
-
-    if (self:GetCaster():GetQuest() == "General.Quest_5")  then 
-        self:GetCaster():UpdateQuest(bonus_gold)
-    end
-
-    self:GetCaster():ModifyGold(bonus_gold , true , DOTA_ModifyGold_CreepKill)
-
-    SendOverheadEventMessage(self:GetCaster(), 0, self:GetCaster(), bonus_gold, nil)
+if not IsSoloMode() then
+    duo_bonus = self:GetSpecialValueFor("duo_bonus")
 end
 
-self:GetCaster():EmitSound("DOTA_Item.Hand_Of_Midas")
-local item_effect = ParticleManager:CreateParticle( "particles/items2_fx/hand_of_midas.vpcf", PATTACH_ABSORIGIN_FOLLOW, target)
-ParticleManager:SetParticleControl( item_effect, 0, target:GetAbsOrigin() )
-ParticleManager:SetParticleControlEnt(item_effect, 1, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetCaster():GetOrigin(), true )
-  
-ParticleManager:ReleaseParticleIndex(item_effect)
+if givegold == true then 
+    local bonus_gold = self:GetSpecialValueFor("gold")/duo_bonus
+    if (caster:GetQuest() == "General.Quest_5")  then 
+        caster:UpdateQuest(bonus_gold)
+    end
+    caster:ModifyGold(bonus_gold , true , DOTA_ModifyGold_CreepKill)
+    caster:SendNumber(0, bonus_gold)
 
-
-if givegold == false then 
+    dota1x6:AddBluePoints(caster, self:GetSpecialValueFor("blue")/duo_bonus)
+else
     local points = 0
     if BluePoints[target:GetUnitName()] then 
         points = BluePoints[target:GetUnitName()]*self:GetSpecialValueFor("blue_creeps")
     end
-
-    my_game:AddBluePoints(self:GetCaster(), points)
-else 
-    my_game:AddBluePoints(self:GetCaster(), self:GetSpecialValueFor("blue"))
+    dota1x6:AddBluePoints(caster, points)
 end
 
+caster:EmitSound("DOTA_Item.Hand_Of_Midas")
 
+local name = caster:HasModifier("modifier_alchemist_item_midas_custom") and "particles/econ/items/alchemist/alchemist_midas_knuckles/alch_hand_of_midas.vpcf" or "particles/items2_fx/hand_of_midas.vpcf"
+
+local item_effect = ParticleManager:CreateParticle( name, PATTACH_ABSORIGIN_FOLLOW, target)
+ParticleManager:SetParticleControl( item_effect, 0, target:GetAbsOrigin() )
+ParticleManager:SetParticleControlEnt(item_effect, 1, caster, PATTACH_POINT_FOLLOW, "attach_hitloc", caster:GetOrigin(), true )
+ParticleManager:ReleaseParticleIndex(item_effect)
 end
 
 
 
 
 modifier_item_midas_custom = class({})
-
 function modifier_item_midas_custom:IsHidden() return true end
 function modifier_item_midas_custom:IsPurgable() return false end
 function modifier_item_midas_custom:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_item_midas_custom:DeclareFunctions()
-    local funcs = {
-        MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-        MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT,
-        MODIFIER_EVENT_ON_DEATH
-    }
-
-    return funcs
+return 
+{
+    MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+    MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT,
+}
 end
 
 
 function modifier_item_midas_custom:GetModifierAttackSpeedBonus_Constant()
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("attack_speed") 
-    end
+return self.speed 
 end
+
 function modifier_item_midas_custom:GetModifierMoveSpeedBonus_Constant()
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("move_speed") 
-    end
+return self.move 
 end
 
+function modifier_item_midas_custom:OnCreated(table)
+self.parent = self:GetParent()
+self.parent:AddDeathEvent(self)
 
-function modifier_item_midas_custom:OnDeath(params)
+self.ability = self:GetAbility()
+
+self.move = self.ability:GetSpecialValueFor("move_speed")
+self.speed = self.ability:GetSpecialValueFor("attack_speed")
+self.radius = self.ability:GetSpecialValueFor("radius")
+end 
+
+
+function modifier_item_midas_custom:DeathEvent(params)
 if not IsServer() then return end
-if not self:GetParent():IsRealHero() then return end
-if not self:GetAbility() then return end
-if self:GetParent():HasModifier("modifier_monkey_king_wukongs_command_custom_soldier") then return end
-if self ~= self:GetParent():FindAllModifiersByName(self:GetName())[1] then return end
-if not params.unit:IsValidKill(self:GetParent()) then return end
-if self:GetParent():IsTempestDouble() then return end
+if not self.parent:IsRealHero() then return end
+if not self.ability then return end
+if self.parent:HasModifier("modifier_monkey_king_wukongs_command_custom_soldier") then return end
+if self ~= self.parent:FindAllModifiersByName(self:GetName())[1] then return end
+if not params.unit:IsValidKill(self.parent) then return end
+if self.parent:IsTempestDouble() then return end
 
 local attacker = params.attacker 
 
@@ -128,23 +139,12 @@ if attacker.owner then
     attacker = attacker.owner
 end 
 
-if ((self:GetParent():GetAbsOrigin() - params.unit:GetAbsOrigin()):Length2D() > self:GetAbility():GetSpecialValueFor("radius")) 
- and attacker ~= self:GetParent() then return end
+if ((self.parent:GetAbsOrigin() - params.unit:GetAbsOrigin()):Length2D() > self.radius) and attacker ~= self:GetParent() then return end
 
-
-self:GetAbility():GiveBonuses(params.unit, true)
-
+self.ability:GiveBonuses(params.unit, true)
 end
 
 
-function modifier_item_midas_custom:OnCreated(table)
-if not self:GetAbility() then return end 
-
-if self:GetAbility():GetCurrentCharges() > 1 then 
-   -- self:GetAbility():SetCurrentCharges(1)
-end
-
-end 
 
 
 modifier_item_midas_noblue = class({})

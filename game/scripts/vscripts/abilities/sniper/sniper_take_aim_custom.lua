@@ -1,172 +1,127 @@
 LinkLuaModifier( "modifier_sniper_take_aim_custom", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_sniper_take_aim_custom_legendary", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_sniper_take_aim_custom_legendary_disarm", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_sniper_take_aim_custom_blink", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_HORIZONTAL )
-LinkLuaModifier( "modifier_sniper_take_aim_custom_blink_speed", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_sniper_take_aim_custom_agility", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_sniper_take_aim_custom_evasion", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_sniper_take_aim_custom_evasion_cd", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_sniper_take_aim_custom_attack_speed", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_sniper_take_aim_custom_slow", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_sniper_take_aim_custom_shield", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_sniper_take_aim_custom_shield_cd", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
-
-
+LinkLuaModifier( "modifier_sniper_take_aim_custom_legendary_unit", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_sniper_take_aim_custom_legendary_damage", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_sniper_take_aim_custom_active", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_sniper_take_aim_custom_damage", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_sniper_take_aim_custom_armor", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_sniper_take_aim_custom_block", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_sniper_take_aim_custom_damage_reduce", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_sniper_take_aim_custom_no_count_move", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_sniper_take_aim_custom_break", "abilities/sniper/sniper_take_aim_custom", LUA_MODIFIER_MOTION_NONE )
 
 sniper_take_aim_custom = class({})
 
-sniper_take_aim_custom.agility_range = 400
-sniper_take_aim_custom.agility_regen = {1, 2}
-sniper_take_aim_custom.agility_bonus = {0.15, 0.25}
-
-sniper_take_aim_custom.attack_speed = {30, 45, 60}
-sniper_take_aim_custom.attack_timer = 2
-
-sniper_take_aim_custom.evasion_speed = {10, 15, 20}
-sniper_take_aim_custom.evasion_bonus = {20, 30, 40}
-sniper_take_aim_custom.evasion_cd = 10
-sniper_take_aim_custom.evasion_duration = 3
-
-sniper_take_aim_custom.range_slow = {-8, -12, -16}
-sniper_take_aim_custom.range_slow_duration = 2
-sniper_take_aim_custom.range_distance = 500
-sniper_take_aim_custom.range_armor = {-3, -4, -5}
-
-
-sniper_take_aim_custom.shield_duration = 3
-sniper_take_aim_custom.shield_health = 30
-sniper_take_aim_custom.shield_durability = 0.2
-sniper_take_aim_custom.shield_cd = 40
-
-
 function sniper_take_aim_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-PrecacheResource( "particle", "particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf", context )
-PrecacheResource( "particle", "particles/items3_fx/blink_swift_buff.vpcf", context )
-PrecacheResource( "particle", "particles/sniper_aim_blink.vpcf", context )
-PrecacheResource( "particle", "particles/items_fx/force_staff.vpcf", context )
-PrecacheResource( "particle", "particles/lc_odd_proc_hands.vpcf", context )
-PrecacheResource( "particle", "particles/status_fx/status_effect_forcestaff.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_snapfire/hero_snapfire_shotgun_debuff.vpcf", context )
-PrecacheResource( "particle", "particles/status_fx/status_effect_snapfire_slow.vpcf", context )
+
+PrecacheResource( "particle","particles/items3_fx/blink_swift_buff.vpcf", context ) 
+PrecacheResource( "particle","particles/items_fx/force_staff.vpcf", context )
+PrecacheResource( "particle","particles/sniper_aim_blink.vpcf", context )
+PrecacheResource( "particle","particles/status_fx/status_effect_forcestaff.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf", context )
+PrecacheResource( "particle","particles/items3_fx/blink_swift_buff.vpcf", context ) 
+PrecacheResource( "particle","particles/lc_odd_proc_hands.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_snapfire/hero_snapfire_shotgun_debuff.vpcf", context )
+PrecacheResource( "particle","particles/status_fx/status_effect_snapfire_slow.vpcf", context )
+PrecacheResource( "particle","particles/sniper_matrix.vpcf", context )
+PrecacheResource( "particle","particles/sniper_shield_hit.vpcf", context )
+PrecacheResource( "particle","particles/hoodwink/bush_damage.vpcf", context )
+PrecacheResource( "particle","particles/sniper/aim_block.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_sniper/sniper_take_aim_overhead.vpcf", context )
 
 end
 
+
+sniper_take_aim_custom.projectiles = {}
 
 function sniper_take_aim_custom:GetCooldown(iLevel)
-if self:GetCaster():HasModifier("modifier_sniper_aim_7") or self:GetCaster():HasModifier("modifier_sniper_aim_6") then 
-	return self:GetCaster():GetTalentValue("modifier_sniper_aim_7", "cd", true)
+local upgrade_cooldown = 0
+if self:GetCaster():HasTalent("modifier_sniper_aim_1") then  
+	upgrade_cooldown = self:GetCaster():GetTalentValue("modifier_sniper_aim_1", "cd")
+end 
+return self.BaseClass.GetCooldown(self, iLevel) + upgrade_cooldown
 end
-
-end
-
 
 function sniper_take_aim_custom:GetIntrinsicModifierName()
+if not self:GetCaster():IsRealHero() then return end
 return "modifier_sniper_take_aim_custom"
 end
 
-
-
-function sniper_take_aim_custom:GetCastRange(vLocation, hTarget)
-if self:GetCaster():HasModifier("modifier_sniper_aim_6") then 
-	if IsClient() then 
-		return self:GetCaster():GetTalentValue("modifier_sniper_aim_6", "range")
-	else 
-		return 999999
-	end
+function sniper_take_aim_custom:GetManaCost(iLevel)
+if self:GetCaster():HasTalent("modifier_sniper_aim_5") then
+	return 0
 end
-
-end
-
-function sniper_take_aim_custom:GetBehavior()
-
-if self:GetCaster():HasModifier("modifier_sniper_aim_6") then 
-	return DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_IMMEDIATE
-else 
-
-	if self:GetCaster():HasModifier("modifier_sniper_aim_7") then 
-		return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IMMEDIATE
-	end
-
-end
-
-return DOTA_ABILITY_BEHAVIOR_PASSIVE
-end
-
-
+return self.BaseClass.GetManaCost(self,iLevel)
+end 
 
 
 function sniper_take_aim_custom:OnSpellStart()
+
+local caster = self:GetCaster()
+local duration = self:GetSpecialValueFor("duration")
+
+if caster:HasTalent("modifier_sniper_aim_7") then
+	caster:EmitSound("Sniper.Headshot_legendary_voice")
+	duration = caster:GetTalentValue("modifier_sniper_aim_7", "duration")
+else 
+	caster:EmitSound("Hero_Sniper.TakeAim.Cast")
+end
+
+duration = duration + caster:GetTalentValue("modifier_sniper_aim_1", "duration")
+
+if caster:HasTalent("modifier_sniper_aim_5") then
+	caster:AddNewModifier(caster, self, "modifier_sniper_take_aim_custom_block", {duration = caster:GetTalentValue("modifier_sniper_aim_5", "duration")})
+	caster:AddNewModifier(caster, self, "modifier_sniper_take_aim_custom_damage_reduce", {})
+end
+
+caster:AddNewModifier(caster, self, "modifier_sniper_take_aim_custom_active", {duration = duration})
+end
+
+
+
+function sniper_take_aim_custom:OnProjectileThink_ExtraData(location, data)
 if not IsServer() then return end
+if not data.index or not self.projectiles or not self.projectiles[data.index] then return end
+if not data.thinker then return end
 
+local caster = self:GetCaster()
+local thinker =  EntIndexToHScript(data.thinker)
 
-if self:GetCaster():HasModifier('modifier_sniper_aim_7') then 
+if thinker == nil or thinker:IsNull() then return end
+if not EntIndexToHScript(data.thinker):HasModifier("modifier_sniper_take_aim_custom_legendary_unit") then return end
 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_sniper_take_aim_custom_legendary", {duration = self:GetCaster():GetTalentValue("modifier_sniper_aim_7", "duration")})
+local width = caster:GetTalentValue("modifier_sniper_aim_7", "width")
+local enemies = FindUnitsInRadius( caster:GetTeamNumber(), location, nil, width, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, 0, false)
+local hit = false
 
-	local duration = self:GetCaster():GetTalentValue("modifier_sniper_aim_7", "illusions_duration")
-	local damage = self:GetCaster():GetTalentValue("modifier_sniper_aim_7", "illusions_damage")
-	local incoming = self:GetCaster():GetTalentValue("modifier_sniper_aim_7", "illusions_incoming") - 100
+for _,enemy in pairs(enemies) do 
+	if enemy:GetUnitName() ~= "npc_teleport" and not enemy:HasModifier("modifier_skeleton_king_reincarnation_custom_legendary") then 
 
-
-	local illusion = CreateIllusions( self:GetCaster(), self:GetCaster(), {duration=duration, outgoing_damage= -100 + damage,incoming_damage=incoming}, 1, 0, false, false )  
-	for k, v in pairs(illusion) do
-
-	    v.owner = self:GetCaster()
-
-	    for _,mod in pairs(self:GetCaster():FindAllModifiers()) do
-	        if mod.StackOnIllusion ~= nil and mod.StackOnIllusion == true then
-	            v:UpgradeIllusion(mod:GetName(), mod:GetStackCount() )
-	        end
-	    end
-
-	    FindClearSpaceForUnit(v, self:GetCaster():GetAbsOrigin(), true)
-
-	    v.aim_illusion = true
-
-		if self:GetCaster():IsMoving() then 
-
-			v:AddNewModifier(self:GetCaster(), self, "modifier_sniper_take_aim_custom_legendary_disarm", {duration = FrameTime()*2})
-
-			local forward_dir = self:GetCaster():GetForwardVector()
-
-		    Timers:CreateTimer(FrameTime()*2, function() 
-			    	v:MoveToPosition(self:GetCaster():GetAbsOrigin() + forward_dir*800)
-			end)
+		hit = true
+		if not caster:HasModifier("modifier_sniper_take_aim_custom_active") then 
+			caster:AddNewModifier(caster, self, "modifier_sniper_take_aim_custom_legendary_damage", {})
 		end
+
+		caster:PerformAttack(enemy, false, true, true, true, false, false, false)
+		local particle_aoe_fx = ParticleManager:CreateParticle("particles/sniper_legendary_attacka.vpcf", PATTACH_ABSORIGIN_FOLLOW, enemy)
+		ParticleManager:SetParticleControlEnt( particle_aoe_fx, 0, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", Vector(0,0,0), true )
+		ParticleManager:SetParticleControlEnt( particle_aoe_fx, 3, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", Vector(0,0,0), true )
+		ParticleManager:DestroyParticle(particle_aoe_fx, false)
+		ParticleManager:ReleaseParticleIndex(particle_aoe_fx) 
+
+		caster:RemoveModifierByName("modifier_sniper_take_aim_custom_legendary_damage")
+		break
 	end
-
-	Timers:CreateTimer(FrameTime(), function()
-		self:GetCaster():EmitSound("Sniper.Aim_legendary_cast")
-	end)
-
 end
 
-if self:GetCaster():HasModifier("modifier_sniper_aim_6") then 
-
-	local point = self:GetCaster():GetCursorPosition()
-	if point == self:GetCaster():GetAbsOrigin() then 
-		point = self:GetCaster():GetForwardVector()*10 + self:GetCaster():GetAbsOrigin()
-	end
-
-	local dir = (point - self:GetCaster():GetAbsOrigin()):Normalized()
-
-	self:GetCaster():SetForwardVector(dir)
-	self:GetCaster():FaceTowards(point)
-
-	ProjectileManager:ProjectileDodge(self:GetCaster())
-
-	self:GetCaster():EmitSound("Sniper.Aim_blink")
-
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_sniper_take_aim_custom_blink_speed", {duration = self:GetCaster():GetTalentValue("modifier_sniper_aim_6", "speed")})
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_sniper_take_aim_custom_blink", {x = point.x, y = point.y, z = point.z, duration = self:GetCaster():GetTalentValue("modifier_sniper_aim_6", "duration")})
-
+if hit == true then 
+	UTIL_Remove(thinker)
+	--ProjectileManager:DestroyTrackingProjectile(self.projectiles[data.index])
 end
 
-
-
 end
-
 
 
 
@@ -175,654 +130,543 @@ function modifier_sniper_take_aim_custom:IsHidden() return true end
 function modifier_sniper_take_aim_custom:IsPurgable() return false end
 
 function modifier_sniper_take_aim_custom:DeclareFunctions()
-    return {
-        MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
-        MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT,
-        MODIFIER_EVENT_ON_ATTACK_LANDED,
-        MODIFIER_EVENT_ON_TAKEDAMAGE,
-        MODIFIER_PROPERTY_MIN_HEALTH
-    }
+return 
+{
+	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING
+}
 end
 
-
-
-function modifier_sniper_take_aim_custom:GetMinHealth()
-if not IsServer() then return end
-if not self:GetParent():IsAlive() then return end
-if not self:GetParent():HasModifier("modifier_sniper_aim_5") then return end
-if self:GetParent():PassivesDisabled() then return end
-if self:GetParent():HasModifier("modifier_death") then return end
-if self:GetParent():HasModifier("modifier_sniper_take_aim_custom_shield_cd") then return end
-
-return 1
+function modifier_sniper_take_aim_custom:GetModifierStatusResistanceStacking() 
+if not self.parent:HasTalent("modifier_sniper_aim_2") then return end
+return self.parent:GetTalentValue("modifier_sniper_aim_2", "status")
 end
-
-
-function modifier_sniper_take_aim_custom:OnTakeDamage(params)
-if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_sniper_aim_5") then return end
-if self:GetParent() ~= params.unit then return end
-if self:GetParent():PassivesDisabled() then return end
-if self:GetParent():HasModifier("modifier_death") then return end
-if self:GetParent():HasModifier("modifier_sniper_take_aim_custom_shield_cd") then return end
-if self:GetParent():GetHealthPercent() > self:GetAbility().shield_health then return end
-
-self:GetParent():Purge(false, true, false, false, false)
-
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_sniper_take_aim_custom_shield", {duration = self:GetAbility().shield_duration})
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_sniper_take_aim_custom_shield_cd", {duration = self:GetAbility().shield_cd})
-
-end
-
-
-
-
-
-
-function modifier_sniper_take_aim_custom:OnAttackLanded(params)
-if not IsServer() then return end
-
-
-
-if self:GetParent() == params.target and self:GetParent():HasModifier("modifier_sniper_aim_1") and (params.attacker:IsHero() or params.attacker:IsCreep())
-	and not self:GetParent():HasModifier("modifier_sniper_take_aim_custom_evasion_cd") then 
-
-	self:GetParent():EmitSound("Sniper.Aim_evasion")
-
-	self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_sniper_take_aim_custom_evasion_cd", {duration = self:GetAbility().evasion_cd})
-	self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_sniper_take_aim_custom_evasion", {duration = self:GetAbility().evasion_duration})
-
-end
-
-
-
-if self:GetParent() ~= params.attacker then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end
-
-
-if self:GetParent():HasModifier("modifier_sniper_aim_3") and (self:GetParent():GetAbsOrigin() - params.target:GetAbsOrigin()):Length2D() >= self:GetAbility().range_distance then 
-	params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_sniper_take_aim_custom_slow", {duration = self:GetAbility().range_slow_duration})
-end
-
-if (self:GetParent():HasModifier("modifier_sniper_aim_7") or self:GetParent():HasModifier("modifier_sniper_aim_6")) and self:GetAbility():GetCooldownTimeRemaining() > 0 then 
-	self:GetParent():CdAbility(self:GetAbility(), self:GetCaster():GetTalentValue("modifier_sniper_aim_7", "cd_inc", true))
-end
-
-end
-
-
-
-
 
 function modifier_sniper_take_aim_custom:OnCreated(table)
 
-self.range = self:GetAbility():GetSpecialValueFor("bonus_attack_range")
-self.move = self:GetAbility():GetSpecialValueFor("bonus_movespeed")
-end
-
-function modifier_sniper_take_aim_custom:OnRefresh(table)
-
-self:OnCreated(table)
-end
-
-
-function modifier_sniper_take_aim_custom:GetModifierMoveSpeedBonus_Constant()
-return self.move
-end
-
-
-function modifier_sniper_take_aim_custom:GetModifierAttackRangeBonus()
-local bonus = 0
-
-
-return self.range + bonus
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 end
 
 
 
 
+modifier_sniper_take_aim_custom_active = class({})
+function modifier_sniper_take_aim_custom_active:IsHidden() return false end
+function modifier_sniper_take_aim_custom_active:IsPurgable() return false end
 
+function modifier_sniper_take_aim_custom_active:OnCreated(table)
 
-modifier_sniper_take_aim_custom_legendary = class({})
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-function modifier_sniper_take_aim_custom_legendary:IsPurgable() return false end
-function modifier_sniper_take_aim_custom_legendary:IsHidden() return false end
+self.slow = self.ability:GetSpecialValueFor("active_slow")
+self.range = self.ability:GetSpecialValueFor("active_range")
+self.armor = self.ability:GetSpecialValueFor("active_armor")
 
+self.lifesteal = self.parent:GetTalentValue("modifier_sniper_aim_2", "heal")/100
+self.creeps = self.parent:GetTalentValue("modifier_sniper_aim_2", "creeps", true)
 
-function modifier_sniper_take_aim_custom_legendary:OnCreated(table)
-self.speed = self:GetCaster():GetTalentValue("modifier_sniper_aim_7", "speed")
+self.damage_duration = self.parent:GetTalentValue("modifier_sniper_aim_3", "duration", true)
+
+if self.parent:HasTalent("modifier_sniper_aim_2") then
+	self.parent:AddDamageEvent_out(self)
+end
+
+if self.parent:HasTalent("modifier_sniper_aim_3") or self.parent:HasTalent("modifier_sniper_aim_6") then
+	self.parent:AddAttackEvent_out(self)
+end
+
+self.leash_duration = self.parent:GetTalentValue("modifier_sniper_aim_6", "leash", true)
+self.leashed = false
 
 if not IsServer() then return end
+self.parent:GenericParticle("particles/units/heroes/hero_sniper/sniper_take_aim_overhead.vpcf", self, true)
 
- --CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), 'generic_sound',  {sound = "Sniper.Aim_legendary_cast"})
-   
+if not self.parent:HasTalent("modifier_sniper_aim_7") then return end
+
+self.parent:AddOrderEvent(self)
+
+self.parent:EmitSound("Sniper.Headshot_legendary")
+self.damage = self.parent:GetTalentValue("modifier_sniper_aim_7", "damage") - 100
+self.width = self.parent:GetTalentValue("modifier_sniper_aim_7", "width")
+self.distance = self.parent:GetTalentValue("modifier_sniper_aim_7", "distance")
+self.attack_pause = self.parent:GetTalentValue("modifier_sniper_aim_7", "interval")
+self.auto = self.parent:GetTalentValue("modifier_sniper_aim_7", "auto")
+self.turn_speed = self.parent:GetTalentValue("modifier_sniper_aim_7", "turn")
+self.random_factor = self.parent:GetTalentValue("modifier_sniper_aim_7", "random_factor")
+self.speed = self.parent:GetTalentValue("modifier_sniper_aim_7", "speed")
+
+self.drow_back = 35
+
+self.anim_return = 0
+self.origin = self.parent:GetOrigin()
+self.charge_finish = false
+self.target_angle = self.parent:GetAnglesAsVector().y
+self.current_angle = self.target_angle
+self.face_target = true
+
+self.count = 0
+self.interval = FrameTime()
+
+self:StartIntervalThink(self.interval)
+end
+
+function modifier_sniper_take_aim_custom_active:CheckState()
+local table_state = {}
+
+if self.parent:HasTalent("modifier_sniper_aim_7") then
+	table_state[MODIFIER_STATE_DISARMED] = true
+	table_state[MODIFIER_STATE_SILENCED] = true
+end
+
+if self.parent:HasTalent("modifier_sniper_aim_6") then
+	table_state[MODIFIER_STATE_CANNOT_MISS] = true
+end
+
+return table_state
 end
 
 
-function modifier_sniper_take_aim_custom_legendary:DeclareFunctions()
-    local funcs = {
-        MODIFIER_PROPERTY_INVISIBILITY_LEVEL,
-        MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-        MODIFIER_EVENT_ON_ATTACK,
-		MODIFIER_EVENT_ON_ABILITY_EXECUTED,
-    }
-    return funcs
-end
-
-
-
-
-function modifier_sniper_take_aim_custom_legendary:OnAbilityExecuted( params )
+function modifier_sniper_take_aim_custom_active:DamageEvent_out(params)
 if not IsServer() then return end
-if not params.ability then return end
-if not params.unit then return end
-if params.unit ~= self:GetParent() then return end
+if not self.parent:HasTalent("modifier_sniper_aim_2") then return end
+if not self.parent:CheckLifesteal(params) then return end
 
-self:Destroy()
+local heal = params.damage*self.lifesteal
+if params.unit:IsCreep() then
+	heal = heal/self.creeps
+end
+self.parent:GenericHeal(heal, self.ability, true, nil, "modifier_sniper_aim_2")
 end
 
-
-function modifier_sniper_take_aim_custom_legendary:OnAttack(params)
+function modifier_sniper_take_aim_custom_active:AttackEvent_out(params)
 if not IsServer() then return end
-if not params.attacker then return end
-if params.attacker ~= self:GetParent() then return end
+if self.parent ~= params.attacker then return end
+if not params.target:IsUnit() then return end
 
-self:Destroy()
+if self.parent:HasTalent("modifier_sniper_aim_3") then
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_sniper_take_aim_custom_damage", {duration = self.damage_duration})
+end
+
+if self.parent:HasTalent("modifier_sniper_aim_6") and params.target:IsHero() and self.leashed == false then
+	self.leashed = true
+	params.target:AddNewModifier(self.parent, self.ability, "modifier_sniper_take_aim_custom_break", {duration = (1 - params.target:GetStatusResistance())*self.leash_duration})
+end
+
 end
 
 
 
-function modifier_sniper_take_aim_custom_legendary:GetModifierMoveSpeedBonus_Percentage()
-   return self.speed
+function modifier_sniper_take_aim_custom_active:OnIntervalThink()
+if not IsServer() then return end
+if not self.parent:HasTalent("modifier_sniper_aim_7") then return end
+
+self.count = self.count + self.interval
+
+if self.parent:IsHexed() or self.parent:IsStunned() then 
+	return
 end
 
+if self.count >= self.attack_pause then 
+	self.count = 0
+	self.parent:FadeGesture(ACT_DOTA_ATTACK)
+	self.parent:StartGesture(ACT_DOTA_ATTACK)
 
+	local point = self.parent:GetForwardVector()*self.distance + self.parent:GetAbsOrigin()
+	local thinker = CreateModifierThinker( self.parent,  self.ability,  "modifier_sniper_take_aim_custom_legendary_unit",   { duration = (0.90*self.distance)/self.speed}, point, self.parent:GetTeamNumber(),  false )
 
+	local index = #self.ability.projectiles + 1
 
+	self.ability.projectiles[index] =  ProjectileManager:CreateTrackingProjectile({
+	    Target = thinker,
+        EffectName = "particles/sniper_legendary_attack.vpcf",
+        Ability = self.ability,
+	    iMoveSpeed = self.speed,
+	    bDodgeable = false, 
+        vSpawnOrigin = self.parent:GetAbsOrigin(),
+        vSourceLoc = self.parent:GetAttachmentOrigin(self.parent:ScriptLookupAttachment("attach_attack1")),
+        Source = self.parent,
+        bDeleteOnHit = true,
+        bProvidesVision = true,
+        iVisionTeamNumber = self.parent:GetTeamNumber(),
+        iVisionRadius = 100,
+        ExtraData = {index = index, thinker = thinker:entindex()},
+	})
 
-
-function modifier_sniper_take_aim_custom_legendary:GetModifierInvisibilityLevel()
-    return 1
+	self.parent:EmitSound("Sniper.Headshot_legendary_attack")
+	FindClearSpaceForUnit(self.parent, self.parent:GetAbsOrigin() - self.parent:GetForwardVector()*(self.drow_back*self.attack_pause), false)
 end
 
-function modifier_sniper_take_aim_custom_legendary:CheckState()
-    return {
-        [MODIFIER_STATE_INVISIBLE] = true,
-        [MODIFIER_STATE_NO_UNIT_COLLISION] = true
-    }
+local qangle_rotation_rate = -self.random_factor + self.random_factor*2*(RandomInt(0, 1))
+local line_position = self.parent:GetAbsOrigin() + self.parent:GetForwardVector() * 400
+local qangle = QAngle(0, qangle_rotation_rate, 0)
+line_position = RotatePosition(self.parent:GetAbsOrigin() , qangle, line_position)
+
+self:AutoTurn( line_position )
+self:TurnLogic( FrameTime() )
 end
 
-
-
-
-modifier_sniper_take_aim_custom_legendary_disarm = class({})
-function modifier_sniper_take_aim_custom_legendary_disarm:IsHidden() return true end
-function modifier_sniper_take_aim_custom_legendary_disarm:IsPurgable() return false end
-function modifier_sniper_take_aim_custom_legendary_disarm:CheckState()
-return
+function modifier_sniper_take_aim_custom_active:DeclareFunctions()
+return 
 {
-	[MODIFIER_STATE_DISARMED] = true
+	MODIFIER_PROPERTY_MOVESPEED_LIMIT,
+	MODIFIER_PROPERTY_DISABLE_TURNING,
+	MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
+	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+	MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
 }
 end
 
+function modifier_sniper_take_aim_custom_active:GetModifierAttackRangeBonus()
+return self.range
+end
+
+function modifier_sniper_take_aim_custom_active:GetModifierMoveSpeedBonus_Percentage()
+return self.slow
+end
+
+function modifier_sniper_take_aim_custom_active:GetModifierPhysicalArmorBonus()
+return self.armor
+end
+
+function modifier_sniper_take_aim_custom_active:GetModifierDamageOutgoing_Percentage()
+if not self.parent:HasTalent("modifier_sniper_aim_7") then return end
+return self.damage
+end
+
+function modifier_sniper_take_aim_custom_active:GetModifierMoveSpeed_Limit()
+if not self.parent:HasTalent("modifier_sniper_aim_7") then return end
+return 0.1
+end
+
+function modifier_sniper_take_aim_custom_active:GetModifierDisableTurning()
+if not self.parent:HasTalent("modifier_sniper_aim_7") then return end
+return 1
+end
+
+function modifier_sniper_take_aim_custom_active:OrderEvent( params )
+if not self.parent:HasTalent("modifier_sniper_aim_7") then return end
 
 
+if 	params.order_type==DOTA_UNIT_ORDER_MOVE_TO_POSITION or
+	params.order_type==DOTA_UNIT_ORDER_MOVE_TO_DIRECTION
+then
+	self:SetDirection( params.pos )
+elseif 
+	(params.order_type==DOTA_UNIT_ORDER_MOVE_TO_TARGET or
+	params.order_type==DOTA_UNIT_ORDER_ATTACK_TARGET) and params.target
+then
+	self:SetDirection( params.target:GetOrigin() )
+elseif
+	params.order_type==DOTA_UNIT_ORDER_STOP or 
+	params.order_type==DOTA_UNIT_ORDER_HOLD_POSITION
+then
+	self:Destroy()
+end	
+
+end
+
+function modifier_sniper_take_aim_custom_active:SetDirection( location )
+local dir = ((location-self.parent:GetOrigin())*Vector(1,1,0)):Normalized()
+self.target_angle = VectorToAngles( dir ).y
+self.face_target = false
+end
+
+function modifier_sniper_take_aim_custom_active:TurnLogic( dt )
+if self.face_target then return end
+local angle_diff = AngleDiff( self.current_angle, self.target_angle )
+local turn_speed = self.turn_speed*dt
+
+local sign = -1
+if angle_diff<0 then sign = 1 end
+
+if math.abs( angle_diff )<1.1*turn_speed then
+	self.current_angle = self.target_angle
+	self.face_target = true
+else
+	self.current_angle = self.current_angle + sign*turn_speed
+end
+
+local angles = self.parent:GetAnglesAsVector()
+self.parent:SetLocalAngles( angles.x, self.current_angle, angles.z )
+end
 
 
+function modifier_sniper_take_aim_custom_active:AutoTurn(location)
 
-modifier_sniper_take_aim_custom_blink_speed = class({})
-function modifier_sniper_take_aim_custom_blink_speed:IsHidden() return false end
-function modifier_sniper_take_aim_custom_blink_speed:IsPurgable() return true end
-function modifier_sniper_take_aim_custom_blink_speed:GetTexture() return "buffs/aim_speed" end
-function modifier_sniper_take_aim_custom_blink_speed:GetEffectName() 
-  return "particles/items3_fx/blink_swift_buff.vpcf" 
+local dir = ((location-self.parent:GetOrigin())*Vector(1,1,0)):Normalized()
+local target_angle = VectorToAngles( dir ).y
+
+local angle_diff = AngleDiff( self.current_angle, target_angle )
+local turn_speed = self.turn_speed*self.interval*self.auto
+
+local sign = -1
+if angle_diff<0 then sign = 1 end
+
+if math.abs( angle_diff )<1.1*turn_speed then
+	self.current_angle = target_angle
+else
+	self.current_angle = self.current_angle + sign*turn_speed
+end
+
+local angles = self.parent:GetAnglesAsVector()
+self.parent:SetLocalAngles( angles.x, self.current_angle, angles.z )
+
 end
 
 
 
-function modifier_sniper_take_aim_custom_blink_speed:CheckState()
-return
-{
-    [MODIFIER_STATE_UNSLOWABLE] = true
-}
-end
-
-
-
-
-
-modifier_sniper_take_aim_custom_blink = class({})
-
-function modifier_sniper_take_aim_custom_blink:IsDebuff() return false end
-function modifier_sniper_take_aim_custom_blink:IsHidden() return true end
-function modifier_sniper_take_aim_custom_blink:IsPurgable() return true end
-
-function modifier_sniper_take_aim_custom_blink:OnCreated(kv)
-    if not IsServer() then return end
-    self.pfx = ParticleManager:CreateParticle("particles/items_fx/force_staff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-    self:GetParent():StartGesture(ACT_DOTA_RUN)
-
-    self.point = Vector(kv.x, kv.y, kv.z)
-
-
-    self.angle = self:GetParent():GetForwardVector():Normalized()--(self.point - self:GetParent():GetAbsOrigin()):Normalized() 
-
-    self.distance = self:GetCaster():GetTalentValue("modifier_sniper_aim_6", "range") / ( self:GetDuration() / FrameTime())
-
-    self.targets = {}
-
-    if self:ApplyHorizontalMotionController() == false then
-        self:Destroy()
-    end
-end
-
-function modifier_sniper_take_aim_custom_blink:DeclareFunctions()
-return
-{
- MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
-    MODIFIER_PROPERTY_DISABLE_TURNING
-}
-end
-
-function modifier_sniper_take_aim_custom_blink:GetActivityTranslationModifiers()
-    return "haste"
-end
-
-
-function modifier_sniper_take_aim_custom_blink:GetModifierDisableTurning() return 1 end
-
-function modifier_sniper_take_aim_custom_blink:GetEffectName() return "particles/sniper_aim_blink.vpcf" end
-function modifier_sniper_take_aim_custom_blink:GetStatusEffectName() return "particles/status_fx/status_effect_forcestaff.vpcf" end
-function modifier_sniper_take_aim_custom_blink:StatusEffectPriority() return 100 end
-
-function modifier_sniper_take_aim_custom_blink:OnDestroy()
-    if not IsServer() then return end
-    self:GetParent():InterruptMotionControllers( true )
-    ParticleManager:DestroyParticle(self.pfx, false)
-    ParticleManager:ReleaseParticleIndex(self.pfx)
-
-    self:GetParent():FadeGesture(ACT_DOTA_RUN)
-   -- self:GetParent():StartGesture(ACT_DOTA_FORCESTAFF_END)
-
- 
-    local dir = self:GetParent():GetForwardVector()
-    dir.z = 0
-    self:GetParent():SetForwardVector(dir)
-    self:GetParent():FaceTowards(self:GetParent():GetAbsOrigin() + dir*10)
-
-    ResolveNPCPositions(self:GetParent():GetAbsOrigin(), 128)
-
-end
-
-
-function modifier_sniper_take_aim_custom_blink:UpdateHorizontalMotion( me, dt )
-    if not IsServer() then return end
-    local pos = self:GetParent():GetAbsOrigin()
-    GridNav:DestroyTreesAroundPoint(pos, 80, false)
-    local pos_p = self.angle * self.distance
-    local next_pos = GetGroundPosition(pos + pos_p,self:GetParent())
-    self:GetParent():SetAbsOrigin(next_pos)
-
-
-end
-
-function modifier_sniper_take_aim_custom_blink:OnHorizontalMotionInterrupted()
-    self:Destroy()
-end
-
-
-
-modifier_sniper_take_aim_custom_agility = class({})
-function modifier_sniper_take_aim_custom_agility:IsHidden() return self:GetStackCount() == 1 end
-function modifier_sniper_take_aim_custom_agility:IsPurgable() return false end
-function modifier_sniper_take_aim_custom_agility:RemoveOnDeath() return false end
-function modifier_sniper_take_aim_custom_agility:GetTexture() return "buffs/aim_agility" end
-function modifier_sniper_take_aim_custom_agility:OnCreated(table)
+function modifier_sniper_take_aim_custom_active:OnDestroy()
 if not IsServer() then return end
 
-self.agi = 0
-self.particle = nil
+if self.parent:HasTalent("modifier_sniper_aim_7") then 
+	self.parent:FadeGesture(ACT_DOTA_ATTACK)
+	self.parent:StopSound("Sniper.Headshot_legendary")
 
-self:OnIntervalThink()
+	local dir = self.parent:GetForwardVector()
+	dir.z = 0
+
+	self.parent:FaceTowards(self.parent:GetAbsOrigin() + dir*10)
+	self.parent:SetForwardVector(dir)
+
+	self.parent:Stop()
+	FindClearSpaceForUnit(self.parent, self.parent:GetAbsOrigin(), false)
+end
+
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_sniper_take_aim_custom_no_count_move", {duration = 0.3})
+end
+
+
+
+modifier_sniper_take_aim_custom_legendary_unit = class({})
+function modifier_sniper_take_aim_custom_legendary_unit:IsHidden() return true end
+function modifier_sniper_take_aim_custom_legendary_unit:IsPurgable() return false end
+
+
+
+modifier_sniper_take_aim_custom_legendary_damage = class({})
+function modifier_sniper_take_aim_custom_legendary_damage:IsHidden() return true end
+function modifier_sniper_take_aim_custom_legendary_damage:IsPurgable() return false end
+function modifier_sniper_take_aim_custom_legendary_damage:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE
+}
+end
+
+function modifier_sniper_take_aim_custom_legendary_damage:GetModifierDamageOutgoing_Percentage()
+return self.damage
+end
+
+
+function modifier_sniper_take_aim_custom_legendary_damage:OnCreated()
+self.damage = self:GetCaster():GetTalentValue("modifier_sniper_aim_7", "damage") - 100
+end 
+
+
+
+
+
+
+
+
+
+modifier_sniper_take_aim_custom_armor = class({})
+function modifier_sniper_take_aim_custom_armor:IsHidden() return false end
+function modifier_sniper_take_aim_custom_armor:IsPurgable() return false end
+function modifier_sniper_take_aim_custom_armor:GetTexture() return "buffs/headshot_armor" end
+function modifier_sniper_take_aim_custom_armor:OnCreated(table)
+
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.max = self.caster:GetTalentValue("modifier_sniper_aim_4", "max")
+self.armor = self.caster:GetTalentValue("modifier_sniper_aim_4", "armor")
+self.slow = self.caster:GetTalentValue("modifier_sniper_aim_4", "slow")
+
+if not IsServer() then return end
+self:SetStackCount(1)
+end
+
+function modifier_sniper_take_aim_custom_armor:OnRefresh(table)
+if not IsServer() then return end
+if self:GetStackCount() >= self.max then return end
+
+self:IncrementStackCount()
+
+if self:GetStackCount() >= self.max then 
+	self.parent:EmitSound("Hoodwink.Acorn_armor")
+	self.parent:GenericParticle("particles/hoodwink/bush_damage.vpcf", self)
+end
+
+end
+
+function modifier_sniper_take_aim_custom_armor:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
+}
+end
+
+function modifier_sniper_take_aim_custom_armor:GetModifierPhysicalArmorBonus()
+return self.armor*self:GetStackCount()
+end
+
+function modifier_sniper_take_aim_custom_armor:GetModifierMoveSpeedBonus_Percentage()
+return self.slow*self:GetStackCount()
+end
+
+
+
+modifier_sniper_take_aim_custom_damage_reduce = class({})
+function modifier_sniper_take_aim_custom_damage_reduce:IsHidden() return false end
+function modifier_sniper_take_aim_custom_damage_reduce:IsPurgable() return false end
+function modifier_sniper_take_aim_custom_damage_reduce:GetTexture() return "buffs/headshot_status" end
+
+function modifier_sniper_take_aim_custom_damage_reduce:OnCreated(table)
+
+self.parent = self:GetParent()
+self.damage = self.parent:GetTalentValue("modifier_sniper_aim_5", "damage_reduce")
+
+if not IsServer() then return end
+self.pos = self.parent:GetAbsOrigin()
+self.parent:GenericParticle("particles/items2_fx/vindicators_axe_armor.vpcf", self)
 self:StartIntervalThink(0.1)
 end
 
-function modifier_sniper_take_aim_custom_agility:OnIntervalThink()
+
+function modifier_sniper_take_aim_custom_damage_reduce:OnIntervalThink()
 if not IsServer() then return end
 
-local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility().agility_range, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_INVULNERABLE, 0, false)
-
-if #enemies > 0 or not self:GetParent():IsAlive() then 
-	self:SetStackCount(1)
-
-	if self.particle then 
-		ParticleManager:DestroyParticle(self.particle, false)
-		ParticleManager:ReleaseParticleIndex(self.particle)
-
-		self.particle = nil
-	end
-
-
-	self.PercentAgi   = 0
-else
-	self:SetStackCount(0)
-
-
-	if self.particle == nil then 
-
-		self.particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-		self:AddParticle(self.particle, false, false, -1, false, false)
-	end
-
-	self.PercentAgi   =  self:GetAbility().agility_bonus[self:GetCaster():GetUpgradeStack("modifier_sniper_aim_4")]
-
+if self.parent:HasModifier("modifier_sniper_take_aim_custom_active") or self.parent:HasModifier("modifier_sniper_take_aim_custom_no_count_move") then 
+	self.pos = self.parent:GetAbsOrigin()
+	return 
 end
 
+if self.pos == self.parent:GetAbsOrigin() then return end
+self:Destroy()
 end
 
 
-
-
-function modifier_sniper_take_aim_custom_agility:DeclareFunctions()
+function modifier_sniper_take_aim_custom_damage_reduce:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE,
-	MODIFIER_PROPERTY_TOOLTIP
-}
-
-end
-
-
-function modifier_sniper_take_aim_custom_agility:GetModifierHealthRegenPercentage()
-if self:GetStackCount() == 1 then return end
-
-return self:GetAbility().agility_regen[self:GetCaster():GetUpgradeStack('modifier_sniper_aim_4')]
-
-end
-
-
-function modifier_sniper_take_aim_custom_agility:OnTooltip()
-return self:GetAbility().agility_bonus[self:GetCaster():GetUpgradeStack("modifier_sniper_aim_4")]*100
-end
-
-
-
-
-modifier_sniper_take_aim_custom_evasion = class({})
-function modifier_sniper_take_aim_custom_evasion:IsHidden() return false end
-function modifier_sniper_take_aim_custom_evasion:IsPurgable() return true end
-function modifier_sniper_take_aim_custom_evasion:GetTexture() return 'buffs/aim_evasion' end
-function modifier_sniper_take_aim_custom_evasion:GetEffectName() 
-  return "particles/items3_fx/blink_swift_buff.vpcf" 
-end
-
-function modifier_sniper_take_aim_custom_evasion:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-	MODIFIER_PROPERTY_EVASION_CONSTANT,
-}
-
-end
-
-
-
-function modifier_sniper_take_aim_custom_evasion:GetModifierMoveSpeedBonus_Percentage()
-return self:GetAbility().evasion_speed[self:GetCaster():GetUpgradeStack("modifier_sniper_aim_1")]
-end
-
-function modifier_sniper_take_aim_custom_evasion:GetModifierEvasion_Constant()
-return self:GetAbility().evasion_bonus[self:GetCaster():GetUpgradeStack("modifier_sniper_aim_1")]
-end
-
-
-modifier_sniper_take_aim_custom_evasion_cd = class({})
-function modifier_sniper_take_aim_custom_evasion_cd:IsHidden() return false end
-function modifier_sniper_take_aim_custom_evasion_cd:IsPurgable() return false end
-function modifier_sniper_take_aim_custom_evasion_cd:IsDebuff() return true end
-function modifier_sniper_take_aim_custom_evasion_cd:RemoveOnDeath() return false end
-function modifier_sniper_take_aim_custom_evasion_cd:GetTexture() return "buffs/aim_evasion" end
-function modifier_sniper_take_aim_custom_evasion_cd:OnCreated(table)
-
-self.RemoveForDuel = true
-end
-
-
-
-modifier_sniper_take_aim_custom_attack_speed = class({})
-
-function modifier_sniper_take_aim_custom_attack_speed:IsHidden() return (self:GetStackCount() == 1) end
-function modifier_sniper_take_aim_custom_attack_speed:IsPurgable() return false end
-function modifier_sniper_take_aim_custom_attack_speed:GetTexture() return "buffs/aim_attack" end
-function modifier_sniper_take_aim_custom_attack_speed:RemoveOnDeath() return false end
-
-function modifier_sniper_take_aim_custom_attack_speed:DeclareFunctions()
-    return {
-        MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-        MODIFIER_EVENT_ON_ATTACK_LANDED
-    }
-end
-
-function modifier_sniper_take_aim_custom_attack_speed:OnCreated(table)
-if not IsServer() then return end
-
-if self:GetParent():IsRealHero() then 
-	self:SetStackCount(0)
-	self:Activate()
-else 
-	local caster = self:GetParent().owner
-	local mod 
-
-
-	if caster then 
-		mod = caster:FindModifierByName("modifier_sniper_take_aim_custom_attack_speed")
-	else 
-		return
-	end
-
-	self:SetStackCount(mod:GetStackCount())
-	if mod:GetStackCount() == 0 then 
-		self:Activate(true)
-	end
-
-end
-
-self:StartIntervalThink(self:GetAbility().attack_timer)
-end
-
-
-
-function modifier_sniper_take_aim_custom_attack_speed:OnAttackLanded(params)
-if not IsServer() then return end
-
-if self:GetParent():HasModifier("modifier_sniper_aim_2") and self:GetParent() == params.target and (params.attacker:IsHero() or params.attacker:IsCreep()) then 
-	self:SetStackCount(1)
-
-	if self.particle then 
-		ParticleManager:DestroyParticle(self.particle, true)
-		ParticleManager:ReleaseParticleIndex(self.particle)
-		self.particle = nil
-	end
-
-	self:StartIntervalThink(self:GetAbility().attack_timer)
-end
-
-
-end
-
-
-function modifier_sniper_take_aim_custom_attack_speed:GetModifierAttackSpeedBonus_Constant()
-if self:GetStackCount() == 1 then return end
-if not self:GetParent():HasModifier("modifier_sniper_aim_2") then return end
-if not self:GetAbility() then return end
-
-return self:GetAbility().attack_speed[self:GetParent():GetUpgradeStack("modifier_sniper_aim_2")]
-end
-
-
-
-function modifier_sniper_take_aim_custom_attack_speed:OnIntervalThink()
-if not IsServer() then return end
-if self:GetStackCount() == 0 then return end
-
-self:SetStackCount(0)
-
-self:Activate()
-
-self:StartIntervalThink(-1)
-end
-
-
-
-
-function modifier_sniper_take_aim_custom_attack_speed:Activate(no_sound)
-if not IsServer() then return end
-if self:GetParent():IsIllusion() and not self:GetParent():IsAlive() then return end
-
-if self.particle == nil then 
-
-	self.particle = ParticleManager:CreateParticle( "particles/lc_odd_proc_hands.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-	self:AddParticle(self.particle, false, false, -1, false, false)
-
-end
-
-if no_sound then return end
-
-self:GetParent():EmitSound("Sniper.Aim_attack")
-end
-
-
-
-modifier_sniper_take_aim_custom_slow = class({})
-function modifier_sniper_take_aim_custom_slow:IsHidden() return false end
-function modifier_sniper_take_aim_custom_slow:IsPurgable() return true end
-function modifier_sniper_take_aim_custom_slow:GetTexture() return "buffs/aim_slow" end
-function modifier_sniper_take_aim_custom_slow:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS
+	MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
 }
 end
 
-function modifier_sniper_take_aim_custom_slow:GetModifierMoveSpeedBonus_Percentage()
-return self:GetAbility().range_slow[self:GetCaster():GetUpgradeStack("modifier_sniper_aim_3")]
-end
-
-function modifier_sniper_take_aim_custom_slow:GetModifierPhysicalArmorBonus()
-return self:GetAbility().range_armor[self:GetCaster():GetUpgradeStack("modifier_sniper_aim_3")]
-end
-
-function modifier_sniper_take_aim_custom_slow:GetEffectName()
-    return "particles/units/heroes/hero_snapfire/hero_snapfire_shotgun_debuff.vpcf"
-end
-
-function modifier_sniper_take_aim_custom_slow:GetEffectAttachType()
-    return PATTACH_ABSORIGIN_FOLLOW
-end
-
-function modifier_sniper_take_aim_custom_slow:GetStatusEffectName()
-    return "particles/status_fx/status_effect_snapfire_slow.vpcf"
-end
-
-function modifier_sniper_take_aim_custom_slow:StatusEffectPriority()
-    return MODIFIER_PRIORITY_NORMAL
+function modifier_sniper_take_aim_custom_damage_reduce:GetModifierIncomingDamage_Percentage()
+return self.damage
 end
 
 
 
 
-modifier_sniper_take_aim_custom_shield = class({})
+modifier_sniper_take_aim_custom_no_count_move = class({})
+function modifier_sniper_take_aim_custom_no_count_move:IsHidden() return true end
+function modifier_sniper_take_aim_custom_no_count_move:IsPurgable() return false end
 
-function modifier_sniper_take_aim_custom_shield:IsHidden() return false end
-function modifier_sniper_take_aim_custom_shield:IsPurgable() return false end
-function modifier_sniper_take_aim_custom_shield:GetTexture() return "buffs/back_ground" end
-function modifier_sniper_take_aim_custom_shield:OnCreated()
 
-self.max_shield = self:GetParent():GetMaxHealth()*self:GetAbility().shield_durability
-self:SetStackCount(self.max_shield)
 
+
+
+modifier_sniper_take_aim_custom_damage = class({})
+function modifier_sniper_take_aim_custom_damage:IsHidden() return false end
+function modifier_sniper_take_aim_custom_damage:IsPurgable() return false end
+function modifier_sniper_take_aim_custom_damage:GetTexture() return "buffs/assassinate_break" end
+function modifier_sniper_take_aim_custom_damage:OnCreated()
+self.parent = self:GetParent()
+self.max = self.parent:GetTalentValue("modifier_sniper_aim_3", "max")
+self.damage = self.parent:GetTalentValue("modifier_sniper_aim_3", "damage")/self.max
+self.move = self.parent:GetTalentValue("modifier_sniper_aim_3", "move")/self.max
 if not IsServer() then return end
 
-self:GetParent():EmitSound("Sniper.Aim_shield")
-self:GetParent():EmitSound("Sniper.Aim_shield2")
-
-
-
-self.particle = ParticleManager:CreateParticle("particles/sniper_matrix.vpcf", PATTACH_CUSTOMORIGIN_FOLLOW, self:GetParent())
-local position = self:GetParent():GetAbsOrigin()
-
-
-ParticleManager:SetParticleControlEnt(  self.particle, 0, self:GetParent(), PATTACH_CENTER_FOLLOW , nil, self:GetParent():GetOrigin(), true )
-ParticleManager:SetParticleControlEnt(self.particle, 1, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", position, true)
-self:AddParticle(self.particle, false, false, -1, false, false)
-
+self:SetStackCount(1)
 end
 
-
-
-
-function modifier_sniper_take_aim_custom_shield:DeclareFunctions()
-    local funcs = {
-		MODIFIER_PROPERTY_REFLECT_SPELL,
-		MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
-    }
-    return funcs
-end
-
-
-function modifier_sniper_take_aim_custom_shield:GetModifierIncomingDamageConstant( params )
-
-
-if IsClient() then 
-	if params.report_max then 
-		return self.max_shield 
-	else 
-		return self:GetStackCount()
-	end
-end
-
+function modifier_sniper_take_aim_custom_damage:OnRefresh()
 if not IsServer() then return end
-if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_HPLOSS) == DOTA_DAMAGE_FLAG_HPLOSS then return end
+if self:GetStackCount() >= self.max then return end
 
-self:GetParent():EmitSound("Sniper.Aim_shield_damage")
-
-local forward = self:GetParent():GetAbsOrigin() - params.attacker:GetAbsOrigin()
-forward.z = 0
-forward = forward:Normalized()
-
-local particle_2 = ParticleManager:CreateParticle("particles/sniper_shield_hit.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
-ParticleManager:SetParticleControlEnt(particle_2, 0, self:GetParent(), PATTACH_POINT, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
-ParticleManager:SetParticleControl(particle_2, 1, self:GetParent():GetAbsOrigin())
-ParticleManager:SetParticleControlForward(particle_2, 1, forward)
-ParticleManager:SetParticleControlEnt(particle_2, 2, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, nil, self:GetParent():GetAbsOrigin(), false)
-ParticleManager:ReleaseParticleIndex(particle_2)
-
-if self:GetStackCount() > params.damage then
-    self:SetStackCount(self:GetStackCount() - params.damage)
-    local i = params.damage
-    return -i
-else
-    
-    local i = self:GetStackCount()
-    self:SetStackCount(0)
-    self:Destroy()
-    return -i
+self:IncrementStackCount()
 end
 
+function modifier_sniper_take_aim_custom_damage:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
+}
+end
+
+function modifier_sniper_take_aim_custom_damage:GetModifierMoveSpeedBonus_Percentage()
+return self:GetStackCount()*self.move
+end
+
+function modifier_sniper_take_aim_custom_damage:GetModifierPreAttack_BonusDamage()
+return self:GetStackCount()*self.damage
 end
 
 
 
 
+modifier_sniper_take_aim_custom_block = class({})
+function modifier_sniper_take_aim_custom_block:IsHidden() return true end
+function modifier_sniper_take_aim_custom_block:IsPurgable() return false end
+function modifier_sniper_take_aim_custom_block:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-modifier_sniper_take_aim_custom_shield_cd = class({})
-
-function modifier_sniper_take_aim_custom_shield_cd:IsHidden() return false end
-function modifier_sniper_take_aim_custom_shield_cd:IsPurgable() return false end
-function modifier_sniper_take_aim_custom_shield_cd:GetTexture() return "buffs/back_ground" end
-function modifier_sniper_take_aim_custom_shield_cd:IsDebuff() return true end
-function modifier_sniper_take_aim_custom_shield_cd:RemoveOnDeath() return false end
-function modifier_sniper_take_aim_custom_shield_cd:OnCreated(table)
-self.RemoveForDuel = true
+if not IsServer() then return end 
+self.particle = ParticleManager:CreateParticle("particles/sniper/aim_block.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt(self.particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true)
+self:AddParticle(self.particle, true, false, -1, false, false)
 end
+
+function modifier_sniper_take_aim_custom_block:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_ABSORB_SPELL
+}
+end
+
+function modifier_sniper_take_aim_custom_block:GetAbsorbSpell(params) 
+if not IsServer() then return end
+if params.ability:GetCaster():GetTeamNumber() == self.parent:GetTeamNumber() then return end
+
+if self.particle then 
+	ParticleManager:DestroyParticle(self.particle, false)
+	ParticleManager:ReleaseParticleIndex(self.particle)
+end 
+
+self.block = true
+self.parent:EmitSound("DOTA_Item.LinkensSphere.Activate")
+self:Destroy()
+return 1 
+end
+
+
+
+
+modifier_sniper_take_aim_custom_break = class({})
+function modifier_sniper_take_aim_custom_break:IsHidden() return true end
+function modifier_sniper_take_aim_custom_break:IsPurgable() return false end
+function modifier_sniper_take_aim_custom_break:CheckState() 
+return 
+{
+	[MODIFIER_STATE_PASSIVES_DISABLED] = true,
+	[MODIFIER_STATE_TETHERED] = true,
+} 
+end
+function modifier_sniper_take_aim_custom_break:GetEffectName() return "particles/items3_fx/silver_edge.vpcf" end
+
+
+function modifier_sniper_take_aim_custom_break:OnCreated(table)
+if not IsServer() then return end
+
+self.parent = self:GetParent()
+self.parent:EmitSound("DOTA_Item.SilverEdge.Target")
+--self.parent:GenericParticle("particles/generic_gameplay/generic_break.vpcf", self, true)
+end
+

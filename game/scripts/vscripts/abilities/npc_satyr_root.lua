@@ -11,19 +11,25 @@ modifier_satyr_root_passive = class ({})
 
 function modifier_satyr_root_passive:IsHidden() return true end
 
+function modifier_satyr_root_passive:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+self.parent:AddAttackEvent_out(self, true)
 
-function modifier_satyr_root_passive:DoScript(target)
-    if not IsServer() then end 
-    if not target:IsMagicImmune() then
-    local chance = self:GetAbility():GetSpecialValueFor("chance")
-        local random = RollPseudoRandomPercentage(chance,1,self:GetParent())
-        if random  then 
-            target:EmitSound("n_creep_Spawnlord.Freeze")
-            local duration = self:GetAbility():GetSpecialValueFor("duration")
-            target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_satyr_root_debuff", { duration = duration*(1 - target:GetStatusResistance()) })
-        end
-    end
+self.duration = self.ability:GetSpecialValueFor("duration")
+self.chance = self.ability:GetSpecialValueFor("chance")
+end
 
+function modifier_satyr_root_passive:AttackEvent_out(params)
+if not IsServer() then end 
+if self.parent ~= params.attacker then return end
+if not params.target:IsUnit() then return end
+
+local random = RollPseudoRandomPercentage(self.chance,1856, self.parent)
+if not random then return end
+
+params.target:EmitSound("n_creep_Spawnlord.Freeze")
+params.target:AddNewModifier(self.parent, self.ability, "modifier_satyr_root_debuff", { duration = self.duration*(1 - params.target:GetStatusResistance()) })
 end
 
 
@@ -48,7 +54,7 @@ function modifier_satyr_root_debuff:OnIntervalThink()
     local duration = self:GetAbility():GetSpecialValueFor("duration")
     local interval = 0.5
     tik = total / (duration / interval) 
-    ApplyDamage({ victim = self:GetParent(), attacker = self:GetCaster(), ability = self:GetAbility(), damage = tik, damage_type = DAMAGE_TYPE_MAGICAL})
+    DoDamage({ victim = self:GetParent(), attacker = self:GetCaster(), ability = self:GetAbility(), damage = tik, damage_type = DAMAGE_TYPE_MAGICAL})
 
 
 end

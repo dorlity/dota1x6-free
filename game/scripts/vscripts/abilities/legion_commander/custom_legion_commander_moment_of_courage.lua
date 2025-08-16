@@ -16,21 +16,35 @@ LinkLuaModifier("modifier_moment_of_courage_custom_damage", "abilities/legion_co
 custom_legion_commander_moment_of_courage = class({})
 
 
+function custom_legion_commander_moment_of_courage:CreateTalent(name)
 
+if name == "modifier_legion_moment_4" then 
+	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_moment_of_courage_custom_crit_stack", {})
+
+else 
+ 	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_moment_of_courage_custom_legendary_defence", {})
+end
+
+end
 
 
 
 
 function custom_legion_commander_moment_of_courage:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
 PrecacheResource( "particle", "particles/lc_hit.vpcf", context )
 PrecacheResource( "particle", "particles/sand_king/finale_double_hit.vpcf", context )
 PrecacheResource( "particle", "particles/brist_lowhp_.vpcf", context )
 PrecacheResource( "particle", "particles/econ/items/sven/sven_ti7_sword/sven_ti7_sword_spell_great_cleave_gods_strength.vpcf", context )
-PrecacheResource( "particle", "particles/lc_charges.vpcf", context )
 PrecacheResource( "particle", "particles/lc_attack_buf.vpcf", context )
 PrecacheResource( "particle", "particles/lc_attack.vpcf", context )
 PrecacheResource( "particle", "particles/lc_defence.vpcf", context )
+PrecacheResource( "particle", "particles/items3_fx/star_emblem_friend_shield.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_egg.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_streaks.vpcf", context )
+PrecacheResource( "particle", "particles/items2_fx/sange_maim.vpcf", context )
 
 end
 
@@ -50,7 +64,7 @@ end
 
 
 function custom_legion_commander_moment_of_courage:GetBehavior()
-if self:GetCaster():HasModifier("modifier_legion_moment_legendary") then
+if self:GetCaster():HasTalent("modifier_legion_moment_7") then
     return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_TOGGLE + DOTA_ABILITY_BEHAVIOR_IMMEDIATE + DOTA_ABILITY_BEHAVIOR_IGNORE_SILENCE + DOTA_ABILITY_BEHAVIOR_IGNORE_PSEUDO_QUEUE
 end
 return DOTA_ABILITY_BEHAVIOR_PASSIVE 
@@ -58,8 +72,8 @@ end
 
 
 function custom_legion_commander_moment_of_courage:GetCooldown(iLevel)
-if IsClient() and self:GetCaster():HasModifier("modifier_legion_moment_bkb") then
-	return self.BaseClass.GetCooldown(self, iLevel) + self:GetCaster():GetTalentValue("modifier_legion_moment_bkb", "cd")
+if IsClient() and self:GetCaster():HasTalent("modifier_legion_moment_6") then
+	return self.BaseClass.GetCooldown(self, iLevel) + self:GetCaster():GetTalentValue("modifier_legion_moment_6", "cd")
 end
 
  return self.BaseClass.GetCooldown(self, iLevel)
@@ -82,7 +96,7 @@ else
 end
 
 
-self:StartCooldown(self:GetCaster():GetTalentValue("modifier_legion_moment_legendary", "toggle"))
+self:StartCooldown(self:GetCaster():GetTalentValue("modifier_legion_moment_7", "toggle"))
 
 end
 
@@ -96,34 +110,34 @@ function modifier_moment_of_courage_custom_tracker:IsPurgable() return false end
 function modifier_moment_of_courage_custom_tracker:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_ATTACK_RECORD,
-	MODIFIER_EVENT_ON_TAKEDAMAGE,
-	MODIFIER_EVENT_ON_ATTACK_LANDED,
+	MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
 	MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
-    MODIFIER_EVENT_ON_ABILITY_EXECUTED,
 }
 
 end
 function modifier_moment_of_courage_custom_tracker:OnCreated()
 
 self.caster = self:GetCaster()
+self.parent = self:GetParent()
+self.parent:AddSpellEvent(self)
+self.parent:AddAttackRecordEvent_inc(self)
 
-self.spells_duration = self:GetCaster():GetTalentValue("modifier_legion_moment_bkb", "duration", true)
+if self.caster:IsRealHero() then
+	self.caster:AddDamageEvent_inc(self)
+end
 
-self.lowhp_health = self:GetCaster():GetTalentValue("modifier_legion_moment_lowhp", "health", true)
-self.lowhp_duration = self:GetCaster():GetTalentValue("modifier_legion_moment_lowhp", "duration", true)
-self.lowhp_cd = self:GetCaster():GetTalentValue("modifier_legion_moment_lowhp", "cd", true)
+self.spells_duration = self:GetCaster():GetTalentValue("modifier_legion_moment_6", "duration", true)
+
+self.lowhp_health = self:GetCaster():GetTalentValue("modifier_legion_moment_5", "health", true)
+self.lowhp_duration = self:GetCaster():GetTalentValue("modifier_legion_moment_5", "duration", true)
+self.lowhp_cd = self:GetCaster():GetTalentValue("modifier_legion_moment_5", "cd", true)
 end 
 
 
-function modifier_moment_of_courage_custom_tracker:OnAbilityExecuted( params )
+function modifier_moment_of_courage_custom_tracker:SpellEvent( params )
 if not IsServer() then return end
-if not self.caster:HasModifier("modifier_legion_moment_bkb") then return end
+if not self.caster:HasTalent("modifier_legion_moment_6") then return end
 if params.unit~=self:GetParent() then return end
-if not params.ability then return end
-if params.ability:IsToggle() then return end
-if UnvalidAbilities[params.ability:GetName()] then return end
-if UnvalidItems[params.ability:GetName()] then return end
 if params.ability:IsItem()  then return end --and params.ability:GetCurrentCharges() > 0
 
 self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_moment_of_courage_custom_speed", {duration = self.spells_duration})
@@ -131,27 +145,18 @@ end
 
 
 function modifier_moment_of_courage_custom_tracker:GetModifierAttackRangeBonus()
-if not self:GetCaster():HasModifier("modifier_legion_moment_chance") then return end 
+if not self:GetCaster():HasTalent("modifier_legion_moment_1") then return end 
 
-return self:GetCaster():GetTalentValue("modifier_legion_moment_chance", "range")
+return self:GetCaster():GetTalentValue("modifier_legion_moment_1", "range")
 end 
 
 
-function modifier_moment_of_courage_custom_tracker:OnRespawn(params)
+
+
+
+function modifier_moment_of_courage_custom_tracker:DamageEvent_inc(params)
 if not IsServer() then return end
-if params.unit ~= self:GetParent() then return end
-if not self:GetParent():HasModifier("modifier_legion_moment_legendary") then return end
-
-
-self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_moment_of_courage_custom_legendary_defence", {})
-end
-
-
-
-
-function modifier_moment_of_courage_custom_tracker:OnTakeDamage(params)
-if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_legion_moment_lowhp") then return end
+if not self:GetParent():HasTalent("modifier_legion_moment_5") then return end
 if self:GetParent():HasModifier("modifier_moment_of_courage_custom_lowhp_cd") then return end 
 if self:GetParent():GetHealthPercent() > self.lowhp_health then return end 
 if self:GetParent():PassivesDisabled() then return end
@@ -166,7 +171,7 @@ end
 
 
 
-function modifier_moment_of_courage_custom_tracker:OnAttackRecord(params)
+function modifier_moment_of_courage_custom_tracker:AttackRecordEvent_inc(params)
 if not IsServer() then return end
 if self:GetParent():PassivesDisabled() then return end
 if params.target ~= self:GetParent() then return end
@@ -174,7 +179,7 @@ if params.target ~= self:GetParent() then return end
 self:TriggerAttack()
 end
 
-function modifier_moment_of_courage_custom_tracker:OnAttackLanded(params)
+function modifier_moment_of_courage_custom_tracker:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end
 if not self:GetParent():HasModifier("modifier_moment_of_courage_custom_legendary_attack") then return end
 if params.attacker ~= self:GetParent() then return end
@@ -187,16 +192,16 @@ end
 
 function modifier_moment_of_courage_custom_tracker:TriggerAttack()
 if not IsServer() then return end
-if not self:GetAbility():IsFullyCastable() and not self:GetParent():HasModifier("modifier_legion_moment_legendary") then return end
+if not self:GetAbility():IsFullyCastable() and not self:GetParent():HasTalent("modifier_legion_moment_7") then return end
 if self:GetParent():HasModifier("modifier_moment_of_courage_custom_no_trigger") then return end
 if self:GetParent():HasModifier("modifier_moment_of_courage_custom_cd") then return end
 if self:GetParent():HasModifier("modifier_moment_of_courage_custom_speed") then return end
 
 
-self.chance = self:GetAbility():GetSpecialValueFor("trigger_chance") + self:GetCaster():GetTalentValue("modifier_legion_moment_bkb", "chance")
+self.chance = self:GetAbility():GetSpecialValueFor("trigger_chance") + self:GetCaster():GetTalentValue("modifier_legion_moment_6", "chance")
 
 if self:GetParent():HasModifier("modifier_moment_of_courage_custom_legendary_defence") then 
-	self.chance = self.chance*self:GetCaster():GetTalentValue("modifier_legion_moment_legendary", "chance")
+	self.chance = self.chance*self:GetCaster():GetTalentValue("modifier_legion_moment_7", "chance")
 end
 
 local random = RollPseudoRandomPercentage(self.chance,27,self:GetParent())
@@ -206,11 +211,11 @@ self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_m
 
 local cd = self:GetAbility().BaseClass.GetCooldown(self:GetAbility(), self:GetAbility():GetLevel())
 
-if self:GetParent():HasModifier("modifier_legion_moment_bkb") then 
-	cd = cd + self:GetCaster():GetTalentValue("modifier_legion_moment_bkb", "cd")
+if self:GetParent():HasTalent("modifier_legion_moment_6") then 
+	cd = cd + self:GetCaster():GetTalentValue("modifier_legion_moment_6", "cd")
 end
 
-if not self:GetParent():HasModifier("modifier_legion_moment_legendary") then 
+if not self:GetParent():HasTalent("modifier_legion_moment_7") then 
 	self:GetAbility():StartCooldown(cd)
 else
 	self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_moment_of_courage_custom_cd", {duration = cd})
@@ -268,15 +273,15 @@ ParticleManager:SetParticleControl( particle, 2, Vector(1,1,1) )
 ParticleManager:SetParticleControlForward( particle, 5, dir )
 ParticleManager:ReleaseParticleIndex(particle)
 
-if self.caster:HasModifier("modifier_legion_moment_defence") then 
-	local duration = self.caster:GetTalentValue("modifier_legion_moment_defence", "duration")
+if self.caster:HasTalent("modifier_legion_moment_2") then 
+	local duration = self.caster:GetTalentValue("modifier_legion_moment_2", "duration")
 
 	self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_moment_of_courage_custom_armor", {duration = duration})
 	target:AddNewModifier(self.caster, self:GetAbility(), "modifier_moment_of_courage_custom_armor", {duration = duration})
 end
 
-if self.caster:HasModifier("modifier_legion_moment_damage") then 
-	self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_moment_of_courage_custom_damage", {duration =self:GetCaster():GetTalentValue("modifier_legion_moment_damage", "duration")})
+if self.caster:HasTalent("modifier_legion_moment_3") then 
+	self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_moment_of_courage_custom_damage", {duration =self:GetCaster():GetTalentValue("modifier_legion_moment_3", "duration")})
 end
 
 self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_moment_of_courage_custom_no_trigger", {})
@@ -284,16 +289,16 @@ self.caster:PerformAttack(target, true, true, true, false, true, false, false)
 self.caster:RemoveModifierByName("modifier_moment_of_courage_custom_no_trigger")
 
 
-if self.caster:HasModifier("modifier_legion_moment_chance") then 
-	target:AddNewModifier(self.caster, self:GetAbility(), "modifier_moment_of_courage_custom_slow", {duration = self:GetCaster():GetTalentValue("modifier_legion_moment_chance", "duration", true)*(1 - target:GetStatusResistance())})
+if self.caster:HasTalent("modifier_legion_moment_1") then 
+	target:AddNewModifier(self.caster, self:GetAbility(), "modifier_moment_of_courage_custom_slow", {duration = self:GetCaster():GetTalentValue("modifier_legion_moment_1", "duration", true)*(1 - target:GetStatusResistance())})
 end 
 
 
-if self.caster:HasModifier("modifier_legion_moment_armor") then 
+if self.caster:HasTalent("modifier_legion_moment_4") then 
 	local mod = self.caster:FindModifierByName("modifier_moment_of_courage_custom_crit_stack")
 
-	local max = self:GetCaster():GetTalentValue("modifier_legion_moment_armor", "cd")
-	local cd_proc = self:GetCaster():GetTalentValue("modifier_legion_moment_armor", "cd_reduce")
+	local max = self:GetCaster():GetTalentValue("modifier_legion_moment_4", "cd")
+	local cd_proc = self:GetCaster():GetTalentValue("modifier_legion_moment_4", "cd_reduce")
 
 	if mod and mod:GetStackCount() < max then 
 		mod:SetStackCount(math.min(max, mod:GetStackCount() + cd_proc) )
@@ -319,7 +324,7 @@ function modifier_moment_of_courage_custom_armor:IsPurgable() return false end
 
 function modifier_moment_of_courage_custom_armor:OnCreated(table)
 
-self.armor = self:GetCaster():GetTalentValue("modifier_legion_moment_defence", "armor")
+self.armor = self:GetCaster():GetTalentValue("modifier_legion_moment_2", "armor")
 
 if self:GetCaster():GetTeamNumber() ~= self:GetParent():GetTeamNumber() then 
 	self.armor = self.armor * -1
@@ -356,26 +361,21 @@ function modifier_moment_of_courage_custom_crit_stack:IsPurgable() return false 
 function modifier_moment_of_courage_custom_crit_stack:RemoveOnDeath() return false end
 function modifier_moment_of_courage_custom_crit_stack:OnCreated(table)
 
-self.max = self:GetCaster():GetTalentValue("modifier_legion_moment_armor", "cd")
-
+self.parent = self:GetParent()
+self.max = self.parent:GetTalentValue("modifier_legion_moment_4", "cd")
 if not IsServer() then return end
 
 self:SetStackCount(self.max)
-
 self:StartIntervalThink(FrameTime())
 end
-
-
 
 function modifier_moment_of_courage_custom_crit_stack:OnIntervalThink()
 if not IsServer() then return end 
 
 if self:GetStackCount() >= self.max then 
-
-	if not self:GetParent():HasModifier("modifier_moment_of_courage_custom_crit_attack") then 
-		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_moment_of_courage_custom_crit_attack", {})
+	if not self.parent:HasModifier("modifier_moment_of_courage_custom_crit_attack") then 
+		self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_moment_of_courage_custom_crit_attack", {})
 	end 
-
 else 
 	self:IncrementStackCount()
 end 
@@ -383,13 +383,10 @@ end
 end 
 
 
-
-
 function modifier_moment_of_courage_custom_crit_stack:OnStackCountChanged(iStackCount)
 if not IsServer() then return end 
 
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'courage_crit_change',  {max = self.max, damage = self:GetStackCount()})
-
+self.parent:UpdateUIlong({max = self.max, stack = self:GetStackCount(), style = "LegionMoment", override_stack = self.max - self:GetStackCount(), hide_number = self:GetStackCount() >= self.max, no_min = true})
 
 if self:GetStackCount() >= self.max then 
 	self:StartIntervalThink(FrameTime())
@@ -413,9 +410,12 @@ function modifier_moment_of_courage_custom_crit_attack:GetTexture() return "buff
 
 function modifier_moment_of_courage_custom_crit_attack:OnCreated(table)
 
-self.cleave = self:GetCaster():GetTalentValue("modifier_legion_moment_armor", "cleave")/100
-self.crit = self:GetCaster():GetTalentValue("modifier_legion_moment_armor", "crit")
-self.stun = self:GetCaster():GetTalentValue("modifier_legion_moment_armor", "stun")
+self.parent = self:GetParent()
+self.parent:AddAttackRecordEvent_out(self)
+
+self.cleave = self:GetCaster():GetTalentValue("modifier_legion_moment_4", "cleave")/100
+self.crit = self:GetCaster():GetTalentValue("modifier_legion_moment_4", "crit")
+self.stun = self:GetCaster():GetTalentValue("modifier_legion_moment_4", "stun")
 
 if not IsServer() then return end
 
@@ -434,12 +434,11 @@ return
 {
 	MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE,
 	MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
-	MODIFIER_EVENT_ON_ATTACK_LANDED,
-	MODIFIER_EVENT_ON_ATTACK_START
+	MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
 }
 end
 
-function modifier_moment_of_courage_custom_crit_attack:OnAttackStart(params)
+function modifier_moment_of_courage_custom_crit_attack:AttackRecordEvent_out(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.attacker then return end
 if self:GetParent():HasModifier("modifier_moment_of_courage_custom_no_trigger") then return end
@@ -454,7 +453,7 @@ return self.crit
 end
 
 
-function modifier_moment_of_courage_custom_crit_attack:OnAttackLanded(params)
+function modifier_moment_of_courage_custom_crit_attack:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.attacker then return end
 if self:GetParent():HasModifier("modifier_moment_of_courage_custom_no_trigger") then return end
@@ -467,7 +466,7 @@ if  params.target:IsHero() or params.target:IsCreep() then
 	params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_bashed", {duration = self.stun *(1 - params.target:GetStatusResistance())})
 end
 
-local mod = self:GetParent():FindModifierByName('modifier_moment_of_courage_custom_crit_stack')
+local mod = self:GetParent():FindModifierByName("modifier_moment_of_courage_custom_crit_stack")
 if mod then 
 	mod:SetStackCount(0)
 end 
@@ -498,29 +497,27 @@ end
 modifier_moment_of_courage_custom_no_trigger = class({})
 function modifier_moment_of_courage_custom_no_trigger:IsHidden() return true end
 function modifier_moment_of_courage_custom_no_trigger:IsPurgable() return false end
-function modifier_moment_of_courage_custom_no_trigger:DeclareFunctions()
-return 
-{
-	MODIFIER_EVENT_ON_TAKEDAMAGE
-}
+
+
+function modifier_moment_of_courage_custom_no_trigger:OnCreated()
+self.parent = self:GetParent()
+self.parent:AddDamageEvent_out(self)
 end
 
 
-
-function modifier_moment_of_courage_custom_no_trigger:OnTakeDamage(params)
+function modifier_moment_of_courage_custom_no_trigger:DamageEvent_out(params)
 if not IsServer() then return end 
 if self:GetParent() ~= params.attacker then return end
 if params.inflictor then return end 
 
-
 self.heal = self:GetAbility():GetSpecialValueFor("hp_leech_percent")/100
 
 if self:GetParent():HasModifier("modifier_moment_of_courage_custom_lowhp") then 
-	self.heal = self.heal + self:GetCaster():GetTalentValue("modifier_legion_moment_lowhp", "lifesteal")/100
+	self.heal = self.heal + self:GetCaster():GetTalentValue("modifier_legion_moment_5", "lifesteal")/100
 end
 
 if self:GetParent():HasModifier("modifier_moment_of_courage_custom_legendary_defence") then 
-	self.heal = self.heal + self:GetCaster():GetTalentValue("modifier_legion_moment_legendary", "lifesteal")/100
+	self.heal = self.heal + self:GetCaster():GetTalentValue("modifier_legion_moment_7", "lifesteal")/100
 end
 
 
@@ -566,8 +563,8 @@ function modifier_moment_of_courage_custom_legendary_attack:GetTexture() return 
 function modifier_moment_of_courage_custom_legendary_attack:GetEffectName() return "particles/lc_attack_buf.vpcf" end
 function modifier_moment_of_courage_custom_legendary_attack:OnCreated(table)
 
-self.move = self:GetCaster():GetTalentValue("modifier_legion_moment_legendary", "move")
-self.speed = self:GetCaster():GetTalentValue("modifier_legion_moment_legendary", "speed")
+self.move = self:GetCaster():GetTalentValue("modifier_legion_moment_7", "move")
+self.speed = self:GetCaster():GetTalentValue("modifier_legion_moment_7", "speed")
 
 if not IsServer() then return end
 
@@ -629,7 +626,7 @@ function modifier_moment_of_courage_custom_legendary_defence:IsPurgable() return
 function modifier_moment_of_courage_custom_legendary_defence:RemoveOnDeath() return false end
 function modifier_moment_of_courage_custom_legendary_defence:OnCreated(table)
 
-self.damage_reduce = self:GetCaster():GetTalentValue("modifier_legion_moment_legendary", "damage_reduce", true)
+self.damage_reduce = self:GetCaster():GetTalentValue("modifier_legion_moment_7", "damage_reduce", true)
 
 if not IsServer() then return end
 
@@ -692,7 +689,7 @@ function modifier_moment_of_courage_custom_lowhp:IsPurgable() return false end
 function modifier_moment_of_courage_custom_lowhp:GetTexture() return "buffs/moment_lowhp" end
 
 function modifier_moment_of_courage_custom_lowhp:OnCreated(table)
-self.damage_reduce = self:GetCaster():GetTalentValue("modifier_legion_moment_lowhp", "damage_reduce")
+self.damage_reduce = self:GetCaster():GetTalentValue("modifier_legion_moment_5", "damage_reduce")
 
 if not IsServer() then return end
 self.RemoveForDuel = true	
@@ -770,7 +767,7 @@ end
 
 
 function modifier_moment_of_courage_custom_slow:OnCreated()
-self.slow = self:GetCaster():GetTalentValue("modifier_legion_moment_chance", "slow")
+self.slow = self:GetCaster():GetTalentValue("modifier_legion_moment_1", "slow")
 if not IsServer() then return end 
 
 self:GetParent():EmitSound("DOTA_Item.Maim")
@@ -799,8 +796,8 @@ function modifier_moment_of_courage_custom_damage:IsPurgable() return false end
 
 function modifier_moment_of_courage_custom_damage:OnCreated(table)
 
-self.max = self:GetCaster():GetTalentValue("modifier_legion_moment_damage", "max")
-self.damage = self:GetCaster():GetTalentValue("modifier_legion_moment_damage", "damage")
+self.max = self:GetCaster():GetTalentValue("modifier_legion_moment_3", "max")
+self.damage = self:GetCaster():GetTalentValue("modifier_legion_moment_3", "damage")
 
 if not IsServer() then return end
 self:SetStackCount(1)

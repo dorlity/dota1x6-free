@@ -12,7 +12,7 @@ function modifier_generic_knockback:IsHidden()
 end
 
 function modifier_generic_knockback:IsPurgable()
-  return false
+  return self.Purgable
 end
 
 function modifier_generic_knockback:GetAttributes()
@@ -21,74 +21,81 @@ end
 --------------------------------------------------------------------------------
 -- Initializations
 function modifier_generic_knockback:OnCreated( kv )
-  if IsServer() then
-    -- creation data (default)
-      -- kv.distance (0)
-      -- kv.height (-1)
-      -- kv.duration (0)
-      -- kv.direction_x, kv.direction_y, kv.direction_z (xy:-forward vector, z:0)
-      -- kv.tree_destroy_radius (hull-radius), can be null if -1 
-      -- kv.IsStun (false)
-      -- kv.IsFlail (true)
-      -- kv.IsPurgable() // later 
-      -- kv.IsMultiple() // later
+if IsServer() then
+  -- creation data (default)
+    -- kv.distance (0)
+    -- kv.height (-1)
+    -- kv.duration (0)
+    -- kv.direction_x, kv.direction_y, kv.direction_z (xy:-forward vector, z:0)
+    -- kv.tree_destroy_radius (hull-radius), can be null if -1 
+    -- kv.IsStun (false)
+    -- kv.IsFlail (true)
+    -- kv.IsPurgable() // later 
+    -- kv.IsMultiple() // later
 
-    -- references
-    self.distance = kv.distance or 0
-    self.height = kv.height or -1
-    self.duration = kv.duration or 0
-    if kv.direction_x and kv.direction_y then
-      self.direction = Vector(kv.direction_x,kv.direction_y,0):Normalized()
-    else
-      self.direction = -(self:GetParent():GetForwardVector())
-    end
-    self.tree = kv.tree_destroy_radius or self:GetParent():GetHullRadius()
+  -- references
 
-    if kv.IsStun then self.stun = kv.IsStun==1 else self.stun = false end
-    if kv.IsFlail then self.flail = kv.IsFlail==1 else self.flail = true end
+  self.Purgable = false
+  if kv.Purgable and kv.Purgable == 1 then 
+    self.Purgable = true
+  end 
 
-    -- check duration
-    if self.duration == 0 then
+  self.distance = kv.distance or 0
+  self.height = kv.height or -1
+  self.duration = kv.duration or 0
+  if kv.direction_x and kv.direction_y then
+    self.direction = Vector(kv.direction_x,kv.direction_y,0):Normalized()
+  else
+    self.direction = -(self:GetParent():GetForwardVector())
+  end
+  self.tree = kv.tree_destroy_radius or self:GetParent():GetHullRadius()
+
+  if kv.IsStun then self.stun = kv.IsStun==1 else self.stun = false end
+  if kv.IsFlail then self.flail = kv.IsFlail==1 else self.flail = true end
+
+  -- check duration
+  if self.duration == 0 then
+    self:Destroy()
+    return
+  end
+
+  -- load data
+  self.parent = self:GetParent()
+  self.origin = self.parent:GetOrigin()
+
+  -- horizontal init
+  self.hVelocity = self.distance/self.duration
+
+  -- vertical init
+  local half_duration = self.duration/2
+  self.gravity = 2*self.height/(half_duration*half_duration)
+  self.vVelocity = self.gravity*half_duration
+
+  -- apply motion controllers
+  if self.distance>0 then
+    if self:ApplyHorizontalMotionController() == false then 
       self:Destroy()
       return
     end
-
-    -- load data
-    self.parent = self:GetParent()
-    self.origin = self.parent:GetOrigin()
-
-    -- horizontal init
-    self.hVelocity = self.distance/self.duration
-
-    -- vertical init
-    local half_duration = self.duration/2
-    self.gravity = 2*self.height/(half_duration*half_duration)
-    self.vVelocity = self.gravity*half_duration
-
-    -- apply motion controllers
-    if self.distance>0 then
-      if self:ApplyHorizontalMotionController() == false then 
-        self:Destroy()
-        return
-      end
-    end
-    if self.height>=0 then
-      if self:ApplyVerticalMotionController() == false then 
-        self:Destroy()
-        return
-      end
-    end
-
-    -- tell client of activity
-    if self.flail then
-      self:SetStackCount( 1 )
-    elseif self.stun then
-      self:SetStackCount( 2 )
-    end
-  else
-    self.anim = self:GetStackCount()
-    self:SetStackCount( 0 )
   end
+  if self.height>=0 then
+    if self:ApplyVerticalMotionController() == false then 
+      self:Destroy()
+      return
+    end
+  end
+
+  -- tell client of activity
+  if self.flail then
+    self:SetStackCount( 1 )
+  elseif self.stun then
+    self:SetStackCount( 2 )
+  end
+else
+  self.anim = self:GetStackCount()
+  self:SetStackCount( 0 )
+end
+
 end
 
 function modifier_generic_knockback:OnRefresh( kv )

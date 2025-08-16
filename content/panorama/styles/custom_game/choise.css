@@ -1,16 +1,126 @@
-/* Prettified by Source 2 Viewer 7.0.0.0 - https://valveresourceformat.github.io */
+/* Prettified by Source 2 Viewer 14.1.0.0 - https://valveresourceformat.github.io */
 
 .MainChoise
 {
 	width: 100%;
 	height: 100%;
+	ui-scale: 98%;
 }
 
-.Cards
+@keyframes 'CardBlurGray'
 {
-	align: center center;
-	flow-children: right;
-	margin-bottom: 130px;
+	0%
+	{
+		box-shadow: fill #ccc 0px 0px 6px -3px;
+	}
+	
+	50%
+	{
+		box-shadow: fill #ccc 0px 0px 11px -3px;
+	}
+	
+	100%
+	{
+		box-shadow: fill #ccc 0px 0px 6px -3px;
+	}
+	
+}
+
+@keyframes 'CardBlurBlue'
+{
+	0%
+	{
+		box-shadow: fill #3485f2 0px 0px 6px -3px;
+	}
+	
+	50%
+	{
+		box-shadow: fill #3485f2 0px 0px 12px -3px;
+	}
+	
+	100%
+	{
+		box-shadow: fill #3485f2 0px 0px 6px -3px;
+	}
+	
+}
+
+@keyframes 'CardBlurPurple'
+{
+	0%
+	{
+		box-shadow: fill #9e48e6 0px 0px 6px -3px;
+	}
+	
+	50%
+	{
+		box-shadow: fill #9e48e6 0px 0px 12px -3px;
+	}
+	
+	100%
+	{
+		box-shadow: fill #9e48e6 0px 0px 6px -3px;
+	}
+	
+}
+
+@keyframes 'CardBlurOrange'
+{
+	0%
+	{
+		box-shadow: fill #ea752b 0px 0px 6px -3px;
+	}
+	
+	50%
+	{
+		box-shadow: fill #ea752b 0px 0px 12px -3px;
+	}
+	
+	100%
+	{
+		box-shadow: fill #ea752b 0px 0px 6px -3px;
+	}
+	
+}
+
+.card_blur_gray
+{
+	animation-name: CardBlurGray;
+	animation-iteration-count: infinite;
+	animation-duration: 2s;
+	transition-property: opacity, transform;
+	transition-duration: .24s;
+	border: 1px solid #999;
+}
+
+.card_blur_blue
+{
+	animation-name: CardBlurBlue;
+	animation-iteration-count: infinite;
+	animation-duration: 2s;
+	transition-property: opacity, transform;
+	transition-duration: .24s;
+	border: 1px solid #3E81CB;
+}
+
+.card_blur_purple
+{
+	animation-name: CardBlurPurple;
+	animation-iteration-count: infinite;
+	animation-duration: 2s;
+	transition-property: opacity, transform;
+	transition-duration: .24s;
+	border: 1px solid #952CD9;
+}
+
+.card_blur_orange
+{
+	animation-name: CardBlurOrange;
+	animation-iteration-count: infinite;
+	animation-duration: 1.8s;
+	transition-property: opacity, transform;
+	transition-duration: .24s;
+	border: 1px solid #DB6920;
 }
 
 @keyframes 'CardAnimationOpen'
@@ -97,20 +207,22 @@
 	
 }
 
-.alert_window_show
+.alert_window_open
 {
 	animation-name: AlertShow;
 	animation-duration: 0.4s;
 	animation-timing-function: ease-in-out;
 	animation-iteration-count: 1;
 	animation-direction: reverse;
-	width: 672px;
-	height: 108px;
-	opacity: 0;
-	background-color: rgba(10, 10, 10, 0.98);
-	align: center top;
-	border: 1px solid #f7942b;
-	margin-top: 10%;
+}
+
+.alert_window_close
+{
+	animation-name: AlertHide;
+	animation-duration: 0.4s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: 1;
+	animation-direction: reverse;
 }
 
 .alert_window
@@ -124,20 +236,14 @@
 	margin-top: 10%;
 }
 
-.alert_window_hide
+.card_hidden
 {
-	animation-name: AlertHide;
-	animation-duration: 0.4s;
-	animation-timing-function: ease-in-out;
-	animation-iteration-count: 1;
-	animation-direction: reverse;
-	width: 672px;
-	height: 108px;
-	opacity: 1;
-	background-color: rgba(10, 10, 10, 0.98);
-	align: center top;
-	border: 1px solid #f7942b;
-	margin-top: 10%;
+	visibility: collapse;
+}
+
+.card_hidden_opacity
+{
+	opacity: 0;
 }
 
 .alert_text
@@ -145,7 +251,6 @@
 	font-size: 21px;
 	text-align: center;
 	align: center center;
-	text-overflow: shrink;
 	color: #e7e7e7;
 	margin-left: 3%;
 	font-family: Radiance;
@@ -153,77 +258,60 @@
 	font-weight: bold;
 }
 
+.Cards
+{
+	height: 1000px;
+	width: 1600px;
+	flow-children: right;
+	vertical-align: center;
+	horizontal-align: center;
+	margin-bottom: 130px;
+}
+
 .card
+{
+	width: 25%;
+	height: 700px;
+	z-index: 0;
+	align: center center;
+	transition-property: transform, pre-transform-scale2d;
+	transition-duration: 0.12s;
+}
+
+.card_opened:hover
+{
+	brightness: 1.3;
+	transform: translate3d( 0, -10px, 0px );
+}
+
+.card_close
 {
 	animation-name: CardAnimationClose;
 	animation-duration: 0.45s;
 	animation-timing-function: ease-in-out;
 	animation-iteration-count: 1;
 	animation-direction: reverse;
-	width: 580px;
-	height: 700px;
-	z-index: 0;
-	vertical-align: center;
-	visibility: collapse;
+	pre-transform-scale2d: 0.95;
 }
 
-.card_chosen
+.card_close_chosen
 {
 	animation-name: CardAnimationChosen;
-	animation-duration: 0.4s;
-	animation-delay: 0.2s;
+	animation-duration: 0.5s;
+	animation-delay: 0.25s;
 	animation-timing-function: ease-in-out;
 	animation-iteration-count: 1;
 	animation-direction: reverse;
-	width: 580px;
-	height: 700px;
-	z-index: 0;
-	vertical-align: center;
-	visibility: collapse;
+	transform: translate3d( 0, -10px, 0px );
 }
 
-.cardOpen
+.card_open
 {
 	animation-name: CardAnimationOpen;
 	animation-duration: 0.45s;
 	animation-timing-function: ease-in-out;
 	animation-iteration-count: 1;
 	animation-direction: reverse;
-	width: 580px;
-	height: 700px;
-	z-index: 0;
-	vertical-align: center;
-	visibility: collapse;
-}
-
-.card_3_3
-{
-	margin-left: -120px;
-}
-
-.card_4_4
-{
-	margin-left: -190px;
-}
-
-.card_1_3_43
-{
-	margin-left: -30px;
-}
-
-.card_3_3_43
-{
-	margin-left: -120px;
-}
-
-.card_1_4_43
-{
-	margin-left: -90px;
-}
-
-.card_4_4_43
-{
-	margin-left: -230px;
 }
 
 @keyframes 'ButtonAnimationOpen'
@@ -266,32 +354,38 @@
 
 .ClosePanel
 {
-	animation-name: ButtonAnimationClose;
-	animation-duration: 0.45s;
-	animation-timing-function: ease-in-out;
-	animation-iteration-count: 1;
-	animation-direction: reverse;
-	visibility: collapse;
-	width: 1920px;
-	height: 1080px;
+	width: 200px;
+	height: 120px;
+	align: center bottom;
+	margin-bottom: 200px;
 }
 
-.ClosePanelOpen
+.ClosePanel_open
 {
 	animation-name: ButtonAnimationOpen;
 	animation-duration: 0.45s;
 	animation-timing-function: ease-in-out;
 	animation-iteration-count: 1;
 	animation-direction: reverse;
-	width: 1920px;
-	height: 1080px;
-	visibility: collapse;
+}
+
+.ClosePanel_close
+{
+	animation-name: ButtonAnimationClose;
+	animation-duration: 0.45s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: 1;
+	animation-direction: reverse;
+}
+
+.card_hidden_button
+{
+	opacity: 0;
 }
 
 .CloseButton
 {
-	align: center center;
-	margin-top: 500px;
+	align: center top;
 	width: 192px;
 	height: 54px;
 	background-image: url("s2r://panorama/images/custom_game/close_button_png.vtex");
@@ -301,11 +395,9 @@
 
 .RefreshButton
 {
-	align: center center;
-	margin-top: 630px;
+	align: center bottom;
 	width: 192px;
 	height: 54px;
-	visibility: collapse;
 	background-image: url("s2r://panorama/images/custom_game/refresh_button_png.vtex");
 	background-repeat: no-repeat;
 	box-shadow: fill green 0px 0px 12px -5px;
@@ -366,17 +458,19 @@
 
 .blur
 {
-	width: 540px;
-	height: 620px;
-	margin-right: 10px;
-	margin-bottom: 10px;
+	width: 180%;
+	height: 630px;
+	margin-bottom: 12px;
+	margin-left: -46px;
+	background-repeat: no-repeat;
+	background-size: 118% 100%;
 	align: center center;
-	background-size: contain;
 	animation-name: CardAnimation;
 	animation-iteration-count: infinite;
-	animation-duration: 5s;
+	animation-duration: 4s;
 	transition-property: opacity, transform;
 	transition-duration: .24s;
+	visibility: collapse;
 }
 
 .card_body
@@ -386,8 +480,9 @@
 	z-index: 1;
 	visibility: visible;
 	align: center center;
+	background-repeat: no-repeat;
 	background-size: contain;
-	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_void_spirit/pulse_6_png.vtex");
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/npc_dota_hero_tinker/march_4_png.vtex");
 }
 
 .card_body_skill
@@ -415,73 +510,286 @@
 	text-align: center;
 }
 
+.text_hidden
+{
+	opacity: 0;
+}
+
 .text_stacks
 {
-	font-size: 32px;
+	font-size: 27px;
 	font-family: defaultFont;
 	font-weight: bold;
 	color: #e7e7e7;
 	text-shadow: 1px 1px 2px 4 black;
 	z-index: 2;
-	align: center center;
-	visibility: collapse;
-	margin-top: 535px;
-	width: 260.68px;
-	height: 256.5px;
+	align: left bottom;
+	margin-bottom: 10px;
+	margin-left: 15px;
 	text-align: center;
 }
 
-.text_stacks_perma
+.text_perma
 {
 	color: #e7e7e7;
-	font-size: 26px;
+	font-family: defaultFont;
+	font-weight: bold;
+	text-shadow: 1px 1px 2px 4 black;
+	z-index: 2;
+	text-align: center;
+	align: center center;
+	margin-top: 400px;
+	font-size: 24px;
+}
+
+.card_icon_hero
+{
+	width: 128px;
+	height: 72.11px;
+	z-index: 2;
+	align: center center;
+	margin-bottom: 285px;
+	margin-left: 3px;
+	box-shadow: black 0px 0px 20px -3px;
+	border: 1px solid #222;
 }
 
 .card_icon
 {
-	width: 137.2px;
-	height: 99.75px;
+	width: 123.3px;
+	height: 90px;
 	z-index: 2;
 	align: center center;
 	margin-bottom: 282px;
-	margin-right: 2px;
+	margin-right: 0px;
+	box-shadow: black 2px 2px 15px -3px;
+	border: 1px solid #222;
 }
 
 .card_icon_skill
 {
-	width: 99.47px;
-	height: 99.75px;
+	width: 90px;
+	height: 90px;
 	margin-bottom: 282px;
 	align: center center;
+	margin-left: 0px;
 	z-index: 2;
+	box-shadow: black 2px 2px 15px -3px;
+	border: 1px solid #222;
+}
+
+.effects_and_cd
+{
+	flow-children: down;
+	align: right bottom;
+	margin-bottom: 4px;
+	margin-right: 6px;
+}
+
+.talent_cd
+{
+	padding: 4px 8px;
+	flow-children: left;
+	margin-bottom: 3px;
+}
+
+.talent_cd_icon
+{
+	width: 28px;
+	height: 28px;
+	align: center center;
+	background-image: url("s2r://panorama/images/status_icons/ability_cooldown_icon_psd.vtex");
+	background-size: contain;
+	brightness: 1.5;
+}
+
+.talent_cd_text
+{
+	align: left center;
+	font-weight: semi-bold;
+	color: #d9d9d9;
+	font-size: 24px;
+	text-shadow: 0px 0px 5px 4.0 #000000;
+	font-family: Radiance;
+	margin-right: 5px;
+	margin-top: 1px;
+}
+
+.talent_effects
+{
+	height: 44px;
+	padding: 5px;
+	flow-children: left;
+	horizontal-align: right;
+	visibility: collapse;
+}
+
+.talent_effects_hidden
+{
+	opacity: 0;
+}
+
+.talent_effects_icon_hidden
+{
+	visibility: collapse;
+}
+
+.talent_effects_icon
+{
+	margin: 0px 2px;
+	height: 30px;
+	width: 30px;
+	border: 1px solid #888;
+	box-shadow: 0px 0px 10px #000;
+	border-radius: 2px;
+	vertical-align: center;
+}
+
+.talent_effects_break
+{
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/tooltip/silver_png.vtex");
+}
+
+.talent_effects_bkb
+{
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/tooltip/bkb_png.vtex");
+}
+
+.talent_effects_dispell
+{
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/tooltip/dispell_png.vtex");
+}
+
+.talent_effects_root
+{
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/tooltip/root_png.vtex");
+}
+
+.talent_effects_purge_self
+{
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/tooltip/purge_self_png.vtex");
+}
+
+.talent_effects_block
+{
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/tooltip/linken_png.vtex");
+}
+
+.talent_effects_basher
+{
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-image: url("s2r://panorama/images/custom_game/icons/mini/tooltip/basher_png.vtex");
+}
+
+.talent_effects_icon:hover
+{
+	brightness: 2;
 }
 
 .card_info
 {
-	width: 60%;
-	height: 10%;
-	background-color: red;
-	align: center bottom;
-	margin-bottom: 5%;
-	background-color: gradient( linear, 0% 0%, 0% 100%, from( #222222 ), to( #4B555D ) );
-	background-image: url("s2r://panorama/images/backgrounds/background_play_button_2x_png.vtex");
-	background-size: 100%;
-	border: 1px solid #83838390;
-	box-shadow: black 0px 0px 8px 0px;
+	width: 186px;
+	height: 40px;
+	align: right bottom;
+	margin-bottom: 6px;
+	margin-right: 15px;
+}
+
+.card_info_panel
+{
+	align: right center;
+	flow-children: right;
 }
 
 .card_info_text
 {
-	align: center center;
-	font-weight: bold;
-	color: gradient( linear, 0% 90%, 0% 0%, from( #ffcda1 ), to( #ff9c00 ) );
-	font-size: 28px;
+	align: left center;
+	font-weight: semi-bold;
+	color: #ccc;
+	font-size: 23px;
 	text-shadow: 0px 0px 5px 3.0 #000000;
 	font-family: Radiance;
+	margin-left: 1px;
+	margin-bottom: 1px;
 }
 
-.card_info_hover
+.card_info_text_purple
 {
-	brightness: 2;
+	color: gradient( linear, 0% 90%, 0% 0%, from( #e0d6eb ), to( #c8aae6 ) );
+}
+
+.card_info_text_orange
+{
+	color: gradient( linear, 0% 90%, 0% 0%, from( #fcddc2 ), to( #fcb74b ) );
+}
+
+.card_info_icon
+{
+	width: 35px;
+	height: 35px;
+	align: right center;
+	background-image: url("s2r://panorama/images/control_icons/alt_key_png.vtex");
+	background-size: contain;
+	margin-left: 5px;
+	margin-top: 3px;
+}
+
+.ability_icon
+{
+	width: 100%;
+	height: 100%;
+}
+
+.Pickrate_panel
+{
+	z-index: 9;
+	width: 84px;
+	height: 42px;
+	margin-top: 98px;
+	margin-right: 18px;
+	horizontal-align: right;
+	border-radius: 3px;
+	background-color: gradient( linear, 0% 0%, 90% 90%, from( #401507 ), to( #643121 ) );
+}
+
+.Pickrate_text
+{
+	align: center center;
+	font-weight: semi-bold;
+	color: gradient( linear, 0% 100%, 0% 0%, from( #f9e0bb ), to( #fff442 ) );
+	font-size: 26px;
+	text-shadow: 0px 0px 5px 2.0 #000000;
+	font-family: Radiance;
+	margin-left: 3px;
+}
+
+.Pickrate_panel_high
+{
+	box-shadow: fill #e6a951 0px 0px 5px -1px;
+}
+
+.Pickrate_panel_low
+{
+	wash-color: #999;
+	saturation: 0.5;
+	border: 2px solid #b94e29;
+}
+
+.panel_collapse
+{
+	visibility: collapse;
 }
 

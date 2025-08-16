@@ -10,37 +10,78 @@ LinkLuaModifier( "modifier_crystal_maiden_arcane_aura_custom_spell", "abilities/
 LinkLuaModifier( "modifier_crystal_maiden_arcane_aura_custom_spell_count", "abilities/crystal_maiden/crystal_maiden_arcane_aura_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_crystal_maiden_arcane_aura_custom_shard", "abilities/crystal_maiden/crystal_maiden_arcane_aura_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_crystal_maiden_arcane_aura_custom_damage", "abilities/crystal_maiden/crystal_maiden_arcane_aura_custom", LUA_MODIFIER_MOTION_NONE )
-
-
-
-
-
+LinkLuaModifier( "modifier_crystal_maiden_arcane_aura_custom_attack_cd", "abilities/crystal_maiden/crystal_maiden_arcane_aura_custom", LUA_MODIFIER_MOTION_NONE )
 
 
 crystal_maiden_arcane_aura_custom = class({})
 
+function crystal_maiden_arcane_aura_custom:GetAbilityTextureName()
+
+if self:GetCaster():HasModifier("modifier_crystal_maiden_persona_1") or self:GetCaster():HasModifier("modifier_crystal_maiden_persona_2") or self:GetCaster():HasModifier("modifier_crystal_maiden_persona_3") or self:GetCaster():HasModifier("modifier_crystal_maiden_persona_4") then
+    return "crystal_maiden_brilliance_aura_persona"
+end
+if self:GetCaster():HasModifier("modifier_crystal_maiden_ti9_immortal_weapon_custom") then
+    return "crystal_maiden_brilliance_aura_ti9"
+end
+if self:GetCaster():HasModifier("modifier_crystal_maiden_cm_ti9_immortal_custom_golden") then
+    return "crystal_maiden_brilliance_aura_ti9_gold"
+end
+return "crystal_maiden_brilliance_aura"
+end
 
 
+function crystal_maiden_arcane_aura_custom:CreateTalent(name)
 
+if name == "modifier_maiden_arcane_6" then
+  self:ToggleAutoCast()
+  self:GetCaster():UpdateUIlong({max = 1, stack = 0, style = "MaidenAura"})
+end
+
+if name == "modifier_maiden_arcane_5" then
+
+  self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_crystal_maiden_arcane_aura_custom_shield_tracker", {})
+end
+
+end
 
 
 
 function crystal_maiden_arcane_aura_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-PrecacheResource( "particle", "particles/maiden_shield_active.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_ancient_apparition/ancient_apparition_chilling_touch_projectile.vpcf", context )
 PrecacheResource( "particle", "particles/econ/items/crystal_maiden/ti9_immortal_staff/cm_ti9_staff_lvlup_globe.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf", context )
 PrecacheResource( "particle", "particles/items5_fx/maiden_shield_start.vpcf", context )
 PrecacheResource( "particle", "particles/maiden_shield.vpcf", context )
-PrecacheResource( "particle", "particles/status_fx/status_effect_frost.vpcf", context )
+PrecacheResource( "particle", "particles/zuus_speed.vpcf", context )
 PrecacheResource( "particle", "particles/maiden_arcane.vpcf", context )
 PrecacheResource( "particle", "particles/maiden_spells.vpcf", context )
-PrecacheResource( "particle", "particles/zuus_speed.vpcf", context )
+PrecacheResource( "particle", "particles/maiden_shield_active.vpcf", context )
+PrecacheResource( "particle", "particles/drow_ranger/frost_cleave.vpcf", context )
 
 end
 
 
+function crystal_maiden_arcane_aura_custom:OnUpgrade()
+if not IsServer() then return end
+local caster = self:GetCaster()
+
+if not caster:IsRealHero() then return end
+
+if caster:HasModifier("modifier_crystal_maiden_ti9_immortal_weapon_custom") or caster:HasModifier("modifier_crystal_maiden_cm_ti9_immortal_custom_golden") then
+  local effect_name = "particles/econ/items/crystal_maiden/ti9_immortal_staff/cm_ti9_staff_lvlup_globe.vpcf"
+
+  if caster:HasModifier("modifier_crystal_maiden_cm_ti9_immortal_custom_golden") then
+      effect_name = "particles/econ/items/crystal_maiden/ti9_immortal_staff/cm_ti9_golden_staff_lvlup_globe.vpcf"
+  end
+  local particle = ParticleManager:CreateParticle( effect_name, PATTACH_ABSORIGIN_FOLLOW, caster )
+  ParticleManager:SetParticleControlEnt( particle, 0, caster, PATTACH_POINT_FOLLOW, "attach_hitloc", caster:GetAbsOrigin(), true )
+  ParticleManager:SetParticleControl(particle, 5, Vector(1,1,1))
+  ParticleManager:ReleaseParticleIndex( particle )
+end
+
+end
 
 function crystal_maiden_arcane_aura_custom:OnInventoryContentsChanged()
 
@@ -57,12 +98,12 @@ function crystal_maiden_arcane_aura_custom:GetBehavior()
 
 local auto = 0
 
-if self:GetCaster():HasModifier("modifier_maiden_arcane_6") then 
+if self:GetCaster():HasTalent("modifier_maiden_arcane_6") then 
   auto = DOTA_ABILITY_BEHAVIOR_AUTOCAST
 end 
 
 if self:GetCaster():HasShard() then
-  return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_MOVEMENT + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK + DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING + DOTA_ABILITY_BEHAVIOR_IGNORE_CHANNEL + DOTA_ABILITY_BEHAVIOR_IMMEDIATE + auto
+  return DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_MOVEMENT + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK + DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING + DOTA_ABILITY_BEHAVIOR_IGNORE_CHANNEL + auto
 end
 return DOTA_ABILITY_BEHAVIOR_PASSIVE + auto
 end
@@ -86,6 +127,18 @@ return
 
 end 
 
+function crystal_maiden_arcane_aura_custom:GetCastRange(vLocation, hTarget)
+
+if self:GetCaster():HasShard() then 
+  if IsClient() then 
+    return self:GetSpecialValueFor("range") - self:GetCaster():GetCastRangeBonus()
+  else 
+    return 999999
+  end
+
+end
+
+end
 
 
 function crystal_maiden_arcane_aura_custom:GetCastAnimation()
@@ -133,138 +186,109 @@ modifier_crystal_maiden_arcane_aura_custom = class({})
 
 function modifier_crystal_maiden_arcane_aura_custom:IsHidden() return true end
 function modifier_crystal_maiden_arcane_aura_custom:IsPurgable() return false end 
-
-
 function modifier_crystal_maiden_arcane_aura_custom:GetAuraRadius()
-  return 
+return FIND_UNITS_EVERYWHERE
 end
 
 function modifier_crystal_maiden_arcane_aura_custom:GetAuraSearchFlags()
-  return DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD
+return DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD
 end
 
 function modifier_crystal_maiden_arcane_aura_custom:GetAuraSearchTeam()
-
-  return DOTA_UNIT_TARGET_TEAM_FRIENDLY
+return DOTA_UNIT_TARGET_TEAM_FRIENDLY
 end
 
 function modifier_crystal_maiden_arcane_aura_custom:GetAuraSearchType()
-
-  return DOTA_UNIT_TARGET_HERO 
+return DOTA_UNIT_TARGET_HERO 
 end
 
-
 function modifier_crystal_maiden_arcane_aura_custom:GetModifierAura()
-  return "modifier_crystal_maiden_arcane_aura_custom_buff"
+return "modifier_crystal_maiden_arcane_aura_custom_buff"
 end
 
 function modifier_crystal_maiden_arcane_aura_custom:IsAura()
-  if self:GetParent():PassivesDisabled() then
-    return false
-  end
-
-  return true
+if self:GetParent():PassivesDisabled() then
+  return false
 end
-
-
-
+return true
+end
 
 
 function modifier_crystal_maiden_arcane_aura_custom:DeclareFunctions()
 return
 {
-  MODIFIER_EVENT_ON_TAKEDAMAGE,
-  MODIFIER_EVENT_ON_ABILITY_FULLY_CAST,
-  MODIFIER_EVENT_ON_ATTACK_LANDED,
-  MODIFIER_PROPERTY_MANACOST_PERCENTAGE,
+  MODIFIER_PROPERTY_MANACOST_PERCENTAGE_STACKING,
   MODIFIER_PROPERTY_MANA_REGEN_TOTAL_PERCENTAGE,
   MODIFIER_PROPERTY_PROJECTILE_NAME,
   MODIFIER_PROPERTY_TRANSLATE_ATTACK_SOUND,
   MODIFIER_PROPERTY_PROJECTILE_SPEED_BONUS,
-  MODIFIER_EVENT_ON_ATTACK,
-  MODIFIER_EVENT_ON_ATTACK_START,
-  MODIFIER_EVENT_ON_ATTACK_FAIL,
-  MODIFIER_PROPERTY_BASE_ATTACK_TIME_CONSTANT,
-  MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
-
+  MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT,
 }
 end
 
-function modifier_crystal_maiden_arcane_aura_custom:GetModifierAttackRangeBonus()
-if not self:GetParent():HasModifier("modifier_maiden_arcane_4") then return end
-return self:GetCaster():GetTalentValue("modifier_maiden_arcane_4", "range")
-end
-
-
 function modifier_crystal_maiden_arcane_aura_custom:GetAttackSound(params)
 if not self.proc then return end
-
 return "Maiden.Arcane_legendary_attack"
 end
 
-
-
 function modifier_crystal_maiden_arcane_aura_custom:GetModifierProjectileSpeedBonus()
 if not self.proc then return end
-
 return self.legendary_speed
 end
 
+function modifier_crystal_maiden_arcane_aura_custom:GetModifierMoveSpeedBonus_Constant()
+if not self.parent:HasTalent("modifier_maiden_arcane_3") then return end
+local bonus = self.parent:GetTalentValue("modifier_maiden_arcane_3", "speed")
+if self.parent:HasModifier("modifier_crystal_maiden_arcane_aura_custom_slow_speed") then
+  bonus = bonus*self.speed_bonus
+end
+return bonus
+end
 
-
-function modifier_crystal_maiden_arcane_aura_custom:OnAttackStart(params)
+function modifier_crystal_maiden_arcane_aura_custom:AttackRecordEvent_out(params)
 if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end
+if self.parent ~= params.attacker then return end
 if params.no_attack_cooldown then return end 
 
-if not self:GetParent():HasModifier("modifier_maiden_arcane_7") then return end
+if not self.parent:HasTalent("modifier_maiden_arcane_7") then return end
 
 self.proc = nil
 
-if not params.target:IsCreep() and not params.target:IsHero() then return end
-if params.target:IsMagicImmune() then return end
-if self:GetParent():GetMana() < self:GetParent():GetMaxMana()*self.legendary_mana then return end
+if not params.target:IsUnit() then return end
+if self.parent:GetMana() < self.parent:GetMaxMana()*self.legendary_mana then return end
 
 self.proc = true
-
-
 end
 
 
 
-function modifier_crystal_maiden_arcane_aura_custom:OnAttack(params)
+function modifier_crystal_maiden_arcane_aura_custom:AttackStartEvent_out(params)
 if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end
+if self.parent ~= params.attacker then return end
 if params.no_attack_cooldown then return end 
-
-local mod = self:GetCaster():FindModifierByName("modifier_crystal_maiden_arcane_aura_custom_speed")
+local mod = self.parent:FindModifierByName("modifier_crystal_maiden_arcane_aura_custom_speed")
 if mod then 
-  mod:DecrementStackCount()
-  if mod:GetStackCount() == 0 then 
-    mod:Destroy()
-  end
+  mod:ReduceStack()
 end
 
-
-if not self:GetParent():HasModifier("modifier_maiden_arcane_7") then return end
-
+if not self.parent:HasTalent("modifier_maiden_arcane_7") then return end
 
 self:StartIntervalThink(self.legendary_cd)
 self.attack = true
 
 if not self.proc then return end
 
-local damage = self:GetParent():GetMaxMana()*self.legendary_mana
-self:GetParent():SetMana(math.max(1, self:GetParent():GetMana() - damage))
+local damage = self.parent:GetMaxMana()*self.legendary_mana
+self.parent:SetMana(math.max(1, self.parent:GetMana() - damage))
 
 local projectile =
 {
   Target = params.target,
-  Source = self:GetParent(),
-  Ability = self:GetAbility(),
+  Source = self.parent,
+  Ability = self.ability,
   EffectName = "particles/units/heroes/hero_ancient_apparition/ancient_apparition_chilling_touch_projectile.vpcf",
-  iMoveSpeed = self:GetParent():GetProjectileSpeed(),
-  vSourceLoc = self:GetParent():GetAbsOrigin(),
+  iMoveSpeed = self.parent:GetProjectileSpeed(),
+  vSourceLoc = self.parent:GetAbsOrigin(),
   bDodgeable = true,
   bProvidesVision = false,
 }
@@ -275,122 +299,109 @@ self.record[params.record] = true
 end
 
 
-
-function modifier_crystal_maiden_arcane_aura_custom:OnAttackLanded(params)
+function modifier_crystal_maiden_arcane_aura_custom:AttackEvent_out(params)
 if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end
-if not params.target:IsCreep() and not params.target:IsHero() then return end
+if self.parent ~= params.attacker then return end
+if not params.target:IsUnit() then return end
 
+local target = params.target
 
-if self:GetParent():HasModifier("modifier_maiden_arcane_3") then 
-  params.target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_crystal_maiden_arcane_aura_custom_slow", {duration = self.slow_duration})
+if self.parent:HasTalent("modifier_maiden_arcane_3") then 
+  target:AddNewModifier(self.parent, self.ability, "modifier_crystal_maiden_arcane_aura_custom_slow", {duration = self.slow_duration})
 end
 
+if self.parent:HasTalent("modifier_maiden_arcane_2") and not self.parent:HasModifier("modifier_crystal_maiden_arcane_aura_custom_attack_cd") then
+  self.parent:AddNewModifier(self.parent, self.ability, "modifier_crystal_maiden_arcane_aura_custom_attack_cd", {duration = self.attack_cd})
+  local damage = self.parent:GetMaxMana()*self.parent:GetTalentValue("modifier_maiden_arcane_2", "damage")/100
+  local damageTable = {attacker = self.parent, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self.ability}
+  target:GenericParticle("particles/drow_ranger/frost_cleave.vpcf")
+  target:EmitSound("Maiden.Arcane_attack")
 
-if self:GetParent():HasModifier("modifier_maiden_arcane_6") and not params.no_attack_cooldown then
-
-  if self:GetParent():HasModifier("modifier_crystal_maiden_arcane_aura_custom_spell") then 
-    self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_crystal_maiden_arcane_aura_custom_spell", {duration = self.spell_duration})
-  else 
-    self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(),"modifier_crystal_maiden_arcane_aura_custom_spell_count", {duration = self.spell_duration})
+  for _,target in pairs(self.parent:FindTargets(self.attack_radius, target:GetAbsOrigin())) do
+    damageTable.victim = target
+    DoDamage(damageTable, "modifier_maiden_arcane_2")
   end
 end
 
+if self.parent:HasTalent("modifier_maiden_arcane_6") and not params.no_attack_cooldown then
 
-if self:GetCaster():HasModifier("modifier_maiden_arcane_2") then 
-  self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(),"modifier_crystal_maiden_arcane_aura_custom_damage", {duration = self.damage_duration})
+  if self.parent:HasModifier("modifier_crystal_maiden_arcane_aura_custom_spell") then 
+    self.parent:AddNewModifier(self.parent, self.ability, "modifier_crystal_maiden_arcane_aura_custom_spell", {duration = self.spell_duration})
+  else 
+    self.parent:AddNewModifier(self.parent, self.ability,"modifier_crystal_maiden_arcane_aura_custom_spell_count", {duration = self.spell_duration})
+  end
+end
+
+if self.parent:HasTalent("modifier_maiden_arcane_4") then 
+  self.parent:AddNewModifier(self.parent, self.ability,"modifier_crystal_maiden_arcane_aura_custom_damage", {duration = self.damage_duration})
 end 
 
-if not self:GetParent():HasModifier("modifier_maiden_arcane_7") then return end
-
+if not self.parent:HasTalent("modifier_maiden_arcane_7") then return end
 if not self.record[params.record] then return end
 
+local damage = self.parent:GetMaxMana()*self.legendary_mana*self.legendary_damage
 
-local damage = self:GetParent():GetMaxMana()*self.legendary_mana*self.legendary_damage
+local real_damage = DoDamage({ victim = target, attacker = self.parent, damage = damage,  damage_type = DAMAGE_TYPE_MAGICAL, ability = self.ability, }, "modifier_maiden_arcane_7")
 
-if not params.target:IsMagicImmune() then 
-  local real_damage = ApplyDamage({ victim = params.target, attacker = self:GetCaster(), damage = damage,  damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility(), })
-
-  SendOverheadEventMessage(params.target, 4, params.target, real_damage, nil)
-
-  params.target:EmitSound("Maiden.Arcane_legendary_attack_end")
-end
-
-self.record[params.record] = nil
+SendOverheadEventMessage(target, 4, target, real_damage, nil)
+target:EmitSound("Maiden.Arcane_legendary_attack_end")
 end
 
 
 
-
-
-function modifier_crystal_maiden_arcane_aura_custom:OnAttackFail(params)
+function modifier_crystal_maiden_arcane_aura_custom:RecordDestroyEvent(params)
 if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_maiden_arcane_7") then return end
-if self:GetParent() ~= params.attacker then return end
-if not self.record[params.record] then return end
 
-self.record[params.record] = nil
+if self.record[params.record] then 
+  self.record[params.record] = nil
+end
+
 end
 
 
-
-
-
-
-function modifier_crystal_maiden_arcane_aura_custom:OnTakeDamage(params)
+function modifier_crystal_maiden_arcane_aura_custom:DamageEvent_inc(params)
 if not IsServer() then return end
-if self:GetParent() ~= params.unit then return end
-if self:GetParent() == params.attacker then return end
+if self.parent ~= params.unit then return end
+if self.parent == params.attacker then return end
 
+if self.parent:HasModifier("modifier_crystal_maiden_arcane_aura_custom_shield_tracker") then 
+  self.parent:FindModifierByName("modifier_crystal_maiden_arcane_aura_custom_shield_tracker"):StartIntervalThink(self.shield_cd)
+end
 
-if self:GetParent():HasModifier("modifier_crystal_maiden_arcane_aura_custom_shield_tracker") then 
-  self:GetParent():FindModifierByName("modifier_crystal_maiden_arcane_aura_custom_shield_tracker"):StartIntervalThink(self.shield_cd)
 end
 
 
-end
-
-function modifier_crystal_maiden_arcane_aura_custom:GetModifierPercentageManacost()
-if not self:GetParent():HasModifier("modifier_maiden_arcane_7") then return end
-
+function modifier_crystal_maiden_arcane_aura_custom:GetModifierPercentageManacostStacking()
+if not self.parent:HasTalent("modifier_maiden_arcane_7") then return end
 return 100
 end
 
 
-
-
-
-
-
-function modifier_crystal_maiden_arcane_aura_custom:OnAbilityFullyCast(keys)
+function modifier_crystal_maiden_arcane_aura_custom:SpellEvent(params)
 if not IsServer() then return end
-if not keys.ability then return end 
-if keys.unit ~= self:GetParent() then return end
-if self:GetParent():PassivesDisabled() then return end
-if keys.ability:IsItem() or  UnvalidAbilities[keys.ability:GetName()] then return end
+if params.unit ~= self.parent then return end
+if self.parent:PassivesDisabled() then return end
+if params.ability:IsItem() then return end
 
-if self:GetParent():HasModifier("modifier_maiden_arcane_4") then 
-  self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_crystal_maiden_arcane_aura_custom_speed", {duration = self.speed_duration})
+if self.parent:HasTalent("modifier_maiden_arcane_4") then 
+  self.parent:RemoveModifierByName("modifier_crystal_maiden_arcane_aura_custom_speed")
+  self.parent:AddNewModifier(self.parent, self.ability, "modifier_crystal_maiden_arcane_aura_custom_speed", {duration = self.speed_duration})
 end
 
-if self:GetParent():HasModifier("modifier_maiden_arcane_3") then 
-  self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_crystal_maiden_arcane_aura_custom_slow_speed", {duration = self.slow_duration})
+if self.parent:HasTalent("modifier_maiden_arcane_3") then 
+  self.parent:RemoveModifierByName("modifier_crystal_maiden_arcane_aura_custom_slow_speed")
+  self.parent:AddNewModifier(self.parent, self.ability, "modifier_crystal_maiden_arcane_aura_custom_slow_speed", {duration = self.slow_duration})
 end
 
-
-
-if not self:GetParent():HasModifier("modifier_maiden_arcane_1") then return end
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_crystal_maiden_arcane_aura_custom_mana", {duration = self.heal_duration})
-
+if not self.parent:HasTalent("modifier_maiden_arcane_1") then return end
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_crystal_maiden_arcane_aura_custom_mana", {duration = self.heal_duration})
 end
-
 
 
 function modifier_crystal_maiden_arcane_aura_custom:GetModifierTotalPercentageManaRegen()
 if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_maiden_arcane_7") then return end
+if not self.parent:HasTalent("modifier_maiden_arcane_7") then return end
 if self.attack == true then return end
-
 return self.legendary_regen 
 end
 
@@ -400,39 +411,51 @@ self.attack = false
 self.proc = nil
 self.record = {}
 
-self.legendary_mana = self:GetCaster():GetTalentValue("modifier_maiden_arcane_7", "mana", true)/100
-self.legendary_damage = self:GetCaster():GetTalentValue("modifier_maiden_arcane_7", "damage", true)/100
-self.legendary_cd = self:GetCaster():GetTalentValue("modifier_maiden_arcane_7", "cd", true)
-self.legendary_speed = self:GetCaster():GetTalentValue("modifier_maiden_arcane_7", "speed", true)
-self.legendary_regen = self:GetCaster():GetTalentValue("modifier_maiden_arcane_7", "regen", true)
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-self.shield_cd = self:GetCaster():GetTalentValue("modifier_maiden_arcane_5", "cd", true)
-
-self.spell_duration = self:GetCaster():GetTalentValue("modifier_maiden_arcane_6", "duration" ,true)
-
-self.slow_duration = self:GetCaster():GetTalentValue("modifier_maiden_arcane_3", "duration",true)
-
-self.speed_duration = self:GetCaster():GetTalentValue("modifier_maiden_arcane_4", "duration",true)
-
-self.heal_duration = self:GetCaster():GetTalentValue("modifier_maiden_arcane_1", "duration",true)
-
-self.damage_duration = self:GetCaster():GetTalentValue("modifier_maiden_arcane_2", "duration",true)
+if self.parent:IsRealHero() then
+  self.parent:AddRecordDestroyEvent(self)
+  self.parent:AddAttackRecordEvent_out(self)
+  self.parent:AddDamageEvent_inc(self)
 end
 
+self.parent:AddAttackStartEvent_out(self)
+self.parent:AddSpellEvent(self)
+self.parent:AddAttackEvent_out(self)
 
+self.legendary_mana = self.parent:GetTalentValue("modifier_maiden_arcane_7", "mana", true)/100
+self.legendary_damage = self.parent:GetTalentValue("modifier_maiden_arcane_7", "damage", true)/100
+self.legendary_cd = self.parent:GetTalentValue("modifier_maiden_arcane_7", "cd", true)
+self.legendary_speed = self.parent:GetTalentValue("modifier_maiden_arcane_7", "speed", true)
+self.legendary_regen = self.parent:GetTalentValue("modifier_maiden_arcane_7", "regen", true)
 
+self.shield_cd = self.parent:GetTalentValue("modifier_maiden_arcane_5", "cd", true)
+
+self.spell_duration = self.parent:GetTalentValue("modifier_maiden_arcane_6", "duration" ,true)
+
+self.slow_duration = self.parent:GetTalentValue("modifier_maiden_arcane_3", "duration",true)
+self.speed_bonus = self.parent:GetTalentValue("modifier_maiden_arcane_3", "bonus",true)
+
+self.attack_cd = self.parent:GetTalentValue("modifier_maiden_arcane_2", "cd", true)
+self.attack_radius = self.parent:GetTalentValue("modifier_maiden_arcane_2", "radius", true)
+
+self.heal_duration = self.parent:GetTalentValue("modifier_maiden_arcane_1", "duration",true)
+
+self.damage_duration = self.parent:GetTalentValue("modifier_maiden_arcane_4", "duration",true)
+self.speed_duration = self.parent:GetTalentValue("modifier_maiden_arcane_4", "duration",true)
+end
 
 
 function modifier_crystal_maiden_arcane_aura_custom:OnIntervalThink()
 if not IsServer() then return end
 
-
-local pfx = ParticleManager:CreateParticle("particles/econ/items/crystal_maiden/ti9_immortal_staff/cm_ti9_staff_lvlup_globe.vpcf", PATTACH_POINT_FOLLOW, self:GetCaster())
-ParticleManager:SetParticleControlEnt(pfx, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetCaster():GetAbsOrigin(), true)
+local pfx = ParticleManager:CreateParticle("particles/econ/items/crystal_maiden/ti9_immortal_staff/cm_ti9_staff_lvlup_globe.vpcf", PATTACH_POINT_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt(pfx, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true)
 ParticleManager:SetParticleControl(pfx, 5, Vector(1,1,1))
 ParticleManager:ReleaseParticleIndex(pfx)
 
-self:GetParent():EmitSound("Maiden.Arcane_legendary_regen")
+self.parent:EmitSound("Maiden.Arcane_legendary_regen")
 self.attack = false
 self:StartIntervalThink(-1)
 end
@@ -442,19 +465,25 @@ end
 
 
 modifier_crystal_maiden_arcane_aura_custom_buff = class({})
-function modifier_crystal_maiden_arcane_aura_custom_buff:IsHidden() return true end
+function modifier_crystal_maiden_arcane_aura_custom_buff:IsHidden() return self.parent == self.caster end
 function modifier_crystal_maiden_arcane_aura_custom_buff:IsPurgable() return false end
-
-
-
 function modifier_crystal_maiden_arcane_aura_custom_buff:OnCreated(table)
-if not IsServer() then return end
-
+self.ability = self:GetAbility()
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
 self.int = 0 
 
-if self:GetParent() ~= self:GetCaster() then return end
+self.regen = self.ability:GetSpecialValueFor("base_mana_regen")
+self.int_bonus = self.ability:GetSpecialValueFor("int_bonus")
 
+if not IsServer() then return end
+if self.parent ~= self.caster then return end
 self:StartIntervalThink(0.5)
+end
+
+function modifier_crystal_maiden_arcane_aura_custom_buff:OnRefresh()
+self.regen = self.ability:GetSpecialValueFor("base_mana_regen")
+self.int_bonus = self.ability:GetSpecialValueFor("int_bonus")
 end
 
 
@@ -466,16 +495,15 @@ return
 end
 
 function modifier_crystal_maiden_arcane_aura_custom_buff:GetModifierConstantManaRegen()
-return self:GetAbility():GetSpecialValueFor("base_mana_regen")*self:GetParent():GetMaxMana()/100
+return self.regen*self.parent:GetMaxMana()/100
 end
-
-
 
 
 function modifier_crystal_maiden_arcane_aura_custom_buff:OnIntervalThink()
 if not IsServer() then return end 
-self.PercentInt = self:GetAbility():GetSpecialValueFor("int_bonus")/100
+self.PercentInt = (self.int_bonus + self.parent:GetTalentValue("modifier_maiden_arcane_2", "int"))/100
 end 
+
 
 
 
@@ -532,6 +560,8 @@ function modifier_crystal_maiden_arcane_aura_custom_shield:OnCreated(table)
 self.shield_damage = self:GetCaster():GetTalentValue("modifier_maiden_arcane_5", "damage", true)/100
 self.shield_cd = self:GetCaster():GetTalentValue("modifier_maiden_arcane_5", "cd", true)
 self.shield_resist = self:GetCaster():GetTalentValue("modifier_maiden_arcane_5", "status", true)
+self.parent = self:GetParent()
+self.shield_talent = "modifier_maiden_arcane_5"
 
 if not IsServer() then return end
 self:SetStackCount(table.mana)
@@ -603,7 +633,7 @@ return "particles/status_fx/status_effect_frost.vpcf"
 end
 
 function modifier_crystal_maiden_arcane_aura_custom_shield:StatusEffectPriority()
-return 9999
+return MODIFIER_PRIORITY_HIGH
 end
 
 function modifier_crystal_maiden_arcane_aura_custom_shield:GetModifierStatusResistanceStacking()
@@ -621,7 +651,6 @@ end
 
 function modifier_crystal_maiden_arcane_aura_custom_shield:GetModifierIncomingDamageConstant( params )
 
-
 if IsClient() then 
   if params.report_max then 
     return self.max_shield
@@ -631,23 +660,17 @@ if IsClient() then
 end
 
 if not IsServer() then return end
-
-local damage = self.shield_damage*params.damage
-
 self:GetParent():EmitSound("Hero_Lich.ProjectileImpact")
 
-if self:GetStackCount() > damage then
-    self:SetStackCount(self:GetStackCount() - damage)
-    local i = damage
-    return -i
-else
-    
-    local i = self:GetStackCount()
-    self:SetStackCount(0)
-    self:Destroy()
-    return -i
+local damage = math.min(self.shield_damage*params.damage, self:GetStackCount())
+self.parent:AddShieldInfo({shield_mod = self, healing = damage, healing_type = "shield"})
+
+self:SetStackCount(self:GetStackCount() - damage)
+if self:GetStackCount() <= 0 then
+  self:Destroy()
 end
 
+return -damage
 end
 
 
@@ -664,20 +687,29 @@ function modifier_crystal_maiden_arcane_aura_custom_speed:GetTexture() return "b
 
 function modifier_crystal_maiden_arcane_aura_custom_speed:OnCreated(table)
 
-self.speed = self:GetCaster():GetTalentValue("modifier_maiden_arcane_4", "speed")
+self.caster = self:GetCaster()
 
+self.speed = self.caster:GetTalentValue("modifier_maiden_arcane_4", "speed")
+self.range = self.caster:GetTalentValue("modifier_maiden_arcane_4", "range")
 
 if not IsServer() then return end 
-
-
-self:SetStackCount(self:GetCaster():GetTalentValue("modifier_maiden_arcane_4", "attacks"))
+self:SetStackCount(self.caster:GetTalentValue("modifier_maiden_arcane_4", "attacks"))
 end
 
+function modifier_crystal_maiden_arcane_aura_custom_speed:ReduceStack()
+if not IsServer() then return end
+self:DecrementStackCount()
+if self:GetStackCount() <= 0 then 
+  self:Destroy() 
+end
+
+end
 
 function modifier_crystal_maiden_arcane_aura_custom_speed:DeclareFunctions()
 return
 {
   MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+  MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
 }
 end
 
@@ -685,6 +717,9 @@ function modifier_crystal_maiden_arcane_aura_custom_speed:GetModifierAttackSpeed
 return self.speed
 end
 
+function modifier_crystal_maiden_arcane_aura_custom_speed:GetModifierAttackRangeBonus()
+return self.range
+end
 
 function modifier_crystal_maiden_arcane_aura_custom_speed:CheckState()
 return
@@ -700,95 +735,39 @@ end
 
 modifier_crystal_maiden_arcane_aura_custom_slow = class({})
 
-
-function modifier_crystal_maiden_arcane_aura_custom_slow:IsHidden()
-  return false
-end
-
-function modifier_crystal_maiden_arcane_aura_custom_slow:IsPurgable()
-  return true
-end
-
-function modifier_crystal_maiden_arcane_aura_custom_slow:GetTexture()
-  return "buffs/arcane_slow"
-end
-
-
+function modifier_crystal_maiden_arcane_aura_custom_slow:IsHidden() return true end
+function modifier_crystal_maiden_arcane_aura_custom_slow:IsPurgable() return true end
+function modifier_crystal_maiden_arcane_aura_custom_slow:GetTexture() return "buffs/arcane_slow" end
 function modifier_crystal_maiden_arcane_aura_custom_slow:DeclareFunctions()
-  local funcs = {
-    MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-  }
-
-  return funcs
+return 
+{
+  MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+}
 end
 
 function modifier_crystal_maiden_arcane_aura_custom_slow:GetModifierMoveSpeedBonus_Percentage()
-  return self.slow
+return self.slow
 end
-
-
 
 function modifier_crystal_maiden_arcane_aura_custom_slow:GetStatusEffectName()
 return "particles/status_fx/status_effect_frost.vpcf"
 end
 
 function modifier_crystal_maiden_arcane_aura_custom_slow:StatusEffectPriority()
-return 9999
+return MODIFIER_PRIORITY_NORMAL 
 end
 
-
-
 function modifier_crystal_maiden_arcane_aura_custom_slow:OnCreated()
-
 self.slow = self:GetCaster():GetTalentValue("modifier_maiden_arcane_3", "slow")
 end 
 
 
 
 
-
-
-
 modifier_crystal_maiden_arcane_aura_custom_slow_speed = class({})
-
-
-function modifier_crystal_maiden_arcane_aura_custom_slow_speed:IsHidden()
-  return true
-end
-
-function modifier_crystal_maiden_arcane_aura_custom_slow_speed:IsPurgable()
-  return true
-end
-
-function modifier_crystal_maiden_arcane_aura_custom_slow_speed:GetTexture()
-  return "buffs/arcane_slow"
-end
-
-
-function modifier_crystal_maiden_arcane_aura_custom_slow_speed:DeclareFunctions()
-  local funcs = {
-    MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-  }
-
-  return funcs
-end
-
-function modifier_crystal_maiden_arcane_aura_custom_slow_speed:GetModifierMoveSpeedBonus_Percentage()
-  return self.speed
-end
-
-
-
-function modifier_crystal_maiden_arcane_aura_custom_slow_speed:GetEffectName()
-  return "particles/zuus_speed.vpcf"
-end
-
-function modifier_crystal_maiden_arcane_aura_custom_slow_speed:OnCreated()
-
-self.speed = self:GetCaster():GetTalentValue("modifier_maiden_arcane_3", "speed")
-end 
-
-
+function modifier_crystal_maiden_arcane_aura_custom_slow_speed:IsHidden() return true end
+function modifier_crystal_maiden_arcane_aura_custom_slow_speed:IsPurgable() return true end
+function modifier_crystal_maiden_arcane_aura_custom_slow_speed:GetEffectName() return "particles/zuus_speed.vpcf" end
 
 
 modifier_crystal_maiden_arcane_aura_custom_shield_tracker = class({})
@@ -879,11 +858,10 @@ function modifier_crystal_maiden_arcane_aura_custom_damage:IsPurgable() return f
 function modifier_crystal_maiden_arcane_aura_custom_damage:GetTexture() return "buffs/arcane_damage" end
 function modifier_crystal_maiden_arcane_aura_custom_damage:OnCreated(table)
 
-self.damage = self:GetCaster():GetTalentValue("modifier_maiden_arcane_2", "damage")
-self.max = self:GetCaster():GetTalentValue("modifier_maiden_arcane_2", "max")
+self.damage = self:GetCaster():GetTalentValue("modifier_maiden_arcane_4", "damage")
+self.max = self:GetCaster():GetTalentValue("modifier_maiden_arcane_4", "max")
 
 if not IsServer() then return end
-
 self:SetStackCount(1)
 end
 
@@ -897,15 +875,12 @@ end
 function modifier_crystal_maiden_arcane_aura_custom_damage:DeclareFunctions()
 return
 {
-    MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
+  MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
 }
 end
 
-
-
 function modifier_crystal_maiden_arcane_aura_custom_damage:GetModifierSpellAmplify_Percentage()
-
-  return self.damage*self:GetStackCount()
+return self.damage*self:GetStackCount()
 end
 
 
@@ -925,7 +900,10 @@ function modifier_crystal_maiden_arcane_aura_custom_spell:GetTexture() return "b
 function modifier_crystal_maiden_arcane_aura_custom_spell:OnCreated(table)
 if not IsServer() then return end
 
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'crystal_attack_change',  {max = self:GetCaster():GetTalentValue("modifier_maiden_arcane_6", "attacks"), damage = self:GetCaster():GetTalentValue("modifier_maiden_arcane_6", "attacks")})
+self.parent = self:GetParent()
+self.max = self.parent:GetTalentValue("modifier_maiden_arcane_6", "attacks")
+
+self.parent:UpdateUIlong({max = self.max, stack = self.max, style = "MaidenAura"})
 
 self.nFXIndex = ParticleManager:CreateParticle("particles/maiden_spells.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
 ParticleManager:SetParticleControl(self.nFXIndex, 0, self:GetParent():GetOrigin())
@@ -936,8 +914,8 @@ end
 
 function modifier_crystal_maiden_arcane_aura_custom_spell:OnDestroy()
 if not IsServer() then return end
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'crystal_attack_change',  {max = self:GetCaster():GetTalentValue("modifier_maiden_arcane_6", "attacks"), damage = 0})
 
+self.parent:UpdateUIlong({max = self.max, stack = 0, style = "MaidenAura"})
 end 
 
 
@@ -946,8 +924,8 @@ function modifier_crystal_maiden_arcane_aura_custom_spell_count:IsHidden() retur
 function modifier_crystal_maiden_arcane_aura_custom_spell_count:IsPurgable() return false end
 function modifier_crystal_maiden_arcane_aura_custom_spell_count:GetTexture() return "buffs/arcane_spells" end
 function modifier_crystal_maiden_arcane_aura_custom_spell_count:OnCreated()
-self.max = self:GetCaster():GetTalentValue("modifier_maiden_arcane_6", "attacks")
-
+self.parent = self:GetParent()
+self.max = self.parent:GetTalentValue("modifier_maiden_arcane_6", "attacks")
 if not IsServer() then return end 
 self:SetStackCount(1)
 
@@ -960,15 +938,14 @@ self:IncrementStackCount()
 
 if self:GetStackCount() >= self.max then 
 
-  self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_crystal_maiden_arcane_aura_custom_spell", {duration = self:GetCaster():GetTalentValue("modifier_maiden_arcane_6", "duration")})
+  self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_crystal_maiden_arcane_aura_custom_spell", {duration = self.parent:GetTalentValue("modifier_maiden_arcane_6", "duration")})
 
-  local particle_peffect = ParticleManager:CreateParticle("particles/maiden_shield_active.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-  ParticleManager:SetParticleControl(particle_peffect, 0, self:GetCaster():GetAbsOrigin())
-  ParticleManager:SetParticleControl(particle_peffect, 2, self:GetCaster():GetAbsOrigin())
+  local particle_peffect = ParticleManager:CreateParticle("particles/maiden_shield_active.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+  ParticleManager:SetParticleControl(particle_peffect, 0, self.parent:GetAbsOrigin())
+  ParticleManager:SetParticleControl(particle_peffect, 2, self.parent:GetAbsOrigin())
   ParticleManager:ReleaseParticleIndex(particle_peffect)
 
-  self:GetCaster():EmitSound("Lina.Array_triple")
-
+  self.parent:EmitSound("Lina.Array_triple")
   self:Destroy()
 end
 
@@ -976,8 +953,7 @@ end
 
 function modifier_crystal_maiden_arcane_aura_custom_spell_count:OnStackCountChanged(iStackCount)
 if not IsServer() then return end 
-
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'crystal_attack_change',  {max = self.max, damage = self:GetStackCount()})
+self.parent:UpdateUIlong({max = self.max, stack = self:GetStackCount(), style = "MaidenAura"})
 end
 
 
@@ -985,7 +961,16 @@ function modifier_crystal_maiden_arcane_aura_custom_spell_count:OnDestroy()
 if not IsServer() then return end
 
 if self:GetStackCount() < self.max then 
-  CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'crystal_attack_change',  {max = self.max, damage = 0})
+  self.parent:UpdateUIlong({max = self.max, stack = 0, style = "MaidenAura"})
 end 
 
 end 
+
+modifier_crystal_maiden_arcane_aura_custom_attack_cd = class({})
+function modifier_crystal_maiden_arcane_aura_custom_attack_cd:IsHidden() return false end
+function modifier_crystal_maiden_arcane_aura_custom_attack_cd:IsDebuff() return true end
+function modifier_crystal_maiden_arcane_aura_custom_attack_cd:IsPurgable() return false end
+function modifier_crystal_maiden_arcane_aura_custom_attack_cd:RemoveOnDeath() return false end
+function modifier_crystal_maiden_arcane_aura_custom_attack_cd:OnCreated()
+self.RemoveForDuel = true
+end

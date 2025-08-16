@@ -1,595 +1,621 @@
 LinkLuaModifier( "modifier_primal_beast_uproar_custom", "abilities/primal_beast/primal_beast_uproar_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_primal_beast_uproar_custom_buff", "abilities/primal_beast/primal_beast_uproar_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_primal_beast_uproar_custom_debuff", "abilities/primal_beast/primal_beast_uproar_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_primal_beast_uproar_custom_speed", "abilities/primal_beast/primal_beast_uproar_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_primal_beast_uproar_custom_legendary", "abilities/primal_beast/primal_beast_uproar_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_primal_beast_uproar_custom_bkb", "abilities/primal_beast/primal_beast_uproar_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_primal_beast_uproar_custom_root", "abilities/primal_beast/primal_beast_uproar_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_primal_beast_uproar_custom_proc", "abilities/primal_beast/primal_beast_uproar_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_primal_beast_uproar_custom_taunt", "abilities/primal_beast/primal_beast_uproar_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_primal_beast_uproar_custom_taunt_cd", "abilities/primal_beast/primal_beast_uproar_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_primal_beast_uproar_custom_taunt_heal", "abilities/primal_beast/primal_beast_uproar_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_primal_beast_uproar_custom_shield", "abilities/primal_beast/primal_beast_uproar_custom", LUA_MODIFIER_MOTION_NONE )
 
 primal_beast_uproar_custom = class({})
 
 
 
-primal_beast_uproar_custom.stats_damage = {6,9,12}
-primal_beast_uproar_custom.stats_speed = {2,3,4}
-
-primal_beast_uproar_custom.taunt_health = 30
-primal_beast_uproar_custom.taunt_cd = 30
-primal_beast_uproar_custom.taunt_radius = 600
-primal_beast_uproar_custom.taunt_duration = 2
-primal_beast_uproar_custom.taunt_heal = 15
-
-
-primal_beast_uproar_custom.proc_speed = 300
-primal_beast_uproar_custom.proc_bonus = {1, 2}
-primal_beast_uproar_custom.proc_crit = {130, 180}
-primal_beast_uproar_custom.proc_duration = 7
-primal_beast_uproar_custom.proc_max = 3
-primal_beast_uproar_custom.proc_health = 0.25
-
-primal_beast_uproar_custom.cast_heal = {0.015, 0.02, 0.025}
-
-primal_beast_blood_frenzy_custom = class({})
-
-
-
-
 function primal_beast_uproar_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-PrecacheResource( "particle", 'particles/units/heroes/hero_meepo/meepo_ransack.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_primal_beast/primal_beast_roar_aoe.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_primal_beast/primal_beast_roar.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_primal_beast/primal_beast_uproar_magic_resist.vpcf', context )
-PrecacheResource( "particle", 'particles/units/heroes/hero_primal_beast/primal_beast_status_effect_slow.vpcf', context )
-PrecacheResource( "particle", 'particles/status_fx/status_effect_legion_commander_duel.vpcf', context )
-PrecacheResource( "particle", 'particles/beast_grave.vpcf', context )
-PrecacheResource( "particle", 'particles/beast_hands.vpcf', context )
-PrecacheResource( "particle", 'particles/beast_root.vpcf', context )
-PrecacheResource( "particle", 'particles/beast_proc.vpcf', context )
-PrecacheResource( "particle", 'particles/beast_blood.vpcf', context )
-PrecacheResource( "particle", 'particles/status_fx/status_effect_bloodrage.vpcf', context )
-
+PrecacheResource( "particle","particles/units/heroes/hero_meepo/meepo_ransack.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_primal_beast/primal_beast_roar_aoe.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_primal_beast/primal_beast_roar.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_primal_beast/primal_beast_uproar_magic_resist.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_primal_beast/primal_beast_status_effect_slow.vpcf", context )
+PrecacheResource( "particle","particles/status_fx/status_effect_legion_commander_duel.vpcf", context )
+PrecacheResource( "particle","particles/beast_grave.vpcf", context )
+PrecacheResource( "particle","particles/beast_hands.vpcf", context )
+PrecacheResource( "particle","particles/items_fx/black_king_bar_avatar.vpcf", context )
+PrecacheResource( "particle","particles/beast_root.vpcf", context )
+PrecacheResource( "particle","particles/beast_proc.vpcf", context )
+PrecacheResource( "particle","particles/beast_blood.vpcf", context )
+PrecacheResource( "particle","particles/jugg_parry.vpcf", context )
+PrecacheResource( "particle","particles/status_fx/status_effect_bloodrage.vpcf", context )
+PrecacheResource( "particle","particles/status_fx/status_effect_beserkers_call.vpcf", context )
+PrecacheResource( "particle","particles/primal_beast/uproar_legendary.vpcf", context )
 end
-
-
 
 
 function primal_beast_uproar_custom:GetBehavior()
-	return DOTA_ABILITY_BEHAVIOR_NO_TARGET
+local bonus = 0
+if self:GetCaster():HasTalent("modifier_primal_beast_uproar_6") then 
+	bonus = DOTA_ABILITY_BEHAVIOR_IGNORE_PSEUDO_QUEUE
+end
+return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IMMEDIATE + DOTA_ABILITY_BEHAVIOR_IGNORE_CHANNEL + bonus
+end
+
+function primal_beast_uproar_custom:GetCastRange(vLocation, hTarget)
+local caster = self:GetCaster()
+local radius = self:GetSpecialValueFor("radius")
+if caster:HasTalent("modifier_primal_beast_uproar_5") then 
+	radius = caster:GetTalentValue("modifier_primal_beast_uproar_5", "radius")
+end
+return radius - caster:GetCastRangeBonus()
 end
 
 function primal_beast_uproar_custom:GetAbilityTextureName(  )
-	local stack = self:GetCaster():GetModifierStackCount( "modifier_primal_beast_uproar_custom", self:GetCaster() )
-	if stack==0 then
-		return "primal_beast_uproar_none"
-	elseif stack == self:GetSpecialValueFor("stack_limit") then
-		return "primal_beast_uproar_max"
-	else
-		return "primal_beast_uproar_mid"
-	end
+local stack = self:GetCaster():GetModifierStackCount( "modifier_primal_beast_uproar_custom", self:GetCaster() )
+if stack==0 then
+	return "primal_beast_uproar_none"
+elseif stack >= self:GetSpecialValueFor("stack_limit") then
+	return "primal_beast_uproar_max"
+else
+	return "primal_beast_uproar_mid"
 end
 
-function primal_beast_uproar_custom:IsRefreshable()
-	return false
 end
 
 function primal_beast_uproar_custom:GetIntrinsicModifierName()
-	return "modifier_primal_beast_uproar_custom"
+if not self:GetCaster():IsRealHero() then return end
+return "modifier_primal_beast_uproar_custom"
 end
 
 function primal_beast_uproar_custom:CastFilterResult()
-	if self:GetCaster():GetModifierStackCount( "modifier_primal_beast_uproar_custom", self:GetCaster() ) < 1 then
-		return UF_FAIL_CUSTOM
-	end
-	if self:GetCaster():HasModifier("modifier_primal_beast_uproar_custom_buff") then
-		return UF_FAIL_CUSTOM
-	end
-	return UF_SUCCESS
+if self:GetCaster():GetModifierStackCount( "modifier_primal_beast_uproar_custom", self:GetCaster() ) < 1 then
+	return UF_FAIL_CUSTOM
+end
+if self:GetCaster():HasModifier("modifier_primal_beast_uproar_custom_buff") then
+	return UF_FAIL_CUSTOM
+end
+return UF_SUCCESS
 end
 
 function primal_beast_uproar_custom:GetCustomCastError( hTarget )
-	if self:GetCaster():GetModifierStackCount( "modifier_primal_beast_uproar_custom", self:GetCaster() ) < 1 then
-		return "#dota_hud_error_no_uproar_stacks"
-	end
-	if self:GetCaster():HasModifier("modifier_primal_beast_uproar_custom_buff") then
-		return "#dota_hud_error_already_roared"
-	end
-	return ""
+if self:GetCaster():GetModifierStackCount( "modifier_primal_beast_uproar_custom", self:GetCaster() ) < 1 then
+	return "#dota_hud_error_no_uproar_stacks"
 end
-
-
-
-
-
-
+if self:GetCaster():HasModifier("modifier_primal_beast_uproar_custom_buff") then
+	return "#dota_hud_error_already_roared"
+end
+return ""
+end
 
 
 function primal_beast_uproar_custom:OnSpellStart()
-	if not IsServer() then return end
 
-	local duration = self:GetSpecialValueFor( "roar_duration" )
-	local radius = self:GetSpecialValueFor( "radius" )
-	local slow = self:GetSpecialValueFor( "slow_duration" )
+local caster = self:GetCaster()
+local duration = self:GetSpecialValueFor("roar_duration") + caster:GetTalentValue("modifier_primal_beast_uproar_2", "duration")
+local radius = self:GetSpecialValueFor("radius")
+local slow = self:GetSpecialValueFor("slow_duration") + caster:GetTalentValue("modifier_primal_beast_uproar_2", "duration")
 
-
-	local stack = 0
-	local modifier = self:GetCaster():FindModifierByName( "modifier_primal_beast_uproar_custom" )
-	if modifier then
-		stack = modifier:GetStackCount()
-		modifier:ResetStack()
-	end
-
-	if self:GetCaster():HasModifier("modifier_primal_beast_uproar_2") then 
-
-		local heal = self.cast_heal[self:GetCaster():GetUpgradeStack("modifier_primal_beast_uproar_2")] *stack*self:GetCaster():GetMaxHealth()
-
-
-		self:GetCaster():Heal(heal, self:GetCaster())
-		SendOverheadEventMessage(self:GetCaster(), 10, self:GetCaster(), heal, nil)
-
-		local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_meepo/meepo_ransack.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-		ParticleManager:ReleaseParticleIndex( particle )
-	end
-
-
-	if self:GetCaster():HasModifier("modifier_primal_beast_uproar_4") then 
-
-		duration = duration + self.proc_bonus[self:GetCaster():GetUpgradeStack("modifier_primal_beast_uproar_4")]
-	--	self:GetCaster():Purge(false, true, false, false, false)
-	--	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_primal_beast_uproar_custom_bkb", {duration = self.bkb_duration})
-	end
-
-	if self:GetCaster():HasModifier("modifier_primal_beast_uproar_1") then 
-		self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_primal_beast_uproar_custom_speed", {duration = self:GetCaster():GetTalentValue("modifier_primal_beast_uproar_1", "duration")})
-	end
-
-	local ult = self:GetCaster():FindAbilityByName("primal_beast_pulverize_custom")
-	if ult and stack == self:GetCaster():GetTalentValue("modifier_primal_beast_pulverize_7", "uproar") and self:GetCaster():HasModifier("modifier_primal_beast_pulverize_7") then 
-		ult:AddLegendaryStack()
-	end 
-
-	local frenzy = self:GetCaster():FindAbilityByName("primal_beast_blood_frenzy_custom")
-	if frenzy and frenzy:GetCooldownTimeRemaining() < duration then
-		--frenzy:StartCooldown(duration)
-	end
-
-	self:StartCooldown(duration)
-	self:GetCaster():AddNewModifier( self:GetCaster(), self, "modifier_primal_beast_uproar_custom_buff", { duration = duration, stack = stack } )
-
-	local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetCaster():GetOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false )
-
-	for _,enemy in pairs(enemies) do
-		if self:GetCaster():HasModifier("modifier_primal_beast_uproar_5") then 
-			enemy:EmitSound("PBeast.Uproar_root")
-			enemy:AddNewModifier(self:GetCaster(), self, "modifier_primal_beast_uproar_custom_root", {duration = self:GetCaster():GetTalentValue("modifier_primal_beast_uproar_5", "root")*(1 - enemy:GetStatusResistance()), stack = stack })
-		else 
-			enemy:AddNewModifier( self:GetCaster(), self, "modifier_primal_beast_uproar_custom_debuff", { duration = slow*(1 - enemy:GetStatusResistance()), stack = stack } )
-		end
-	end
-
-	self:PlayEffects( radius )
-	self:PlayEffects2()
+local stack = 0
+local modifier = caster:FindModifierByName( "modifier_primal_beast_uproar_custom" )
+if modifier then
+	stack = modifier:GetStackCount()
+	modifier:ResetStack()
 end
 
+local ult = caster:FindAbilityByName("primal_beast_pulverize_custom")
+local ult_stack = caster:GetTalentValue("modifier_primal_beast_pulverize_7", "uproar", true)
+
+if ult and stack >= ult_stack and ult:IsTrained() then 
+	ult:AddLegendaryStack()
+end 
+
+if caster:HasTalent("modifier_primal_beast_uproar_6") then 
+	caster:Purge(false, true, false, false, false)
+	caster:AddNewModifier(caster, self, "modifier_primal_beast_uproar_custom_shield", {duration = caster:GetTalentValue("modifier_primal_beast_uproar_6", "duration")})
+end
+
+self:StartCooldown(duration)
+caster:RemoveModifierByName("modifier_primal_beast_uproar_custom_buff")
+caster:AddNewModifier( caster, self, "modifier_primal_beast_uproar_custom_buff", { duration = duration, stack = stack } )
+
+local pull_duration = caster:GetTalentValue("modifier_primal_beast_uproar_5", "pull_duration")
+local root_duration = caster:GetTalentValue("modifier_primal_beast_uproar_5", "root")
+local pull_radius = caster:GetTalentValue("modifier_primal_beast_uproar_5", "radius")
+
+local damage = caster:GetTalentValue("modifier_primal_beast_uproar_3", "cast_damage")
+local damageTable = {attacker = caster, ability = self, damage = damage*stack, damage_type = DAMAGE_TYPE_MAGICAL}
+local caster_loc = caster:GetAbsOrigin()
+
+for _,enemy in pairs(caster:FindTargets(radius)) do
+
+	if caster:HasTalent("modifier_primal_beast_uproar_3") then 
+		damageTable.victim = enemy
+		DoDamage(damageTable, "modifier_primal_beast_uproar_3")
+	end
+
+	if ult and ult:IsTrained() and stack >= ult_stack then 
+		ult:AddStrStack(enemy)
+	end
+
+	if caster:HasTalent("modifier_primal_beast_uproar_5") then 
+
+		enemy:Purge(true, false, false, false, false)
+
+		if (enemy:GetAbsOrigin() - caster_loc):Length2D() <= pull_radius then 
+
+			local dir = (caster_loc -  enemy:GetAbsOrigin()):Normalized()
+			local point = caster_loc - dir*100
+
+			local distance = (point - enemy:GetAbsOrigin()):Length2D()
+
+			distance = math.max(100, distance)
+			point = enemy:GetAbsOrigin() + dir*distance
+
+			local arc = enemy:AddNewModifier( caster,  self,  "modifier_generic_arc",  
+			{
+			  target_x = point.x,
+			  target_y = point.y,
+			  distance = distance,
+			  duration = pull_duration,
+			  height = 0,
+			  fix_end = false,
+			  isStun = false,
+			  activity = ACT_DOTA_FLAIL,
+			})
+
+			if arc then 
+			  	arc:SetEndCallback(function()
+			  		if enemy and not enemy:IsNull() then		
+			  			enemy:EmitSound("PBeast.Uproar_root")
+						enemy:AddNewModifier(caster, self, "modifier_primal_beast_uproar_custom_root", {duration = root_duration*(1 - enemy:GetStatusResistance()), stack = stack })
+					end
+				end)
+			end  
+		else 
+  			enemy:EmitSound("PBeast.Uproar_root")
+			enemy:AddNewModifier(caster, self, "modifier_primal_beast_uproar_custom_root", {duration = root_duration*(1 - enemy:GetStatusResistance()), stack = stack })
+		end
+	else 
+		enemy:AddNewModifier( caster, self, "modifier_primal_beast_uproar_custom_debuff", { duration = slow*(1 - enemy:GetStatusResistance()), stack = stack } )
+	end
+end
+
+self:PlayEffects( radius )
+self:PlayEffects2()
+end
+
+
 function primal_beast_uproar_custom:PlayEffects( radius )
-	local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_primal_beast/primal_beast_roar_aoe.vpcf", PATTACH_ABSORIGIN, self:GetCaster() )
-	ParticleManager:SetParticleControl( effect_cast, 1, Vector( radius, radius, radius ) )
-	ParticleManager:ReleaseParticleIndex( effect_cast )
-	self:GetCaster():EmitSound("Hero_PrimalBeast.Uproar.Cast")
+local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_primal_beast/primal_beast_roar_aoe.vpcf", PATTACH_ABSORIGIN, self:GetCaster() )
+ParticleManager:SetParticleControl( effect_cast, 1, Vector( radius, radius, radius ) )
+ParticleManager:ReleaseParticleIndex( effect_cast )
+self:GetCaster():EmitSound("Hero_PrimalBeast.Uproar.Cast")
 end
 
 function primal_beast_uproar_custom:PlayEffects2()
-	local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_primal_beast/primal_beast_roar.vpcf", PATTACH_POINT_FOLLOW, self:GetCaster() )
-	ParticleManager:SetParticleControlEnt( effect_cast, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_jaw_fx", Vector(0,0,0), true )
-	ParticleManager:ReleaseParticleIndex( effect_cast )
+local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_primal_beast/primal_beast_roar.vpcf", PATTACH_POINT_FOLLOW, self:GetCaster() )
+ParticleManager:SetParticleControlEnt( effect_cast, 0, self:GetCaster(), PATTACH_POINT_FOLLOW, "attach_jaw_fx", Vector(0,0,0), true )
+ParticleManager:ReleaseParticleIndex( effect_cast )
 end
+
+
 
 
 modifier_primal_beast_uproar_custom = class({})
 
-function modifier_primal_beast_uproar_custom:IsHidden()
-	return self:GetStackCount() < 1
-end
-
-function modifier_primal_beast_uproar_custom:IsPurgable()
-	return false
-end
-
-function modifier_primal_beast_uproar_custom:RemoveOnDeath()
-	return false
-end
-
-function modifier_primal_beast_uproar_custom:DestroyOnExpire()
-	return false
-end
-
+function modifier_primal_beast_uproar_custom:IsHidden() return self:GetStackCount() < 1 end
+function modifier_primal_beast_uproar_custom:IsPurgable() return false end
+function modifier_primal_beast_uproar_custom:RemoveOnDeath() return false end
+function modifier_primal_beast_uproar_custom:DestroyOnExpire() return false end
 function modifier_primal_beast_uproar_custom:OnCreated( kv )
-	self.damage = self:GetAbility():GetSpecialValueFor( "bonus_damage" )
-	if not IsServer() then return end
-	self.damage_count = 0
-	self.damage_attack_count = 0
 
-	self.damage_limit = self:GetAbility():GetSpecialValueFor( "damage_limit" )
-	self.stack_limit = self:GetAbility():GetSpecialValueFor( "stack_limit" )
-	self.duration = self:GetAbility():GetSpecialValueFor( "stack_duration" )
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.parent:AddRecordDestroyEvent(self)
+self.parent:AddDamageEvent_inc(self)
+self.parent:AddDamageEvent_out(self)
+self.parent:AddAttackEvent_out(self)
+self.parent:AddSpellEvent(self)
+
+self.damage_count = 0
+self.damage_attack_count = 0
+
+self.damage_limit = self.ability:GetSpecialValueFor( "damage_limit" )
+self.stack_limit = self.ability:GetSpecialValueFor( "stack_limit" )
+self.duration = self.ability:GetSpecialValueFor( "stack_duration" )
+
+self.records = {}
+
+self.status_resist = self.parent:GetTalentValue("modifier_primal_beast_uproar_2", "status")
+
+self.legendary_max = self.parent:GetTalentValue("modifier_primal_beast_uproar_7", "max", true)
+
+self.speed_duration = self.parent:GetTalentValue("modifier_primal_beast_uproar_4", "duration", true)
+self.heal_creeps = self.parent:GetTalentValue("modifier_primal_beast_uproar_4", "creeps", true)
+self.speed_heal = self.parent:GetTalentValue("modifier_primal_beast_uproar_4", "heal", true)/100
+self.speed_stun = self.parent:GetTalentValue("modifier_primal_beast_uproar_4", "stun", true)
+if not IsServer() then return end
+self:SetHasCustomTransmitterData(true)
+self:UpdateTalent()
 end
 
 function modifier_primal_beast_uproar_custom:OnRefresh( kv )
-	self.damage = self:GetAbility():GetSpecialValueFor( "bonus_damage" )
-	if not IsServer() then return end
-	self.damage_limit = self:GetAbility():GetSpecialValueFor( "damage_limit" )
-	self.stack_limit = self:GetAbility():GetSpecialValueFor( "stack_limit" )
-	self.duration = self:GetAbility():GetSpecialValueFor( "stack_duration" )	
+self.damage = self.ability:GetSpecialValueFor( "bonus_damage" )
 end
 
 function modifier_primal_beast_uproar_custom:DeclareFunctions()
-	local funcs = {
-		MODIFIER_EVENT_ON_TAKEDAMAGE,
-		MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
-	}
-
-	return funcs
-end
-
-function modifier_primal_beast_uproar_custom:OnTakeDamage( params )
-if not IsServer() then return end
-if params.unit ~= self:GetParent() then return end
-local damage = params.damage
-
-
-if self:GetParent():HasModifier("modifier_primal_beast_uproar_6") then 
-
-	if self:GetParent():GetHealthPercent() < self:GetAbility().taunt_health and 
-		not self:GetParent():PassivesDisabled() and 
-		not self:GetParent():HasModifier("modifier_primal_beast_uproar_custom_taunt_cd") then 
-
-		self:GetAbility():PlayEffects(self:GetAbility().taunt_radius)
-
-		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_primal_beast_uproar_custom_taunt_heal", {duration = self:GetAbility().taunt_duration})
-		
-		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_primal_beast_uproar_custom_taunt_cd", {duration = self:GetAbility().taunt_cd})
-		
-		local enemies = FindUnitsInRadius( self:GetParent():GetTeamNumber(), self:GetParent():GetOrigin(), nil, self:GetAbility().taunt_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, 0, false)
-
-		for _,enemy in pairs(enemies) do 
-			if enemy:GetUnitName() ~= "npc_teleport" then
-				enemy:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_primal_beast_uproar_custom_taunt", {duration = (1 - enemy:GetStatusResistance())*self:GetAbility().taunt_duration})
-			end
-		end
-	
-	end
-
-end
-
-
-
-if self:GetParent():HasModifier("modifier_primal_beast_uproar_4") and not self:GetParent():HasModifier("modifier_primal_beast_uproar_custom_proc") then 
-
-	local max = self:GetParent():GetMaxHealth()*self:GetAbility().proc_health 
-
-	self.damage_attack_count = self.damage_attack_count + damage
-	if self.damage_attack_count >= max then 
-		self.damage_attack_count = 0
-		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_primal_beast_uproar_custom_proc", {duration = self:GetAbility().proc_duration})
-	end
-end
-
-
-if self:GetParent():HasModifier( "modifier_primal_beast_uproar_custom_buff" ) and not self:GetParent():HasModifier("modifier_primal_beast_uproar_custom_legendary")  then return end
-
-
-local max = self.damage_limit
-
-local stack_limit = self.stack_limit
-	
-
-if self:GetParent():HasModifier("modifier_primal_beast_uproar_custom_legendary") then 
-	stack_limit = 99999
-end
-
-
-
-while damage > 0 do 
-	self.damage_count = damage + self.damage_count
-
-	if self.damage_count < max then 
-	    damage = 0
-    else 
-	    damage =  self.damage_count - max
-	    self.damage_count = 0
-
-		if self:GetStackCount() < stack_limit then
-			self:IncrementStackCount()
-			if self:GetStackCount() == self.stack_limit then
-				self:GetParent():EmitSound("Hero_PrimalBeast.Uproar.MaxStacks")
-			end
-		end
-
-		self:SetDuration( self.duration, true )
-		self:StartIntervalThink(self.duration)
-	end
-end
-
-
-
-
-end
-
-function modifier_primal_beast_uproar_custom:GetModifierPreAttack_BonusDamage()
-	return self.damage
-end
-
-function modifier_primal_beast_uproar_custom:OnIntervalThink()
-	self:ResetStack()
-end
-
-function modifier_primal_beast_uproar_custom:ResetStack()
-	self:SetStackCount(0)
-end
-
-modifier_primal_beast_uproar_custom_buff = class({})
-
-function modifier_primal_beast_uproar_custom_buff:IsPurgable()
-	return false
-end
-
-function modifier_primal_beast_uproar_custom_buff:OnCreated( kv )
-	self.damage = self:GetAbility():GetSpecialValueFor( "bonus_damage_per_stack" )
-	self.armor = self:GetAbility():GetSpecialValueFor( "roared_bonus_armor" )
-	if not IsServer() then return end
-	self:SetStackCount(self:GetStackCount() + kv.stack)
-	self:PlayEffects()
-end
-
-
-function modifier_primal_beast_uproar_custom_buff:OnRefresh( kv )
-	self:OnCreated(kv)
-end
-
-function modifier_primal_beast_uproar_custom_buff:DeclareFunctions()
-	local funcs = {
-		MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
-		MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
-		MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-		MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS
-	}
-
-	return funcs
-end
-
-function modifier_primal_beast_uproar_custom_buff:GetModifierPreAttack_BonusDamage()
-local bonus = self.damage
-if self:GetParent():HasModifier("modifier_primal_beast_uproar_3") then 
-	bonus = bonus + self:GetAbility().stats_damage[self:GetParent():GetUpgradeStack("modifier_primal_beast_uproar_3")]
-end 
-	return bonus * self:GetStackCount()
-end
-
-
-
-function modifier_primal_beast_uproar_custom_buff:GetModifierMoveSpeedBonus_Percentage()
-local bonus = 0
-if self:GetParent():HasModifier("modifier_primal_beast_uproar_3") then 
-	bonus = self:GetAbility().stats_speed[self:GetParent():GetUpgradeStack("modifier_primal_beast_uproar_3")]
-end 
-	return bonus * self:GetStackCount()
-end
-
-
-
-function modifier_primal_beast_uproar_custom_buff:GetModifierPhysicalArmorBonus()
-	return self.armor * self:GetStackCount()
-end
-
-function modifier_primal_beast_uproar_custom_buff:PlayEffects()
-	local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_primal_beast/primal_beast_uproar_magic_resist.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent() )
-	ParticleManager:SetParticleControlEnt( effect_cast, 2, self:GetParent(), PATTACH_OVERHEAD_FOLLOW, "attach_hitloc", Vector(0,0,0), true )
-	self:AddParticle( effect_cast, false, false, -1, false, false )
-end
-
-modifier_primal_beast_uproar_custom_debuff = class({})
-
-function modifier_primal_beast_uproar_custom_debuff:IsPurgable()
-	return true
-end
-
-function modifier_primal_beast_uproar_custom_debuff:GetTexture()
-	return "primal_beast_uproar"
-end
-
-function modifier_primal_beast_uproar_custom_debuff:OnCreated( kv )
-	self.slow = -self:GetAbility():GetSpecialValueFor( "move_slow_per_stack" ) + self:GetCaster():GetTalentValue("modifier_primal_beast_uproar_5", "slow")
-	if not IsServer() then return end
-	self:SetStackCount(kv.stack)
-end
-
-function modifier_primal_beast_uproar_custom_debuff:OnRefresh( kv )
-	self.slow = -self:GetAbility():GetSpecialValueFor( "move_slow_per_stack" ) + self:GetCaster():GetTalentValue("modifier_primal_beast_uproar_5", "slow")
-	if not IsServer() then return end
-	self:SetStackCount(kv.stack)
-end
-
-function modifier_primal_beast_uproar_custom_debuff:DeclareFunctions()
-	local funcs = {
-		MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-	}
-
-	return funcs
-end
-
-function modifier_primal_beast_uproar_custom_debuff:GetModifierMoveSpeedBonus_Percentage()
-	return self.slow * self:GetStackCount()
-end
-
-function modifier_primal_beast_uproar_custom_debuff:GetStatusEffectName()
-	return "particles/units/heroes/hero_primal_beast/primal_beast_status_effect_slow.vpcf"
-end
-
-function modifier_primal_beast_uproar_custom_debuff:StatusEffectPriority()
-	return MODIFIER_PRIORITY_NORMAL
-end
-
-
-modifier_primal_beast_uproar_custom_speed = class({})
-function modifier_primal_beast_uproar_custom_speed:IsHidden() return false end
-function modifier_primal_beast_uproar_custom_speed:IsPurgable() return false end
-function modifier_primal_beast_uproar_custom_speed:GetTexture() return "buffs/uproar_speed" end
-function modifier_primal_beast_uproar_custom_speed:DeclareFunctions()
-return
+return 
 {
-	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-	MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
-	MODIFIER_EVENT_ON_ATTACK_LANDED
+	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
 }
 end
 
-function modifier_primal_beast_uproar_custom_speed:GetModifierAttackSpeedBonus_Constant()
-return self.speed
+function modifier_primal_beast_uproar_custom:GetModifierStatusResistanceStacking()
+return self.status_resist
 end
 
-function modifier_primal_beast_uproar_custom_speed:GetModifierAttackRangeBonus()
-return self.range
+function modifier_primal_beast_uproar_custom:UpdateTalent(name)
+self.status_resist = self.parent:GetTalentValue("modifier_primal_beast_uproar_2", "status")
+self:SendBuffRefreshToClients()
 end
 
 
-function modifier_primal_beast_uproar_custom_speed:OnAttackLanded(params)
+function modifier_primal_beast_uproar_custom:AddCustomTransmitterData() 
+return 
+{
+  status_resist = self.status_resist,
+} 
+end
+
+function modifier_primal_beast_uproar_custom:HandleCustomTransmitterData(data)
+self.status_resist = data.status_resist
+end
+
+
+
+
+function modifier_primal_beast_uproar_custom:RecordDestroyEvent(params)
 if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end
+if not self.records[params.record] then return end
 
-self:SetDuration(self.duration, true)
-
+self.records[params.record] = nil
 end
 
 
 
-function modifier_primal_beast_uproar_custom_speed:OnCreated()
-self.speed = self:GetCaster():GetTalentValue("modifier_primal_beast_uproar_1", "speed")
-self.range = self:GetCaster():GetTalentValue("modifier_primal_beast_uproar_1", "range")
-self.duration = self:GetCaster():GetTalentValue("modifier_primal_beast_uproar_1", "duration")
+function modifier_primal_beast_uproar_custom:SpellEvent(params)
+if not IsServer() then return end 
+if not self.parent:HasTalent("modifier_primal_beast_uproar_4") then return end
+if params.unit~=self.parent then return end
+if params.ability:IsItem() then return end
 
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_primal_beast_uproar_custom_proc", {duration = self.speed_duration})
+end
+
+
+function modifier_primal_beast_uproar_custom:AttackEvent_out(params)
+if not IsServer() then return end 
+if self.parent ~= params.attacker then return end 
+if not params.target:IsUnit() then return end 
+
+
+local speed_mod = self.parent:FindModifierByName("modifier_primal_beast_uproar_custom_proc")
+if speed_mod then
+	speed_mod:DecrementStackCount()
+	if speed_mod:GetStackCount() <= 0 then
+		speed_mod:Destroy()
+	end
+	self.records[params.record] = true
+end
+
+local mod = self.parent:FindModifierByName("modifier_primal_beast_uproar_custom_legendary")
+if mod then 
+	if self:GetStackCount() < self:GetMax() then
+		self:IncrementStackCount()
+	end
+	self:SetDuration( self.duration, true )
+	self:StartIntervalThink(self.duration)
+end
+
+end
+
+
+function modifier_primal_beast_uproar_custom:DamageEvent_out(params)
+if not IsServer() then return end
+
+if params.record and self.records[params.record] and self.parent:CheckLifesteal(params, 2) then 
+	local heal = params.damage*self.speed_heal
+	if params.unit:IsCreep() then 
+		heal = heal/self.heal_creeps
+	end
+	self.parent:GenericHeal(heal, self.ability, false, nil, "modifier_primal_beast_uproar_4")
+	params.unit:EmitSound("PBeast.Uproar_proc_attack")
+	params.unit:AddNewModifier(self.parent, self.parent:BkbAbility(nil, true), "modifier_bashed", {duration = self.speed_stun*(1 - params.unit:GetStatusResistance())})
+end
+
+end
+
+function modifier_primal_beast_uproar_custom:DamageEvent_inc(params)
+if not IsServer() then return end
+if params.unit ~= self.parent then return end
+if not params.attacker:IsUnit() then return end
+
+local damage = params.damage
+local stack_limit = self:GetMax()
+
+local final = self.damage_count + damage
+
+if final >= self.damage_limit then 
+
+	local delta = math.floor(final/self.damage_limit)
+
+  for i = 1, delta do 
+		if not self.parent:HasModifier( "modifier_primal_beast_uproar_custom_buff" ) or self.parent:HasModifier("modifier_primal_beast_uproar_custom_legendary") then
+
+			if self:GetStackCount() < stack_limit then
+				self:IncrementStackCount()
+				if self:GetStackCount() == self.stack_limit then
+					self.parent:EmitSound("Hero_PrimalBeast.Uproar.MaxStacks")
+				end
+			end
+			self:SetDuration( self.duration, true )
+			self:StartIntervalThink(self.duration)
+		end
+	end
+
+	self.damage_count = final - delta*self.damage_limit
+else 
+  self.damage_count = final
 end 
 
+end
+
+
+function modifier_primal_beast_uproar_custom:GetMax()
+local stack_limit = self.stack_limit
+	
+if self.parent:HasModifier("modifier_primal_beast_uproar_custom_legendary") then 
+	stack_limit = self.legendary_max
+end
+
+return stack_limit
+end
+
+
+function modifier_primal_beast_uproar_custom:OnIntervalThink()
+self:ResetStack()
+end
+
+function modifier_primal_beast_uproar_custom:ResetStack()
+self:SetStackCount(0)
+self:StartIntervalThink(-1)
+end
+
+
+
+
+modifier_primal_beast_uproar_custom_buff = class({})
+function modifier_primal_beast_uproar_custom_buff:IsPurgable() return false end
+function modifier_primal_beast_uproar_custom_buff:IsHidden() return false end
+function modifier_primal_beast_uproar_custom_buff:GetTexture() return "primal_beast_uproar" end
+
+function modifier_primal_beast_uproar_custom_buff:OnCreated( kv )
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+self.caster = self:GetCaster()
+
+self.magic_max = self.caster:GetTalentValue("modifier_primal_beast_uproar_1", "max")
+self.magic = self.caster:GetTalentValue("modifier_primal_beast_uproar_1", "magic")
+self.movespeed = self.caster:GetTalentValue("modifier_primal_beast_uproar_1", "movespeed")
+
+self.damage = self.ability:GetSpecialValueFor( "bonus_damage_per_stack" ) + self.parent:GetTalentValue("modifier_primal_beast_uproar_3", "damage")
+self.armor = self.ability:GetSpecialValueFor( "roared_bonus_armor" )
+if not IsServer() then return end
+self:SetStackCount(kv.stack)
+self:PlayEffects()
+end
+
+
+function modifier_primal_beast_uproar_custom_buff:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
+	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+	MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS
+}
+end
+
+function modifier_primal_beast_uproar_custom_buff:GetModifierPreAttack_BonusDamage()
+return self.damage * self:GetStackCount()
+end
+
+function modifier_primal_beast_uproar_custom_buff:GetModifierMagicalResistanceBonus()
+if not self.caster:HasTalent("modifier_primal_beast_uproar_1") then return end
+return self.magic * math.min(self:GetStackCount(), self.magic_max)
+end
+
+function modifier_primal_beast_uproar_custom_buff:GetModifierMoveSpeedBonus_Percentage()
+if not self.caster:HasTalent("modifier_primal_beast_uproar_1") then return end
+return self.movespeed * math.min(self:GetStackCount(), self.magic_max)
+end
+
+function modifier_primal_beast_uproar_custom_buff:GetModifierPhysicalArmorBonus()
+return self.armor * self:GetStackCount()
+end
+
+function modifier_primal_beast_uproar_custom_buff:PlayEffects()
+local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_primal_beast/primal_beast_uproar_magic_resist.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent() )
+ParticleManager:SetParticleControlEnt( effect_cast, 2, self:GetParent(), PATTACH_OVERHEAD_FOLLOW, "attach_hitloc", Vector(0,0,0), true )
+self:AddParticle( effect_cast, false, false, -1, false, false )
+end
+
+
+
+
+
+modifier_primal_beast_uproar_custom_debuff = class({})
+
+function modifier_primal_beast_uproar_custom_debuff:IsHidden() return false end
+function modifier_primal_beast_uproar_custom_debuff:IsPurgable() return true end
+function modifier_primal_beast_uproar_custom_debuff:GetTexture() return "primal_beast_uproar" end
+
+function modifier_primal_beast_uproar_custom_debuff:OnCreated( kv )
+self.ability = self:GetAbility()
+self.caster = self:GetCaster()
+self.parent = self:GetParent()
+self.slow = -self.ability:GetSpecialValueFor( "move_slow_per_stack" )
+if not IsServer() then return end
+self:SetStackCount(kv.stack)
+end
+
+function modifier_primal_beast_uproar_custom_debuff:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+}
+end
+
+function modifier_primal_beast_uproar_custom_debuff:GetModifierMoveSpeedBonus_Percentage()
+return self.slow * self:GetStackCount()
+end
+
+function modifier_primal_beast_uproar_custom_debuff:GetStatusEffectName()
+return "particles/units/heroes/hero_primal_beast/primal_beast_status_effect_slow.vpcf"
+end
+
+function modifier_primal_beast_uproar_custom_debuff:StatusEffectPriority()
+return MODIFIER_PRIORITY_NORMAL
+end
 
 
 
 
 
 
+
+
+
+primal_beast_blood_frenzy_custom = class({})
+
+function primal_beast_blood_frenzy_custom:CreateTalent()
+self:SetHidden(false)
+end
 
 function primal_beast_blood_frenzy_custom:GetCooldown(iLevel)
 return self:GetCaster():GetTalentValue("modifier_primal_beast_uproar_7", "cd")
 end
 
-
-
 function primal_beast_blood_frenzy_custom:OnSpellStart()
-if not IsServer() then return end 
+local caster = self:GetCaster()
 
-self:GetCaster():EmitSound("PBeast.Uproar_legendary")
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_primal_beast_uproar_custom_legendary", {duration = self:GetCaster():GetTalentValue("modifier_primal_beast_uproar_7", "duration")})
+caster:EmitSound("PBeast.Uproar_legendary")
+caster:AddNewModifier(caster, self, "modifier_primal_beast_uproar_custom_legendary", {duration = caster:GetTalentValue("modifier_primal_beast_uproar_7", "duration")})
 end
 
 
 
 
 modifier_primal_beast_uproar_custom_legendary = class({})
-
 function modifier_primal_beast_uproar_custom_legendary:IsHidden() return false end
 function modifier_primal_beast_uproar_custom_legendary:IsPurgable() return false end
+function modifier_primal_beast_uproar_custom_legendary:GetStatusEffectName() return "particles/status_fx/status_effect_legion_commander_duel.vpcf" end
+function modifier_primal_beast_uproar_custom_legendary:StatusEffectPriority() return MODIFIER_PRIORITY_SUPER_ULTRA  end
 
-function modifier_primal_beast_uproar_custom_legendary:GetStatusEffectName()
-return "particles/status_fx/status_effect_legion_commander_duel.vpcf"
+function modifier_primal_beast_uproar_custom_legendary:OnCreated(table)
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.speed = self.parent:GetTalentValue("modifier_primal_beast_uproar_7", "speed")
+
+self.max_time = self:GetRemainingTime()
+
+if not IsServer() then return end 
+self.RemoveForDuel = true
+
+self.uproar = self.parent:FindAbilityByName("primal_beast_uproar_custom")
+self.mod = self.parent:FindModifierByName("modifier_primal_beast_uproar_custom")
+if self.uproar then 
+	self.uproar:SetActivated(false)
 end
 
-function modifier_primal_beast_uproar_custom_legendary:StatusEffectPriority()
-return 111111
+self.ability:EndCd()
+
+local effect_cast = ParticleManager:CreateParticle( "particles/beast_hands.vpcf", PATTACH_OVERHEAD_FOLLOW, self.parent )
+ParticleManager:SetParticleControlEnt( effect_cast, 2, self.parent, PATTACH_OVERHEAD_FOLLOW, "attach_hitloc", Vector(0,0,0), true )
+self:AddParticle( effect_cast, false, false, -1, false, false )
+
+self.parent:GenericParticle("particles/primal_beast/uproar_legendary.vpcf", self)
+
+self.parent:EmitSound("Hero_PrimalBeast.Uproar.Cast")
+self:OnIntervalThink()
+self:StartIntervalThink(0.03)
 end
 
+
+function modifier_primal_beast_uproar_custom_legendary:OnIntervalThink()
+if not IsServer() then return end
+local stack = 0
+if self.mod and not self.mod:IsNull() then 
+	stack = self.mod:GetStackCount()
+end
+
+self.parent:UpdateUIshort({max_time = self.max_time, time = self:GetRemainingTime(), stack = stack, style = "BeastUproar", priority = 1})
+end
+
+function modifier_primal_beast_uproar_custom_legendary:OnDestroy()
+if not IsServer() then return end
+self.parent:UpdateUIshort({hide = 1, hide_full = 1, style = "BeastUproar", priority = 1})
+
+self.ability:StartCd()
+
+if self.uproar and not self.uproar:IsNull() then
+	self.uproar:SetActivated(true)
+	if self.mod and not self.mod:IsNull() and self.mod:GetStackCount() > 0 then 
+		if self.parent:IsAlive() then
+			self.parent:GenericHeal(self.parent:GetMaxHealth()*self.mod:GetStackCount()*self.parent:GetTalentValue("modifier_primal_beast_uproar_7", "heal")/100, self.ability, nil, nil, "modifier_primal_beast_uproar_7")
+			self.uproar:OnSpellStart()
+		else 
+			self.mod:ResetStack()
+		end
+	end
+end
+
+end
 
 function modifier_primal_beast_uproar_custom_legendary:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_MIN_HEALTH
+	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
 }
 end
 
-function modifier_primal_beast_uproar_custom_legendary:GetMinHealth()
-if not self:GetParent():IsAlive() then return end
-if self:GetParent():HasModifier("modifier_death") then return end
-return 1
-end
-
-function modifier_primal_beast_uproar_custom_legendary:CheckState()
-return
-{
-	--[MODIFIER_STATE_STUNNED] = true,
-	--[MODIFIER_STATE_SILENCED] = true,
-	--[MODIFIER_STATE_MUTED] = true,
-
-}
+function modifier_primal_beast_uproar_custom_legendary:GetModifierAttackSpeedBonus_Constant()
+return self.speed
 end
 
 
-function modifier_primal_beast_uproar_custom_legendary:OnDestroy()
-if not IsServer() then return end
-if not self:GetParent():IsAlive() then return end
-
-local roar = self:GetCaster():FindAbilityByName("primal_beast_uproar_custom")
-local modifier = self:GetCaster():FindModifierByName( "modifier_primal_beast_uproar_custom" )
-if roar and modifier and modifier:GetStackCount() > 0 then 
-	roar:OnSpellStart()
-end
-
---self:GetCaster():FadeGesture(ACT_DOTA_VICTORY)
-end
-
-function modifier_primal_beast_uproar_custom_legendary:GetEffectName() return "particles/beast_grave.vpcf" end
-
-function modifier_primal_beast_uproar_custom_legendary:OnCreated(table)
-if not IsServer() then return end
 
 
-local effect_cast = ParticleManager:CreateParticle( "particles/beast_hands.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent() )
-ParticleManager:SetParticleControlEnt( effect_cast, 2, self:GetParent(), PATTACH_OVERHEAD_FOLLOW, "attach_hitloc", Vector(0,0,0), true )
-self:AddParticle( effect_cast, false, false, -1, false, false )
-
---self:GetCaster():StartGesture(ACT_DOTA_VICTORY)
-self:GetCaster():EmitSound("Hero_PrimalBeast.Uproar.Cast")
-end
-
-
-modifier_primal_beast_uproar_custom_bkb = class({})
-function modifier_primal_beast_uproar_custom_bkb:IsHidden() return false end
-function modifier_primal_beast_uproar_custom_bkb:IsPurgable() return false end
-function modifier_primal_beast_uproar_custom_bkb:GetTexture() return "buffs/uproar_bkb" end
-function modifier_primal_beast_uproar_custom_bkb:CheckState()
-return
-{
-	[MODIFIER_STATE_MAGIC_IMMUNE] = true
-}
-end
-function modifier_primal_beast_uproar_custom_bkb:GetEffectName() return "particles/items_fx/black_king_bar_avatar.vpcf" end
 
 
 modifier_primal_beast_uproar_custom_root = class({})
-function modifier_primal_beast_uproar_custom_root:IsHidden() return false end
+function modifier_primal_beast_uproar_custom_root:IsHidden() return true end
 function modifier_primal_beast_uproar_custom_root:IsPurgable() return true end
 function modifier_primal_beast_uproar_custom_root:OnCreated(table)
 if not IsServer() then return end
-self.stack = table.stack
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
 
+self.stack = table.stack
 end
 
 function modifier_primal_beast_uproar_custom_root:OnDestroy()
 if not IsServer() then return end
 
-local duration = (self:GetAbility():GetSpecialValueFor("slow_duration") + self:GetCaster():GetTalentValue("modifier_primal_beast_uproar_5", "duration"))*(1 - self:GetParent():GetStatusResistance())
-
-self:GetParent():AddNewModifier( self:GetCaster(), self:GetAbility(), "modifier_primal_beast_uproar_custom_debuff", { duration = duration, stack = self.stack } )
+local duration = (self.ability:GetSpecialValueFor("slow_duration") + self.caster:GetTalentValue("modifier_primal_beast_uproar_2", "duration"))*(1 - self.parent:GetStatusResistance())
+self.parent:AddNewModifier( self.caster, self.ability, "modifier_primal_beast_uproar_custom_debuff", {duration = duration, stack = self.stack})
 end
 
 function modifier_primal_beast_uproar_custom_root:CheckState()
@@ -613,54 +639,32 @@ function modifier_primal_beast_uproar_custom_proc:IsHidden() return false end
 function modifier_primal_beast_uproar_custom_proc:IsPurgable() return false end
 function modifier_primal_beast_uproar_custom_proc:GetTexture() return "buffs/spray_slow" end
 function modifier_primal_beast_uproar_custom_proc:OnCreated(table)
-if not IsServer() then return end
-self:SetStackCount(self:GetAbility().proc_max)
 
-self:GetParent():EmitSound("PBeast.Uproar_proc")
-local particle = ParticleManager:CreateParticle("particles/beast_proc.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-ParticleManager:ReleaseParticleIndex(particle)
+self.parent = self:GetParent()
+self.speed = self.parent:GetTalentValue("modifier_primal_beast_uproar_4", "speed")
+self.max = self.parent:GetTalentValue("modifier_primal_beast_uproar_4", "attacks")
+self:SetStackCount(self.max)
+
+if not IsServer() then return end
+self.parent:GenericParticle("particles/beast_proc.vpcf")
+self.parent:EmitSound("PBeast.Uproar_proc")
 end
 
-function modifier_primal_beast_uproar_custom_proc:OnRefresh(table)
-self:OnCreated(table)
+function modifier_primal_beast_uproar_custom_proc:OnRefresh()
+if not IsServer() then return end
+self:SetStackCount(self.max)
 end
 
 function modifier_primal_beast_uproar_custom_proc:DeclareFunctions()
 return
 {
 	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-	MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE,
-	MODIFIER_EVENT_ON_ATTACK_LANDED
 }
 end
 
-
 function modifier_primal_beast_uproar_custom_proc:GetModifierAttackSpeedBonus_Constant()
-	return self:GetAbility().proc_speed
+return self.speed
 end
-
-
-function modifier_primal_beast_uproar_custom_proc:GetModifierPreAttack_CriticalStrike()
-	return self:GetAbility().proc_crit[self:GetParent():GetUpgradeStack("modifier_primal_beast_uproar_4")]
-end
-
-function modifier_primal_beast_uproar_custom_proc:GetCritDamage()
-	return self:GetAbility().proc_crit[self:GetParent():GetUpgradeStack("modifier_primal_beast_uproar_4")]
-
-end
-
-function modifier_primal_beast_uproar_custom_proc:OnAttackLanded(params)
-if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end
-
-self:DecrementStackCount()
-params.target:EmitSound("PBeast.Uproar_proc_attack")
-if self:GetStackCount() == 0 then 
-	self:Destroy()
-end
-
-end
-
 
 function modifier_primal_beast_uproar_custom_proc:GetEffectName()
 return "particles/beast_blood.vpcf"
@@ -670,9 +674,8 @@ function modifier_primal_beast_uproar_custom_proc:GetStatusEffectName()
 return "particles/status_fx/status_effect_bloodrage.vpcf"
 end
 
-
 function modifier_primal_beast_uproar_custom_proc:StatusEffectPriority()
-return 10000
+return MODIFIER_PRIORITY_HIGH 
 end
 
 
@@ -682,83 +685,54 @@ end
 
 
 
+modifier_primal_beast_uproar_custom_shield = class({})
+function modifier_primal_beast_uproar_custom_shield:IsHidden() return true end
+function modifier_primal_beast_uproar_custom_shield:IsPurgable() return false end
+function modifier_primal_beast_uproar_custom_shield:OnCreated(table)
+self.parent = self:GetParent()
+self.shield_talent = "modifier_primal_beast_uproar_6"
+self.max_shield = self.parent:GetTalentValue("modifier_primal_beast_uproar_6", "shield")*(self.parent:GetMaxHealth() - self.parent:GetHealth())/100
 
-modifier_primal_beast_uproar_custom_taunt = class({})
-
-function modifier_primal_beast_uproar_custom_taunt:IsPurgable()
-  return false
-end
-function modifier_primal_beast_uproar_custom_taunt:IsHidden()
-  return true
-end
-
-function modifier_primal_beast_uproar_custom_taunt:OnCreated( kv )
 if not IsServer() then return end
-if self:GetParent():IsCreep() then return end
-
-self:GetParent():SetForceAttackTarget( self:GetCaster() )
-self:GetParent():MoveToTargetToAttack( self:GetCaster() )
-
-self:GetParent():EmitSound("Hero_Axe.Berserkers_Call")
-self:StartIntervalThink(FrameTime())
-end
-
-function modifier_primal_beast_uproar_custom_taunt:OnIntervalThink()
-  if not IsServer() then return end
-  if not self:GetCaster():IsAlive() then
-    self:Destroy()
-  end
-end
-
-function modifier_primal_beast_uproar_custom_taunt:OnDestroy()
-if not IsServer() then return end
-
-self:GetParent():SetForceAttackTarget( nil )
-  
-end
-
-function modifier_primal_beast_uproar_custom_taunt:CheckState()
-  local state = {
-    [MODIFIER_STATE_COMMAND_RESTRICTED] = true,
-    [MODIFIER_STATE_TAUNTED] = true,
-  }
-
-  return state
-end
-
-function modifier_primal_beast_uproar_custom_taunt:GetStatusEffectName()
-  return "particles/status_fx/status_effect_beserkers_call.vpcf"
+self:SetStackCount(self.max_shield)
+self.parent:GenericParticle("particles/items2_fx/vindicators_axe_armor.vpcf", self)
 end
 
 
-
-
-
-
-modifier_primal_beast_uproar_custom_taunt_cd = class({})
-function modifier_primal_beast_uproar_custom_taunt_cd:IsHidden() return false end
-function modifier_primal_beast_uproar_custom_taunt_cd:IsPurgable() return false end
-function modifier_primal_beast_uproar_custom_taunt_cd:IsDebuff() return true end
-function modifier_primal_beast_uproar_custom_taunt_cd:RemoveOnDeath() return false end
-function modifier_primal_beast_uproar_custom_taunt_cd:GetTexture() return "buffs/uproar_bkb" end
-function modifier_primal_beast_uproar_custom_taunt_cd:OnCreated(table)
-self.RemoveForDuel = true
-end
-
-modifier_primal_beast_uproar_custom_taunt_heal = class({})
-function modifier_primal_beast_uproar_custom_taunt_heal:IsHidden() return true end
-function modifier_primal_beast_uproar_custom_taunt_heal:IsPurgable() return false end
-function modifier_primal_beast_uproar_custom_taunt_heal:OnCreated()
-self.heal = self:GetAbility().taunt_heal/self:GetRemainingTime()
-end
-
-function modifier_primal_beast_uproar_custom_taunt_heal:DeclareFunctions()
+function modifier_primal_beast_uproar_custom_shield:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE
+	MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
 }
 end
 
-function modifier_primal_beast_uproar_custom_taunt_heal:GetModifierHealthRegenPercentage()
-return self.heal
+
+function modifier_primal_beast_uproar_custom_shield:GetModifierIncomingDamageConstant( params )
+if self:GetStackCount() == 0 then return end
+
+if IsClient() then 
+  if params.report_max then 
+  	return self.max_shield
+  else 
+	  return self:GetStackCount()
+	end 
+end
+
+if not IsServer() then return end
+
+self:GetParent():EmitSound("Juggernaut.Parry")
+local particle = ParticleManager:CreateParticle( "particles/jugg_parry.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent )
+ParticleManager:SetParticleControlEnt( particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_attack1", self.parent:GetAbsOrigin(), true )
+ParticleManager:SetParticleControl( particle, 1, self.parent:GetAbsOrigin() )
+ParticleManager:ReleaseParticleIndex(particle)
+
+local damage = math.min(params.damage, self:GetStackCount())
+self.parent:AddShieldInfo({shield_mod = self, healing = damage, healing_type = "shield"})
+
+self:SetStackCount(self:GetStackCount() - damage)
+if self:GetStackCount() <= 0 then
+  self:Destroy()
+end
+
+return -damage
 end

@@ -2,9 +2,7 @@ LinkLuaModifier("modifier_sandking_sand_storm_custom", "abilities/sand_king/sand
 LinkLuaModifier("modifier_sandking_sand_storm_custom_target", "abilities/sand_king/sandking_sand_storm_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_sandking_sand_storm_custom_tracker", "abilities/sand_king/sandking_sand_storm_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_sandking_sand_storm_custom_caster", "abilities/sand_king/sandking_sand_storm_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_sandking_sand_storm_custom_invis", "abilities/sand_king/sandking_sand_storm_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_sandking_sand_storm_custom_spider_ai", "abilities/sand_king/sandking_sand_storm_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_sandking_sand_storm_custom_legendary", "abilities/sand_king/sandking_sand_storm_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_sandking_sand_storm_custom_spider_effect", "abilities/sand_king/sandking_sand_storm_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_sandking_sand_storm_custom_speed", "abilities/sand_king/sandking_sand_storm_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_sandking_sand_storm_custom_cyclone", "abilities/sand_king/sandking_sand_storm_custom", LUA_MODIFIER_MOTION_NONE)
@@ -12,36 +10,65 @@ LinkLuaModifier("modifier_sandking_sand_storm_custom_silence", "abilities/sand_k
 LinkLuaModifier("modifier_sandking_sand_storm_custom_damage_cd", "abilities/sand_king/sandking_sand_storm_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_sandking_sand_storm_custom_heal", "abilities/sand_king/sandking_sand_storm_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_sandking_sand_storm_custom_root", "abilities/sand_king/sandking_sand_storm_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_sandking_sand_storm_custom_fade", "abilities/sand_king/sandking_sand_storm_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_sandking_sand_storm_custom_speed_cd", "abilities/sand_king/sandking_sand_storm_custom", LUA_MODIFIER_MOTION_NONE)
 
 
 
 sandking_sand_storm_custom = class({})
 		
 function sandking_sand_storm_custom:Precache(context)
-    
-PrecacheResource( "particle", "particles/sand_king/sandking_sandstorm_custom.vpcf", context )
-PrecacheResource( "particle", "particles/sand_king/sand_tornado.vpcf", context )
-PrecacheResource( "particle", "particles/sand_king/tornado_damage.vpcf", context )
-PrecacheResource( "particle", "particles/muerta/veil_pull.vpcf", context )
-PrecacheResource( "particle", "particles/sand_king/sand_root.vpcf", context )
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/sand_king/sandking_sandstorm_custom.vpcf", context )
+PrecacheResource( "particle","particles/muerta/veil_pull.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_brewmaster/brewmaster_dispel_magic.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf", context )
+PrecacheResource( "particle","particles/status_fx/status_effect_armadillo_shield.vpcf", context )
+PrecacheResource( "particle","particles/neutral_fx/skeleton_spawn.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_primal_beast/primal_beast_status_effect_slow.vpcf", context )
+PrecacheResource( "particle","particles/sand_king/sandking_caustic_finale_explode_custom.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf", context )
+PrecacheResource( "particle","particles/sand_king/sand_tornado.vpcf", context )
+PrecacheResource( "particle","particles/generic_gameplay/generic_silenced.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_primal_beast/primal_beast_status_effect_slow.vpcf", context )
+PrecacheResource( "particle","particles/sand_king/tornado_damage.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf", context )
+PrecacheResource( "particle","particles/sand_king/sand_root.vpcf", context )
+PrecacheResource( "particle","particles/lina/dragon_status.vpcf", context )
+PrecacheUnitByNameSync("npc_dota_sand_king_spider", context, -1)
 end
 
+function sandking_sand_storm_custom:GetRadius()
+return self:GetSpecialValueFor("sand_storm_radius") + self:GetCaster():GetTalentValue("modifier_sand_king_sand_6", "radius")
+end
 
 function sandking_sand_storm_custom:GetCastRange(vLocation, hTarget)
-return self:GetSpecialValueFor("sand_storm_radius") + self:GetCaster():GetTalentValue("modifier_sand_king_sand_2", "radius")
+return self:GetRadius()
 end
-
 
 function sandking_sand_storm_custom:GetCooldown(level)
 local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_sand_king_sand_2") then 
+if self:GetCaster():HasTalent("modifier_sand_king_sand_2") then 
 	bonus = self:GetCaster():GetTalentValue("modifier_sand_king_sand_2", "cd")
 end 
-
-	return self.BaseClass.GetCooldown(self, level)  + bonus
+return self.BaseClass.GetCooldown(self, level)  + bonus
 end
 
+
+function sandking_sand_storm_custom:GetManaCost(iLevel)
+if self:GetCaster():HasTalent("modifier_sand_king_sand_5") then 
+	return 0
+end
+return self:GetSpecialValueFor("AbilityManaCost")
+end
+
+function sandking_sand_storm_custom:GetBehavior()
+local bonus = 0
+if self:GetCaster():HasTalent("modifier_sand_king_sand_5") then 
+	bonus = DOTA_ABILITY_BEHAVIOR_IGNORE_PSEUDO_QUEUE
+end
+return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK + DOTA_ABILITY_BEHAVIOR_IMMEDIATE + bonus
+end
 
 
 function sandking_sand_storm_custom:GetIntrinsicModifierName()
@@ -49,44 +76,61 @@ if not self:GetCaster():IsRealHero() then return end
 return "modifier_sandking_sand_storm_custom_tracker"
 end
 
+function sandking_sand_storm_custom:ProcLegendary(point)
+local caster = self:GetCaster()
+if not caster:HasTalent("modifier_sand_king_sand_7") then return end
 
-function sandking_sand_storm_custom:OnSpellStart()
+local life_duration = caster:GetTalentValue("modifier_sand_king_sand_7", "life_duration")
 
+for i = 1,caster:GetTalentValue("modifier_sand_king_sand_7", "count") do
 
-if self:GetCaster():HasModifier("modifier_sand_king_sand_5") then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_sandking_sand_storm_custom_speed", {duration = self:GetCaster():GetTalentValue("modifier_sand_king_sand_5", "duration")})
+	local pos = point + RandomVector(220)
+
+	local unit = CreateUnitByName("npc_dota_sand_king_spider", pos, false, caster, caster, caster:GetTeamNumber())
+	unit:AddNewModifier(caster, self, "modifier_sandking_sand_storm_custom_spider_ai", {})
+	unit:AddNewModifier(caster, self, "modifier_kill", { duration = life_duration })
+
+	unit.owner = caster
+
+	EmitSoundOnLocationWithCaster(unit:GetAbsOrigin(), "SandKing.Spider_spawn", caster)
+	unit:SetAngles(0, 0, 0)
+	unit:SetForwardVector(caster:GetForwardVector())
+	FindClearSpaceForUnit(unit, unit:GetAbsOrigin(), true)
 end
 
+end
+
+
+
+function sandking_sand_storm_custom:OnSpellStart()
 local duration = self:GetSpecialValueFor("duration")
-local thinker =  CreateModifierThinker(self:GetCaster(), self, "modifier_sandking_sand_storm_custom", {duration = duration}, self:GetCaster():GetAbsOrigin(), self:GetCaster():GetTeamNumber(), false)
+local caster = self:GetCaster()
+local thinker =  CreateModifierThinker(caster, self, "modifier_sandking_sand_storm_custom", {duration = duration}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false)
 
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_sandking_sand_storm_custom_caster", {duration = duration, thinker = thinker:entindex()})
+caster:AddNewModifier(caster, self, "modifier_sandking_sand_storm_custom_caster", {duration = duration, thinker = thinker:entindex()})
 
-if self:GetCaster():HasModifier("modifier_sand_king_sand_4") then 
-
-	for i = 1,self:GetCaster():GetTalentValue("modifier_sand_king_sand_4", "max") do
-
+if caster:HasTalent("modifier_sand_king_sand_4") then 
+	for i = 1,caster:GetTalentValue("modifier_sand_king_sand_4", "max") do
 		local angel = (math.pi/2 + 2*math.pi/2 * i)
-		CreateModifierThinker(self:GetCaster(), self, "modifier_sandking_sand_storm_custom_cyclone", {thinker = thinker:entindex(), angle = angel}, self:GetCaster():GetAbsOrigin(), self:GetCaster():GetTeamNumber(), false)
+		CreateModifierThinker(caster, self, "modifier_sandking_sand_storm_custom_cyclone", {thinker = thinker:entindex(), angle = angel}, caster:GetAbsOrigin(), caster:GetTeamNumber(), false)
 	end
 end
 
-self:GetCaster():EmitSound("SandKing.SandStorm.start")
+caster:EmitSound("SandKing.SandStorm.start")
 end 
 
 
+
 function sandking_sand_storm_custom:GetDamage(target)
-
-local damage = self:GetSpecialValueFor("sand_storm_damage") + self:GetCaster():GetTalentValue("modifier_sand_king_sand_1", "damage")*self:GetCaster():GetMaxHealth()/100
+local caster = self:GetCaster()
+local damage = self:GetSpecialValueFor("sand_storm_damage") + caster:GetTalentValue("modifier_sand_king_sand_1", "damage")*caster:GetMaxHealth()/100
 local damage_inc = self:GetCaster():GetTalentValue("modifier_sand_king_sand_7", "damage")/100
-
 
 local mod = target:FindModifierByName("modifier_sandking_sand_storm_custom_spider_effect")
 
 if mod then 
 	damage = damage*(1 + mod:GetStackCount()*damage_inc)
 end 
-
 return damage
 end 
 
@@ -97,42 +141,32 @@ function modifier_sandking_sand_storm_custom:IsPurgable() return false end
 function modifier_sandking_sand_storm_custom:OnCreated(table)
 if not IsServer() then return end
 
-self:GetAbility():SetActivated(false)
-self:GetAbility():EndCooldown()
-
-if (self:GetCaster():HasModifier("modifier_sand_king_sand_7") or self:GetCaster():HasModifier("modifier_sand_king_sand_6")) and not self:GetAbility():IsHidden() then 
-	self:GetCaster():SwapAbilities(self:GetAbility():GetName(), "sandking_sand_storm_custom_legendary", false, true)
-
-	self:GetCaster():FindAbilityByName("sandking_sand_storm_custom_legendary"):StartCooldown(0.5)
-
-end
-
-
 self.caster = self:GetCaster()
 self.thinker = self:GetParent()
-self.radius = self:GetAbility():GetSpecialValueFor("sand_storm_radius") + self.caster:GetTalentValue("modifier_sand_king_sand_2", "radius")
-self.speed = self:GetAbility():GetSpecialValueFor("sand_storm_move_speed") + self.caster:GetTalentValue("modifier_sand_king_sand_5", "sand_speed")
+self.ability = self:GetAbility()
+
+self.ability:EndCd()
+
+if self.caster:HasTalent("modifier_sand_king_sand_6") and not self.ability:IsHidden() then 
+	self.caster:SwapAbilities(self.ability:GetName(), "sandking_sand_storm_custom_legendary", false, true)
+	self.caster:FindAbilityByName("sandking_sand_storm_custom_legendary"):StartCooldown(0.5)
+end
+
+self.radius = self.ability:GetRadius()
+self.speed = (self.ability:GetSpecialValueFor("sand_storm_move_speed") + self.caster:GetTalentValue("modifier_sand_king_sand_2", "speed"))/100
+self.timer = self.ability:GetSpecialValueFor("timer")
 
 self.scepter_max = nil
 self.scepter_count = 0
-self.ulti = self:GetCaster():FindAbilityByName("sandking_epicenter_custom")
-if self.ulti and self:GetCaster():HasScepter() and self.ulti:GetLevel() > 0 then 
-	
-	self.scepter_max = self.ulti:GetSpecialValueFor("scepter_sand")
-end 
 
-
-local particle_cast = "particles/sand_king/sandking_sandstorm_custom.vpcf"
-
-self.effect_cast = ParticleManager:CreateParticle( particle_cast, PATTACH_WORLDORIGIN, nil )
-ParticleManager:SetParticleControl( self.effect_cast, 0, self:GetParent():GetOrigin() )
+self.effect_cast = ParticleManager:CreateParticle( "particles/sand_king/sandking_sandstorm_custom.vpcf", PATTACH_WORLDORIGIN, nil )
+ParticleManager:SetParticleControl( self.effect_cast, 0, self.thinker:GetOrigin() )
 ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( self.radius, self.radius, self.radius ) )
 self:AddParticle(self.effect_cast,false, false, -1, false, false)
 
-self:GetParent():EmitSound("SandKing.SandStorm.loop")
+self.thinker:EmitSound("SandKing.SandStorm.loop")
 
 self.interval = 0.03
-
 self:StartIntervalThink(self.interval)
 end 
 
@@ -140,64 +174,43 @@ end
 function modifier_sandking_sand_storm_custom:OnDestroy()
 if not IsServer() then return end 
 
-if (self:GetCaster():HasModifier("modifier_sand_king_sand_7") or self:GetCaster():HasModifier("modifier_sand_king_sand_6")) and self:GetAbility():IsHidden() then 
-	self:GetCaster():SwapAbilities(self:GetAbility():GetName(), "sandking_sand_storm_custom_legendary", true, false)
+if self.caster:HasTalent("modifier_sand_king_sand_6") and self.ability:IsHidden() then 
+	self.caster:SwapAbilities(self.ability:GetName(), "sandking_sand_storm_custom_legendary", true, false)
 end
 
+self.ability:StartCd()
 
-self:GetAbility():UseResources(false, false, false, true)
-self:GetAbility():SetActivated(true)
-
-self:GetParent():StopSound("SandKing.SandStorm.loop")
-self:GetCaster():RemoveModifierByName("modifier_sandking_sand_storm_custom_caster")
-self:GetCaster():RemoveModifierByName("modifier_sandking_sand_storm_custom_invis")
-
-UTIL_Remove(self:GetParent())
+self.thinker:StopSound("SandKing.SandStorm.loop")
+self.caster:RemoveModifierByName("modifier_sandking_sand_storm_custom_caster")
+UTIL_Remove(self.thinker)
 end 
-
 
 function modifier_sandking_sand_storm_custom:OnIntervalThink()
 if not IsServer() then return end
 
-if not self.thinker or self.thinker:IsNull() then 
+if not self.thinker or self.thinker:IsNull() or not self.caster or self.caster:IsNull() or not self.caster:IsAlive() then 
 	self:Destroy()
 	return 
 end
 
-if self.scepter_max then 
-	self.scepter_count = self.scepter_count + self.interval
-
-	if self.scepter_count >= self.scepter_max then 
-		self.scepter_count = 0
-		self.ulti:Pulse(self:GetParent(), self.radius, true)
-	end 
-end 
-
-
 
 local dir = (self.caster:GetAbsOrigin() - self.thinker:GetAbsOrigin())
+local caster_near = dir:Length2D() <= self.radius
 
-if not self.caster or self.caster:IsNull() or not self.caster:IsAlive() or dir:Length2D() > self.radius then 
-	self:Destroy()
-	return 
-end 
+if caster_near then 
+	self.thinker:RemoveModifierByName("modifier_sandking_sand_storm_custom_fade")
+end
 
-local speed = self.speed
+if not caster_near and not self.thinker:HasModifier("modifier_sandking_sand_storm_custom_fade") then 
+	self.thinker:AddNewModifier(self.caster, self.ability, "modifier_sandking_sand_storm_custom_fade", {duration = self.timer})
+end
 
-if self.caster:HasModifier("modifier_sandking_sand_storm_custom_speed") then 
-	speed = 550
-end 
-
+local speed = self.caster:GetMoveSpeedModifier(self:GetCaster():GetBaseMoveSpeed(), false)*self.speed
 
 if dir:Length2D() <= speed/10 then return end 
-
-
-
 local dist = speed*self.interval
 
 self.thinker:SetAbsOrigin(GetGroundPosition((self.thinker:GetAbsOrigin() + dir:Normalized()*dist), nil))
-
-
 if self.effect_cast then 
 	ParticleManager:SetParticleControl( self.effect_cast, 0, self.thinker:GetAbsOrigin() )
 end 
@@ -205,24 +218,23 @@ end
 end
 
 
-
 function modifier_sandking_sand_storm_custom:IsAura() return true end
 
 function modifier_sandking_sand_storm_custom:GetAuraSearchTeam()
-	return DOTA_UNIT_TARGET_TEAM_ENEMY end
+return DOTA_UNIT_TARGET_TEAM_BOTH
+end
 
 function modifier_sandking_sand_storm_custom:GetAuraSearchType()
-	return DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO
+return DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO
 end
 
 function modifier_sandking_sand_storm_custom:GetModifierAura()
-	return "modifier_sandking_sand_storm_custom_target"
+return "modifier_sandking_sand_storm_custom_target"
 end
 
 function modifier_sandking_sand_storm_custom:GetAuraRadius()
-	return self.radius
+return self.radius
 end
-
 
 function modifier_sandking_sand_storm_custom:GetAuraDuration()
 return 0
@@ -234,34 +246,69 @@ modifier_sandking_sand_storm_custom_target = class({})
 function modifier_sandking_sand_storm_custom_target:IsHidden() return true end
 function modifier_sandking_sand_storm_custom_target:IsPurgable() return false end
 function modifier_sandking_sand_storm_custom_target:OnCreated()
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+self.is_enemy = self.parent:GetTeamNumber() ~= self.caster:GetTeamNumber()
 
 self.interval = self:GetAbility():GetSpecialValueFor("damage_tick_rate")
+self.slow = self.caster:GetTalentValue("modifier_sand_king_sand_1", "slow")
+
+self.speed_cd = self.caster:GetTalentValue("modifier_sand_king_sand_5", "cd", true)
+self.speed_duration = self.caster:GetTalentValue("modifier_sand_king_sand_5", "duration", true)
 
 if not IsServer() then return end 
-
 self.damageTable = {victim = self:GetParent(), attacker = self:GetCaster(), ability = self:GetAbility(), damage_type = DAMAGE_TYPE_MAGICAL}
 
 self:StartIntervalThink(self.interval)
+
+if self.caster:HasTalent("modifier_sand_king_sand_3") and self.caster == self.parent then 
+	self.PercentStr = self.caster:GetTalentValue("modifier_sand_king_sand_3", "str")/100
+end
+
 end 
+
+function modifier_sandking_sand_storm_custom_target:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
+}
+end
+
+
+function modifier_sandking_sand_storm_custom_target:GetModifierMoveSpeedBonus_Percentage()
+if not self.is_enemy then return end 
+if not self.caster:HasTalent("modifier_sand_king_sand_1") then return end 
+return self.slow
+end
 
 function modifier_sandking_sand_storm_custom_target:OnIntervalThink()
 if not IsServer() then return end 
 
-if self:GetCaster():GetQuest() == "Sand.Quest_6" and self:GetParent():IsRealHero() then 
-	self:GetCaster():UpdateQuest(self.interval)
+if self.is_enemy then
+	if self.caster:GetQuest() == "Sand.Quest_6" and self.parent:IsRealHero() then 
+		self.caster:UpdateQuest(self.interval)
+	end
+	local damage = self.interval*self:GetAbility():GetDamage(self.parent)
+
+	self.damageTable.damage = damage
+	DoDamage(self.damageTable)
+else 
+	if self.caster == self.parent and self.caster:HasTalent("modifier_sand_king_sand_5") and not self.caster:HasModifier("modifier_sandking_sand_storm_custom_speed_cd") then 
+		self.caster:AddNewModifier(self.caster, self.ability, "modifier_sandking_sand_storm_custom_speed_cd", {duration = self.speed_cd})
+		self.caster:AddNewModifier(self.caster, self.ability, "modifier_sandking_sand_storm_custom_speed", {duration = self.speed_duration})
+	end
+end
+
 end
 
 
-local damage = self.interval*self:GetAbility():GetDamage(self:GetParent())
+function modifier_sandking_sand_storm_custom_target:OnDestroy()
+if not IsServer() then return end 
+if not self.PercentStr then return end
 
-
-self.damageTable.damage = damage
-
-ApplyDamage(self.damageTable)
-
+self.parent:PercentRefresh()
 end
-
-
 
 
 
@@ -270,135 +317,25 @@ function modifier_sandking_sand_storm_custom_caster:IsHidden() return false end
 function modifier_sandking_sand_storm_custom_caster:IsPurgable() return false end
 function modifier_sandking_sand_storm_custom_caster:OnCreated(table)
 
-self.status = self:GetCaster():GetTalentValue("modifier_sand_king_sand_3", "status")
-self.regen = self:GetCaster():GetTalentValue("modifier_sand_king_sand_3", "heal")
+self.caster = self:GetCaster()
 
-if not IsServer() then return end 
-
-self.thinker = EntIndexToHScript(table.thinker)
-
-self.cd = self:GetAbility():GetSpecialValueFor("fade_delay")
-
-self:OnIntervalThink()
+self.regen = self.caster:GetTalentValue("modifier_sand_king_sand_3", "heal")
 end 
-
-
 
 
 function modifier_sandking_sand_storm_custom_caster:DeclareFunctions()
-local funcs = {
-    MODIFIER_EVENT_ON_ATTACK,
-	MODIFIER_EVENT_ON_ABILITY_EXECUTED,
-	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
+return 
+{
 	MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE
 }
-return funcs
 end
-
-function modifier_sandking_sand_storm_custom_caster:GetModifierStatusResistanceStacking()
-if not self:GetParent():HasModifier("modifier_sand_king_sand_3") then return end
-return self.status
-end
-
 
 
 function modifier_sandking_sand_storm_custom_caster:GetModifierHealthRegenPercentage()
-if not self:GetParent():HasModifier("modifier_sand_king_sand_3") then return end
+if not self.caster:HasTalent("modifier_sand_king_sand_3") then return end 
+if not self.caster:HasModifier("modifier_sandking_sand_storm_custom_target") then return end
 return self.regen
 end
-
-
-function modifier_sandking_sand_storm_custom_caster:OnIntervalThink()
-if not IsServer() then return end 
-
-local target = nil
-if self:GetParent():GetAttackTarget() then 
-	target = self:GetParent():GetAttackTarget():entindex()
-end 
-
-self.mod = self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_sandking_sand_storm_custom_invis", {target = target, duration = self:GetRemainingTime()})
-self:StartIntervalThink(-1)
-end 
-
-
-function modifier_sandking_sand_storm_custom_caster:OnAbilityExecuted( params )
-if not IsServer() then return end
-if not params.ability then return end
-if not params.unit then return end
-if params.unit ~= self:GetParent() then return end
-
-if self.mod and not self.mod:IsNull() then 
-	self.mod:Destroy()
-end
-
-self:StartIntervalThink(self.cd)
-end
-
-function modifier_sandking_sand_storm_custom_caster:OnAttack(params)
-if not IsServer() then return end
-if not params.attacker then return end
-if params.attacker ~= self:GetParent() then return end
-
-if self.mod and not self.mod:IsNull() then 
-	self.mod:Destroy()
-end
-
-self:StartIntervalThink(self.cd)
-end
-
-
-
-function modifier_sandking_sand_storm_custom_caster:CheckState()
-return
-{
-	[MODIFIER_STATE_NO_UNIT_COLLISION] = true
-}
-end
-
-
-
-
-
-
-
-
-
-modifier_sandking_sand_storm_custom_invis = class({})
-
-function modifier_sandking_sand_storm_custom_invis:IsPurgable() return false end
-function modifier_sandking_sand_storm_custom_invis:IsHidden() return true end
-
-
-function modifier_sandking_sand_storm_custom_invis:OnCreated(table)
-if not IsServer() then return end
-
-if table.target ~= nil  then
-	self:GetParent():MoveToTargetToAttack(EntIndexToHScript(table.target))
-end 
-
-end
-
-
-function modifier_sandking_sand_storm_custom_invis:DeclareFunctions()
-local funcs = {
-    MODIFIER_PROPERTY_INVISIBILITY_LEVEL,
-}
-return funcs
-end
-
-
-function modifier_sandking_sand_storm_custom_invis:GetModifierInvisibilityLevel()
-if self:GetCaster():IsInvulnerable() then return end
-    return 1
-end
-
-function modifier_sandking_sand_storm_custom_invis:CheckState()
-if self:GetCaster():IsInvulnerable() then return end
-    return {
-        [MODIFIER_STATE_INVISIBLE] = true,
-    }
-end
-
 
 
 
@@ -410,29 +347,12 @@ sandking_sand_storm_custom_legendary = class({})
 
 
 function sandking_sand_storm_custom_legendary:GetCooldown(iLevel)
-return self:GetCaster():GetTalentValue("modifier_sand_king_sand_7", "cd", true)
+return self:GetCaster():GetTalentValue("modifier_sand_king_sand_6", "cd")
 end
-
-function sandking_sand_storm_custom_legendary:GetChannelTime()
-if not self:GetCaster():HasModifier("modifier_sand_king_sand_7") then return end
-return self:GetCaster():GetTalentValue("modifier_sand_king_sand_7", "duration")
-end
-
-
 
 function sandking_sand_storm_custom_legendary:GetBehavior()
-if self:GetCaster():HasModifier("modifier_sand_king_sand_7") then
-	return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_CHANNELLED
+return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IMMEDIATE
 end
-
-
-if self:GetCaster():HasModifier("modifier_sand_king_sand_4") then
-	return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IMMEDIATE
-end
-
-end
-
-
 
 function sandking_sand_storm_custom_legendary:GetChannelAnimation()
 return ACT_DOTA_OVERRIDE_ABILITY_2
@@ -441,144 +361,58 @@ end
 
 function sandking_sand_storm_custom_legendary:OnSpellStart()
 
-
-if self:GetCaster():HasModifier("modifier_sand_king_sand_6") then 
-	self.caster = self:GetCaster()
-
-	local mod = self.caster:FindModifierByName("modifier_sandking_sand_storm_custom_caster")
-
-	self.point = self.caster:GetAbsOrigin()
-
-	local ability = self:GetCaster():FindAbilityByName("sandking_sand_storm_custom")
-	local radius = ability:GetSpecialValueFor("sand_storm_radius") + self.caster:GetTalentValue("modifier_sand_king_sand_2", "radius") + self.caster:GetTalentValue("modifier_sand_king_sand_6", "more_radius")
-
-	if mod and mod.thinker and not mod.thinker:IsNull() then 
-		self.point = mod.thinker:GetAbsOrigin()
-
-		local effect_cast = ParticleManager:CreateParticle( "particles/muerta/veil_pull.vpcf", PATTACH_ABSORIGIN_FOLLOW, mod.thinker )
-		ParticleManager:SetParticleControl( effect_cast, 0, mod.thinker:GetAbsOrigin() )
-		ParticleManager:SetParticleControl( effect_cast, 1, Vector( radius, radius, radius ) )
-		ParticleManager:ReleaseParticleIndex( effect_cast )
-
-	end 
-
-	EmitSoundOnLocationWithCaster(self.point, "SandKing.Sand_pull", self.caster)
-	
-	--[[self.caster:AddNewModifier(self.caster, self, "modifier_sandking_sand_storm_custom_heal", {duration = self:GetCaster():GetTalentValue("modifier_sand_king_sand_6", "duration")})
-
-	local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_brewmaster/brewmaster_dispel_magic.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.caster)
-	ParticleManager:ReleaseParticleIndex(particle)
-
-	self.caster:Purge(false, true, false, false, false)
-	]]
-
-	local units = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self.point, nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO, 0, 0, false )
-
-	local root_duration = self:GetCaster():GetTalentValue("modifier_sand_king_sand_6", "duration")
-
-	for _,unit in pairs(units) do
-
-		local dir = (self.point -  unit:GetAbsOrigin()):Normalized()
-		local point = self.point - dir*50
-		local distance = (point - unit:GetAbsOrigin()):Length2D()
-
-		distance = math.max(50, distance)
-		point = unit:GetAbsOrigin() + dir*distance
-
-		local mod = unit:AddNewModifier( self:GetCaster(),  self,  "modifier_generic_arc",  
-		{
-		  target_x = point.x,
-		  target_y = point.y,
-		  distance = distance,
-		  duration = 0.3,
-		  height = 0,
-		  fix_end = false,
-		  isStun = true,
-		  activity = ACT_DOTA_FLAIL,
-		})
-
-		local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf", PATTACH_ABSORIGIN_FOLLOW, unit )
-		mod:AddParticle(effect_cast,false, false, -1, false, false)
-		mod:SetEndCallback(function()
-
-			unit:AddNewModifier(self:GetCaster(), self, "modifier_sandking_sand_storm_custom_root", {duration = (1 - unit:GetStatusResistance())*root_duration})
-
-		end)
-
-
-	end
-end
-
-if not self:GetCaster():HasModifier("modifier_sand_king_sand_7") then return end
-
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_sandking_sand_storm_custom_legendary", {})
-end 
-
-function sandking_sand_storm_custom_legendary:OnChannelFinish(bInterrupted)
-
-
-self:GetCaster():RemoveModifierByName("modifier_sandking_sand_storm_custom_legendary")
-end
-
-
-
-modifier_sandking_sand_storm_custom_legendary = class({})
-function modifier_sandking_sand_storm_custom_legendary:IsHidden() return true end
-function modifier_sandking_sand_storm_custom_legendary:IsPurgable() return false end
-function modifier_sandking_sand_storm_custom_legendary:OnCreated()
-if not IsServer() then return end 
-
-self.max = self:GetCaster():GetTalentValue("modifier_sand_king_sand_7", "max")
-self.duration = self:GetCaster():GetTalentValue("modifier_sand_king_sand_7", "duration")
 self.caster = self:GetCaster()
 
-self.life_duration = self:GetCaster():GetTalentValue("modifier_sand_king_sand_7", "life_duration")
+local mod = self.caster:FindModifierByName("modifier_sandking_sand_storm_custom_target")
+self.point = self.caster:GetAbsOrigin()
 
-self.interval = self.duration/(self.max - 1) - 0.015
+local ability = self.caster:FindAbilityByName("sandking_sand_storm_custom")
+local radius = ability:GetRadius() + self.caster:GetTalentValue("modifier_sand_king_sand_6", "more_radius")
 
-self.qangle_rotation_rate = 360 / self.max
-self.line_position = self.caster:GetAbsOrigin() + RandomVector(300)
+if mod and mod:GetAuraOwner() and not mod:GetAuraOwner():IsNull() then 
+	self.point = mod:GetAuraOwner():GetAbsOrigin()
 
-self:OnIntervalThink()
-self:StartIntervalThink(self.interval)
+	local effect_cast = ParticleManager:CreateParticle( "particles/muerta/veil_pull.vpcf", PATTACH_ABSORIGIN_FOLLOW, mod:GetAuraOwner() )
+	ParticleManager:SetParticleControl( effect_cast, 0, self.point )
+	ParticleManager:SetParticleControl( effect_cast, 1, Vector( radius, radius, radius ) )
+	ParticleManager:ReleaseParticleIndex( effect_cast )
 end 
 
+EmitSoundOnLocationWithCaster(self.point, "SandKing.Sand_pull", self.caster)
 
-function modifier_sandking_sand_storm_custom_legendary:OnIntervalThink()
-if not IsServer() then return end 
-if self:GetStackCount() >= self.max then return end
+local units = FindUnitsInRadius( self.caster:GetTeamNumber(), self.point, nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO, 0, 0, false )
 
-local qangle = QAngle(0, self.qangle_rotation_rate, 0)
-self.line_position = RotatePosition(self.caster:GetAbsOrigin() , qangle, self.line_position)
+local root_duration = self.caster:GetTalentValue("modifier_sand_king_sand_6", "duration")
 
-self:IncrementStackCount()
+for _,unit in pairs(units) do
 
-local unit = CreateUnitByName("npc_dota_sand_king_spider", self.line_position, false, self.caster, self.caster, self.caster:GetTeamNumber())
-unit:AddNewModifier(self.caster, self:GetAbility(), "modifier_sandking_sand_storm_custom_spider_ai", {})
+	local dir = (self.point -  unit:GetAbsOrigin()):Normalized()
+	local point = self.point - dir*50
+	local distance = (point - unit:GetAbsOrigin()):Length2D()
 
-unit:AddNewModifier(self.caster, self:GetAbility(), "modifier_kill", { duration = self.life_duration })
+	distance = math.max(50, distance)
+	point = unit:GetAbsOrigin() + dir*distance
 
-unit.owner = self.caster
+	local mod = unit:AddNewModifier( self.caster,  self,  "modifier_generic_arc",  
+	{
+	  target_x = point.x,
+	  target_y = point.y,
+	  distance = distance,
+	  duration = 0.3,
+	  height = 0,
+	  fix_end = false,
+	  isStun = true,
+	  activity = ACT_DOTA_FLAIL,
+	})
 
---unit:SetControllableByPlayer(self.caster:GetPlayerID(), true)
-unit:SetAngles(0, 0, 0)
-unit:SetForwardVector(self.caster:GetForwardVector())
-FindClearSpaceForUnit(unit, unit:GetAbsOrigin(), true)
+	local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf", PATTACH_ABSORIGIN_FOLLOW, unit )
+	mod:AddParticle(effect_cast,false, false, -1, false, false)
+	mod:SetEndCallback(function()
+		unit:AddNewModifier(self.caster, self, "modifier_sandking_sand_storm_custom_root", {duration = (1 - unit:GetStatusResistance())*root_duration})
+	end)
+end
 
-EmitSoundOnLocationWithCaster(unit:GetAbsOrigin(), "SandKing.Spider_spawn", self.caster)
-
-if self:GetStackCount() >= self.max then 
-	self.caster:Stop()
-	self:Destroy()
 end 
-
-end 
-
-
-
-
-
-
 
 
 
@@ -586,7 +420,6 @@ end
 
 
 modifier_sandking_sand_storm_custom_spider_ai = class({})
-
 function modifier_sandking_sand_storm_custom_spider_ai:IsHidden() return true end
 function modifier_sandking_sand_storm_custom_spider_ai:IsPurgable() return false end
 function modifier_sandking_sand_storm_custom_spider_ai:RemoveOnDeath() return false end
@@ -596,22 +429,26 @@ return "particles/status_fx/status_effect_armadillo_shield.vpcf"
 end
 
 function modifier_sandking_sand_storm_custom_spider_ai:StatusEffectPriority()
-	return 9999999
+	return MODIFIER_PRIORITY_ILLUSION
 end
 
 
 function modifier_sandking_sand_storm_custom_spider_ai:OnCreated(table)
 if not IsServer() then return end
 
-local health = self:GetCaster():GetMaxHealth()*self:GetCaster():GetTalentValue("modifier_sand_king_sand_7", "health")/100
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
 
-self:GetParent():SetBaseMaxHealth(health)
-self:GetParent():SetHealth(self:GetParent():GetMaxHealth())
+local health = self.caster:GetMaxHealth()*self.caster:GetTalentValue("modifier_sand_king_sand_7", "health")/100
+self.slow_duration = self.caster:GetTalentValue("modifier_sand_king_sand_7", "slow_duration", true)
 
-ParticleManager:ReleaseParticleIndex( ParticleManager:CreateParticle( "particles/neutral_fx/skeleton_spawn.vpcf", PATTACH_ABSORIGIN, self:GetParent() ) )
-self:GetParent():SetRenderColor(246, 210, 143)
+self.parent:SetBaseMaxHealth(health)
+self.parent:SetHealth(self.parent:GetMaxHealth())
 
-local vec = (self:GetParent():GetAbsOrigin() - self:GetCaster():GetAbsOrigin())
+ParticleManager:ReleaseParticleIndex( ParticleManager:CreateParticle( "particles/neutral_fx/skeleton_spawn.vpcf", PATTACH_ABSORIGIN, self.parent ) )
+self.parent:SetRenderColor(246, 210, 143)
+
+local vec = (self.parent:GetAbsOrigin() - self.caster:GetAbsOrigin())
 
 self.vec = vec:Normalized()*300
 
@@ -627,28 +464,21 @@ end
 function modifier_sandking_sand_storm_custom_spider_ai:CheckState()
 return
 {
-	--[MODIFIER_STATE_FLYING_FOR_PATHING_PURPOSES_ONLY] = true,
 	[MODIFIER_STATE_NO_UNIT_COLLISION] = true,
 	[MODIFIER_STATE_CANNOT_MISS] = true
 }
 end
 
-
 function modifier_sandking_sand_storm_custom_spider_ai:IsValidTarget(target)
 if not IsServer() then return end 
-
-
 if not target or target:IsNull() or not target:IsAlive() or 
- ((target:GetAbsOrigin() - self:GetParent():GetAbsOrigin()):Length2D() > self.radius) or (not target:IsHero() and not target:IsCreep())
+ ((target:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D() > self.radius) or (not target:IsHero() and not target:IsCreep())
 or target:IsCourier() or target:GetUnitName() == "npc_teleport" or target:HasModifier("modifier_monkey_king_wukongs_command_custom_soldier") then 
 
 	return false 
 end
-
-
 return true
 end 
-
 
 function modifier_sandking_sand_storm_custom_spider_ai:SetTarget(target)
 if not IsServer() then return end
@@ -656,37 +486,34 @@ if not self:IsValidTarget(target) then return end
 if self.target == target then return end
 
 self.target = target
-self:GetParent():MoveToPositionAggressive(self.target:GetAbsOrigin())
-self:GetParent():SetForceAttackTarget(self.target)
+self.parent:MoveToPositionAggressive(self.target:GetAbsOrigin())
+self.parent:SetForceAttackTarget(self.target)
 
 end 
-
-
 
 function modifier_sandking_sand_storm_custom_spider_ai:MoveToCaster()
 if not IsServer() then return end
 
 self.target = nil
-self:GetParent():SetForceAttackTarget(nil)
+self.parent:SetForceAttackTarget(nil)
 
-local point = self:GetCaster():GetAbsOrigin() + self.vec
+local point = self.caster:GetAbsOrigin() + self.vec
 
-if (point - self:GetParent():GetAbsOrigin()):Length2D() > 50 then 
-	self:GetParent():MoveToPosition(self:GetCaster():GetAbsOrigin() + self.vec)
+if (point - self.parent:GetAbsOrigin()):Length2D() > 50 then 
+	self.parent:MoveToPosition(self.caster:GetAbsOrigin() + self.vec)
 end
 
 end
-
 
 function modifier_sandking_sand_storm_custom_spider_ai:OnIntervalThink()
 if not IsServer() then return end
 
-if self:GetParent():GetAggroTarget() then
-    self.target = self:GetParent():GetAggroTarget()
+if self.parent:GetAggroTarget() then
+    self.target = self.parent:GetAggroTarget()
 end
 
-local heroes = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_CLOSEST, false )
-local creeps = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_CLOSEST, false )
+local heroes = FindUnitsInRadius( self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_CLOSEST, false )
+local creeps = FindUnitsInRadius( self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_CLOSEST, false )
 
 if self:IsValidTarget(self.target) and self.target:IsHero() then 
     self:SetTarget(self.target)
@@ -715,10 +542,20 @@ if not self:IsValidTarget(self.target) then
 	self:MoveToCaster()
 end
 
-
 end
 
+function modifier_sandking_sand_storm_custom_spider_ai:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_PROCATTACK_FEEDBACK
+}
+end
 
+function modifier_sandking_sand_storm_custom_spider_ai:GetModifierProcAttack_Feedback(params)
+if not IsServer() then return end
+if not params.target:IsCreep() and not params.target:IsHero() then return end
+params.target:AddNewModifier(self.caster, self:GetAbility(), "modifier_sandking_sand_storm_custom_spider_effect", {duration = self.slow_duration})
+end
 
 
 
@@ -733,37 +570,27 @@ return "particles/units/heroes/hero_primal_beast/primal_beast_status_effect_slow
 end
 
 function modifier_sandking_sand_storm_custom_spider_effect:OnCreated()
-
---self.slow = self:GetCaster():GetTalentValue("modifier_sand_king_sand_7", "slow")
 self.damage = self:GetCaster():GetTalentValue("modifier_sand_king_sand_7", "damage")
 if not IsServer() then return end
-
 self:SetStackCount(1)
 end 
 
 function modifier_sandking_sand_storm_custom_spider_effect:OnRefresh(table)
 if not IsServer() then return end 
 self:IncrementStackCount()
-
 end 
 
 function modifier_sandking_sand_storm_custom_spider_effect:DeclareFunctions()
 return
 {
-	--MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
 	MODIFIER_PROPERTY_TOOLTIP
 }
 end
 
-function modifier_sandking_sand_storm_custom_spider_effect:GetModifierMoveSpeedBonus_Percentage()
---return self:GetStackCount()*self.slow
-end
 
 function modifier_sandking_sand_storm_custom_spider_effect:OnTooltip()
 return self:GetStackCount()*self.damage
 end
-
-
 
 
 
@@ -774,36 +601,38 @@ function modifier_sandking_sand_storm_custom_tracker:IsPurgable() return false e
 function modifier_sandking_sand_storm_custom_tracker:OnCreated()
 
 self.caster = self:GetCaster()
-self.slow_duration = self:GetCaster():GetTalentValue("modifier_sand_king_sand_7", "slow_duration", true)
-self.death_radius = self:GetCaster():GetTalentValue("modifier_sand_king_sand_7", "radius", true)
-end 
+self.ability = self:GetAbility()
+self.parent = self:GetParent()
+self.parent:AddDeathEvent(self)
+self.caster:AddSpellEvent(self)
+self.death_radius = self.caster:GetTalentValue("modifier_sand_king_sand_7", "radius", true)
+self.death_damage = self.caster:GetTalentValue("modifier_sand_king_sand_7", "death_damage", true)/100
 
-function modifier_sandking_sand_storm_custom_tracker:DeclareFunctions()
-return
+self.no_proc = 
 {
-	MODIFIER_EVENT_ON_ATTACK_LANDED,
-	MODIFIER_EVENT_ON_DEATH
+	["sandking_burrowstrike_custom"] = true,
+	["sandking_scorpion_strike_custom"] = true,
+	["sandking_burrowstrike_custom_legendary_exit"] = true,
+	["sandking_burrowstrike_custom_reverse"] = true
 }
-end
-
-function modifier_sandking_sand_storm_custom_tracker:OnAttackLanded(params)
-if not IsServer() then return end
-if not self.caster:HasModifier("modifier_sand_king_sand_7") then return end
-if not params.target:IsCreep() and not params.target:IsHero() then return end
-
-local attacker = params.attacker
-
-if attacker and attacker.owner and attacker.owner == self.caster and attacker:HasModifier("modifier_sandking_sand_storm_custom_spider_ai") then 
-	params.target:AddNewModifier(self.caster, self:GetAbility(), "modifier_sandking_sand_storm_custom_spider_effect", {duration = self.slow_duration})
 end 
 
+
+
+function modifier_sandking_sand_storm_custom_tracker:SpellEvent(params)
+if not IsServer() then return end
+if not self.caster:HasTalent("modifier_sand_king_sand_7") then return end
+if params.unit ~= self.caster then return end 
+if params.ability:IsItem() then return end 
+if self.no_proc[params.ability:GetName()] then return end 
+
+self.ability:ProcLegendary(self.caster:GetAbsOrigin())
 end
 
 
-
-function modifier_sandking_sand_storm_custom_tracker:OnDeath(params)
+function modifier_sandking_sand_storm_custom_tracker:DeathEvent(params)
 if not IsServer() then return end
-if not self.caster:HasModifier("modifier_sand_king_sand_7") then return end
+if not self.caster:HasTalent("modifier_sand_king_sand_7") then return end
 
 local unit = params.unit
 
@@ -815,15 +644,15 @@ if unit and unit.owner and unit.owner == self.caster and unit:HasModifier("modif
 
 	unit:EmitSound("Ability.SandKing_CausticFinale")
 
-	local targets = self:GetCaster():FindTargets(self.death_radius, unit:GetAbsOrigin())
+	local targets = self.caster:FindTargets(self.death_radius, unit:GetAbsOrigin())
 
-	local damage_table = {attacker = self:GetCaster(), ability = self:GetAbility(), damage = damage, damage_type = DAMAGE_TYPE_MAGICAL}
+	local damage_table = {attacker = self.caster, ability = self.ability, damage_type = DAMAGE_TYPE_MAGICAL}
 
 	for _,target in pairs(targets) do
 
-		damage_table.damage = self:GetAbility():GetDamage(target)
+		damage_table.damage = self.ability:GetDamage(target)*self.death_damage
 		damage_table.victim = target
-		local real_damage = ApplyDamage(damage_table)
+		local real_damage = DoDamage(damage_table, "modifier_sand_king_sand_7")
 	end 
 
 end 
@@ -836,17 +665,9 @@ end
 
 
 
-
-
-
-
-
-
-
 modifier_sandking_sand_storm_custom_speed = class({})
 function modifier_sandking_sand_storm_custom_speed:IsHidden() return true end
 function modifier_sandking_sand_storm_custom_speed:IsPurgable() return false end
-
 
 function modifier_sandking_sand_storm_custom_speed:GetEffectName()
 return "particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf"
@@ -857,26 +678,32 @@ return PATTACH_ABSORIGIN_FOLLOW
 end
 
 function modifier_sandking_sand_storm_custom_speed:OnCreated()
-
-self.speed = self:GetCaster():GetTalentValue("modifier_sand_king_sand_5", "speed")
-
+self.parent = self:GetParent()
+self.speed = self.parent:GetTalentValue("modifier_sand_king_sand_5", "speed")
+self.status = self.parent:GetTalentValue("modifier_sand_king_sand_5", "status")
+if not IsServer() then return end
+self.parent:EmitSound("SandKing.Storm_speed")
+self.parent:GenericParticle("particles/lina/dragon_status.vpcf", self)
 end
-
 
 function modifier_sandking_sand_storm_custom_speed:CheckState()
 return
 {
-	[MODIFIER_STATE_UNSLOWABLE] = true
+	--[MODIFIER_STATE_UNSLOWABLE] = true
 }
 end
 
 function modifier_sandking_sand_storm_custom_speed:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
 }
 end
 
+function modifier_sandking_sand_storm_custom_speed:GetModifierStatusResistanceStacking()
+return self.status
+end
 
 function modifier_sandking_sand_storm_custom_speed:GetModifierMoveSpeedBonus_Percentage()
 return self.speed
@@ -894,6 +721,7 @@ self.thinker = EntIndexToHScript(table.thinker)
 self.hit_radius = 200
 self.caster = self:GetCaster()
 self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
 self.effect_cast = ParticleManager:CreateParticle( "particles/sand_king/sand_tornado.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
 ParticleManager:SetParticleControl( self.effect_cast, 0, self:GetParent():GetOrigin() )
@@ -906,7 +734,7 @@ self:GetParent():EmitSound("SandKing.Tornado_loop")
 
 self.radius_min = 220
 
-self.radius_max = self:GetAbility():GetSpecialValueFor("sand_storm_radius") + self.caster:GetTalentValue("modifier_sand_king_sand_2", "radius") - self.hit_radius
+self.radius_max = self.ability:GetRadius() - self.hit_radius
 
 self.radius_speed = 60
 self.radius_k = 1
@@ -924,7 +752,10 @@ self.center = self.thinker:GetAbsOrigin()
 
 self.current_angle = table.angle
 
-self.current_speed = 1.75
+self.current_speed = 1.3
+if self.caster:GetTalentValue("modifier_sand_king_sand_4", "max") == 1 then 
+	self.current_speed = self.current_speed * 1.2
+end 
 
 self.dt = 0.01
 self:StartIntervalThink(self.dt)
@@ -1061,11 +892,7 @@ end
 function modifier_sandking_sand_storm_custom_silence:GetModifierMoveSpeedBonus_Percentage()
 return self.slow
 end
-
-
-
 function modifier_sandking_sand_storm_custom_silence:GetEffectName() return "particles/generic_gameplay/generic_silenced.vpcf" end
-
 function modifier_sandking_sand_storm_custom_silence:ShouldUseOverheadOffset() return true end
 function modifier_sandking_sand_storm_custom_silence:GetEffectAttachType() return PATTACH_OVERHEAD_FOLLOW end
 function modifier_sandking_sand_storm_custom_silence:GetStatusEffectName()
@@ -1074,7 +901,7 @@ end
 
 
 function modifier_sandking_sand_storm_custom_silence:StatusEffectPriority()
-return 99999
+return MODIFIER_PRIORITY_NORMAL 
 end
 
 
@@ -1085,20 +912,22 @@ function modifier_sandking_sand_storm_custom_damage_cd:IsPurgable() return false
 function modifier_sandking_sand_storm_custom_damage_cd:OnCreated()
 if not IsServer() then return end
 self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+self.parent = self:GetParent()
 
 self.silence = self.caster:GetTalentValue("modifier_sand_king_sand_4", "silence")
-self:GetParent():AddNewModifier(self.caster, self:GetAbility(), "modifier_sandking_sand_storm_custom_silence", {duration = self.silence*(1 - self:GetParent():GetStatusResistance())})
+self.parent:AddNewModifier(self.caster, self.ability, "modifier_sandking_sand_storm_custom_silence", {duration = self.silence*(1 - self.parent:GetStatusResistance())})
 
-self.damage = self:GetCaster():GetTalentValue("modifier_sand_king_sand_4", "damage")/100
+self.damage = self.caster:GetTalentValue("modifier_sand_king_sand_4", "damage")/100
 
-ApplyDamage({victim = self:GetParent(), attacker = self:GetCaster(), ability = self:GetAbility(), damage = self:GetAbility():GetDamage(self:GetParent())*self.damage, damage_type = DAMAGE_TYPE_MAGICAL})
+DoDamage({victim = self.parent, attacker = self:GetCaster(), ability = self.ability, damage = self.ability:GetDamage(self.parent)*self.damage, damage_type = DAMAGE_TYPE_MAGICAL}, "modifier_sand_king_sand_4")
 
-local particle = ParticleManager:CreateParticle("particles/sand_king/tornado_damage.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
-ParticleManager:SetParticleControlEnt( particle, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true )
-ParticleManager:SetParticleControlEnt( particle, 1, self:GetParent(), PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true )
+local particle = ParticleManager:CreateParticle("particles/sand_king/tornado_damage.vpcf", PATTACH_CUSTOMORIGIN, self.parent)
+ParticleManager:SetParticleControlEnt( particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true )
+ParticleManager:SetParticleControlEnt( particle, 1, self.parent, PATTACH_ABSORIGIN_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true )
 ParticleManager:ReleaseParticleIndex(particle)
 
-self:GetParent():EmitSound("SandKing.Tornado_damage")
+self.parent:EmitSound("SandKing.Tornado_damage")
 end 
 
 
@@ -1171,5 +1000,24 @@ return
 end
 
 
+modifier_sandking_sand_storm_custom_fade = class({})
+function modifier_sandking_sand_storm_custom_fade:IsHidden() return true end
+function modifier_sandking_sand_storm_custom_fade:IsPurgable() return false end
+function modifier_sandking_sand_storm_custom_fade:OnDestroy()
+if not IsServer() then return end 
+if self:GetRemainingTime() > 0.1 then return end
+local parent = self:GetParent()
+if not parent or parent:IsNull() then return end 
+
+parent:RemoveModifierByName("modifier_sandking_sand_storm_custom")
+end
 
 
+modifier_sandking_sand_storm_custom_speed_cd = class({})
+function modifier_sandking_sand_storm_custom_speed_cd:IsHidden() return false end
+function modifier_sandking_sand_storm_custom_speed_cd:IsPurgable() return false end
+function modifier_sandking_sand_storm_custom_speed_cd:RemoveOnDeath() return false end
+function modifier_sandking_sand_storm_custom_speed_cd:IsDebuff() return true end
+function modifier_sandking_sand_storm_custom_speed_cd:OnCreated()
+self.RemoveForDuel = true
+end

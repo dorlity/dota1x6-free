@@ -1,0 +1,375 @@
+
+"DOTAAbilities"
+{
+
+"Version"		"1"
+
+
+
+
+
+"muerta_dead_shot_custom"
+{
+    // General
+    //-------------------------------------------------------------------------------------------------------------
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/muerta/muerta_dead_shot_custom" 
+    "AbilityTextureName"            "muerta_dead_shot"      
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_VECTOR_TARGETING"
+    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
+    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_TREE"
+    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"   
+    "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_NO"
+    "SpellDispellableType"          "SPELL_DISPELLABLE_YES"
+    "FightRecapLevel"               "1"
+    "AbilitySound"                  "Hero_Muerta.DeadShot.Cast"
+    "LinkedAbility"                 "muerta_dead_shot_custom_legendary"
+
+    // Casting
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCastAnimation"          "ACT_DOTA_CAST_ABILITY_1"
+    "AbilityCastPoint"              "0.15"
+
+    // Time     
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCooldown"               "16 14 12 10"
+    
+    // Cost
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityManaCost"               "90 100 110 120"
+
+    "AbilityCastRange"              "1000"
+
+    // Special  
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+        "range"                         "1500"
+        "damage"                        "100 175 250 325"
+        "speed"                         "2000"
+        "radius"                        "150"
+        "ricochet_radius_start"         "115"
+        "ricochet_radius_end"           "115"
+        "ricochet_distance_multiplier"  "1.5"
+        "ricochet_fear_duration"        "0.8 0.95 1.1 1.25"
+        "impact_slow_percent"           "-100"
+        "impact_slow_duration"          "1"
+        "creeps_damage"                 "50"
+    }
+}
+
+
+
+
+"muerta_dead_shot_custom_legendary"
+{
+    // General
+    //-------------------------------------------------------------------------------------------------------------
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/muerta/muerta_dead_shot_custom" 
+    "AbilityTextureName"            "muerta_parting_shot"       
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_HIDDEN"
+    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
+    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+    "AbilityUnitTargetFlags"        "DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES"
+    "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_YES"
+    "SpellDispellableType"          "SPELL_DISPELLABLE_NO"
+    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"   
+    "FightRecapLevel"               "1"
+    "MaxLevel"                      "1"
+    "LinkedAbility"                 "muerta_dead_shot_custom_proc"
+
+    // Casting
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCastAnimation"          "ACT_DOTA_CAST_ABILITY_1"
+    "AbilityCastPoint"              "0.10"
+
+    // Time     
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCooldown"               "12"
+    
+    // Cost
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityManaCost"               "50"
+
+    "AbilityCastRange"              "1000"
+
+    // Special  
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+        "speed"             "2000"
+        "duration"          "3.5"
+        "start_range"       "100"
+        "impact_stun"           "1"
+        "max_range"             "420"
+        "debuff_duration"        "15"
+        "damage"                 "20"
+        "max"                    "5"
+        "creep_radius"            "350"
+    }
+}
+
+
+
+
+"muerta_dead_shot_custom_proc"
+{
+    // General
+    //-------------------------------------------------------------------------------------------------------------
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/muerta/muerta_dead_shot_custom" 
+    "AbilityTextureName"            "dead_shot_proc"        
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_HIDDEN"
+    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"   
+    "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_NO"
+    "FightRecapLevel"               "1"
+    "AbilitySound"                  "Hero_Muerta.DeadShot.Cast"
+    "LinkedAbility"                 "muerta_dead_shot_custom"
+    "MaxLevel"                      "1"
+
+    // Casting
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCastAnimation"          "ACT_DOTA_CAST_ABILITY_1"
+    "AbilityCastPoint"              "0.15"
+
+    // Time     
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCooldown"               "1"
+    
+    // Cost
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityManaCost"               "50"
+
+    "AbilityCastRange"              "1300"
+
+    // Special  
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+        "range"                         "1300"
+        "damage_1"                      "40"
+        "damage_2"                      "75"
+        "speed"                         "2000"
+        "radius"                        "100"
+        "ricochet_radius_start"         "115"
+        "ricochet_radius_end"           "115"
+        "fear_1"                        "0.8"
+        "fear_2"                        "1.2"
+        "impact_slow_percent"           "-100"
+        "impact_slow_duration"          "0.5"
+    }
+}
+
+
+
+
+//=================================================================================================================
+// MUERTA: The Calling
+//=================================================================================================================
+"muerta_the_calling_custom"
+{
+    // General
+    //-------------------------------------------------------------------------------------------------------------
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/muerta/muerta_the_calling_custom" 
+    "AbilityTextureName"            "muerta_the_calling"                                                        // unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_AOE"
+    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"   
+    "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_NO"
+    "SpellDispellableType"          "SPELL_DISPELLABLE_YES"
+    "AbilitySound"                  "Hero_Muerta.Revenants.Cast"
+    "LinkedAbility"                 "muerta_the_calling_custom_legendary"
+    "HasScepterUpgrade"             "1"
+
+    // Casting
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCastRange"              "580"
+    "AbilityCastPoint"              "0.1"
+    "AbilityCastAnimation"          "ACT_DOTA_CAST_ABILITY_2"
+
+    // Time     
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCooldown"               "20"
+
+    // Cost
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityManaCost"               "140 155 170 185"
+    
+    // Special
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+        "damage"                        "45 90 135 180"
+        "duration"                      "5 6 7 8"
+        "hit_radius"                    "120"
+        "radius"                        "580"
+        "num_revenants"                    "4"
+        "speed_initial"                 "0.2"
+        "speed_max"                     "1.0"
+        "acceleration"          "0.75"
+        "rotation_initial"      "0"
+        "debug_draw"                    "0"
+        "aura_movespeed_slow"           "-20"
+        "silence_duration"              "1 1.5 2 2.5"
+        "silence_creeps"                "0.5"
+        "rotation_direction"            "-1"
+        "show_warning"                  "1"
+        "scepter_range"                     "200"
+        "scepter_duration"                      "-4"
+        "scepter_cd"                        "-8"
+    }
+}
+
+
+"muerta_the_calling_custom_legendary"
+{
+    // General
+    //-------------------------------------------------------------------------------------------------------------
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/muerta/muerta_the_calling_custom" 
+    "AbilityTextureName"            "muerta_calling_legendary"                                                      // unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+
+    "MaxLevel"                      "1"
+    "LinkedAbility"                 "muerta_the_calling_custom_target"
+    // Time     
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCooldown"               "25"
+
+    
+    // Special
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+        "duration"                      "2"
+        "movespeed"                     "80"
+        "cd_inc"                        "1"
+    }
+}
+
+
+
+
+"muerta_the_calling_custom_target"
+{
+    // General
+    //-------------------------------------------------------------------------------------------------------------
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/muerta/muerta_the_calling_custom" 
+    "AbilityTextureName"            "muerta_calling_target"                                                     // unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_AOE | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+
+    "MaxLevel"                      "1"
+
+    // Time     
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCooldown"               "5"
+    "AbilityCastRange"              "1000"
+    
+    // Special
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+    }
+}
+
+
+
+
+
+//=================================================================================================================
+// MUERTA: Gunslinger
+//=================================================================================================================
+"muerta_gunslinger_custom"
+{
+    // General
+    //-------------------------------------------------------------------------------------------------------------
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/muerta/muerta_gunslinger_custom" 
+    "AbilityTextureName"            "muerta_gunslinger"                                                     // unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_PASSIVE"
+    "AbilityType"                   "DOTA_ABILITY_TYPE_BASIC"
+    "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_YES"
+    "AbilityUnitTargetFlags"        "DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES"
+    //"AbilitySound"                    "Hero_PhantomAssassin.CoupDeGrace"
+
+    "AbilityCastAnimation"          "ACT_DOTA_CAST_ABILITY_3"
+    "IsBreakable"                   "1"
+
+    // Special
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+        "double_shot_chance"  "100"
+        "double_shot_chance_custom"  "15 20 25 30"
+        
+        "target_search_bonus_range" "175"
+    }
+}
+
+
+
+//=================================================================================================================
+// MUERTA: Pierce the Veil
+//=================================================================================================================
+"muerta_pierce_the_veil_custom"
+{
+    // General
+    //-------------------------------------------------------------------------------------------------------------
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/muerta/muerta_pierce_the_veil_custom" 
+    "AbilityTextureName"            "muerta_pierce_the_veil"                                        // unique ID number for this ability.  Do not change this once established or it will invalidate collected stats.
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+    "SpellDispellableType"          "SPELL_DISPELLABLE_NO"
+    "AbilityType"                   "ABILITY_TYPE_ULTIMATE"
+    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"
+    "FightRecapLevel"               "2"
+    "AbilitySound"                  "Hero_Muerta.PierceTheVeil.Cast"
+    "AbilityCastPoint"              "0"
+    "AbilityCastAnimation"          "ACT_DOTA_CAST_ABILITY_2"
+
+    // Time     
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityCooldown"               "50"
+
+    // Cost
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityManaCost"               "150 250 350"
+    "HasShardUpgrade"               "1"
+
+    // Special
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityValues"
+    {
+        "duration"                  "3.4 3.7 4"
+        "transform_duration"        "0.35"
+        "base_damage_pct"           "100"
+        "modelscale"                "30"
+        "bonus_damage"              "20 40 60"
+        "bkb_damage"                "-30"
+        "shard_lifesteal"           "30"
+        "shard_lifesteal_creeps"    "3"
+        "shard_amp"             "2"
+        "shard_max"             "10"
+        "shard_radius"          "900"
+        "shard_bonus"           "4"
+    }
+}
+
+
+
+
+"muerta_supernatural"
+{
+    // General
+    //-------------------------------------------------------------------------------------------------------------
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_INNATE_UI"
+    "MaxLevel"                      "1"
+    "Innate"                        "1"
+}
+
+
+
+
+}

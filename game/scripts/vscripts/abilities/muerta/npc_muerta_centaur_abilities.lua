@@ -7,6 +7,17 @@ npc_muerta_centaur_charge = class({})
 
 
 
+function npc_muerta_centaur_charge:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle", "particles/generic_gameplay/generic_has_quest.vpcf", context )
+PrecacheResource( "particle", "particles/items_fx/force_staff.vpcf", context )
+PrecacheResource( "particle", "particles/lc_odd_charge.vpcf", context )
+PrecacheResource( "particle", "particles/status_fx/status_effect_forcestaff.vpcf", context )
+PrecacheResource( "particle", "particles/neutral_fx/neutral_centaur_khan_war_stomp.vpcf", context )
+PrecacheResource( "particle", "particles/red_zone.vpcf", context )
+
+end
+
 
 
 function npc_muerta_centaur_charge:OnAbilityPhaseStart()
@@ -95,7 +106,7 @@ function modifier_npc_muerta_centaur_chrarge:GetModifierDisableTurning() return 
 
 function modifier_npc_muerta_centaur_chrarge:GetStatusEffectName() return "particles/status_fx/status_effect_forcestaff.vpcf" end
 
-function modifier_npc_muerta_centaur_chrarge:StatusEffectPriority() return 100 end
+function modifier_npc_muerta_centaur_chrarge:StatusEffectPriority() return MODIFIER_PRIORITY_NORMAL  end
 
 function modifier_npc_muerta_centaur_chrarge:OnDestroy()
     if not IsServer() then return end
@@ -190,6 +201,12 @@ end
 
 npc_muerta_centaur_stun = class({})
 
+
+function npc_muerta_centaur_stun:GetChannelTime()
+return self:GetSpecialValueFor("AbilityChannelTime")
+end
+
+
 function npc_muerta_centaur_stun:OnSpellStart()
 if not IsServer() then return end
 
@@ -220,6 +237,7 @@ self.max = self:GetAbility():GetSpecialValueFor("amount")
 
 self:CastAnim()
 self:SetStackCount(0)
+self.count = 0
 
 self:StartIntervalThink(self.delay)
 end
@@ -245,7 +263,7 @@ for _,unit in pairs(units) do
 
     local damage = self.damage*unit:GetMaxHealth()/100
 
-    ApplyDamage({victim = unit, attacker = self:GetParent(), damage_type = DAMAGE_TYPE_MAGICAL,  damage = damage, ability = self:GetAbility(),})
+    DoDamage({victim = unit, attacker = self:GetParent(), damage_type = DAMAGE_TYPE_MAGICAL,  damage = damage, ability = self:GetAbility(),})
 
     SendOverheadEventMessage(unit, 4, unit, damage, nil)
 
@@ -255,6 +273,12 @@ end
 if self:GetStackCount() < self.max then 
 
     self:CastAnim()
+end
+
+self.count = self.count + 1
+if self.count >= self.max then 
+    self:Destroy()
+    return
 end
 
 end
@@ -306,7 +330,7 @@ function modifier_npc_muerta_centaur_passive:IsPurgable() return false end
 function modifier_npc_muerta_centaur_passive:DeclareFunctions()
 return
 {
-    MODIFIER_EVENT_ON_ATTACK_LANDED
+    MODIFIER_PROPERTY_PROCATTACK_FEEDBACK
 }
 end
 
@@ -317,7 +341,7 @@ self:SetStackCount(0)
 end
 
 
-function modifier_npc_muerta_centaur_passive:OnAttackLanded(params)
+function modifier_npc_muerta_centaur_passive:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.attacker then return end
 

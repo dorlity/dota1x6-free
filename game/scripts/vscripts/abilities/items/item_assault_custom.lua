@@ -1,157 +1,126 @@
 LinkLuaModifier("modifier_item_assault_custom", "abilities/items/item_assault_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_item_assault_custom_active_debuff", "abilities/items/item_assault_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_item_assault_custom_aura", "abilities/items/item_assault_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_item_assault_custom_buff", "abilities/items/item_assault_custom", LUA_MODIFIER_MOTION_NONE)
 
 item_assault_custom = class({})
 
 function item_assault_custom:GetIntrinsicModifierName()
-	return "modifier_item_assault_custom"
+return "modifier_item_assault_custom"
+end
+
+function item_assault_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/bristleback/armor_buff.vpcf", context )
 end
 
 
-
-
-modifier_item_assault_custom	= class({})
-
-function modifier_item_assault_custom:IsPurgable()		return false end
+modifier_item_assault_custom	= class(mod_hidden)
 function modifier_item_assault_custom:RemoveOnDeath()	return false end
-function modifier_item_assault_custom:IsHidden()	return true end
-
 function modifier_item_assault_custom:OnCreated()
-self.bonus_attack_speed = self:GetAbility():GetSpecialValueFor("bonus_attack_speed")
-self.bonus_armor = self:GetAbility():GetSpecialValueFor("bonus_armor")
-self.radius = self:GetAbility():GetSpecialValueFor("aura_radius")
 
 self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-self:StartIntervalThink(0.2)
+self.bonus_attack_speed = self.ability:GetSpecialValueFor("bonus_attack_speed")
+self.bonus_armor = self.ability:GetSpecialValueFor("bonus_armor")
+self.radius = self.ability:GetSpecialValueFor("AbilityCastRange")
+self.bonus_max = self.ability:GetSpecialValueFor("bonus_max")
+self.timer = self.ability:GetSpecialValueFor("timer")
 end
 
+function modifier_item_assault_custom:AddStack()
+if not IsServer() then return end
+
+if self:GetStackCount() < self.bonus_max then
+	self:IncrementStackCount()
+	if self:GetStackCount() >= self.bonus_max and not self.particle then
+		self.parent:EmitSound("BB.Back_shield")
+		self.particle = self.parent:GenericParticle("particles/bristleback/armor_buff.vpcf", self)
+	end
+end
+self:StartIntervalThink(self.timer)
+end
+
+function modifier_item_assault_custom:OnStackCountChanged(iStackCount)
+if not IsServer() then return end
+local mod = self.parent:FindModifierByName("modifier_item_assault_custom_aura")
+if mod then
+	mod:SetStackCount(self:GetStackCount())
+end
+
+end
 
 function modifier_item_assault_custom:OnIntervalThink()
 if not IsServer() then return end
 
-local stack = 0
-
-for _,enemy in pairs(FindUnitsInRadius( self.parent:GetTeamNumber(), self.parent:GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC + DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_INVULNERABLE, FIND_CLOSEST,false)) do 
-	local mod = enemy:FindModifierByName("modifier_item_assault_custom_active_debuff")
-
-	if mod and mod.activated and mod.activated == true then
-		stack = 1
-		break
-	end  
-end 
-
-if self:GetStackCount() ~= stack then
-
-	if stack == 1 then  
-
-		if self.particle == nil then 
-			self:GetParent():EmitSound("BB.Back_shield")
-
-			self.particle = ParticleManager:CreateParticle("particles/bristleback/armor_buff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-			self:AddParticle(self.particle, false, false, -1, false, false)
-		end
-	else 
-
-		if self.particle then 
-			ParticleManager:DestroyParticle(self.particle, false)
-			ParticleManager:ReleaseParticleIndex(self.particle)
-			self.particle = nil
-		end 
-
-	end 
-end 
-
-self:SetStackCount(stack)
-end 
-
-function modifier_item_assault_custom:DeclareFunctions()
-	local funcs = {
-		MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-		MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
-	}
-
-	return funcs
+if self.particle then
+	ParticleManager:Delete(self.particle, 1)
+	self.particle = nil
 end
 
-function modifier_item_assault_custom:GetModifierAttackSpeedBonus_Constant()
-	return self.bonus_attack_speed
-end
-
-function modifier_item_assault_custom:GetModifierPhysicalArmorBonus()
-	return self.bonus_armor
-end
-
-
-function modifier_item_assault_custom:GetAuraRadius()
-return self.radius
-end
-
-function modifier_item_assault_custom:GetAuraSearchFlags()
-	return DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_INVULNERABLE
-end
-
-function modifier_item_assault_custom:GetAuraSearchTeam()
-	return DOTA_UNIT_TARGET_TEAM_BOTH
-end
-
-function modifier_item_assault_custom:GetAuraSearchType()
-	return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC
-end
-
-function modifier_item_assault_custom:GetModifierAura()
-	return "modifier_item_assault_custom_active_debuff"
-end
-
-function modifier_item_assault_custom:IsAura()
-	return true
-end
-
-
-
-
-
-
-modifier_item_assault_custom_active_debuff = class({})
-
-function modifier_item_assault_custom_active_debuff:OnCreated()
-if not self:GetAbility() then self:Destroy() return end
-
-self.bonus_armor = self:GetAbility():GetSpecialValueFor("bonus_aura_armor")
-self.bonus_speed = self:GetAbility():GetSpecialValueFor("bonus_aura_speed")
-
-
-self.armor = self:GetAbility():GetSpecialValueFor("aura_negative_armor")
-self.speed = 0
-
-if self:GetParent():GetTeamNumber() == self:GetCaster():GetTeamNumber() then 
-	self.armor = self:GetAbility():GetSpecialValueFor("aura_positive_armor")
-	self.speed = self:GetAbility():GetSpecialValueFor("aura_attack_speed")
-end 
-
-self.activated = false
-
-if not IsServer() then return end 
-if self:GetParent():GetTeamNumber() == self:GetCaster():GetTeamNumber() then return end
-if not self:GetParent():IsHero() then return end
-
-self:StartIntervalThink(self:GetAbility():GetSpecialValueFor("timer"))
-end
-
-
-function modifier_item_assault_custom_active_debuff:OnIntervalThink()
-if not IsServer() then return end 
-
-self.activated = true
-
+self:SetStackCount(0)
 self:StartIntervalThink(-1)
 end
 
+function modifier_item_assault_custom:DeclareFunctions()
+return 
+{
+	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
+}
+end
 
-function modifier_item_assault_custom_active_debuff:IsHidden() return false end
-function modifier_item_assault_custom_active_debuff:IsPurgable() return false end
+function modifier_item_assault_custom:GetModifierAttackSpeedBonus_Constant()
+return self.bonus_attack_speed
+end
 
-function modifier_item_assault_custom_active_debuff:DeclareFunctions()
+function modifier_item_assault_custom:GetModifierPhysicalArmorBonus()
+return self.bonus_armor
+end
+
+function modifier_item_assault_custom:GetAuraRadius() return self.radius end
+function modifier_item_assault_custom:GetAuraSearchFlags() return DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_INVULNERABLE end
+function modifier_item_assault_custom:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_BOTH end
+function modifier_item_assault_custom:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC end
+function modifier_item_assault_custom:GetModifierAura() return "modifier_item_assault_custom_aura" end
+function modifier_item_assault_custom:IsAura() 
+if not IsServer() then return end
+return IsValid(self.parent) and self.parent:IsRealHero() and not self.parent:IsTempestDouble()
+end
+
+
+
+
+modifier_item_assault_custom_aura = class(mod_visible)
+function modifier_item_assault_custom_aura:IsHidden() return false end
+function modifier_item_assault_custom_aura:IsPurgable() return false end
+function modifier_item_assault_custom_aura:OnCreated()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+self.parent = self:GetParent()
+
+self.is_enemy = self.parent:GetTeamNumber() ~= self.caster:GetTeamNumber()
+
+self.aura_positive_armor = self.ability:GetSpecialValueFor("aura_positive_armor")
+self.aura_attack_speed = self.ability:GetSpecialValueFor("aura_attack_speed")
+self.aura_negative_armor = self.ability:GetSpecialValueFor("aura_negative_armor")
+
+self.bonus_aura_armor = self.ability:GetSpecialValueFor("bonus_aura_armor")
+self.bonus_aura_speed = self.ability:GetSpecialValueFor("bonus_aura_speed")
+self.radius = self.ability:GetSpecialValueFor("AbilityCastRange")
+end
+
+function modifier_item_assault_custom_aura:GetAuraRadius() return self.radius end
+function modifier_item_assault_custom_aura:GetAuraSearchFlags() return DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_INVULNERABLE end
+function modifier_item_assault_custom_aura:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_ENEMY end
+function modifier_item_assault_custom_aura:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO end
+function modifier_item_assault_custom_aura:GetModifierAura() return "modifier_item_assault_custom_buff" end
+function modifier_item_assault_custom_aura:IsAura() return self.is_enemy and self.parent:IsRealHero() end
+function modifier_item_assault_custom_aura:GetAuraEntityReject(hEntity)
+return self.caster ~= hEntity
+end
+
+function modifier_item_assault_custom_aura:DeclareFunctions()
 return 
 {
 	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
@@ -159,30 +128,34 @@ return
 }
 end
 
-function modifier_item_assault_custom_active_debuff:GetModifierPhysicalArmorBonus()
-local bonus = 0
+function modifier_item_assault_custom_aura:GetModifierPhysicalArmorBonus()
+if self.is_enemy then
+	return self.aura_negative_armor
+end
+return self.aura_positive_armor + self.caster:GetUpgradeStack("modifier_item_assault_custom")*self.bonus_aura_armor
+end
 
-if self:GetParent():GetTeamNumber() == self:GetCaster():GetTeamNumber() and 
-	self:GetCaster():HasModifier("modifier_item_assault_custom") and self:GetCaster():GetUpgradeStack("modifier_item_assault_custom") > 0 then 
-	bonus = self.bonus_armor
-end 
-
-return self.armor + bonus
+function modifier_item_assault_custom_aura:GetModifierAttackSpeedBonus_Constant()
+if self.is_enemy then return end
+return self.aura_attack_speed + self.caster:GetUpgradeStack("modifier_item_assault_custom")*self.bonus_aura_speed
 end
 
 
 
-function modifier_item_assault_custom_active_debuff:GetModifierAttackSpeedBonus_Constant()
 
-local bonus = 0
+modifier_item_assault_custom_buff = class(mod_hidden)
+function modifier_item_assault_custom_buff:OnCreated()
+self.parent = self:GetParent()
 
-if self:GetParent():GetTeamNumber() == self:GetCaster():GetTeamNumber() and 
-	self:GetCaster():HasModifier("modifier_item_assault_custom") and self:GetCaster():GetUpgradeStack("modifier_item_assault_custom") > 0 then 
-	bonus = self.bonus_speed
-end 
-
-return self.speed + bonus
+if not IsServer() then return end
+self:StartIntervalThink(1)
 end
 
+function modifier_item_assault_custom_buff:OnIntervalThink()
+if not IsServer() then return end
+local mod = self.parent:FindModifierByName("modifier_item_assault_custom")
+if mod then
+	mod:AddStack()
+end
 
-
+end

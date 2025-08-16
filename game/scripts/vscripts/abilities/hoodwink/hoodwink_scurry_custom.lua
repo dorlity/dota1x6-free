@@ -10,100 +10,83 @@ LinkLuaModifier( "modifier_hoodwink_scurry_custom_unslow", "abilities/hoodwink/h
 LinkLuaModifier( "modifier_hoodwink_scurry_custom_slow", "abilities/hoodwink/hoodwink_scurry_custom", LUA_MODIFIER_MOTION_NONE )
 
 hoodwink_scurry_custom = class({})
-hoodwink_scurry_custom_1 = class({})
 
 
+function hoodwink_scurry_custom:CreateTalent()
+self:ToggleAutoCast()
+end
 
 function hoodwink_scurry_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-    
+
+PrecacheResource( "particle", "particles/items3_fx/blink_swift_start.vpcf", context )
+PrecacheResource( "particle", "particles/items3_fx/blink_swift_end.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_scurry_passive.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_scurry_aura.vpcf", context )
-PrecacheResource( "particle", "particles/hood_proj.vpcf", context )
-PrecacheResource( "particle", "particles/hoodwink_head.vpcf", context )
 PrecacheResource( "particle", "particles/hood_charge.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_scurry_aura.vpcf", context )
+PrecacheResource( "particle", "particles/hoodwink_head.vpcf", context )
+PrecacheResource( "particle", "particles/hoodwink/scurry_proj.vpcf", context )
 PrecacheResource( "particle", "particles/hoodwink_ground.vpcf", context )
-
+PrecacheResource( "particle", "particles/units/heroes/hero_sniper/sniper_headshot_slow.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_acorn_shot_slow.vpcf", context )
 end
 
 
 
 function hoodwink_scurry_custom:GetIntrinsicModifierName()
-	return "modifier_hoodwink_scurry_custom"
+return "modifier_hoodwink_scurry_custom"
 end
-
 
 
 function hoodwink_scurry_custom:GetBehavior()
 local toggle = 0
-
-if self:GetCaster():HasModifier("modifier_hoodwink_scurry_5") then 
-	toggle = DOTA_ABILITY_BEHAVIOR_AUTOCAST
-end 
-
-return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IMMEDIATE + toggle
-end
-
-
-
-function hoodwink_scurry_custom_1:GetBehavior()
-
-local toggle = 0
-if self:GetCaster():HasModifier("modifier_hoodwink_scurry_5") then 
+if self:GetCaster():HasTalent("modifier_hoodwink_scurry_5") then 
 	toggle = DOTA_ABILITY_BEHAVIOR_AUTOCAST
 end 
 return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IMMEDIATE + toggle
 end
 
 
-function hoodwink_scurry_custom_1:OnSpellStart()
-
-local ability = self:GetCaster():FindAbilityByName("hoodwink_scurry_custom")
-if not ability then return end 
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_hoodwink_scurry_custom_cd", {duration = 1})
-ability:Cast(self:GetCaster():HasModifier("modifier_hoodwink_scurry_5") and self:GetAutoCastState() == true)
+function hoodwink_scurry_custom:GetAbilityChargeRestoreTime(level)
+local bonus = 0
+local caster = self:GetCaster()
+if caster:HasTalent("modifier_hoodwink_scurry_5") then 
+  bonus = caster:GetTalentValue("modifier_hoodwink_scurry_5", "cd")
+end 
+return self:GetSpecialValueFor("AbilityChargeRestoreTime") + bonus
 end
-
-
 
 
 
 function hoodwink_scurry_custom:OnSpellStart()
+local caster = self:GetCaster()
+caster:AddNewModifier(caster, self, "modifier_hoodwink_scurry_custom_cd", {duration = 1})
 
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_hoodwink_scurry_custom_cd", {duration = 1})
-self:Cast(self:GetCaster():HasModifier("modifier_hoodwink_scurry_5") and self:GetAutoCastState() == true)
-end
+local duration = self:GetSpecialValueFor( "duration" ) + caster:GetTalentValue("modifier_hoodwink_scurry_1", "duration")
 
+if caster:HasTalent("modifier_hoodwink_scurry_5") and  caster:HasTalent("modifier_hoodwink_scurry_5") and self:GetAutoCastState() and not caster:IsRooted() and not caster:IsLeashed() then 
+	local point = caster:GetAbsOrigin()
+	local range = caster:GetTalentValue("modifier_hoodwink_scurry_5", "range")
 
-
-
-
-function hoodwink_scurry_custom:Cast(blink)
-local duration = self:GetSpecialValueFor( "duration" ) + self:GetCaster():GetTalentValue("modifier_hoodwink_scurry_1", "duration")
-
-if self:GetCaster():HasModifier("modifier_hoodwink_scurry_5") and (blink == true or blink == 1) and not self:GetCaster():IsRooted() and not self:GetCaster():IsLeashed() then 
-
-	local point = self:GetCaster():GetAbsOrigin()
-	local range = self:GetCaster():GetTalentValue("modifier_hoodwink_scurry_5", "range")
-
-	FindClearSpaceForUnit(self:GetCaster(), point + self:GetCaster():GetForwardVector()*range, true)
+	FindClearSpaceForUnit(caster, point + caster:GetForwardVector()*range, true)
 
 	local effect = ParticleManager:CreateParticle("particles/items3_fx/blink_swift_start.vpcf", PATTACH_WORLDORIGIN, nil)
 	ParticleManager:SetParticleControl(effect, 0, point)
 	ParticleManager:ReleaseParticleIndex(effect)
 
 	effect = ParticleManager:CreateParticle("particles/items3_fx/blink_swift_end.vpcf", PATTACH_WORLDORIGIN, nil)
-	ParticleManager:SetParticleControl(effect, 0, self:GetCaster():GetAbsOrigin())
+	ParticleManager:SetParticleControl(effect, 0, caster:GetAbsOrigin())
 	ParticleManager:ReleaseParticleIndex(effect)
 
-	self:GetCaster():EmitSound("Hoodwink.Scurry_blink")
+	caster:EmitSound("Hoodwink.Scurry_blink")
 end
 
-if self:GetCaster():HasModifier("modifier_hoodwink_scurry_4") then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_hoodwink_scurry_custom_unslow", {duration = self:GetCaster():GetTalentValue("modifier_hoodwink_scurry_4", "duration")})
+if caster:HasTalent("modifier_hoodwink_scurry_4") then 
+	caster:AddNewModifier(caster, self, "modifier_hoodwink_scurry_custom_unslow", {duration = caster:GetTalentValue("modifier_hoodwink_scurry_4", "duration")})
 end 
 
-self:GetCaster():AddNewModifier( self:GetCaster(), self, "modifier_hoodwink_scurry_custom_buff", { duration = duration } )
+caster:AddNewModifier( caster, self, "modifier_hoodwink_scurry_custom_buff", { duration = duration } )
 
 end
 
@@ -117,44 +100,35 @@ end
 modifier_hoodwink_scurry_custom = class({})
 
 function modifier_hoodwink_scurry_custom:IsHidden()
-	return self:GetStackCount()~=0
+	return true
 end
 
 function modifier_hoodwink_scurry_custom:DeclareFunctions()
-local funcs = 
+return 
 {
-	MODIFIER_PROPERTY_EVASION_CONSTANT,
 	MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT,
-	MODIFIER_PROPERTY_SLOW_RESISTANCE,
-	MODIFIER_EVENT_ON_TAKEDAMAGE,
-	MODIFIER_EVENT_ON_ATTACK_LANDED,
-	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
-	MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
+	MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
 	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-	MODIFIER_EVENT_ON_ATTACK,
-	MODIFIER_EVENT_ON_ATTACK_FAIL,
 }
-
-return funcs
 end
 
 function modifier_hoodwink_scurry_custom:GetModifierMoveSpeedBonus_Constant()
-if not self:GetCaster():HasModifier("modifier_hoodwink_scurry_1") then return end 
+if not self:GetCaster():HasTalent("modifier_hoodwink_scurry_1") then return end 
 return self:GetCaster():GetTalentValue("modifier_hoodwink_scurry_1", "move")
 end
 
 
 function modifier_hoodwink_scurry_custom:GetModifierAttackSpeedBonus_Constant()
-if not self:GetParent():HasModifier("modifier_hoodwink_scurry_3") then return end
+if not self:GetParent():HasTalent("modifier_hoodwink_scurry_3") then return end
 return self:GetCaster():GetTalentValue("modifier_hoodwink_scurry_3", "speed")
 end
 
 
 
-function modifier_hoodwink_scurry_custom:OnAttack(params)
+function modifier_hoodwink_scurry_custom:AttackStartEvent_out(params)
 if not IsServer() then return end 
 if self.parent ~= params.attacker then return end 
-if not params.target:IsHero() and not params.target:IsCreep() then return end
+if not params.target:IsUnit() then return end
 
 local mod = self.parent:FindModifierByName("modifier_hoodwink_scurry_custom_knock_attack")
 if not mod then return end 
@@ -166,24 +140,22 @@ mod:Destroy()
 end 
 
 
-function modifier_hoodwink_scurry_custom:OnAttackFail(params)
+function modifier_hoodwink_scurry_custom:RecordDestroyEvent(params)
 if not IsServer() then return end 
+if not self.attack_records[params.record] then return end
 
 self.attack_records[params.record] = nil
-
 end 
 
 
-
-
-function modifier_hoodwink_scurry_custom:OnAttackLanded(params)
+function modifier_hoodwink_scurry_custom:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.attacker then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end
+if not params.target:IsUnit() then return end
 
-if self.parent:HasModifier("modifier_hoodwink_scurry_3") and self.parent:HasModifier("modifier_hoodwink_scurry_custom_buff") then 
+if self.parent:HasTalent("modifier_hoodwink_scurry_3") and self.parent:HasModifier("modifier_hoodwink_scurry_custom_buff") then 
 	local damage = self.parent:GetTalentValue("modifier_hoodwink_scurry_3", "damage")
-	ApplyDamage({ victim = params.target, attacker = self:GetParent(), damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility(), damage_flags = DOTA_DAMAGE_FLAG_NONE })
+	DoDamage({ victim = params.target, attacker = self:GetParent(), damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility(), damage_flags = DOTA_DAMAGE_FLAG_NONE }, "modifier_hoodwink_scurry_3")
 
 	params.target:SendNumber(4, damage)
 end
@@ -191,25 +163,14 @@ end
 
 if self.attack_records[params.record] == nil then return end 
 
-self.attack_records[params.record] = nil
-
 params.target:EmitSound("Hoodwink.Scurry_attack")
 params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_hoodwink_scurry_custom_slow", {duration = self.slow_duration}) 
-
---[[params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_hoodwink_scurry_custom_knock", 
-{
-	duration = self.attack_knock_duration,
-	x = self:GetCaster():GetAbsOrigin().x,
-	y = self:GetCaster():GetAbsOrigin().y
-})]]
-
 end
 
 
-
-function modifier_hoodwink_scurry_custom:OnTakeDamage(params)
+function modifier_hoodwink_scurry_custom:DamageEvent_inc(params)
 if not IsServer() then return end 
-if not self:GetParent():HasModifier("modifier_hoodwink_scurry_6") then return end 
+if not self:GetParent():HasTalent("modifier_hoodwink_scurry_6") then return end 
 if self:GetParent() ~= params.unit then return end 
 if params.unit:GetTeamNumber() == params.attacker:GetTeamNumber() then return end 
 
@@ -218,65 +179,16 @@ end
 
 
 
-function modifier_hoodwink_scurry_custom:GetModifierEvasion_Constant()
-if self:GetStackCount()==1 then return 0 end
-return self.evasion
-end
-
-function modifier_hoodwink_scurry_custom:GetModifierIncomingDamage_Percentage()
-if self:GetStackCount()==1 then return 0 end
-if not self:GetParent():HasModifier("modifier_hoodwink_scurry_2") then return end
-return self:GetCaster():GetTalentValue("modifier_hoodwink_scurry_2", "damage_reduce")
-end
-
-
-function modifier_hoodwink_scurry_custom:GetModifierStatusResistanceStacking() 
-if self:GetStackCount()==1 then return 0 end
-if not self:GetParent():HasModifier("modifier_hoodwink_scurry_2") then return end
-return self:GetCaster():GetTalentValue("modifier_hoodwink_scurry_2", "status")
-end
-
-
 
 function modifier_hoodwink_scurry_custom:OnIntervalThink()
 if not IsServer() then return end
 
-if self:GetParent():HasModifier("modifier_hoodwink_scurry_6") and not self:GetParent():HasModifier("modifier_hoodwink_scurry_custom_damaged") then 
-	self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_hoodwink_scurry_custom_shield", {})
-end
-
-
-local stack = 1
-
-if not self:GetParent():HasModifier("modifier_hoodwink_scurry_6") then 
-	local trees = GridNav:GetAllTreesAroundPoint( self.parent:GetOrigin(), self.radius, false )
-	if #trees>0 then
-	 	stack = 0 
-	end
-else 
-	stack = 0
-end 
-
-
-if self:GetStackCount()~=stack then
-	self:SetStackCount( stack )
-	if stack==0 then
-		self.effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_hoodwink/hoodwink_scurry_passive.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent )
-		ParticleManager:SetParticleControl( self.effect_cast, 2, Vector( self.radius, 0, 0 ) )
-	else
-
-		if not self.effect_cast then return end
-		ParticleManager:DestroyParticle( self.effect_cast, false )
-		ParticleManager:ReleaseParticleIndex( self.effect_cast )
-	end
-end
-
-
 local distance = math.min((self.parent:GetAbsOrigin() - self.old_pos):Length2D(), self.stack_distance)
 self.old_pos = self.parent:GetAbsOrigin()
 
+if not self.parent:HasTalent("modifier_hoodwink_scurry_4") and not self.parent:HasTalent("modifier_hoodwink_scurry_legendary") then return end 
 
-if self.parent:HasModifier("modifier_hoodwink_scurry_4") and not self.parent:IsInvisible()  then 
+if self.parent:HasTalent("modifier_hoodwink_scurry_4") and not self.parent:IsInvisible()  then 
 	self.attack_distance = self.attack_distance + distance
 
 	if self.attack_distance >= self.parent:GetTalentValue("modifier_hoodwink_scurry_4", "distance") then 
@@ -296,83 +208,84 @@ if self.parent:HasModifier("modifier_hoodwink_scurry_4") and not self.parent:IsI
 	end 
 end 
 
-if self.parent:HasModifier("modifier_hoodwink_scurry_legendary") then 
+if self.parent:HasTalent("modifier_hoodwink_scurry_legendary") then 
 	if self.init == false then 
  		self.init = true
 
-		CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self.parent:GetPlayerOwnerID()), 'Hoodwink_change',  {max = self.max_distance, current = 0})
+ 		self.parent:UpdateUIlong({max = self.max_distance, stack = 0, active = 0, style = "HoodwinkScurry"})
+
+		CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self.parent:GetPlayerOwnerID()), "Hoodwink_change",  {max = self.max_distance, current = 0})
 
 		self.particle = ParticleManager:CreateParticle("particles/hood_charge.vpcf", PATTACH_OVERHEAD_FOLLOW, self.parent)
 		self:AddParticle(self.particle, false, false, -1, false, false)
  	end
-else 
-	return
-end 
 
+	local mod = self.parent:FindModifierByName("modifier_hoodwink_scurry_custom_legendary")
 
-local mod = self.parent:FindModifierByName("modifier_hoodwink_scurry_custom_legendary")
+	local max = self.max_distance
+	local current = self.distance
+	local active = 0
 
-local max = self.max_distance
-local current = self.distance
-local active = 0
+	if mod then 
+		max = self.legendary_duration
+		current = mod:GetRemainingTime()
+		active = 1
+	end
 
-if mod then 
-	max = self.legendary_duration
-	current = mod:GetRemainingTime()
-	active = 1
-end
+ 	self.parent:UpdateUIlong({max = max, stack = current, active = active, use_zero = active, style = "HoodwinkScurry"})
 
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self.parent:GetPlayerOwnerID()), 'Hoodwink_change',  {max = max, current = current, active = active})
+	if mod then return end
+	if not self.parent:IsAlive() then return end
 
-if mod then return end
-if not self.parent:IsAlive() then return end
+	self.distance = self.distance + distance
 
-self.distance = self.distance + distance
+	local stack = math.floor(self.distance/self.stack_distance)
 
-local stack = math.floor(self.distance/self.stack_distance)
+	if self.stack ~= stack then 
+		self.stack = stack
 
-if self.stack ~= stack then 
-	self.stack = stack
+		if self.stack >= self.max then 
+			ParticleManager:DestroyParticle(self.particle, false)
+			ParticleManager:ReleaseParticleIndex(self.particle)
+			self.particle = nil
+			self.stack = 0
+			self.distance = 0
+			self:GetParent():AddNewModifier(self.parent, self:GetAbility(), "modifier_hoodwink_scurry_custom_legendary", {duration = self.legendary_duration})
+		else 
 
-	if self.stack >= self.max then 
-		ParticleManager:DestroyParticle(self.particle, false)
-		ParticleManager:ReleaseParticleIndex(self.particle)
-		self.particle = nil
-		self.stack = 0
-		self.distance = 0
-		self:GetParent():AddNewModifier(self.parent, self:GetAbility(), "modifier_hoodwink_scurry_custom_legendary", {duration = self.legendary_duration})
-	else 
+			if self.particle == nil then 
+				self.particle = ParticleManager:CreateParticle("particles/hood_charge.vpcf", PATTACH_OVERHEAD_FOLLOW, self.parent)
+				self:AddParticle(self.particle, false, false, -1, false, false)
+			end
 
-		if self.particle == nil then 
-			self.particle = ParticleManager:CreateParticle("particles/hood_charge.vpcf", PATTACH_OVERHEAD_FOLLOW, self.parent)
-			self:AddParticle(self.particle, false, false, -1, false, false)
-		end
+			local max = self.max
+			local s = self.stack
 
-		local max = self.max
-		local s = self.stack
-
-		for i = 1,max do 
-			if i <= s then 
-				ParticleManager:SetParticleControl(self.particle, i, Vector(1, 0, 0))	
-			else 
-				ParticleManager:SetParticleControl(self.particle, i, Vector(0, 0, 0))	
+			for i = 1,max do 
+				if i <= s then 
+					ParticleManager:SetParticleControl(self.particle, i, Vector(1, 0, 0))	
+				else 
+					ParticleManager:SetParticleControl(self.particle, i, Vector(0, 0, 0))	
+				end
 			end
 		end
 	end
-end
+end 
 
-end
 
+self:StartIntervalThink(FrameTime())
+end
 
 
 
 function modifier_hoodwink_scurry_custom:OnCreated( kv )
 self.parent = self:GetParent()
-self.evasion = self:GetAbility():GetSpecialValueFor( "evasion" )
-self.radius = self:GetAbility():GetSpecialValueFor( "radius" )
 
-
-self.parent = self:GetParent()
+if self.parent:IsRealHero() then 
+	self.parent:AddRecordDestroyEvent(self)
+	self.parent:AddDamageEvent_inc(self)
+	self.parent:AddAttackStartEvent_out(self)
+end
 
 if not IsServer() then return end
 self.slow_duration = self:GetCaster():GetTalentValue("modifier_hoodwink_scurry_4", "slow_duration", true)
@@ -392,14 +305,9 @@ self.attack_range = self:GetCaster():GetTalentValue("modifier_hoodwink_scurry_4"
 self.attack_knock_duration = self:GetCaster():GetTalentValue("modifier_hoodwink_scurry_4", "knock_duration", true)
 self.attack_records = {}
 
-self:StartIntervalThink( FrameTime() )
-self:OnIntervalThink()
+self:StartIntervalThink(1)
 end
 
-function modifier_hoodwink_scurry_custom:OnRefresh( kv )
-self.evasion = self:GetAbility():GetSpecialValueFor( "evasion" )
-self.radius = self:GetAbility():GetSpecialValueFor( "radius" )
-end
 
 
 
@@ -416,6 +324,7 @@ function modifier_hoodwink_scurry_custom_buff:IsPurgable()
 end
 
 function modifier_hoodwink_scurry_custom_buff:OnCreated( kv )
+self.parent = self:GetParent()
 self.movespeed = self:GetAbility():GetSpecialValueFor( "movement_speed_pct" )
 
 self.attack_range = self:GetAbility():GetSpecialValueFor("attack_range")
@@ -431,7 +340,20 @@ end
 self:GetCaster():EmitSound("Hero_Hoodwink.Scurry.Cast")
 self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_hoodwink/hoodwink_scurry_aura.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
 self:AddParticle(self.particle, false, false, -1, true, false)
+self:OnIntervalThink()
+self:StartIntervalThink(0.5)
 end
+
+function modifier_hoodwink_scurry_custom_buff:OnIntervalThink()
+if not IsServer() then return end
+
+self:SetStackCount(0)
+local evasion = self.parent:GetEvasion()
+self:SetStackCount(evasion*100)
+
+self:SendBuffRefreshToClients()
+end
+
 
 function modifier_hoodwink_scurry_custom_buff:OnRefresh( kv )
 self:OnCreated(kv)
@@ -445,16 +367,19 @@ end
 
 
 function modifier_hoodwink_scurry_custom_buff:DeclareFunctions()
-	local funcs = {
-		MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-		MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
-		MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
-		MODIFIER_PROPERTY_CAST_RANGE_BONUS_STACKING,
-	}
-
-	return funcs
+return 
+{
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+	MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
+	MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
+	MODIFIER_PROPERTY_CAST_RANGE_BONUS_STACKING,
+	MODIFIER_PROPERTY_EVASION_CONSTANT,
+}
 end
 
+function modifier_hoodwink_scurry_custom_buff:GetModifierEvasion_Constant()
+return self:GetStackCount()
+end
 
 function modifier_hoodwink_scurry_custom_buff:GetModifierCastRangeBonusStacking()
 return self.spell_range 
@@ -501,6 +426,9 @@ function modifier_hoodwink_scurry_custom_legendary:OnCreated(table)
 self.bva = self:GetCaster():GetTalentValue("modifier_hoodwink_scurry_legendary", "bva")
 self.heal = self:GetCaster():GetTalentValue("modifier_hoodwink_scurry_legendary", "lifesteal")
 self.creeps = self:GetCaster():GetTalentValue("modifier_hoodwink_scurry_legendary", "creeps")
+self.parent = self:GetParent()
+
+self.parent:AddDamageEvent_out(self)
 
 if not IsServer() then return end
 self.moved = false
@@ -520,7 +448,6 @@ return
 {
 	MODIFIER_PROPERTY_BASE_ATTACK_TIME_CONSTANT,
 	MODIFIER_PROPERTY_BONUS_NIGHT_VISION,
-	MODIFIER_EVENT_ON_TAKEDAMAGE,
 	MODIFIER_PROPERTY_PROJECTILE_NAME,
 	MODIFIER_PROPERTY_TOOLTIP
 }
@@ -535,7 +462,7 @@ end
 
 
 
-function modifier_hoodwink_scurry_custom_legendary:OnTakeDamage(params)
+function modifier_hoodwink_scurry_custom_legendary:DamageEvent_out(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.attacker then return end
 if not params.unit:IsCreep() and not params.unit:IsHero() then return end
@@ -550,7 +477,7 @@ end
 
 heal = heal*params.damage
 
-self:GetParent():GenericHeal(heal, self:GetAbility(), true)
+self:GetParent():GenericHeal(heal, self:GetAbility(), true, nil, "modifier_hoodwink_scurry_legendary")
 
 end
 
@@ -678,6 +605,8 @@ function modifier_hoodwink_scurry_custom_shield:GetTexture() return "buffs/reinc
 function modifier_hoodwink_scurry_custom_shield:IsPurgable() return false end
 function modifier_hoodwink_scurry_custom_shield:OnCreated(table)
 
+self.parent = self:GetParent()
+self.shield_talent = "modifier_hoodwink_scurry_6"
 self.shield_max = self:GetCaster():GetTalentValue("modifier_hoodwink_scurry_6", "shield")/100
 
 self.max_shield = self:GetParent():GetMaxHealth()*self.shield_max
@@ -752,23 +681,20 @@ end
 
 if not IsServer() then return end
 
-local damage = params.damage
-if self:GetCaster():HasModifier("modifier_hoodwink_scurry_2") then 
-	damage = damage * (1 + self.damage_reduce)
+local real_damage = params.damage
+if self:GetCaster():HasTalent("modifier_hoodwink_scurry_2") then 
+	real_damage = real_damage * (1 + self.damage_reduce)
 end 
 
-if self:GetStackCount() > damage then
-    self:SetStackCount(self:GetStackCount() - damage)
-    local i = params.damage
-    return -i
-else
-    
-    local i = self:GetStackCount()
-    self:SetStackCount(0)
-    self:Destroy()
-    return -i
+local damage = math.min(real_damage, self:GetStackCount())
+self.parent:AddShieldInfo({shield_mod = self, healing = damage, healing_type = "shield"})
+
+self:SetStackCount(self:GetStackCount() - damage)
+if self:GetStackCount() <= 0 then
+  self:Destroy()
 end
 
+return -damage
 end
 
 

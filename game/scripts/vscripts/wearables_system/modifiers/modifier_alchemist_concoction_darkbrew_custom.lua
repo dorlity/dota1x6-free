@@ -1,0 +1,5 @@
+modifier_alchemist_concoction_darkbrew_custom = class({})
+function modifier_alchemist_concoction_darkbrew_custom:IsHidden() return true end
+function modifier_alchemist_concoction_darkbrew_custom:IsPurgable() return false end
+function modifier_alchemist_concoction_darkbrew_custom:IsPurgeException() return false end
+function modifier_alchemist_concoction_darkbrew_custom:RemoveOnDeath() return false end

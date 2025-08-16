@@ -11,12 +11,18 @@ function modifier_golem_passive:IsHidden() return true end
 
 function modifier_golem_passive:DeclareFunctions() return {
 
-    MODIFIER_EVENT_ON_DEATH,
-    MODIFIER_EVENT_ON_ATTACK_LANDED
+    MODIFIER_PROPERTY_PROCATTACK_FEEDBACK
 
 } end
 
-function modifier_golem_passive:OnAttackLanded( param )
+
+function modifier_golem_passive:OnCreated(table)
+self.parent = self:GetParent()
+self.parent:AddDeathEvent(self)
+end
+
+
+function modifier_golem_passive:GetModifierProcAttack_Feedback( param )
     if not IsServer() then end 
     if self:GetParent() == param.attacker  then
     local chance = self:GetAbility():GetSpecialValueFor("chance")
@@ -24,14 +30,14 @@ function modifier_golem_passive:OnAttackLanded( param )
         if random and not param.target:IsBuilding() then 
             local duration = self:GetAbility():GetSpecialValueFor("duration")
             param.target:AddNewModifier(param.attacker, self:GetAbility(), "modifier_stunned", { duration = duration*(1 - param.target:GetStatusResistance()) })
-            param.target:EmitSound("Hero_Tiny.CraggyExterior")
-            param.target:EmitSound("Hero_Tiny.CraggyExterior.Stun")
+            param.target:EmitSound("Creep.Tiny_craggy")
+            param.target:EmitSound("Creep.Tiny_craggy_stun")
         end
     end
 
 end
 
-function modifier_golem_passive:OnDeath( param )
+function modifier_golem_passive:DeathEvent( param )
     if not IsServer() then end 
       
     if param.unit == self:GetParent() then
@@ -43,10 +49,8 @@ function modifier_golem_passive:OnDeath( param )
                     for j = 1,2 do
                         new_golem = CreateUnitByName(golems[i-1], self:GetParent():GetAbsOrigin(), true, nil, nil, DOTA_TEAM_CUSTOM_5)
                         new_golem.mkb = self:GetParent().mkb
-                        new_golem.owner = self:GetParent().owner
-                        new_golem:AddNewModifier(new_golem, nil, "modifier_waveupgrade", {})
                         new_golem.givegold = self:GetParent().givegold
-                        new_golem.host = self:GetParent().host
+                        new_golem.host_team = self:GetParent().host_team
                         new_golem.ally = nil
                         new_golem.summoned = true
                         if new_golem.givegold then 
@@ -54,6 +58,7 @@ function modifier_golem_passive:OnDeath( param )
                               new_golem:SetMinimumGoldBounty(gold*GoldComeback)
                               new_golem:SetMaximumGoldBounty(gold*GoldComeback)
                         end
+                        new_golem:AddNewModifier(new_golem, nil, "modifier_waveupgrade", {})
                      end
                 break
                 end

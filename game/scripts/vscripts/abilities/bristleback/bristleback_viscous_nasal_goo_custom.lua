@@ -9,17 +9,16 @@ bristleback_viscous_nasal_goo_custom              = class({})
 
 
 
-
 function bristleback_viscous_nasal_goo_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
 PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_viscous_nasal_goo.vpcf", context )
-PrecacheResource( "particle", "particles/econ/items/bristleback/ti7_head_nasal_goo/bristleback_ti7_crimson_nasal_goo_proj.vpcf", context )
-PrecacheResource( "particle", "particles/bristle_goo_ground.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_viscous_nasal_goo_debuff.vpcf", context )
 PrecacheResource( "particle", "particles/status_fx/status_effect_goo.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_viscous_nasal_stack.vpcf", context )
 
 end
+
 
 
 
@@ -39,8 +38,8 @@ end
 function bristleback_viscous_nasal_goo_custom:GetCooldown(level)
 local bonus = 0
 
-if self:GetCaster():HasModifier("modifier_bristle_goo_stack") then 
-    bonus = self:GetCaster():GetTalentValue("modifier_bristle_goo_stack", "cd")
+if self:GetCaster():HasTalent("modifier_bristle_goo_5") then 
+    bonus = self:GetCaster():GetTalentValue("modifier_bristle_goo_5", "cd")
 end
 
 return self.BaseClass.GetCooldown( self, level ) + bonus
@@ -163,7 +162,7 @@ end
 
 function bristleback_viscous_nasal_goo_custom:AddStack(target)
 
-local duration = self:GetSpecialValueFor("goo_duration") + self:GetCaster():GetTalentValue("modifier_bristle_goo_max", "duration")
+local duration = self:GetSpecialValueFor("goo_duration") + self:GetCaster():GetTalentValue("modifier_bristle_goo_1", "duration")
 
 target:AddNewModifier(self:GetCaster(), self, "modifier_bristleback_viscous_nasal_goo_custom", {duration = duration * (1 - target:GetStatusResistance())})
 end
@@ -187,7 +186,7 @@ function modifier_bristleback_viscous_nasal_goo_custom:GetStatusEffectName()
 end
 
 function modifier_bristleback_viscous_nasal_goo_custom:StatusEffectPriority()
-    return 10
+    return MODIFIER_PRIORITY_NORMAL 
 end
 
 
@@ -198,14 +197,14 @@ self.caster   = self:GetCaster()
 self.parent   = self:GetParent()
 self.RemoveForDuel = true
 
-self.armor_per_stack    = self.ability:GetSpecialValueFor("armor_per_stack") + self:GetCaster():GetTalentValue("modifier_bristle_goo_status", "armor")
-self.move_slow_per_stack  = self.ability:GetSpecialValueFor("move_slow_per_stack") + self:GetCaster():GetTalentValue("modifier_bristle_goo_stack", "slow")
-self.stack_limit      = self.ability:GetSpecialValueFor("stack_limit") + self:GetCaster():GetTalentValue("modifier_bristle_goo_max", "max")
+self.armor_per_stack    = self.ability:GetSpecialValueFor("armor_per_stack") + self:GetCaster():GetTalentValue("modifier_bristle_goo_6", "armor")
+self.move_slow_per_stack  = self.ability:GetSpecialValueFor("move_slow_per_stack") + self:GetCaster():GetTalentValue("modifier_bristle_goo_5", "slow")
+self.stack_limit      = self.ability:GetSpecialValueFor("stack_limit") + self:GetCaster():GetTalentValue("modifier_bristle_goo_1", "max")
 
-self.damage_reduce = self:GetCaster():GetTalentValue("modifier_bristle_goo_proc", "damage_reduce")
-self.damage_reduce_max = self:GetCaster():GetTalentValue("modifier_bristle_goo_proc", "max")
+self.damage_reduce = self:GetCaster():GetTalentValue("modifier_bristle_goo_2", "damage_reduce")
+self.damage_reduce_max = self:GetCaster():GetTalentValue("modifier_bristle_goo_2", "max")
 
-self.dispel_stun = self:GetCaster():GetTalentValue("modifier_bristle_goo_status", "stun")
+self.dispel_stun = self:GetCaster():GetTalentValue("modifier_bristle_goo_6", "stun")
 
 if not IsServer() then return end
 
@@ -233,7 +232,7 @@ if self:GetStackCount() < self.stack_limit then
   self:IncrementStackCount()
 end 
 
-if self:GetCaster():HasModifier("modifier_bristle_goo_ground") then 
+if self:GetCaster():HasTalent("modifier_bristle_goo_3") then 
   self.parent:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_bristleback_viscous_nasal_goo_damage", {})
 end
 self.parent:EmitSound("Hero_Bristleback.ViscousGoo.Target")
@@ -269,7 +268,7 @@ end
 
 
 function modifier_bristleback_viscous_nasal_goo_custom:GetModifierTotalDamageOutgoing_Percentage()
-if not self:GetCaster():HasModifier("modifier_bristle_goo_proc") then return end 
+if not self:GetCaster():HasTalent("modifier_bristle_goo_2") then return end 
 
 return self.damage_reduce * math.min(self:GetStackCount(), self.damage_reduce_max)
 end
@@ -291,8 +290,10 @@ end
 
 function modifier_bristleback_viscous_nasal_goo_custom:OnDestroy()
 if not IsServer() then return end
-if not self:GetCaster():HasModifier("modifier_bristle_goo_status") then return end
+if not self:GetCaster():HasTalent("modifier_bristle_goo_6") then return end
 if self:GetRemainingTime() <= 0.1 then return end 
+if self.parent:HasModifier("modifier_abaddon_borrowed_time_custom") then return end
+
 
 local stun = self.dispel_stun*self:GetStackCount()
 
@@ -312,8 +313,7 @@ function modifier_bristleback_viscous_nasal_goo_tracker:IsPurgable() return fals
 function modifier_bristleback_viscous_nasal_goo_tracker:DeclareFunctions()
 return
 {
-  MODIFIER_EVENT_ON_ATTACK_LANDED,
-  MODIFIER_EVENT_ON_TAKEDAMAGE,
+  MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
   MODIFIER_PROPERTY_CAST_RANGE_BONUS_STACKING,
 }
 
@@ -321,7 +321,7 @@ end
 
 
 function modifier_bristleback_viscous_nasal_goo_tracker:GetModifierCastRangeBonusStacking()
-if not self:GetCaster():HasModifier("modifier_bristle_goo_stack") then return end 
+if not self:GetCaster():HasTalent("modifier_bristle_goo_5") then return end 
 
 return self.range_bonus
 end
@@ -331,26 +331,27 @@ end
 function modifier_bristleback_viscous_nasal_goo_tracker:OnCreated()
 
 self.parent = self:GetParent()
-self.legendary_chance = self:GetCaster():GetTalentValue("modifier_bristle_goo_legendary", "chance", true)
-self.legendary_damage = self:GetCaster():GetTalentValue("modifier_bristle_goo_legendary", "damage", true)/100
-self.legendary_stun = self:GetCaster():GetTalentValue("modifier_bristle_goo_legendary", "stun", true)
+self.legendary_chance = self:GetCaster():GetTalentValue("modifier_bristle_goo_7", "chance", true)
+self.legendary_damage = self:GetCaster():GetTalentValue("modifier_bristle_goo_7", "damage", true)/100
+self.legendary_stun = self:GetCaster():GetTalentValue("modifier_bristle_goo_7", "stun", true)
 
-self.attack_duration = self:GetCaster():GetTalentValue("modifier_bristle_goo_damage", "duration", true)
+self.attack_duration = self:GetCaster():GetTalentValue("modifier_bristle_goo_4", "duration", true)
 
-self.heal_creeps = self.parent:GetTalentValue("modifier_bristle_goo_proc", "heal_creeps", true)
-self.heal_max = self.parent:GetTalentValue("modifier_bristle_goo_proc", "max", true)
+self.heal_creeps = self.parent:GetTalentValue("modifier_bristle_goo_2", "heal_creeps", true)
+self.heal_max = self.parent:GetTalentValue("modifier_bristle_goo_2", "max", true)
 
-self.range_bonus = self.parent:GetTalentValue("modifier_bristle_goo_stack", "range", true)
+self.range_bonus = self.parent:GetTalentValue("modifier_bristle_goo_5", "range", true)
 
+self.parent:AddDamageEvent_out(self)
 end 
 
 
 
-function modifier_bristleback_viscous_nasal_goo_tracker:OnTakeDamage(params)
+function modifier_bristleback_viscous_nasal_goo_tracker:DamageEvent_out(params)
 if not IsServer() then return end
 if not params.attacker then return end
 if params.attacker ~= self.parent then return end
-if not params.unit:IsHero() and not params.unit:IsCreep() then return end
+if not params.unit:IsUnit() then return end
 if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end
 
 local unit = params.unit
@@ -358,19 +359,19 @@ local mod =  params.unit:FindModifierByName("modifier_bristleback_viscous_nasal_
 
 if not mod then return end
 
-if self.parent:HasModifier("modifier_bristle_goo_proc") then 
+if self.parent:HasTalent("modifier_bristle_goo_2") then 
 
-  local heal = self.parent:GetTalentValue("modifier_bristle_goo_proc", "heal")*(math.min(mod:GetStackCount(), self.heal_max))/100
+  local heal = self.parent:GetTalentValue("modifier_bristle_goo_2", "heal")*(math.min(mod:GetStackCount(), self.heal_max))/100
 
   if unit:IsCreep() then 
     heal = heal*self.heal_creeps
   end 
 
-  self.parent:GenericHeal(heal*params.damage, self:GetAbility(), true)
+  self.parent:GenericHeal(heal*params.damage, self:GetAbility(), true, nil, "modifier_bristle_goo_2")
 
 end
 
-if not self.parent:HasModifier("modifier_bristle_goo_legendary") then return end
+if not self.parent:HasTalent("modifier_bristle_goo_7") then return end
 if self.parent:HasModifier("modifier_bristleback_viscous_nasal_goo_no_stun") then return end
 
 
@@ -379,8 +380,7 @@ if not random  then return end
 
 self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_bristleback_viscous_nasal_goo_no_stun", {})
 
-
-local damage = ApplyDamage({ victim = params.unit, damage = self.parent:GetAverageTrueAttackDamage(nil)*self.legendary_damage, damage_type = DAMAGE_TYPE_PHYSICAL, damage_flags = DOTA_DAMAGE_FLAG_BYPASSES_BLOCK, attacker = self:GetCaster(), ability= self:GetAbility() })
+local damage = DoDamage({ victim = params.unit, damage = self.parent:GetAverageTrueAttackDamage(nil)*self.legendary_damage, damage_type = DAMAGE_TYPE_PHYSICAL, damage_flags = DOTA_DAMAGE_FLAG_BYPASSES_PHYSICAL_BLOCK, attacker = self:GetCaster(), ability= self:GetAbility() }, "modifier_bristle_goo_7")
 
 SendOverheadEventMessage(params.unit, 4, params.unit, damage, nil)
 
@@ -398,11 +398,11 @@ end
 
 
 
-function modifier_bristleback_viscous_nasal_goo_tracker:OnAttackLanded(params)
+function modifier_bristleback_viscous_nasal_goo_tracker:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end
-if not self.parent:HasModifier("modifier_bristle_goo_damage") then return end
+if not self.parent:HasTalent("modifier_bristle_goo_4") then return end
 if self.parent ~= params.attacker then return end 
-if not params.target:IsHero() and not params.target:IsCreep() then return end
+if not params.target:IsUnit() then return end
 
 local mod =  params.target:FindModifierByName("modifier_bristleback_viscous_nasal_goo_custom")
 
@@ -416,7 +416,7 @@ else
   self.parent:RemoveModifierByName("modifier_bristleback_viscous_nasal_goo_speed") 
 end 
 
-if not RollPseudoRandomPercentage(self.parent:GetTalentValue("modifier_bristle_goo_damage", "chance") ,7229,self:GetCaster()) then return end
+if not RollPseudoRandomPercentage(self.parent:GetTalentValue("modifier_bristle_goo_4", "chance") ,7229,self:GetCaster()) then return end
 
 self:GetAbility():AddStack(params.target)   
 end
@@ -432,11 +432,11 @@ function modifier_bristleback_viscous_nasal_goo_damage:GetAttributes() return MO
 function modifier_bristleback_viscous_nasal_goo_damage:OnCreated(table)
 if not IsServer() then return end
 
-self.max = self:GetCaster():GetTalentValue("modifier_bristle_goo_ground", "duration")
-self.interval = self:GetCaster():GetTalentValue("modifier_bristle_goo_ground", "interval")
-self.damage = self:GetCaster():GetTalentValue("modifier_bristle_goo_ground", "damage")*self.interval 
+self.max = self:GetCaster():GetTalentValue("modifier_bristle_goo_3", "duration")
+self.interval = self:GetCaster():GetTalentValue("modifier_bristle_goo_3", "interval")
+self.damage = self:GetCaster():GetTalentValue("modifier_bristle_goo_3", "damage")*self.interval 
 
-self.damage_table = {victim = self:GetParent(),damage = self.damage ,damage_type = DAMAGE_TYPE_PHYSICAL, damage_flags = DOTA_DAMAGE_FLAG_BYPASSES_BLOCK, attacker = self:GetCaster(),ability = self:GetAbility()}
+self.damage_table = {victim = self:GetParent(),damage = self.damage ,damage_type = DAMAGE_TYPE_PHYSICAL, damage_flags = DOTA_DAMAGE_FLAG_BYPASSES_PHYSICAL_BLOCK, attacker = self:GetCaster(),ability = self:GetAbility()}
        
 
 self:StartIntervalThink(self.interval)
@@ -444,7 +444,7 @@ end
 
 function modifier_bristleback_viscous_nasal_goo_damage:OnIntervalThink()
 if not IsServer() then return end
-ApplyDamage(self.damage_table)            
+DoDamage(self.damage_table, "modifier_bristle_goo_3")            
 
 self:IncrementStackCount()
 if self:GetStackCount() >= self.max then 
@@ -473,7 +473,7 @@ function modifier_bristleback_viscous_nasal_goo_speed:IsPurgable() return false 
 function modifier_bristleback_viscous_nasal_goo_speed:GetTexture() return "buffs/goo_speed" end
 function modifier_bristleback_viscous_nasal_goo_speed:OnCreated()
 
-self.speed = self:GetCaster():GetTalentValue("modifier_bristle_goo_damage", "speed")
+self.speed = self:GetCaster():GetTalentValue("modifier_bristle_goo_4", "speed")
 end
 
 function modifier_bristleback_viscous_nasal_goo_speed:DeclareFunctions()

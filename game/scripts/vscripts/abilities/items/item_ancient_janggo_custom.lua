@@ -7,6 +7,11 @@ item_ancient_janggo_custom = class({})
 function item_ancient_janggo_custom:GetIntrinsicModifierName()
 	return "modifier_item_ancient_janggo_custom"
 end
+function item_ancient_janggo_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/items_fx/drum_of_endurance_buff.vpcf", context )
+end
+
 
 function item_ancient_janggo_custom:OnSpellStart()
 if not IsServer() then return end

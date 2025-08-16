@@ -1,186 +1,213 @@
-LinkLuaModifier("modifier_custom_blink_shard", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_custom_blink_tracker", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_blink_hit", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_blink_hit_count", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_custom_blink_legendary_attacks", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_blink_legendary_nocount", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_blink_legendary_nospeed", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_blink_spell", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_blink_speed", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_blink_absorb", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_blink_legendary_attacks_damage", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_blink_speed_attacks", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_custom_blink_legendary_tracker", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_custom_blink_damage", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_blink_attacks_slow", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_blink_root", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_blink_shield", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_blink_spell_block", "abilities/queen_of_pain/custom_queenofpain_blink", LUA_MODIFIER_MOTION_NONE)
+
 
 
 
 custom_queenofpain_blink = class({})
 
 
-custom_queenofpain_blink.legendary_duration = 2.5
-custom_queenofpain_blink.legendary_radius = 400
-custom_queenofpain_blink.legendary_duration_attacks = FrameTime()*3
-
-
-
-custom_queenofpain_blink.speed_duration = 3
-custom_queenofpain_blink.speed_damage = {6, 9, 12}
-custom_queenofpain_blink.speed_inc = {40, 60, 80}
-
-custom_queenofpain_blink.move_duration = 3
-custom_queenofpain_blink.move_range = {40, 60, 80}
-custom_queenofpain_blink.move_evasion = {10, 15, 20}
-
-
-custom_queenofpain_blink.magic_radius = 200
-custom_queenofpain_blink.magic_damage = 0.8
-custom_queenofpain_blink.magic_chance_init = 10
-custom_queenofpain_blink.magic_chance_inc = 10
-custom_queenofpain_blink.magic_cd = 0.5
-
 
 function custom_queenofpain_blink:GetAbilityTextureName()
-    if self:GetCaster():HasModifier("modifier_queenofpain_arcana_custom_1") then
-        return "queen_of_pain/arcana/queenofpain_blink_alt1"
-    elseif self:GetCaster():HasModifier("modifier_queenofpain_arcana_custom_2") then
-        return "queen_of_pain/arcana/queenofpain_blink_alt2"
-    end
-    return "queenofpain_blink"
+if self:GetCaster():HasModifier("modifier_queenofpain_arcana_custom_1") then
+    return "queen_of_pain/arcana/queenofpain_blink_alt1"
+elseif self:GetCaster():HasModifier("modifier_queenofpain_arcana_custom_2") then
+    return "queen_of_pain/arcana/queenofpain_blink_alt2"
+end
+return "queenofpain_blink"
 end
 
+function custom_queenofpain_blink:CreateTalent(name)
+if name == "modifier_queen_blink_7" then
+	self:UpdateLegendary()
+end
+
+if name == "modifier_queen_blink_5" then
+	self:ToggleAutoCast()
+end
+
+end
 
 function custom_queenofpain_blink:Precache(context)
-
-PrecacheResource( "particle", "particles/units/heroes/hero_queenofpain/queen_blink_shard_start.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_queenofpain/queen_blink_start.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_queenofpain/queen_blink_end.vpcf", context )
-PrecacheResource( "particle", "particles/econ/items/queen_of_pain/qop_arcana/qop_arcana_blink_start.vpcf", context )
-PrecacheResource( "particle", "particles/econ/items/queen_of_pain/qop_arcana/qop_arcana_blink_end.vpcf", context )
-PrecacheResource( "particle", "particles/qop_attack_.vpcf", context )
-PrecacheResource( "particle", "particles/qop_marker.vpcf", context )
-PrecacheResource( "particle", "particles/qop_linken_buff.vpcf", context )
-PrecacheResource( "particle", "particles/qop_linken.vpcf", context )
-PrecacheResource( "particle", "particles/items4_fx/ascetic_cap.vpcf" , context )
-
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/units/heroes/hero_queenofpain/queen_blink_shard_start.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_queenofpain/queen_blink_start.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_queenofpain/queen_blink_end.vpcf", context )
+PrecacheResource( "particle","particles/qop_attack_.vpcf", context )
+PrecacheResource( "particle","particles/qop_marker.vpcf", context )
+PrecacheResource( "particle","particles/items4_fx/ascetic_cap.vpcf", context ) 
+PrecacheResource( "particle","particles/shadow_fiend/requiem_refresh.vpcf", context ) 
+PrecacheResource( "particle","particles/queen_of_pain/blink_legendary_stack.vpcf", context ) 
+PrecacheResource( "particle","particles/queen_of_pain/blink_attack.vpcf", context )
+PrecacheResource( "particle","particles/queen_of_pain/blink_root.vpcf", context )
+PrecacheResource( "particle","particles/shadow_fiend/requiem_block.vpcf", context )
 end
 
 
-
-
-function custom_queenofpain_blink:GetIntrinsicModifierName() return "modifier_custom_blink_tracker" end
+function custom_queenofpain_blink:GetIntrinsicModifierName() 
+if not self:GetCaster():IsRealHero() then return end
+return "modifier_custom_blink_tracker" 
+end
 
 
 function custom_queenofpain_blink:GetCastPoint(iLevel)
-
-local bonus = 0
-
-if self:GetCaster():HasModifier('modifier_queen_Blink_absorb') then 
-	bonus = self:GetCaster():GetTalentValue("modifier_queen_Blink_absorb", "cast")
+local bonus = 1
+if self:GetCaster():HasTalent("modifier_queen_blink_1") then 
+	bonus = 1 + self:GetCaster():GetTalentValue("modifier_queen_blink_1", "cast")/100
 end
-
-
-return self.BaseClass.GetCastPoint(self) + bonus
+return self.BaseClass.GetCastPoint(self)*bonus
 end
-
-
-
 
 function custom_queenofpain_blink:GetCooldown(iLevel)
 local upgrade_cooldown = 0	
-if self:GetCaster():HasModifier("modifier_queen_Blink_cd") then 
-	upgrade_cooldown = self:GetCaster():GetTalentValue("modifier_queen_Blink_cd", "cd")
+if self:GetCaster():HasTalent("modifier_queen_blink_1") then 
+	upgrade_cooldown = self:GetCaster():GetTalentValue("modifier_queen_blink_1", "cd")
 end
-
 return self.BaseClass.GetCooldown(self, iLevel) + upgrade_cooldown 
 end
 
-
 function custom_queenofpain_blink:GetManaCost(iLevel)
-
-if self:GetCaster():HasModifier("modifier_queenofpain_blood_pact") and self:GetCaster():FindAbilityByName("custom_queenofpain_blood_pact") then 
+local caster = self:GetCaster()
+if caster:HasTalent("modifier_queen_blink_6") then
 	return 0
 end
-
+if caster:HasModifier("modifier_queenofpain_blood_pact") then 
+	return 0
+end
 return self.BaseClass.GetManaCost(self,iLevel)
 end 
 
-
 function custom_queenofpain_blink:GetHealthCost(level)
-
-if self:GetCaster():HasModifier("modifier_queenofpain_blood_pact") and self:GetCaster():FindAbilityByName("custom_queenofpain_blood_pact") then 
-	return self:GetCaster():GetTalentValue("modifier_queen_Scream_legendary", "cost")*self:GetCaster():GetMaxHealth()/100
+local caster = self:GetCaster()
+if caster:HasModifier("modifier_queenofpain_blood_pact") then 
+	return caster:GetTalentValue("modifier_queen_scream_7", "cost")*caster:GetMaxHealth()/100
 end
 
 end 
-
 
 function custom_queenofpain_blink:GetCastRange(vLocation, hTarget)
 local range = self:GetSpecialValueFor("blink_range") 
 if IsClient() then 
 	return range
-end
-return 
+else
+	return 99999
 end
 
+end
 
 function custom_queenofpain_blink:GetBehavior()
-  if self:GetCaster():HasShard() or self:GetCaster():HasModifier("modifier_queen_Blink_legendary") then
-    return DOTA_ABILITY_BEHAVIOR_AOE + DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES end
- return DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES 
+local bonus = 0
+local caster = self:GetCaster()
+if caster:HasShard() or caster:HasTalent("modifier_queen_blink_7") or caster:HasTalent("modifier_queen_blink_5") then
+    bonus = DOTA_ABILITY_BEHAVIOR_AOE
 end
-
+if caster:HasTalent("modifier_queen_blink_5") then
+	bonus = bonus + DOTA_ABILITY_BEHAVIOR_AUTOCAST
+end
+return DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES + bonus
+end
 
 function custom_queenofpain_blink:GetAOERadius() 
-if self:GetCaster():HasModifier("modifier_queen_Blink_legendary") then 
-	return self.legendary_radius
+local caster = self:GetCaster()
+if caster:HasTalent("modifier_queen_blink_7") or caster:HasTalent("modifier_queen_blink_5") then 
+	return caster:GetTalentValue("modifier_queen_blink_7", "aoe", true)
 end
-
-if self:GetCaster():HasShard() then
+if caster:HasShard() then
 	return self:GetSpecialValueFor("shard_radius")
 end
-
 return 0
 end
 
 
-function custom_queenofpain_blink:ShardStrike(location)
+
+function custom_queenofpain_blink:UpdateLegendary()
 if not IsServer() then return end
+local mod = self:GetCaster():FindModifierByName("modifier_custom_blink_tracker")
+
+if mod then
+	mod:UpdateJS()
+end
+
+end
+
+
+
+function custom_queenofpain_blink:ShardStrike(location)
+
+local caster = self:GetCaster()
 local radius = self:GetSpecialValueFor("shard_radius")
 local damage = self:GetSpecialValueFor("shard_damage")
 local silence = self:GetSpecialValueFor("shard_silence")
-local caster = self:GetCaster()
+local targets = caster:FindTargets(radius, location)
+local knock_range = caster:GetTalentValue("modifier_queen_blink_5", "knock_radius", true)
+local knock_duration = caster:GetTalentValue("modifier_queen_blink_5", "knock_duration", true)
+local knock_root = caster:GetTalentValue("modifier_queen_blink_5", "root", true)
 
-local blink_shard_pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_queenofpain/queen_blink_shard_start.vpcf", PATTACH_WORLDORIGIN, nil)
-ParticleManager:SetParticleControl(blink_shard_pfx, 0, location )
-ParticleManager:SetParticleControl(blink_shard_pfx, 1, location )
-ParticleManager:SetParticleControl(blink_shard_pfx, 2, Vector(radius,radius,radius) )
-ParticleManager:ReleaseParticleIndex(blink_shard_pfx)
+if caster:HasShard() then 
+	local blink_shard_pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_queenofpain/queen_blink_shard_start.vpcf", PATTACH_WORLDORIGIN, nil)
+	ParticleManager:SetParticleControl(blink_shard_pfx, 0, location )
+	ParticleManager:SetParticleControl(blink_shard_pfx, 1, location )
+	ParticleManager:SetParticleControl(blink_shard_pfx, 2, Vector(radius,radius,radius) )
+	ParticleManager:ReleaseParticleIndex(blink_shard_pfx)
+end
 
+for _, enemy in pairs(targets) do
 
-local enemies = FindUnitsInRadius(caster:GetTeamNumber(), location, nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_CLOSEST, false)
-for _, enemy in pairs(enemies) do
-	if not enemy:IsMagicImmune() then 
+	if caster:HasShard() then
+		DoDamage({victim = enemy, attacker = caster, ability = self, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL})
+		enemy:AddNewModifier(caster, self, "modifier_generic_silence", {duration = (1 - enemy:GetStatusResistance())*silence})
+	end
 
-		ApplyDamage({victim = enemy, attacker = self:GetCaster(), ability = self, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL})
-		enemy:AddNewModifier(self:GetCaster(), self, "modifier_custom_blink_shard", {duration = (1 - enemy:GetStatusResistance())*silence})
+	if caster:HasTalent("modifier_queen_blink_5") then
+		caster:RemoveModifierByName("modifier_generic_knockback")
+		if self:GetAutoCastState() then
+
+			local enemy_direction = (enemy:GetOrigin() - location):Normalized()
+			local point = location + enemy_direction*(knock_range + 10) 
+			local distance =(point - enemy:GetAbsOrigin()):Length2D()
+
+			local knock = enemy:AddNewModifier(caster, self,
+			"modifier_generic_knockback",
+			{
+				duration = knock_duration,
+				distance = distance,
+				height = 0,
+				direction_x = enemy_direction.x,
+				direction_y = enemy_direction.y,
+			})
+			if knock then
+			  	knock:SetEndCallback(function()
+			        if enemy and not enemy:IsNull() and knock:GetRemainingTime() <= 0.1 then
+			        	enemy:EmitSound("QoP.Blink_root")
+			        	enemy:AddNewModifier(caster, self, "modifier_custom_blink_root", {duration = (1 - enemy:GetStatusResistance())*knock_root})
+			        end
+			    end)
+			end
+		else
+        	enemy:EmitSound("QoP.Blink_root")
+        	enemy:AddNewModifier(caster, self, "modifier_custom_blink_root", {duration = (1 - enemy:GetStatusResistance())*knock_root})
+		end
 	end
 end
 
 end
 
+
 function custom_queenofpain_blink:OnSpellStart()
-if not IsServer() then return end
 
 local caster = self:GetCaster()
 local caster_pos = caster:GetAbsOrigin()
 local target_pos = self:GetCursorPosition()
 
-
-if caster:HasModifier("modifier_queen_Blink_damage") then 
-	caster:AddNewModifier(caster, self, "modifier_custom_blink_speed", {duration = self:GetCaster():GetTalentValue("modifier_queen_Blink_damage", "duration")})
-end
-
-
-local blink_range = self:GetSpecialValueFor("blink_range") + self:GetCaster():GetCastRangeBonus()
+local blink_range = self:GetSpecialValueFor("blink_range") + caster:GetCastRangeBonus()
 local distance = (target_pos - caster_pos)
 
 
@@ -191,34 +218,31 @@ end
 local start_b = "particles/units/heroes/hero_queenofpain/queen_blink_start.vpcf"
 local end_b = "particles/units/heroes/hero_queenofpain/queen_blink_end.vpcf"
 
-
-if self:GetCaster():HasModifier("modifier_queenofpain_arcana_custom_1") then 
+if caster:HasModifier("modifier_queenofpain_arcana_custom_1") then 
 	start_b = "particles/econ/items/queen_of_pain/qop_arcana/qop_arcana_blink_start.vpcf"
 	end_b = "particles/econ/items/queen_of_pain/qop_arcana/qop_arcana_blink_end.vpcf"
 
-
 	local direction = (target_pos - caster_pos)
     direction = direction:Normalized()
 
     local particle_one = ParticleManager:CreateParticle(start_b, PATTACH_WORLDORIGIN, nil) 
-    ParticleManager:SetParticleControl( particle_one, 0, self:GetCaster():GetAbsOrigin() )
+    ParticleManager:SetParticleControl( particle_one, 0, caster:GetAbsOrigin() )
     ParticleManager:SetParticleControlForward( particle_one, 0, direction:Normalized() )
-    ParticleManager:SetParticleControl( particle_one, 1, self:GetCaster():GetForwardVector() )
+    ParticleManager:SetParticleControl( particle_one, 1, caster:GetForwardVector() )
     ParticleManager:SetParticleControl( particle_one, 4,Vector(10,1,0) )
     ParticleManager:ReleaseParticleIndex( particle_one )
 
-elseif self:GetCaster():HasModifier("modifier_queenofpain_arcana_custom_2") then 
+elseif caster:HasModifier("modifier_queenofpain_arcana_custom_2") then 
     start_b = "particles/econ/items/queen_of_pain/qop_arcana/qop_arcana_blink_v2_start.vpcf"
 	end_b = "particles/econ/items/queen_of_pain/qop_arcana/qop_arcana_blink_v2_end.vpcf"
-
 
 	local direction = (target_pos - caster_pos)
     direction = direction:Normalized()
 
     local particle_one = ParticleManager:CreateParticle(start_b, PATTACH_WORLDORIGIN, nil) 
-    ParticleManager:SetParticleControl( particle_one, 0, self:GetCaster():GetAbsOrigin() )
+    ParticleManager:SetParticleControl( particle_one, 0, caster:GetAbsOrigin() )
     ParticleManager:SetParticleControlForward( particle_one, 0, direction:Normalized() )
-    ParticleManager:SetParticleControl( particle_one, 1, self:GetCaster():GetForwardVector() )
+    ParticleManager:SetParticleControl( particle_one, 1, caster:GetForwardVector() )
     ParticleManager:SetParticleControl( particle_one, 4,Vector(10,1,0) )
     ParticleManager:ReleaseParticleIndex( particle_one )
 else
@@ -233,44 +257,46 @@ ProjectileManager:ProjectileDodge(caster)
 local sound_out = "Hero_QueenOfPain.Blink_out"
 local sound_in = "Hero_QueenOfPain.Blink_in"
 
-if self:GetCaster():HasModifier("modifier_queenofpain_arcana_custom_1") then
+if caster:HasModifier("modifier_queenofpain_arcana_custom_1") then
     sound_in = "Hero_QueenOfPain.Blink_in.Arcana"
     sound_out = "Hero_QueenOfPain.Blink_out.Arcana"
-elseif self:GetCaster():HasModifier("modifier_queenofpain_arcana_custom_2") then
+elseif caster:HasModifier("modifier_queenofpain_arcana_custom_2") then
     sound_in = "Hero_QueenOfPain.Blink_in.Arcana"
     sound_out = "Hero_QueenOfPain.Blink_out.Arcana"
 end
 
 caster:EmitSound(sound_in)
 
+if caster:HasTalent("modifier_queen_blink_5") then
+    local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_queenofpain/queen_blink_end_distort.vpcf", PATTACH_WORLDORIGIN, nil) 
+	ParticleManager:SetParticleControl(particle, 0, caster_pos )
+    ParticleManager:ReleaseParticleIndex(particle)
+end
 
-if caster:HasShard() then 
+if caster:HasShard() or caster:HasTalent("modifier_queen_blink_5") then 
 	caster:EmitSound("Hero_QueenOfPain.Blink_in.Shard")
 	self:ShardStrike(caster_pos)
 end
 
-
 FindClearSpaceForUnit(caster, target_pos, true)
 
-if caster:HasShard() then 
+if caster:HasShard() or caster:HasTalent("modifier_queen_blink_5") then 
 	caster:EmitSound("Hero_QueenOfPain.Blink_Out.Shard")
 	self:ShardStrike(target_pos)
 end
 
+if caster:HasTalent("modifier_queen_sonic_7") then
+	local ability = caster:FindAbilityByName("custom_queenofpain_sonic_wave")
+	if ability and ability:IsTrained() then
+		ability:CreateFire(caster_pos, target_pos)
+	end
+end
+
 if caster:GetQuest() == "Queen.Quest_6" then 
-
 	local enemies = FindUnitsInRadius(caster:GetTeamNumber(), target_pos, nil, caster.quest.number, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_NOT_ILLUSIONS + DOTA_UNIT_TARGET_FLAG_NOT_CREEP_HERO  + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_CLOSEST, false)
-
 	if #enemies > 0 then 
 		caster:UpdateQuest(1)
 	end
-
-end
-
-
-local ability = self:GetCaster():FindAbilityByName("custom_queenofpain_scream_of_pain")
-if self:GetCaster():HasModifier("modifier_queen_Scream_shield") then 
-	ability:ProcHeal()
 end
 
 caster:EmitSound(sound_out)
@@ -281,43 +307,34 @@ ParticleManager:ReleaseParticleIndex(blink_end_pfx)
 
 caster:StartGesture(ACT_DOTA_CAST_ABILITY_2_END)
 
-
-if caster:HasModifier("modifier_queen_Blink_legendary") and self:GetCaster():HasModifier("modifier_custom_blink_hit_count") then
-
-	local mod = caster:FindModifierByName("modifier_custom_blink_hit_count")
-
-	caster:AddNewModifier(caster, self, "modifier_custom_blink_legendary_attacks", {hits = mod:GetStackCount()})
+local mod = caster:FindModifierByName("modifier_custom_blink_legendary_tracker")
+if mod then
+	caster:AddNewModifier(caster, self, "modifier_custom_blink_legendary_attacks", {stack = mod:GetStackCount()})
 	caster:StartGesture(ACT_DOTA_CAST_ABILITY_1)
-	for _,m in pairs(caster:FindAllModifiers()) do
-		if m:GetName() == "modifier_custom_blink_hit" then 
-			m:Destroy()
-		end
+		
+	if mod:GetStackCount() >= caster:GetTalentValue("modifier_queen_blink_7", "max") then
+		self:EndCooldown()
+		self:StartCooldown(0.3)
+		local particle = ParticleManager:CreateParticle("particles/shadow_fiend/requiem_refresh.vpcf", PATTACH_CUSTOMORIGIN, caster)
+		ParticleManager:SetParticleControlEnt( particle, 0, caster, PATTACH_POINT_FOLLOW, "attach_hitloc", caster:GetOrigin(), true )
+		ParticleManager:ReleaseParticleIndex(particle)
+
+		caster:EmitSound("Hero_Rattletrap.Overclock.Cast")	
 	end
+
+	mod:Destroy()
 end
 
-if caster:HasModifier("modifier_queen_Blink_spells") then 
-	caster:AddNewModifier(caster, self, "modifier_custom_blink_spell", {})
+if caster:HasTalent("modifier_queen_blink_2") then
+	caster:RemoveModifierByName("modifier_custom_blink_shield")
+	caster:AddNewModifier(caster, self, "modifier_custom_blink_shield", {duration = caster:GetTalentValue("modifier_queen_blink_2", "duration")})
 end
 
-
-
-
-if caster:HasModifier("modifier_queen_Blink_absorb") then 
-	caster:AddNewModifier(caster, self, "modifier_custom_blink_absorb", { duration = self:GetCaster():GetTalentValue("modifier_queen_Blink_absorb", "duration")})
+if caster:HasTalent("modifier_queen_blink_6") then 
+	caster:AddNewModifier(caster, self, "modifier_custom_blink_spell_block", { duration = caster:GetTalentValue("modifier_queen_blink_6", "duration")})
 end	
 
-
 end
-
-
-modifier_custom_blink_shard = class({})
-
-function modifier_custom_blink_shard:IsHidden() return false end
-function modifier_custom_blink_shard:IsPurgable() return true end
-function modifier_custom_blink_shard:GetTexture() return "silencer_last_word" end
-function modifier_custom_blink_shard:CheckState() return {[MODIFIER_STATE_SILENCED] = true} end
-function modifier_custom_blink_shard:GetEffectName() return "particles/generic_gameplay/generic_silenced.vpcf" end
-function modifier_custom_blink_shard:GetEffectAttachType() return PATTACH_OVERHEAD_FOLLOW end
 
 
 
@@ -329,291 +346,363 @@ modifier_custom_blink_tracker = class({})
 
 function modifier_custom_blink_tracker:IsHidden() return true end
 function modifier_custom_blink_tracker:IsPurgable() return false end
-
 function modifier_custom_blink_tracker:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_ATTACK,
-	MODIFIER_EVENT_ON_ATTACK_LANDED,
 	MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
+	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
 }
 
+end
+
+function modifier_custom_blink_tracker:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.parent:AddRecordDestroyEvent(self)
+self.parent:AddAttackStartEvent_out(self)
+self.parent:AddAttackEvent_out(self)
+self.parent:AddSpellEvent(self)
+
+self.legendary_duration = self.parent:GetTalentValue("modifier_queen_blink_7", "duration", true)
+self.legendary_max = self.parent:GetTalentValue("modifier_queen_blink_7", "max", true)
+self.legendary_spell = self.parent:GetTalentValue("modifier_queen_blink_7", "spell", true)
+
+self.effect_duration = self.parent:GetTalentValue("modifier_queen_blink_4", "effect_duration", true)
+self.attack_radius = self.parent:GetTalentValue("modifier_queen_blink_4", "radius", true)
+self.attack_duration = self.parent:GetTalentValue("modifier_queen_blink_4", "duration", true)
+
+self.damage_duration = self.parent:GetTalentValue("modifier_queen_blink_3", "duration", true)
+
+self.status_bonus = self.parent:GetTalentValue("modifier_queen_blink_6", "status", true)
+
+self.records = {}
+
+if not IsServer() then return end
+self:StartIntervalThink(1)
+end
+
+function modifier_custom_blink_tracker:OnIntervalThink()
+if not IsServer() then return end
+if not self.parent:HasTalent("modifier_queen_blink_2") then return end
+
+self.PercentInt = self.parent:GetTalentValue("modifier_queen_blink_2", "int")/100
+end
+
+function modifier_custom_blink_tracker:UpdateJS()
+if not IsServer() then return end
+local stack = 0
+local mod = self.parent:FindModifierByName("modifier_custom_blink_legendary_tracker")
+
+if mod then
+	stack = mod:GetStackCount()
+	if self.effect then 
+		ParticleManager:DestroyParticle(self.effect, false)
+		ParticleManager:ReleaseParticleIndex(self.effect)
+		self.effect = nil
+	end
+else 
+	if not self.effect then 
+		self.effect = self.parent:GenericParticle("particles/queen_of_pain/blink_legendary_stack.vpcf", self, true)
+		for i = 1,self.legendary_max/2 do 
+			ParticleManager:SetParticleControl(self.effect, i, Vector(0, 0, 0))	
+		end
+	end
+end
+
+self.parent:UpdateUIlong({max = self.legendary_max, stack= stack, style = "QopBlink"})
 end
 
 
 function modifier_custom_blink_tracker:GetModifierAttackRangeBonus()
-if not self:GetParent():HasModifier("modifier_queen_Blink_damage") then return end 
-
-return self:GetAbility().move_range[self:GetCaster():GetUpgradeStack("modifier_queen_Blink_damage")]
+if not self.parent:HasTalent("modifier_queen_blink_3") then return end 
+return self.parent:GetTalentValue("modifier_queen_blink_3", "range")
 end 
 
-function modifier_custom_blink_tracker:OnAttack(params)
-if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_queen_Blink_legendary") then return end
-if self:GetParent() ~= params.attacker then return end
-if self:GetParent():HasModifier("modifier_custom_blink_legendary_nocount") then return end
+function modifier_custom_blink_tracker:GetModifierStatusResistanceStacking() 
+if not self.parent:HasTalent("modifier_queen_blink_6") then return end 
+return self.status_bonus
+end 
 
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_blink_hit", {duration = self:GetAbility().legendary_duration})
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_blink_hit_count", {})
+function modifier_custom_blink_tracker:SpellEvent(params)
+if not IsServer() then return end
+if self.parent ~= params.unit then return end
+if params.ability:IsItem() then return end
+
+if self.parent:HasTalent("modifier_queen_blink_4") then
+	self.parent:RemoveModifierByName("modifier_custom_blink_speed_attacks")
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_custom_blink_speed_attacks", {duration = self.effect_duration})
+end
+
+if not self.parent:HasTalent("modifier_queen_blink_7") then return end
+if self.ability == params.ability then return end
+
+for i = 1,self.legendary_spell do
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_custom_blink_legendary_tracker", {duration = self.legendary_duration})
+end
 
 end
 
 
-function modifier_custom_blink_tracker:OnAttackLanded(params)
+function modifier_custom_blink_tracker:AttackStartEvent_out(params)
 if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end
+if self.parent ~= params.attacker then return end
+if not params.target:IsUnit() then return end
+if params.no_attack_cooldown then return end
 
-if self:GetCaster():HasModifier("modifier_queen_Blink_speed") then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_custom_blink_damage", {duration = self:GetCaster():GetTalentValue("modifier_queen_Blink_speed", "duration")})
+if self.parent:HasTalent("modifier_queen_blink_3") then 
+	self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_custom_blink_damage", {duration = self.damage_duration})
 end 
 
+local mod = self.parent:FindModifierByName("modifier_custom_blink_speed_attacks")
+if mod then
+	self.parent:EmitSound("QoP.Blink_attack_start")
+	self.records[params.record] = true
+	mod:DecrementStackCount()
+	if mod:GetStackCount() <= 0 then 
+	  mod:Destroy()
+	end 
+end
 
-if not self:GetParent():HasModifier("modifier_queen_Blink_magic") then return end
+if not self.parent:HasTalent("modifier_queen_blink_7") then return end
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_custom_blink_legendary_tracker", {duration = self.legendary_duration})
+end
 
 
-local chance = self:GetCaster():GetTalentValue("modifier_queen_Blink_magic", "chance")
 
-local random = RollPseudoRandomPercentage(chance,41,self:GetParent())
+function modifier_custom_blink_tracker:RecordDestroyEvent(params)
+if not params.record then return end
+if not self.records[params.record] then return end
+self.records[params.record] = nil
+end
 
-if not random then return end
 
-params.target:EmitSound("QoP.Blink_attack")
+function modifier_custom_blink_tracker:AttackEvent_out(params)
+if not IsServer() then return end
+if self.parent ~= params.attacker then return end
+if not params.target:IsUnit() then return end
+local target = params.target
 
-local blink_shard_pfx = ParticleManager:CreateParticle("particles/qop_attack_.vpcf", PATTACH_ABSORIGIN_FOLLOW, params.target)
-ParticleManager:SetParticleControlEnt(blink_shard_pfx, 0, params.target, PATTACH_POINT_FOLLOW, "attach_hitloc", params.target:GetAbsOrigin(), true)
-ParticleManager:SetParticleControlEnt(blink_shard_pfx, 1, params.target, PATTACH_POINT_FOLLOW, "attach_hitloc", params.target:GetAbsOrigin(), true)
-ParticleManager:SetParticleControlEnt(blink_shard_pfx, 3, params.target, PATTACH_POINT_FOLLOW, "attach_hitloc", params.target:GetAbsOrigin(), true)
+if not self.parent:HasTalent("modifier_queen_blink_4") then return end
+if not params.record or not self.records[params.record] then return end
+
+target:EmitSound("QoP.Blink_attack")
+
+local blink_shard_pfx = ParticleManager:CreateParticle("particles/qop_attack_.vpcf", PATTACH_ABSORIGIN_FOLLOW, target)
+ParticleManager:SetParticleControlEnt(blink_shard_pfx, 0, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true)
+ParticleManager:SetParticleControlEnt(blink_shard_pfx, 1, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true)
+ParticleManager:SetParticleControlEnt(blink_shard_pfx, 3, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true)
 ParticleManager:ReleaseParticleIndex(blink_shard_pfx)
 
+local damage = self.parent:GetTalentValue("modifier_queen_blink_4", "damage") * self.parent:GetIntellect(false) / 100
+target:SendNumber(4, damage)
 
-
-self:GetCaster():CdAbility(self:GetAbility(), self:GetCaster():GetTalentValue("modifier_queen_Blink_magic", "cd"))
-
-local damage = self:GetCaster():GetTalentValue("modifier_queen_Blink_magic", "damage") * self:GetParent():GetIntellect() / 100
-
-local enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), params.target:GetAbsOrigin() , nil, self:GetCaster():GetTalentValue("modifier_queen_Blink_magic", "radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_CLOSEST, false)
-
-for _, enemy in pairs(enemies) do
-	local real_damage = ApplyDamage({victim = enemy, attacker = self:GetParent(), ability = self:GetAbility(), damage = damage, damage_type = DAMAGE_TYPE_MAGICAL})
-	SendOverheadEventMessage(enemy, 4, enemy, real_damage, nil)
+for _,enemy in pairs(self.parent:FindTargets(self.attack_radius, target:GetAbsOrigin())) do
+	DoDamage({victim = enemy, attacker = self.parent, ability = self.ability, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL}, "modifier_queen_blink_4")
+	enemy:AddNewModifier(self.parent, self.ability, "modifier_custom_blink_attacks_slow", {duration = (1 - enemy:GetStatusResistance())*self.attack_duration})
 end
 
-
+self.records[params.record] = nil
 end
 
 
 
-modifier_custom_blink_hit = class({})
-function modifier_custom_blink_hit:IsHidden() return true end
-function modifier_custom_blink_hit:IsPurgable() return false end
-function modifier_custom_blink_hit:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-function modifier_custom_blink_hit:OnDestroy()
-if not IsServer() then return end
-
-local mod = self:GetParent():FindModifierByName("modifier_custom_blink_hit_count")
-if mod then 
-	mod:DecrementStackCount()
-	if mod:GetStackCount() == 0 then 
-		mod:Destroy()
-	end
-end
 
 
-end
 
-modifier_custom_blink_hit_count = class({})
-function modifier_custom_blink_hit_count:IsHidden() return false end
-function modifier_custom_blink_hit_count:IsPurgable() return false end
-function modifier_custom_blink_hit_count:GetTexture() return "buffs/qop_blink_attack" end
-function modifier_custom_blink_hit_count:OnCreated(table)
-if not IsServer() then return end
-	self:SetStackCount(1)
-end
-
-function modifier_custom_blink_hit_count:OnRefresh(table)
-if not IsServer() then return end
-	self:IncrementStackCount()
-end
-
-function modifier_custom_blink_hit_count:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_TOOLTIP
-}
-
-end
-function modifier_custom_blink_hit_count:OnTooltip() return self:GetStackCount() end
 
 modifier_custom_blink_legendary_attacks = class({})
 function modifier_custom_blink_legendary_attacks:IsHidden() return true end
 function modifier_custom_blink_legendary_attacks:IsPurgable() return false end 
 function modifier_custom_blink_legendary_attacks:OnCreated(table)
 if not IsServer() then return end
-self.hits = table.hits
-self.radius = self:GetAbility().legendary_radius
-self.count = 0
-self:GetParent():EmitSound("QoP.Blink_legendary")
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
+self:SetStackCount(table.stack)
 
+self.radius = self.parent:GetTalentValue("modifier_queen_blink_7", "aoe")
+self.parent:EmitSound("QoP.Blink_legendary")
 
-self.enemies = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility().legendary_radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_CLOSEST, false)
+self.targets = self.parent:FindTargets(self.radius)
 
-for _,enemy in ipairs(self.enemies) do
-	enemy.qop_mark = ParticleManager:CreateParticle("particles/qop_marker.vpcf", PATTACH_OVERHEAD_FOLLOW, enemy)
-	ParticleManager:SetParticleControl(enemy.qop_mark, 0 , enemy:GetAbsOrigin())
-end
-
-if #self.enemies == 0 then 
+if #self.targets == 0 then 
 	self:Destroy()
 end
 
-self:StartIntervalThink(self:GetAbility().legendary_duration_attacks)
+for _,target in pairs(self.targets) do
+	target:GenericParticle("particles/qop_marker.vpcf", self, true)
+end
+
+self:StartIntervalThink(self.parent:GetTalentValue("modifier_queen_blink_7", "interval"))
 end
 
 function modifier_custom_blink_legendary_attacks:OnIntervalThink()
 if not IsServer() then return end
-self.count = self.count + 1 
-
-
 local array = {}
 
-for _,enemy in ipairs(self.enemies) do 
-	if enemy:IsAlive() then 
+for _,enemy in pairs(self.targets) do 
+	if enemy:IsAlive() and not enemy:IsNull() then 
 		array[#array+1] = enemy
 	end
 end
 
 if #array > 0 then 
-	 local random = RandomInt(1, #array)
-
-	 	local no = self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_blink_legendary_nocount", {})
-	 	self:GetParent():PerformAttack(array[random], true, true, true, false, true, false, false)	
-		 if no then no:Destroy() end
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_custom_blink_legendary_attacks_damage", {duration = FrameTime()})
+	self.parent:PerformAttack(array[RandomInt(1, #array)], true, true, true, false, true, false, false)
+	self.parent:RemoveModifierByName("modifier_custom_blink_legendary_attacks_damage")
 else 
 	self:Destroy()
 end
 
-
-if self.count >= self.hits then self:Destroy() end
+self:DecrementStackCount()
+if self:GetStackCount() <= 0 then
+	self:Destroy()
+end
 
 end
 
-function modifier_custom_blink_legendary_attacks:OnDestroy()
+modifier_custom_blink_legendary_attacks_damage = class({})
+function modifier_custom_blink_legendary_attacks_damage:IsHidden() return true end
+function modifier_custom_blink_legendary_attacks_damage:IsPurgable() return false end
+function modifier_custom_blink_legendary_attacks_damage:OnCreated()
+self.damage = self:GetCaster():GetTalentValue("modifier_queen_blink_7", "damage") - 100
+end
+
+function modifier_custom_blink_legendary_attacks_damage:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE
+}
+end
+
+function modifier_custom_blink_legendary_attacks_damage:GetModifierDamageOutgoing_Percentage()
 if not IsServer() then return end
-for _,enemy in ipairs(self.enemies) do
-	if  enemy.qop_mark then 
-		ParticleManager:DestroyParticle(enemy.qop_mark, false)
-		ParticleManager:ReleaseParticleIndex(enemy.qop_mark)
-	end
-end
-end
-
-modifier_custom_blink_legendary_nocount = class({})
-function modifier_custom_blink_legendary_nocount:IsHidden() return true end
-function modifier_custom_blink_legendary_nocount:IsPurgable() return false end
-
-modifier_custom_blink_legendary_nospeed = class({})
-function modifier_custom_blink_legendary_nospeed:IsHidden() return true end
-function modifier_custom_blink_legendary_nospeed:IsPurgable() return false end
-
-
-modifier_custom_blink_spell = class({})
-function modifier_custom_blink_spell:IsHidden() return false end
-function modifier_custom_blink_spell:IsPurgable() return false end
-function modifier_custom_blink_spell:GetTexture() return "buffs/qop_blink_spell" end
-
-function modifier_custom_blink_spell:OnCreated(table)
- self.RemoveForDuel = true
+return self.damage
 end
 
 
 
 
-modifier_custom_blink_speed = class({})
-function modifier_custom_blink_speed:IsHidden() return false end
-function modifier_custom_blink_speed:IsPurgable() return true end
-function modifier_custom_blink_speed:GetTexture() return "buffs/Crit_damage" end
 
-function modifier_custom_blink_speed:OnCreated(table)
-self.speed = self:GetCaster():GetTalentValue("modifier_queen_Blink_damage", "speed")
+
+modifier_custom_blink_speed_attacks = class({})
+function modifier_custom_blink_speed_attacks:IsHidden() return false end
+function modifier_custom_blink_speed_attacks:IsPurgable() return false end
+function modifier_custom_blink_speed_attacks:GetTexture() return "buffs/Crit_damage" end
+
+function modifier_custom_blink_speed_attacks:OnCreated(table)
+self.parent = self:GetParent()
+self.speed = self.parent:GetTalentValue("modifier_queen_blink_4", "speed")
+self:SetStackCount(self.parent:GetTalentValue("modifier_queen_blink_4", "count"))
 end
 
-function modifier_custom_blink_speed:DeclareFunctions()
+function modifier_custom_blink_speed_attacks:DeclareFunctions()
 return 
 {
 	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+  	MODIFIER_PROPERTY_PROJECTILE_NAME,
 }
 end
 
-function modifier_custom_blink_speed:GetModifierAttackSpeedBonus_Constant()
-return self.speed
+function modifier_custom_blink_speed_attacks:GetModifierAttackSpeedBonus_Constant()
+return self.speed 
+end
+
+function modifier_custom_blink_speed_attacks:GetModifierProjectileName()
+return "particles/queen_of_pain/blink_attack.vpcf"
 end
 
 
 
-
-
-modifier_custom_blink_absorb = class({})
-function modifier_custom_blink_absorb:IsHidden() return false end
-function modifier_custom_blink_absorb:IsPurgable() return false end
-function modifier_custom_blink_absorb:GetTexture() return "buffs/qop_blink_cd" end
-
-function modifier_custom_blink_absorb:OnCreated(table)
-self.status = self:GetCaster():GetTalentValue("modifier_queen_Blink_absorb", "status_bonus")
-self.damage = self:GetCaster():GetTalentValue("modifier_queen_Blink_absorb", "damage_reduce")
-
-if not IsServer() then return end
-
+modifier_custom_blink_attacks_slow = class({})
+function modifier_custom_blink_attacks_slow:IsHidden() return true end
+function modifier_custom_blink_attacks_slow:IsPurgable() return true end
+function modifier_custom_blink_attacks_slow:OnCreated()
+self.slow = self:GetCaster():GetTalentValue("modifier_queen_blink_4", "slow")
 end
 
-function modifier_custom_blink_absorb:GetEffectName()
-return "particles/items4_fx/ascetic_cap.vpcf" 
-end
-
-
-function modifier_custom_blink_absorb:DeclareFunctions()
+function modifier_custom_blink_attacks_slow:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
-	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
 }
 end
 
+function modifier_custom_blink_attacks_slow:GetModifierMoveSpeedBonus_Percentage()
+return self.slow
+end
 
-function modifier_custom_blink_absorb:GetModifierStatusResistanceStacking() 
-return self.status
+function modifier_custom_blink_attacks_slow:GetEffectName()
+return "particles/units/heroes/hero_sniper/sniper_headshot_slow.vpcf"
+end
+
+function modifier_custom_blink_attacks_slow:GetEffectAttachType()
+return PATTACH_OVERHEAD_FOLLOW
 end
 
 
-function modifier_custom_blink_absorb:GetModifierIncomingDamage_Percentage()
-return self.damage
-end
+
 
 
 
 modifier_custom_blink_legendary_tracker = class({})
 function modifier_custom_blink_legendary_tracker:IsHidden() return true end
 function modifier_custom_blink_legendary_tracker:IsPurgable() return false end
-function modifier_custom_blink_legendary_tracker:RemoveOnDeath() return false end
 function modifier_custom_blink_legendary_tracker:OnCreated(table)
-if not IsServer() then return end
-self:StartIntervalThink(0.1)
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
+self.max = self.parent:GetTalentValue("modifier_queen_blink_7", "max")
+self.timer = self.parent:GetTalentValue("modifier_queen_blink_7", "duration")
+self.radius = self.parent:GetTalentValue("modifier_queen_blink_7", "radius")
+
+if not IsServer() then return end
+
+self.effect = self.parent:GenericParticle("particles/queen_of_pain/blink_legendary_stack.vpcf", self, true)
+
+self:SetStackCount(1)
+self:StartIntervalThink(0.2)
 end
+
+function modifier_custom_blink_legendary_tracker:OnRefresh()
+if not IsServer() then return end
+if self:GetStackCount() >= self.max then return end
+
+self:IncrementStackCount()
+end
+
 
 function modifier_custom_blink_legendary_tracker:OnIntervalThink()
 if not IsServer() then return end
-local stack = 0
-if self:GetParent():HasModifier("modifier_custom_blink_hit_count") then 
-	stack = self:GetParent():FindModifierByName("modifier_custom_blink_hit_count"):GetStackCount()
+local heroes = FindUnitsInRadius( self.parent:GetTeamNumber(), self.parent:GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_CLOSEST, false )
+
+if #heroes > 0 then 
+	self:SetDuration(self.timer, true)
 end
 
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'qop_attack_change',  {rage =stack})
+end
+
+function modifier_custom_blink_legendary_tracker:OnStackCountChanged(iStackCount)
+if not IsServer() then return end
+self.ability:UpdateLegendary()
+
+if self.effect then 
+	for i = 1,self.max/2 do 
+		if i <= math.floor(self:GetStackCount()/2) then 
+			ParticleManager:SetParticleControl(self.effect, i, Vector(1, 0, 0))	
+		else 
+			ParticleManager:SetParticleControl(self.effect, i, Vector(0, 0, 0))	
+		end
+	end
+end
 
 end
 
-
+function modifier_custom_blink_legendary_tracker:OnDestroy()
+if not IsServer() then return end
+self.ability:UpdateLegendary()
+end
 
 
 
@@ -622,19 +711,17 @@ function modifier_custom_blink_damage:IsHidden() return false end
 function modifier_custom_blink_damage:IsPurgable() return false end
 function modifier_custom_blink_damage:GetTexture() return "buffs/Shift_attacks" end
 function modifier_custom_blink_damage:OnCreated(table)
-
-self.damage = self:GetCaster():GetTalentValue("modifier_queen_Blink_speed", "damage")
-self.max = self:GetCaster():GetTalentValue("modifier_queen_Blink_speed", "max")
+self.parent = self:GetParent()
+self.damage = self.parent:GetTalentValue("modifier_queen_blink_3", "damage")
+self.max = self.parent:GetTalentValue("modifier_queen_blink_3", "max")
 
 if not IsServer() then return end
-
 self:SetStackCount(1)
 end
 
 function modifier_custom_blink_damage:OnRefresh(table)
 if not IsServer() then return end
 if self:GetStackCount() >= self.max then return end
-
 self:IncrementStackCount()
 end
 
@@ -645,9 +732,116 @@ return
 }
 end
 
-
-
 function modifier_custom_blink_damage:GetModifierSpellAmplify_Percentage()
-
-  return self.damage*self:GetStackCount()
+ return self.damage*self:GetStackCount()
 end
+
+
+
+
+modifier_custom_blink_root = class({})
+function modifier_custom_blink_root:IsHidden() return true end
+function modifier_custom_blink_root:IsPurgable() return true end
+function modifier_custom_blink_root:CheckState() 
+return 
+{
+	[MODIFIER_STATE_ROOTED] = true
+} 
+end
+
+function modifier_custom_blink_root:OnCreated()
+self:StartIntervalThink(0.1)
+end
+
+function modifier_custom_blink_root:OnIntervalThink()
+if not IsServer() then return end
+self:GetParent():GenericParticle("particles/queen_of_pain/blink_root.vpcf", self)
+self:StartIntervalThink(-1)
+end
+
+
+
+
+
+
+modifier_custom_blink_shield = class({})
+function modifier_custom_blink_shield:IsHidden() return true end
+function modifier_custom_blink_shield:IsPurgable() return false end
+function modifier_custom_blink_shield:OnCreated(table)
+self.parent = self:GetParent()
+self.shield_talent = "modifier_queen_blink_2"
+self.max_shield = self.parent:GetTalentValue("modifier_queen_blink_2", "shield")*self.parent:GetIntellect(false)/100
+
+if not IsServer() then return end
+self.RemoveForDuel = true
+self:SetStackCount(self.max_shield)
+end
+
+function modifier_custom_blink_shield:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
+}
+end
+
+function modifier_custom_blink_shield:GetModifierIncomingDamageConstant( params )
+
+if IsClient() then 
+	if params.report_max then 
+		return self.max_shield
+	else 
+     	return self:GetStackCount()
+    end 
+end
+
+if not IsServer() then return end
+
+local damage = math.min(params.damage, self:GetStackCount())
+self.parent:AddShieldInfo({shield_mod = self, healing = damage, healing_type = "shield"})
+
+self:SetStackCount(self:GetStackCount() - damage)
+if self:GetStackCount() <= 0 then
+  self:Destroy()
+end
+
+return -damage
+end
+
+
+
+
+modifier_custom_blink_spell_block = class({})
+function modifier_custom_blink_spell_block:IsHidden() return true end
+function modifier_custom_blink_spell_block:IsPurgable() return false end
+function modifier_custom_blink_spell_block:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+if not IsServer() then return end 
+self.particle = ParticleManager:CreateParticle("particles/shadow_fiend/requiem_block.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt(self.particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true)
+self:AddParticle(self.particle, true, false, -1, false, false)
+end
+
+function modifier_custom_blink_spell_block:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_ABSORB_SPELL
+}
+end
+
+function modifier_custom_blink_spell_block:GetAbsorbSpell(params) 
+if not IsServer() then return end
+if params.ability:GetCaster():GetTeamNumber() == self.parent:GetTeamNumber() then return end
+
+if self.particle then 
+	ParticleManager:DestroyParticle(self.particle, false)
+	ParticleManager:ReleaseParticleIndex(self.particle)
+end 
+
+self.block = true
+self.parent:EmitSound("DOTA_Item.LinkensSphere.Activate")
+self:Destroy()
+return 1 
+end
+

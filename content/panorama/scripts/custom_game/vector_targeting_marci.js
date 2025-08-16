@@ -70,36 +70,6 @@ var marci_check_mouse_f = function marci_check_mouse(eventName, arg, arg2, arg3)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
 //Listen for class changes
 $.RegisterForUnhandledEvent("StyleClassesChanged", MarciCheckAbilityVectorTargeting );
 function MarciCheckAbilityVectorTargeting(panel){

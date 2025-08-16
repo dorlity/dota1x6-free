@@ -39,7 +39,7 @@ target:AddNewModifier(caster, self, "modifier_centaur_double_slow", {duration = 
 target:AddNewModifier(caster, self, "modifier_centaur_double_heal", {duration = self:GetSpecialValueFor("duration_heal")})
 
 if target:IsIllusion() then 
-    ApplyDamage({victim = target, attacker = self:GetCaster(), damage = self:GetSpecialValueFor("damage"), damage_type = DAMAGE_TYPE_MAGICAL, ability = self})
+    DoDamage({victim = target, attacker = self:GetCaster(), damage = self:GetSpecialValueFor("damage"), damage_type = DAMAGE_TYPE_MAGICAL, ability = self})
 end
 
 end

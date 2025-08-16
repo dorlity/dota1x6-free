@@ -1,21 +1,27 @@
 "use strict";
 
-function InitEndScreen() {
+function InitEndScreen() 
+{
 	const CustomUIContainerHUD = $.GetContextPanel().GetParent()
 	for (const panel of CustomUIContainerHUD.Children())
 		if (panel.BHasClass("MainPick"))
 			panel.style.visibility = "collapse"
+
 	var dotahud = $.GetContextPanel().GetParent().GetParent().GetParent().GetParent()
     dotahud.FindChildTraverse("TopBarScoreboard").style.visibility = 'collapse'
 
+    $.GetContextPanel().RemoveClass("EndScreen_Points_collapse")
+
 	const CustomUIRoot = CustomUIContainerHUD.GetParent()
+
 	const HeroSelection = CustomUIRoot.FindChild("CustomUIContainer_HeroSelection")
 	if (HeroSelection !== null)
 		HeroSelection.style.visibility = "collapse"
+
 	const HudTopBar = CustomUIRoot.FindChild("CustomUIContainer_HudTopBar")
 	if (HudTopBar !== null)
 		HudTopBar.style.visibility = "collapse"
-	$.GetContextPanel().style.visibility = "visible"
+
 
 	if ( ScoreboardUpdater_InitializeScoreboard === null ) { $.Msg( "WARNING: This file requires shared_scoreboard_updater.js to be included." ); }
 
@@ -60,7 +66,6 @@ function InitEndScreen() {
 			endScreenVictory.style.color = teamColor + ";";
 		}
 	}
-
 	var winningTeamLogo = $( "#WinningTeamLogo" );
 	if ( winningTeamLogo )
 	{
@@ -71,16 +76,43 @@ function InitEndScreen() {
 			winningTeamLogo.BLoadLayout( logo_xml, false, false );
 		}
 	}
+
+	let kv = {"exp":0,"total_games":140,"kills":0,"expire":0,"place":1,"rating_before":0,"rating_change":0,"runes":0,"calibration_games":0,"valid_time":1,"level":1,"towers":0,"randomed":1,"points": 500,"subscribed":1,"achivment_table":{"1": {"amount":3000, "id":2, "completed":1}, "2": {"amount":3000, "id":1, "completed":1}}, "quest_table":{"shards":15,"icon":"Hook","exp":80,"completed":1,"name":"Pudge.Quest_5"},"n":625258387}
+	//EndScreen_game_end(kv)
+	
+	let main_panel = $.GetContextPanel().FindChildTraverse("CustomBg")
+	if (main_panel)
+	{
+		let BackgroundScene = $.CreatePanel("DOTAScenePanel", main_panel, 'BackgroundScene', {map:'maps/backgrounds/dashboard_parallax_ti6_initial.vmap', hittest:'true'})
+		BackgroundScene.AddClass("BackgroundScene")
+	}
+
+	CreateTalentPanel()
+
+	var EndScreenTalents = $.GetContextPanel().FindChildTraverse("EndScreenTalents")
+	if (EndScreenTalents)
+		EndScreenTalents.RemoveClass("EndScreenTalents_show")
+
+	let button = $.GetContextPanel().FindChildTraverse("EndHeroesData_HeaderTalentsButton")
+	if (button)
+		button.RemoveClass("EndScreen_Points_collapse")
+
+	var TalentButton = $.GetContextPanel().FindChildTraverse("EndHeroesData_HeaderTalentsPanel")
+	if (TalentButton) 
+		SetShowTalent(TalentButton, Players.GetPlayerSelectedHero(Game.GetLocalPlayerID()))
 }
 
-function CheckForEndGame() {
+
+function init()
+{
+	GameEvents.Subscribe('GameEnded', InitEndScreen)
+
 	const val = CustomNetTables.GetTableValue("networth_players", "")
-	if (val !== undefined && val.game_ended) {
+	if (val !== undefined && val.game_ended) 
+	{
+		$.Msg("END SCREEN START")
 		InitEndScreen()
 		return
 	}
-	$.GetContextPanel().style.visibility = "collapse"
-	$.Schedule(0.2, CheckForEndGame)
 }
-
-CheckForEndGame()
+init()

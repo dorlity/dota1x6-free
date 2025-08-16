@@ -30,16 +30,16 @@ self:GetCaster():EmitSound("Hero_Centaur.HoofStomp")
 
 local particle_stomp_fx = ParticleManager:CreateParticle("particles/units/heroes/hero_centaur/centaur_warstomp.vpcf", PATTACH_ABSORIGIN, self:GetCaster())
 ParticleManager:SetParticleControl(particle_stomp_fx, 0, self:GetCaster():GetAbsOrigin())
-ParticleManager:SetParticleControl(particle_stomp_fx, 1, Vector(self.radius, 1, 1))
+ParticleManager:SetParticleControl(particle_stomp_fx, 1, Vector(self.radius, self.radius, self.radius))
 ParticleManager:SetParticleControl(particle_stomp_fx, 2, self:GetCaster():GetAbsOrigin())
 ParticleManager:ReleaseParticleIndex(particle_stomp_fx)
 
 local targets = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetCaster():GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_ANY_ORDER, false)
 
-for _,target in ipairs(targets) do
+for _,target in pairs(targets) do
     if not target:IsMagicImmune() then 
         target:AddNewModifier(self:GetCaster(), self, "modifier_stunned", {duration = self:GetSpecialValueFor("stun")*(1 - target:GetStatusResistance())})
-        ApplyDamage({victim = target, attacker = self:GetCaster(), damage = self:GetSpecialValueFor("damage"), damage_type = DAMAGE_TYPE_MAGICAL, ability = self})
+        DoDamage({victim = target, attacker = self:GetCaster(), damage = self:GetSpecialValueFor("damage"), damage_type = DAMAGE_TYPE_MAGICAL, ability = self})
            
     end
 end

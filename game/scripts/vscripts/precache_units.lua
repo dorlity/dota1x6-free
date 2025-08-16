@@ -34,8 +34,6 @@ return
 	"npc_dota_hero_sven_icon",
 	"npc_dota_hero_sniper_icon",
 	"npc_dota_donate_pet",
-	"npc_dota_wraith_king_skeleton_ghost_custom",
-	"npc_dota_wraith_king_skeleton_warrior_custom",
 	"juggernaut_healing_ward",
 	"npc_kobold",
 	"npc_kobold_t",
@@ -124,5 +122,12 @@ return
 	"patrol_melee_bad",
 	"patrol_range_good",
 	"patrol_melee_good",
-	"npc_sniper_mine"
+	"npc_sniper_mine",
+	"npc_enigma",
+	"npc_dota_tormentor_custom",
+	"npc_dota_tormentor_custom_health",
+	"npc_dota_neutral_prowler_shaman", 
+	"npc_lifestealer_infest_dragon",
+	"npc_lifestealer_infest_ursa",
+	"npc_lifestealer_infest_centaur",
 }

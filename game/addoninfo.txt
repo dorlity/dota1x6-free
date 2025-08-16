@@ -3,9 +3,7 @@
 	maps = 
 	[
 		"unranked",
-		"ranked_0-500_start",
-		"ranked_500-1000",
-		"ranked_1000-x",
+		"unranked_duo",
 	]
 	IsPlayable = 1
 	PenaltiesEnabled = false
@@ -16,16 +14,8 @@
 			map = "unranked"
 		},
 		{
-			MaxPlayers = 6
-			map = "ranked_0-500_start"
-		},
-		{
-			MaxPlayers = 6
-			map = "ranked_500-1000"
-		},
-		{
-			MaxPlayers = 6
-			map = "ranked_1000-x"
+			MaxPlayers = 8
+			map = "unranked_duo"
 		},
 	]
 	HideInTools = false
@@ -40,7 +30,7 @@
 	}
 	HeroGuidesSupported = true
 	ForceDefaultGuide = true
-	MinimalPrecache = 1
+	MinimalPrecache = true
 	MinPlayers = 1
 	MaxPlayers = 6
 	TeamCount = -1

@@ -1,13 +1,27 @@
 var parentHUDElements = $.GetContextPanel().GetParent().GetParent().GetParent().FindChild("HUDElements");
 $.GetContextPanel().SetParent(parentHUDElements);
 
+var local_unit = ""
+var legendary_info = []
+var current_legendary = ""
+
+GameEvents.Subscribe( "dota_player_update_selected_unit", UpdateSelectionUnit );
+GameEvents.Subscribe( "dota_player_update_query_unit", UpdateSelectionUnit );
+GameEvents.Subscribe( "m_event_dota_inventory_changed_query_unit", UpdateSelectionUnit );
+
 Hack()
+SpectatorPanelUpdate()
+
+function UpdateSelectionUnit(...args)
+{
+	Hack()
+	SpectatorPanelUpdate()
+}
+
+
 
 function Hack()
 {
-
-
-
 	var parentHUDElements = $.GetContextPanel().GetParent().GetParent().FindChildTraverse("QuickBuyRows");
 	var stash = $.GetContextPanel().GetParent().GetParent().FindChildTraverse("stash_bg");
 	var Row = parentHUDElements.FindChildTraverse("Row1")
@@ -15,12 +29,10 @@ function Hack()
 
 	var minimap = $.GetContextPanel().GetParent().GetParent().FindChildTraverse("HUDElements").GetParent()
 
-
 	var Dota1x6 = $.GetContextPanel().FindChildTraverse("Dota1x6")
 
 	if ((Game.IsHUDFlipped()) && (Info.BHasClass("AllPointsAndInfo")))
 	{	
-
 		Info.RemoveClass("AllPointsAndInfo")
 		Info.AddClass("AllPointsAndInfo_left")
 	}
@@ -33,21 +45,17 @@ function Hack()
 
 	if (minimap.BHasClass("MinimapExtraLarge"))
 	{
-
 		Dota1x6.RemoveClass("Dota1x6_small")
 		Dota1x6.AddClass("Dota1x6_large")
 	}else 
 	{
-
 		Dota1x6.RemoveClass("Dota1x6_large")
 		Dota1x6.AddClass("Dota1x6_small")
 	}
 
 
-
 	if ((Game.IsHUDFlipped()) && (Dota1x6.BHasClass("Dota1x6")))
 	{	
-
 		Dota1x6.RemoveClass("Dota1x6")
 		Dota1x6.AddClass("Dota1x6_right")
 	}
@@ -58,13 +66,9 @@ function Hack()
 		Dota1x6.AddClass("Dota1x6")
 	}
 
-
-
-
 	var bonus = 0
 	var margin = 0
 
-	
 
 	if (Row.visible)
 	{	
@@ -85,15 +89,164 @@ function Hack()
 	var text = String(margin) + '%'
 	Info.style.marginTop = text
 
+	let hero = Entities.GetUnitName(Players.GetLocalPlayerPortraitUnit())
 
+	if (hero != local_unit)
+	{
+		local_unit = hero
+		current_legendary = ""
+		UpdateInnatePanel()
+	}
 
-   $.Schedule(0.3, Hack)
-	
+	var dotaHud = $.GetContextPanel().GetParent().GetParent().GetParent()
+	let innate = dotaHud.FindChildTraverse("DOTAHUDInnateStatusTooltip")
+
+	if (innate)
+	{
+		let content = innate.FindChildTraverse("Contents")
+		let legendary_panel = dotaHud.FindChildTraverse("legendary_details")
+
+		if (legendary_panel && content)
+		{
+
+			legendary_panel.SetParent(content)
+			let innate_details = innate.FindChildrenWithClassTraverse("InnateContainer")[0]
+
+			if (innate_details)
+			{
+				content.MoveChildBefore(legendary_panel, innate_details)
+			}
+
+			if (legendary_table[1] && legendary_table[1] != 0)
+			{
+				legendary_panel.RemoveClass("legendary_aspect_hidden")
+			}else 
+			{
+				legendary_panel.AddClass("legendary_aspect_hidden")
+			}
+		}
+	}
 }
 
 
+function UpdateInnatePanel(new_table)
+{
+
+	let hero = Entities.GetUnitName(Players.GetLocalPlayerPortraitUnit()) 
+
+    var players_heroes = CustomNetTables.GetTableValue("hero_portrait_levels", hero)
+    var player_id = Game.GetLocalPlayerID()
+
+    if (players_heroes)
+        player_id = players_heroes["id"]
+
+    player_id = Number(player_id)
+
+    let hero_index = Players.GetPlayerHeroEntityIndex(player_id)   
+
+	var dotaHud = $.GetContextPanel().GetParent().GetParent().GetParent()
+	if (!dotaHud)
+		return
+
+	legendary_table = Game.GetLocalLegendary()
+
+	if (new_table != undefined)
+	{
+		legendary_table[0] = new_table.legendary
+		legendary_table[1] = new_table.legendary_talent
+		legendary_table[2] = new_table.legendary_skill_name
+	}
+
+    let skill_name = null 
+    let talent_data = null
+    let skill_number = null
+
+    if (legendary_table[1] && Game.talents_values && Game.talents_values[hero] && Game.talents_values[hero][legendary_table[1]])
+    {
+		talent_data = Game.talents_values[hero][legendary_table[1]]
+		skill_number = talent_data["skill_number"]
+	    if (Game.spells_by_number[hero] && Game.spells_by_number[hero][skill_number])
+	    {
+	        skill_name = Game.spells_by_number[hero][skill_number]["name"]
+	    }
+	}
+
+	let legendary_panel = dotaHud.FindChildTraverse("legendary_details")
+
+	if (legendary_panel)
+	{
+
+		let legendary_details_top_icon = legendary_panel.FindChildTraverse("legendary_details_top_icon")
+		let legendary_name = legendary_panel.FindChildTraverse("legendary_details_top_text")
+	  	let legendary_text = legendary_panel.FindChildTraverse("legendary_details_text")
+	  
+		if (legendary_details_top_icon && legendary_table[0] && legendary_table[0] != 0)
+		{
+	        if (skill_name)
+	        {
+                let ability = Entities.GetAbilityByName(hero_index, skill_name)
+                if (ability)
+                    legendary_details_top_icon.contextEntityIndex =  ability
+                legendary_details_top_icon.abilityname = skill_name
+	        }
+		}
+
+		if (legendary_name)
+		{
+			legendary_name.text = $.Localize("#DOTA_Tooltip_ability_" + legendary_table[2])
+		}
+	}
+
+	
+	let global_facet = dotaHud.FindChildTraverse("ContentsContainer").GetParent()
+	if (!global_facet)
+		return
+	
+	let aspect = dotaHud.FindChildTraverse("legendary_aspect")
+	let legendary_icon = legendary_table[0]
 
 
+	if (aspect)
+	{
+		let content = global_facet.FindChildTraverse("ContentsContainer")
+		if (content)
+		{	
+			content.SetPanelEvent('onmouseover', function() 
+			{
+	  			let legendary_text = legendary_panel.FindChildTraverse("legendary_details_text")
+				let legendary_info = Game.GetLocalLegendary()
+				if (legendary_text && legendary_table[1] && legendary_info[1] != 0 && current_legendary == "")
+				{
+					current_legendary = Game.ShowTalentValues("#upgrade_disc_" + legendary_info[1], legendary_info[1], 0, false, true, true)
+					legendary_text.text = current_legendary
+				}
+    		});
+
+			aspect.SetParent(content)
+
+			let innate_icon = content.FindChildTraverse("InnateIcon")
+			if (innate_icon)
+			{
+				content.MoveChildBefore(aspect, innate_icon)
+			}
+
+			if (legendary_icon != 0 )
+			{
+		        if (skill_name)
+		        {
+	                let ability = Entities.GetAbilityByName(hero_index, skill_name)
+	                if (ability)
+	                    aspect.contextEntityIndex =  ability
+	                aspect.abilityname = skill_name
+		        }
+				aspect.RemoveClass("legendary_aspect_hidden")
+			}else 
+			{
+				aspect.AddClass("legendary_aspect_hidden")
+			}
+		}
+	}
+}
 
 
 
@@ -104,6 +257,11 @@ function init()
 	GameEvents.Subscribe_custom('hero_quest_init', hero_quest_init)
 	GameEvents.Subscribe_custom('hero_quest_complete', hero_quest_complete)
 	GameEvents.Subscribe_custom('hero_quest_update', hero_quest_update)
+
+	GameEvents.Subscribe_custom('goodwin_quest_alert', goodwin_quest_alert)
+	GameEvents.Subscribe_custom('goodwin_quest_icon', goodwin_quest_icon)
+
+	GameEvents.Subscribe_custom('UpdateInnatePanel', UpdateInnatePanel)
 
 	GameEvents.Subscribe_custom('grenade_count_change', grenade_count_change)
 
@@ -123,6 +281,51 @@ init();
 
 
 
+function goodwin_quest_alert(kv)
+{
+	Game.EmitSound("Hunt.Start")
+	var Main = $.GetContextPanel().FindChildTraverse("GoodwinQuest")
+
+	let event = $.CreatePanel("Panel",Main,"event")
+	event.AddClass("GoodwinQuest_event")
+
+
+	let portrait = $.CreatePanel("Panel",event,"portrait")
+	portrait.AddClass("GoodwinQuest_portrait")
+
+	let event_text_main = $.CreatePanel("Panel",event,"event")
+	event_text_main.AddClass("GoodwinQuest_main")
+
+	let event_text = $.CreatePanel("Label", event_text_main, "")
+	event_text.html = true
+	event_text.AddClass("GoodwinQuest_text") 
+	event_text.text = $.Localize("#goodwin_quest_" + String(kv.id))
+
+	Game.EmitSound("GoodwinQuest")
+
+
+	$.Schedule( 7.55, function(){ 
+		event.RemoveClass("GoodwinQuest_event");
+        event.AddClass("GoodwinQuest_event_close");
+        goodwin_quest_icon(kv)
+	 })
+	event.DeleteAsync( 8 );
+}
+
+function goodwin_quest_icon(kv)
+{
+	var main = $.GetContextPanel().FindChildTraverse("GoodwinQuest_panel")
+
+	main.RemoveClass("GoodwinQuest_panel_hidden")
+
+	var text = $.Localize("#goodwin_quest_" + String(kv.id))
+
+	main.SetPanelEvent('onmouseover', function() {
+	$.DispatchEvent('DOTAShowTextTooltip', main, text) });
+
+	main.SetPanelEvent('onmouseout', function() {
+	$.DispatchEvent('DOTAHideTextTooltip', main); });
+}
 
 
 function OnKill( kv )
@@ -217,7 +420,35 @@ function OnKill( kv )
 		
 }
 
+function SpectatorPanelUpdate()
+{
+    let hero = Players.GetLocalPlayerPortraitUnit()
+    if (hero && Entities.IsRealHero( hero ) && IsSpectatorCustom(Players.GetLocalPlayer()))
+    {
+        let spectator_points = CustomNetTables.GetTableValue("spectator_points", Entities.GetPlayerOwnerID( hero ))
+        if (spectator_points)
+        {
+            OnKill( 
+            {
+                blue : spectator_points.blue,
+                purple : spectator_points.purple,
+                max : spectator_points.max,
+                max_p : spectator_points.max_p,
+            })
+        }
+    }
+}
 
+function IsSpectatorCustom(id)
+{
+    const localPlayer = Players.GetLocalPlayer()
+    if (Players.IsSpectator(localPlayer))
+    {
+        return true
+    }
+    const localTeam = Players.GetTeam(localPlayer)
+    return localTeam !== 2 && localTeam !== 3 && localTeam !== 6 && localTeam !== 7 && localTeam !== 8 && localTeam !== 9 && localTeam !== 10 && localTeam !== 11 && localTeam !== 12 && localTeam !== 13
+}
 
 
 function grenade_count_change(kv)
@@ -309,7 +540,7 @@ function hero_quest_init(kv)
 	let place = ""
 	if (!kv.legendary)
 	{
-		place = '<br><br>' + $.Localize("#QuestDiscWin")
+		place = '<br><br>' + $.Localize("#QuestDiscWin") + Game.GetWinPlace() + $.Localize("#QuestDiscWin2")
 	}
 
 	let text_info = $.Localize('#' + name) + '<br><br>' + $.Localize('#QuestReward') + "<b><font color='#53ea48'>" + String(shards) + "</font></b>" + $.Localize('#QuestReward2') + "<b><font color='#53ea48'>" + String(exp) + "</font></b>" + $.Localize('#QuestReward3') + place

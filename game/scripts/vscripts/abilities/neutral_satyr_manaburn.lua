@@ -1,4 +1,3 @@
-LinkLuaModifier("modifier_neutral_cast", "modifiers/modifier_neutral_cast", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_satyr_manaburn", "abilities/neutral_satyr_manaburn", LUA_MODIFIER_MOTION_NONE)
 
 
@@ -27,23 +26,19 @@ end
 function modifier_satyr_manaburn:DeclareFunctions()
 return 
 {
-  MODIFIER_EVENT_ON_ATTACK_LANDED
+  MODIFIER_PROPERTY_PROCATTACK_BONUS_DAMAGE_MAGICAL
 }
 end
 
-function modifier_satyr_manaburn:OnAttackLanded(params)
+function modifier_satyr_manaburn:GetModifierProcAttack_BonusDamage_Magical(params)
 if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end
-if params.target:IsMagicImmune() then return end
 
 params.target:EmitSound("n_creep_SatyrSoulstealer.ManaBurn")
+
 local effect = ParticleManager:CreateParticle( "particles/generic_gameplay/generic_manaburn.vpcf", PATTACH_ABSORIGIN_FOLLOW, params.target)
-params.target:SpendMana(self.mana, self:GetAbility())
 
-ApplyDamage({victim = params.target, attacker = self:GetParent(), damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility()})
-
-
-
+params.target:Script_ReduceMana(self.mana, self:GetAbility())
+return self.damage
 end
 
 

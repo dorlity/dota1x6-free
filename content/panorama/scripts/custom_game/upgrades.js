@@ -19,10 +19,12 @@ Hack()
 function rating()
 {
 
-let players = [0,5000,0,0,0,0,0]
+let ratings_places = [0, 40, 30, 10, -10, -30, -40]
+let players = [0, 0,1200,1000,1800,1200,1300]
 let player = 1
 
-let place = 4 
+let place = 1
+let self_rating = players[player]
 
 let r_summ = 0
 
@@ -32,53 +34,36 @@ for (var i = 0; i <= 6; i++)
 }
 
 let avg = r_summ/6
-avg = 1200
+
+let diff = self_rating - avg
+let coef = 1
 
 
+if ( Math.abs(diff) > 300)
+{
+  if (diff < 0)
+  {
+  	diff = Math.max( -650, diff )
+  	diff = diff + 300
+  }else
+  {
+  	diff = Math.min( 650, diff )
+  	diff = diff - 300
+  }
 
-let ratings = [0, 40, 30, 10, -10, -30, -40]
-let ratings_max = [0, 20,15,5,-5,-15,-20]
-
-
-
-let rating_diff = players[player] / avg
-
-let k = 0
-let change = ratings[place]
-
-
-if ((rating_diff) > 1.5 && (players[player] > 2000))
-{ 
-
-	k = (rating_diff*rating_diff)/20
-	if (place <= 3)
-	{ 
-		change = Math.max((ratings[place] - ratings[place]*k),ratings_max[place])
-	}
-	else 
-	{
-		change = ratings[place] + ratings[place]*k
-	}
-	
+	if (place > 3)
+  {
+    coef = 1 + diff / 300 / 1.7
+  }else
+  {
+    coef = 1 - diff / 300 / 1.7
+  }
 }
 
-if (rating_diff < 0.7 )
-{ 
-
-	k = 1/(20*rating_diff*rating_diff)
-	if (place <= 3)
-	{ 
-		change = (ratings[place] + ratings[place]*k)
-	}
-	else 
-	{
-		change = Math.min((ratings[place] - ratings[place]*k),ratings_max[place])
-	}
-	
-}
+let r = Math.trunc( ratings_places[place] * coef )
 
 
-$.Msg(players[player],' ',Math.floor(avg),' ',rating_diff,' ---- ',change)
+$.Msg(self_rating,' ',Math.floor(avg),' ', diff,' ',coef, ' ---- ',r)
 
 }
 
@@ -110,7 +95,7 @@ function rating1()
 }
 
 
-ma()
+//ma()
 function ma()
 {
 
@@ -142,34 +127,24 @@ for (var i = 1; i < 30; i++)
 	if (i >= 6)
 	{
 		timer = 120
+		timer2 = 120
 	}	
 
-	if (i >= 6)
-	{
-		timer2 = 120
-	}
-
-	if (i >= 16)
-	{
-		timer = 180
-
-	}
 	if (i >= 14)
 	{
-		timer2 = 180
+		timer = 180
 
+	}
+	if (i >= 13)
+	{
+		timer2 = 180
 	}
 
 	if (i >= 21)
 	{
 		timer = 180
-	}
-
-	if (i >= 21)
-	{
 		timer2 = 180
 	}
-
 
 	n = n + timer
 	n2 = n2 + timer2
@@ -180,194 +155,102 @@ for (var i = 1; i < 30; i++)
 	let min2 = Math.floor(n2/60)
 	let sec2 = n2 - min2 * 60
 
-	$.Msg(i,' ',min1,':',sec1,' --- ',min2,':',sec2,)
+	let ivent = "0"
+	let wave_ivent = "0"
 
+	if ((i == 5) || (i == 22))
+	{
+		wave_ivent = "boss"
+	}
+
+	if ((i == 18) || (i == 20))
+	{
+		wave_ivent = "siege"
+	}
+
+	if ((i >= 13) && (i % 2 != 0))
+	{
+		wave_ivent = "duel"
+	}
+
+
+	if ((i >= 5) && (i < 13))
+	{
+		ivent = "patrol 1"
+	}
+
+	if (i >= 13)
+	{
+		ivent = "patrol 2"
+	}
+
+	if ((i >= 12) && (i % 3 == 0))
+	{
+		ivent = "torment"
+	}
+
+
+	$.Msg(i,' ',min1,':',sec1,' --- ',min2,':',sec2,'   ',i,'   | ',wave_ivent,' + ',ivent,' | ')
 }
 
 
 
 }
 
-
+//ma_3()
 function ma_3()
 {
 
-let h = []
 
-h[1] = 0
-h[2] = 0
+let health1 = 3760*0.8
 
-let n = 1.02
-let n2 = 0
-
-
-let wave1 = 20
-let wave2 = 20
-
-let time1 = 0
-let time2 = 0
-
-let min1 = 0
-let sec1 = 0
-
-
-let damage1 = 44
-let health1 = 720
-
-let damage_up1 = 1
 let health_up1 = 1
 
+let health2 = 3950
 
-let damage2 = 44
-let health2 = 720
-
-let damage_up2 = 1
 let health_up2 = 1
 
-let reward_1 = 250
-let reward_2 = 275
-let total_reward_1 = 0
-let total_reward_2 = 0
-
-let respawn_1 = 10
-let respawn_1_wave = 1.5
-
-let respawn_2 = 10
-let respawn_2_wave = 2
 
 
 $.Msg('--------------------------------')
 
-for (var i = 0; i < 25; i++)
+for (var i = 8; i < 25; i++)
 {
 
-	if (i == 1)
-	{
-		wave1 = 70
-	}
-	if (i >= 9)
-	{
-		wave1 = 120
-	}
-	if (i >= 15)
-	{
-		wave1 = 150
-	}	
-	if (i >= 20)
-	{
-		wave1 = 180
-	}
-
-
 	if (i >= 1)
 	{
-		damage_up1 = 1.22
-		health_up1 = 1.26
+		health_up1 = 1.15
+		health_up2 = 1.14
 	}
 	if (i >= 10)
 	{
-		damage_up1 = 1.19
-		health_up1 = 1.21
+		health_up1 = 1.13
+		health_up2 = 1.10
 	}	
 	if (i >= 15)
 	{
-		damage_up1 = 1.18
-		health_up1 = 1.20
+		health_up1 = 1.13
+		health_up2 = 1.10
 	}	
 	if (i >= 20)
 	{
-		damage_up1 = 1.17
-		health_up1 = 1.22
+		health_up1 = 1.11
+		health_up2 = 1.10
+	}	
+	if (i >= 25)
+	{
+		health_up1 = 1.10
+		health_up2 = 1.10
 	}	
 
-
-
-
-
-
-
-
-
-
-	if (i == 1)
-	{
-		wave2 = 70
-	}
-	if (i >= 5)
-	{
-		wave2 = 120
-	}
-	if (i >= 15)
-	{
-		wave2 = 180
-	}
-
-
-	if (i >= 1)
-	{
-		damage_up2 = 1.25
-		health_up2 = 1.31
-	}
-	if (i >= 10)
-	{
-		damage_up2 = 1.19
-		health_up2 = 1.21
-	}	
-	if (i >= 15)
-	{
-		damage_up2 = 1.18
-		health_up2 = 1.20
-	}	
-	if (i >= 20)
-	{
-		damage_up2 = 1.17
-		health_up2 = 1.22
-	}	
-
-
-
-
-
-
-
-	damage1 = damage1*damage_up1
 	health1 = health1*health_up1
-
-	damage2 = damage2*damage_up2
 	health2 = health2*health_up2
 
-	if (i == 11)
-	{
-		damage1 = damage1*1.3
-		health1 = health1*1.4
-
-		damage2 = damage2*1.3
-		health2 = health2*1.4
-	}
-
-
-
-
-	time1 = time1 + wave1
-	min1 = Math.floor(time1/60)
-	sec1 = time1 - min1*60
-
-	time2 = time2 + wave2
-	min2 = Math.floor(time2/60)
-	sec2 = time2 - min2*60
-
-	total_reward_1 = total_reward_1 + reward_1
-	total_reward_2 = total_reward_2 + reward_2
-
-	respawn_1 = respawn_1 + respawn_1_wave
-	respawn_2 = respawn_2 + respawn_2_wave
-
-
-	$.Msg(i+1,' ', min1,':',sec1,' ',respawn_1, ' ||| ',' ', min2,':',sec2,' ',respawn_2)
-
-	//$.Msg(min + ':' + sec + ' +' + n +' --- ',min2 + ':' + sec2 + ' +' + n2 +' | ',i  )
-
+	$.Msg(i,' ', Math.floor(health1), ' ', Math.floor(health2))
 }
+
+
+
 }
 
 

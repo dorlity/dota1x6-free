@@ -8,21 +8,36 @@ LinkLuaModifier("modifier_sandking_burrowstrike_custom_legendary_cd", "abilities
 LinkLuaModifier("modifier_sandking_burrowstrike_custom_second", "abilities/sand_king/sandking_burrowstrike_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_sandking_burrowstrike_custom_speed", "abilities/sand_king/sandking_burrowstrike_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_sandking_burrowstrike_custom_reverse", "abilities/sand_king/sandking_burrowstrike_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_sandking_burrowstrike_custom_slow", "abilities/sand_king/sandking_burrowstrike_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_sandking_burrowstrike_custom_immune", "abilities/sand_king/sandking_burrowstrike_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_sandking_burrowstrike_custom_quest", "abilities/sand_king/sandking_burrowstrike_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_sandking_burrowstrike_custom_leash", "abilities/sand_king/sandking_burrowstrike_custom", LUA_MODIFIER_MOTION_NONE)
 
 
 sandking_burrowstrike_custom = class({})
 				
 function sandking_burrowstrike_custom:Precache(context)
-    
-PrecacheResource( "particle", "particles/sand_king/burrow_legendary.vpcf", context )
-PrecacheResource( "particle", "particles/sand_king/burrow_legendary_start.vpcf", context )
-PrecacheResource( "particle", "particles/sand_king/burrow_legendary_active.vpcf", context )
-PrecacheResource( "particle", "particles/sand_king/sand_king_wave.vpcf", context )
-PrecacheResource( "particle", "particles/sand_king/burrow_second.vpcf", context )
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+
+PrecacheResource( "particle","particles/units/heroes/hero_sandking/sandking_burrowstrike.vpcf", context )
+PrecacheResource( "particle","particles/generic_gameplay/generic_stunned.vpcf", context )
+PrecacheResource( "particle","particles/sand_king/burrow_legendary_start.vpcf", context )
+PrecacheResource( "particle","particles/sand_king/burrow_legendary_active.vpcf", context )
+PrecacheResource( "particle","particles/sand_king/burrow_legendary.vpcf", context )
+PrecacheResource( "particle","particles/sand_king/sand_king_wave.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_sandking/sandking_sandstorm_burrowstrike_field_explosion.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_sandking/sandking_sandstorm_burrowstrike_field_explosion.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_nyx_assassin/nyx_assassin_burrow_exit.vpcf", context )
+PrecacheResource( "particle","particles/lina_timer.vpcf", context )
+PrecacheResource( "particle","particles/sand_king/burrow_second.vpcf", context )
+PrecacheResource( "particle","particles/generic_gameplay/generic_stunned.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_monkey_king/monkey_king_quad_tap_hit.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_sandking/sandking_burrowstrike.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_sniper/sniper_headshot_slow.vpcf", context )
+PrecacheResource( "model","models/heroes/nerubian_assassin/mound.vmdl", context )
 end
+
+
 
 function sandking_burrowstrike_custom:GetIntrinsicModifierName()
 if not self:GetCaster():IsRealHero() then return end
@@ -30,50 +45,29 @@ return "modifier_sandking_burrowstrike_custom_tracker"
 end
 
 
-
 function sandking_burrowstrike_custom:GetCooldown(level)
 local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_sand_king_burrow_1") then 
-	--bonus = self:GetCaster():GetTalentValue("modifier_sand_king_burrow_1", "cd")
+if self:GetCaster():HasTalent("modifier_sand_king_burrow_6") then 
+	bonus = self:GetCaster():GetTalentValue("modifier_sand_king_burrow_6", "cd")
 end 
-
-	return self.BaseClass.GetCooldown(self, level)  + bonus
+return self.BaseClass.GetCooldown(self, level)  + bonus
 end
 
-
-
-function sandking_burrowstrike_custom:GetBehavior()
-local bonus = 0
-if self:GetCaster():HasModifier("modifier_sandking_burrowstrike_custom_legendary") then 
-	--bonus = DOTA_ABILITY_BEHAVIOR_IMMEDIATE
-end 
-
-return DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_UNIT_TARGET + DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES + bonus
-end
 
 
 function sandking_burrowstrike_custom:GetCastRange(vLocation, hTarget)
 if IsClient() then 
-	return self:GetSpecialValueFor("AbilityCastRange") + self:GetCaster():GetTalentValue("modifier_sand_king_burrow_1", "range")
+	return self:GetSpecialValueFor("AbilityCastRange")
 else 
 	return 99999
 end 
 
 end 
 
-function sandking_burrowstrike_custom:ReduceCd()
-if not self:GetCaster():HasModifier("modifier_sand_king_burrow_5") then return end
-self:GetCaster():CdAbility(self, self:GetCaster():GetTalentValue("modifier_sand_king_burrow_5", "cd"))
-end 
-
-
 
 
 function sandking_burrowstrike_custom:OnSpellStart(new_target)
 if not IsServer() then return end 
-
-
 
 local point = self:GetCursorPosition()
 local caster = self:GetCaster()
@@ -89,7 +83,7 @@ if point == origin then
 end
 local dir = (point - origin)
 
-local max_distance = self:GetSpecialValueFor("AbilityCastRange") + self:GetCaster():GetTalentValue("modifier_sand_king_burrow_1", "range") + self:GetCaster():GetCastRangeBonus()
+local max_distance = self:GetSpecialValueFor("AbilityCastRange") + self:GetCaster():GetCastRangeBonus()
 
 if dir:Length2D() >= max_distance then 
 	dir = dir:Normalized()
@@ -113,7 +107,7 @@ end
 self.anim_time =  self:GetSpecialValueFor("burrow_anim_time")
 local speed = self:GetSpecialValueFor("burrow_speed")
 
-if self:GetCaster():HasModifier("modifier_sand_king_burrow_5") then 
+if self:GetCaster():HasTalent("modifier_sand_king_burrow_5") then 
 	self.anim_time = self.anim_time*(1 - self:GetCaster():GetTalentValue("modifier_sand_king_burrow_5", "speed")/100)
 	speed = speed*(1 + self:GetCaster():GetTalentValue("modifier_sand_king_burrow_5", "speed")/100)
 end 
@@ -141,18 +135,14 @@ ProjectileManager:CreateLinearProjectile(
 local delay = distance/speed
 local duration = math.max(delay, self.anim_time)
 
-if caster:HasModifier("modifier_sandking_burrowstrike_custom_legendary") then 
-	--duration = delay
-end 
-
-if caster:HasModifier("modifier_sand_king_burrow_5") then 
+if caster:HasTalent("modifier_sand_king_burrow_5") then 
 	ProjectileManager:ProjectileDodge(self:GetCaster())
 	caster:AddNewModifier(caster, self, "modifier_sandking_burrowstrike_custom_immune", {duration = caster:GetTalentValue("modifier_sand_king_burrow_5", "duration") + delay})
 end 
 
 caster:AddNewModifier(caster, self, "modifier_sandking_burrowstrike_custom", {duration = duration, delay = delay, pos_x = point.x, pos_y = point.y, pos_z = point.z, reverse = 0})
 
-if caster:HasModifier("modifier_sand_king_burrow_6") then 
+if caster:HasTalent("modifier_sand_king_burrow_6") then 
 	caster:AddNewModifier(caster, self, "modifier_sandking_burrowstrike_custom_reverse", {duration = caster:GetTalentValue("modifier_sand_king_burrow_6", "duration")})
 end 
 
@@ -165,13 +155,13 @@ end
 
 function sandking_burrowstrike_custom:OnProjectileHit( target, location )
 if not target then return end
-if target:TriggerSpellAbsorb( self ) then return end
+--if target:TriggerSpellAbsorb( self ) then return end
+local caster = self:GetCaster()
  
-local duration = self:GetSpecialValueFor( "burrow_duration" ) + self:GetCaster():GetTalentValue("modifier_sand_king_burrow_1", "stun")
-
+local duration = self:GetSpecialValueFor( "burrow_duration" ) + caster:GetTalentValue("modifier_sand_king_burrow_1", "stun")
 
 target:RemoveModifierByName("modifier_sandking_burrowstrike_custom_stun")
-target:AddNewModifier(self:GetCaster(), self, "modifier_sandking_burrowstrike_custom_stun", { duration = duration*(1 - target:GetStatusResistance()) } )
+target:AddNewModifier(caster, self, "modifier_sandking_burrowstrike_custom_stun", { duration = duration*(1 - target:GetStatusResistance()) } )
 
 local finale = self:GetCaster():FindAbilityByName("sandking_caustic_finale_custom")
 
@@ -180,9 +170,6 @@ if finale then
 end 
 
 end
-
-
-
 
 
 
@@ -201,23 +188,23 @@ end
 
 
 
+
+
 modifier_sandking_burrowstrike_custom = class({})
  
 function modifier_sandking_burrowstrike_custom:IsHidden() return true end
 function modifier_sandking_burrowstrike_custom:IsPurgable() return false end
-
-
-
 function modifier_sandking_burrowstrike_custom:OnCreated( kv )
 if not IsServer() then return end
+self.caster = self:GetCaster()
 self.delay = kv.delay
 self.ended = false
 
 self.reverse = kv.reverse
 
-self:GetParent():StartGesture(ACT_DOTA_SAND_KING_BURROW_IN)
+self.caster:StartGesture(ACT_DOTA_SAND_KING_BURROW_IN)
 self.point = Vector( kv.pos_x, kv.pos_y, 0 )
-self.origin = self:GetParent():GetAbsOrigin()
+self.origin = self.caster:GetAbsOrigin()
 
 self:StartIntervalThink(math.max(0.25, self.delay - FrameTime()))
 end
@@ -239,31 +226,29 @@ self.ended = true
 
 if self.reverse == 0 then 
 
-	if self:GetCaster():HasModifier("modifier_sand_king_burrow_4") then 
-		self:GetCaster():RemoveModifierByName("modifier_sandking_burrowstrike_custom_second")
-		self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_sandking_burrowstrike_custom_second", {duration = self:GetCaster():GetTalentValue("modifier_sand_king_burrow_4", "delay")})
+	if self.caster:HasTalent("modifier_sand_king_burrow_4") then 
+		self.caster:RemoveModifierByName("modifier_sandking_burrowstrike_custom_second")
+		self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_sandking_burrowstrike_custom_second", {duration = self.caster:GetTalentValue("modifier_sand_king_burrow_4", "delay")})
 	end
 
-	if self:GetCaster():HasModifier("modifier_sand_king_burrow_3") then 
-		self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_sandking_burrowstrike_custom_speed", {duration = self:GetCaster():GetTalentValue("modifier_sand_king_burrow_3", "duration")})
+	if self.caster:HasTalent("modifier_sand_king_burrow_3") then 
+		self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_sandking_burrowstrike_custom_speed", {duration = self.caster:GetTalentValue("modifier_sand_king_burrow_3", "duration")})
 	end
 end 
 
-self:GetParent():StartGesture(ACT_DOTA_OVERRIDE_ABILITY_1)
+self.caster:StartGesture(ACT_DOTA_OVERRIDE_ABILITY_1)
+self.caster:FadeGesture(ACT_DOTA_SAND_KING_BURROW_IN)
+FindClearSpaceForUnit( self.caster, self.point, true )
 
-self:GetParent():FadeGesture(ACT_DOTA_SAND_KING_BURROW_IN)
-FindClearSpaceForUnit( self:GetParent(), self.point, true )
+local sand = self.caster:FindAbilityByName("sandking_sand_storm_custom")
+if sand and sand:IsTrained() and self.caster:HasTalent("modifier_sand_king_sand_7") then 
+	sand:ProcLegendary(self.caster:GetAbsOrigin())
+end
 
-
-local ability = self:GetCaster():FindAbilityByName("sandking_epicenter_custom")
-if ability and self:GetCaster():HasScepter() then 
-	ability:Pulse(self:GetCaster(), ability:GetSpecialValueFor("epicenter_radius_base"), true)
-end 
-
-local face_dir = self:GetParent():GetForwardVector()
+local face_dir = self.caster:GetForwardVector()
 face_dir.z = 0
-self:GetParent():FaceTowards(self:GetParent():GetAbsOrigin() + face_dir*10)
-self:GetParent():SetForwardVector(face_dir)
+self.caster:FaceTowards(self.caster:GetAbsOrigin() + face_dir*10)
+self.caster:SetForwardVector(face_dir)
 
 if self.reverse == 1 then 
 	self:Destroy()
@@ -295,24 +280,27 @@ function modifier_sandking_burrowstrike_custom_stun:IsStunDebuff() return true e
 
 function modifier_sandking_burrowstrike_custom_stun:OnCreated(table)
 if not IsServer() then return end
-self:GetParent():InterruptMotionControllers(false)
 
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
 
-self.damage = self:GetAbility():GetAbilityDamage() + self:GetCaster():GetTalentValue("modifier_sand_king_burrow_2", "damage")*self:GetCaster():GetAverageTrueAttackDamage(nil)/100
+self.parent:InterruptMotionControllers(false)
 
-if self:GetParent():IsCreep() then 
-	local damageTable = {victim = self:GetParent(), attacker = self:GetCaster(), damage = 1, damage_type = DAMAGE_TYPE_PURE, ability = self:GetAbility(), }
-	ApplyDamage(damageTable)
+self.damage = self:GetAbility():GetAbilityDamage() + self.caster:GetTalentValue("modifier_sand_king_burrow_2", "damage")*self.caster:GetAverageTrueAttackDamage(nil)/100
+
+if self.parent:IsCreep() then 
+	local damageTable = {victim = self.parent, attacker = self.caster, damage = 1, damage_type = DAMAGE_TYPE_PURE, ability = self:GetAbility(), }
+	DoDamage(damageTable)
 end
 
 self.anim_time = self:GetAbility():GetSpecialValueFor("burrow_anim_time")
 
-self.mod = self:GetParent():AddNewModifier( self:GetCaster(), self:GetAbility(),
+self.mod = self.parent:AddNewModifier( self.caster, self:GetAbility(),
 "modifier_knockback",
 {	
-	center_x = self:GetParent():GetAbsOrigin().x,
-	center_y = self:GetParent():GetAbsOrigin().y,
-	center_z = self:GetParent():GetAbsOrigin().z,
+	center_x = self.parent:GetAbsOrigin().x,
+	center_y = self.parent:GetAbsOrigin().y,
+	center_z = self.parent:GetAbsOrigin().z,
 	knockback_distance = 0,
 	knockback_height = 300,	
 	duration = self.anim_time,
@@ -320,7 +308,7 @@ self.mod = self:GetParent():AddNewModifier( self:GetCaster(), self:GetAbility(),
 	should_stun = true,
 })
 
-self:GetParent():StartGesture(ACT_DOTA_FLAIL)
+self.parent:StartGesture(ACT_DOTA_FLAIL)
 
 self:StartIntervalThink(self.anim_time)
 end
@@ -329,11 +317,11 @@ end
 function modifier_sandking_burrowstrike_custom_stun:OnIntervalThink()
 if not IsServer() then return end
 
-self:GetParent():RemoveGesture(ACT_DOTA_FLAIL)
-self:GetParent():StartGesture(ACT_DOTA_DISABLED)
+self.parent:RemoveGesture(ACT_DOTA_FLAIL)
+self.parent:StartGesture(ACT_DOTA_DISABLED)
 
-local damageTable = {victim = self:GetParent(), attacker = self:GetCaster(), damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility(), }
-ApplyDamage(damageTable)
+local damageTable = {victim = self.parent, attacker = self.caster, damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility(), }
+DoDamage(damageTable)
 
 self:StartIntervalThink(-1)
 end
@@ -353,9 +341,12 @@ if self.mod and not self.mod:IsNull() then
 	self.mod:Destroy()
 end 
 
-self:GetParent():FadeGesture(ACT_DOTA_DISABLED)
+if self.caster:HasTalent("modifier_sand_king_burrow_5") then 
+	self.parent:AddNewModifier(self.caster, self.ability, "modifier_sandking_burrowstrike_custom_leash", {duration = (1 - self.parent:GetStatusResistance())*self.caster:GetTalentValue("modifier_sand_king_burrow_5", "leash")})
 end
 
+self.parent:FadeGesture(ACT_DOTA_DISABLED)
+end
 
 
 function modifier_sandking_burrowstrike_custom_stun:GetEffectName()
@@ -373,6 +364,9 @@ end
 
 sandking_burrowstrike_custom_legendary = class({})
 
+function sandking_burrowstrike_custom_legendary:CreateTalent()
+self:SetHidden(false)
+end
 
 function sandking_burrowstrike_custom_legendary:GetCooldown(iLevel)
 return self:GetCaster():GetTalentValue("modifier_sand_king_burrow_7", "cd")
@@ -383,11 +377,6 @@ self.particle_sandblast_fx = ParticleManager:CreateParticle("particles/sand_king
 self:GetCaster():StartGesture(ACT_DOTA_SAND_KING_BURROW_IN)
 return true
 end 
-
-
-
-
-
 
 function sandking_burrowstrike_custom_legendary:OnAbilityPhaseInterrupted()
 
@@ -401,24 +390,25 @@ end
 
 
 function sandking_burrowstrike_custom_legendary:OnSpellStart()
+local caster = self:GetCaster()
 
 if self.particle_sandblast_fx then 
 	ParticleManager:DestroyParticle(self.particle_sandblast_fx, false)
 	ParticleManager:ReleaseParticleIndex(self.particle_sandblast_fx)
 end 
 
-self:GetCaster():FadeGesture(ACT_DOTA_SAND_KING_BURROW_IN)
+caster:FadeGesture(ACT_DOTA_SAND_KING_BURROW_IN)
 
-local point = self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector()*50
-FindClearSpaceForUnit(self:GetCaster(), point, true)
+local point = caster:GetAbsOrigin() + caster:GetForwardVector()*50
+FindClearSpaceForUnit(caster, point, true)
 
-local ability = self:GetCaster():FindAbilityByName("sandking_burrowstrike_custom_legendary_exit")
+local ability = caster:FindAbilityByName("sandking_burrowstrike_custom_legendary_exit")
 
 if ability:IsHidden() then 
-	self:GetCaster():SwapAbilities("sandking_burrowstrike_custom_legendary_exit", "sandking_burrowstrike_custom_legendary", true, false)
+	caster:SwapAbilities("sandking_burrowstrike_custom_legendary_exit", "sandking_burrowstrike_custom_legendary", true, false)
 end 
 
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_sandking_burrowstrike_custom_legendary", {})
+caster:AddNewModifier(caster, self, "modifier_sandking_burrowstrike_custom_legendary", {})
 end 
 
 
@@ -428,8 +418,9 @@ function modifier_sandking_burrowstrike_custom_legendary:IsHidden() return true 
 function modifier_sandking_burrowstrike_custom_legendary:IsPurgable() return false end
 function modifier_sandking_burrowstrike_custom_legendary:OnCreated()
 self.caster = self:GetCaster()
+self.parent = self:GetParent()
 
-if not self.caster:HasModifier("modifier_sand_king_burrow_7") then 
+if not self.caster:HasTalent("modifier_sand_king_burrow_7") then 
 	self:Destroy()
 	return
 end 
@@ -437,17 +428,19 @@ end
 self.interval = 0.05
 self.count = 0
 
+self.shield_talent = "modifier_sand_king_burrow_7"
+self.max_shield = self.caster:GetTalentValue("modifier_sand_king_burrow_7", "shield")*self.caster:GetMaxHealth()/100
+self.restore = (self.max_shield / self.caster:GetTalentValue("modifier_sand_king_burrow_7", "restore_timer"))*self.interval
+self.speed = self.caster:GetTalentValue("modifier_sand_king_burrow_7", "speed")
+self.attack_cd = self.caster:GetTalentValue("modifier_sand_king_burrow_7", "attack_cd")
+self.radius = self.caster:GetTalentValue("modifier_sand_king_burrow_7", "radius")
+self.attack_stun = self.caster:GetTalentValue("modifier_sand_king_burrow_7", "attack_stun")
+self.damage = self.caster:GetTalentValue("modifier_sand_king_burrow_7", "damage")
 
-self.max_shield = self:GetCaster():GetTalentValue("modifier_sand_king_burrow_7", "shield")*self.caster:GetMaxHealth()/100
-self.restore = (self.max_shield / self:GetCaster():GetTalentValue("modifier_sand_king_burrow_7", "restore_timer"))*self.interval
-self.speed = self:GetCaster():GetTalentValue("modifier_sand_king_burrow_7", "speed")
-self.attack_cd = self:GetCaster():GetTalentValue("modifier_sand_king_burrow_7", "attack_cd")
-self.radius = self:GetCaster():GetTalentValue("modifier_sand_king_burrow_7", "radius")
-self.attack_stun = self:GetCaster():GetTalentValue("modifier_sand_king_burrow_7", "attack_stun")
+self.speed_bonus = self.caster:GetTalentValue("modifier_sand_king_burrow_3", "speed")
+self.speed_active = self.caster:GetTalentValue("modifier_sand_king_burrow_3", "bonus")
 
-self.speed_bonus = self:GetCaster():GetTalentValue("modifier_sand_king_burrow_3", "speed")
-self.speed_active = self:GetCaster():GetTalentValue("modifier_sand_king_burrow_3", "bonus")
-
+self.damage_reduce = self:GetAbility():GetSpecialValueFor("damage")/100
 
 self:SetStackCount(self.max_shield)
 
@@ -465,11 +458,11 @@ self.RemoveForDuel = true
 self.active_effect = ParticleManager:CreateParticle( "particles/sand_king/burrow_legendary_active.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
 self:AddParticle(self.active_effect,false, false, -1, false, false)
 
-self.ability = self:GetCaster():FindAbilityByName("sandking_burrowstrike_custom")
+self.ability = self.caster:FindAbilityByName("sandking_burrowstrike_custom")
 
 self.caster:EmitSound("SandKing.Burrow_loop")
 
-self:GetCaster():EmitSound("SandKing.Burrow_start")
+self.caster:EmitSound("SandKing.Burrow_start")
 local particle_cast = "particles/sand_king/burrow_legendary.vpcf"
 
 self.effect_cast = ParticleManager:CreateParticle( particle_cast, PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
@@ -483,7 +476,7 @@ self.effect_max = 0.5
 self.sound_count = 0
 self.sound_max = 0.8
 
-self.attack_max = self:GetCaster():GetTalentValue("modifier_sand_king_burrow_7", "attack_cd")
+self.attack_max = self.caster:GetTalentValue("modifier_sand_king_burrow_7", "attack_cd")
 self.attack_count = self.attack_max
 
 self.old_pos = self.caster:GetAbsOrigin()
@@ -556,10 +549,6 @@ if self.attack_count >= self.attack_max then
 			})
 		end
 	end 
-
-	if #targets > 0 then 
-		self.ability:ReduceCd()
-	end 
 end
 
 
@@ -573,14 +562,14 @@ if not IsServer() then return end
 self:GetAbility():UseResources(false, false, false, true)
 self:GetAbility():SetActivated(true)
 
-self:GetCaster():StopSound("SandKing.Burrow_loop")
+self.caster:StopSound("SandKing.Burrow_loop")
 
-self:GetCaster():EmitSound("SandKing.Burrow_end")
+self.caster:EmitSound("SandKing.Burrow_end")
 
-self.particle_sandblast_fx = ParticleManager:CreateParticle("particles/units/heroes/hero_nyx_assassin/nyx_assassin_burrow_exit.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
+self.particle_sandblast_fx = ParticleManager:CreateParticle("particles/units/heroes/hero_nyx_assassin/nyx_assassin_burrow_exit.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.caster)
 ParticleManager:ReleaseParticleIndex(self.particle_sandblast_fx)
 
-local caster = self:GetCaster()
+local caster = self.caster
 local prev_offset = caster:GetBaseHealthBarOffset()
 
 local dir = self.dir
@@ -588,7 +577,7 @@ local dir = self.dir
 caster:SetForwardVector(dir)
 caster:FaceTowards(caster:GetAbsOrigin() + dir*10)
 
-caster:SetAbsOrigin(self:GetCaster():GetAbsOrigin() + Vector(0,0,-300))
+caster:SetAbsOrigin(self.caster:GetAbsOrigin() + Vector(0,0,-300))
 caster:SetHealthBarOffsetOverride(prev_offset + 300)
 
 caster:Stop()
@@ -601,13 +590,13 @@ Timers:CreateTimer(FrameTime(), function()
 	end 
 end)
 
-local ability = self:GetCaster():FindAbilityByName("sandking_burrowstrike_custom_legendary")
+local ability = self.caster:FindAbilityByName("sandking_burrowstrike_custom_legendary")
 
 if ability:IsHidden() then 
-	self:GetCaster():SwapAbilities("sandking_burrowstrike_custom_legendary_exit", "sandking_burrowstrike_custom_legendary", false, true)
+	self.caster:SwapAbilities("sandking_burrowstrike_custom_legendary_exit", "sandking_burrowstrike_custom_legendary", false, true)
 end 
 
-self:GetCaster():StartGesture(ACT_DOTA_OVERRIDE_ABILITY_1)
+self.caster:StartGesture(ACT_DOTA_OVERRIDE_ABILITY_1)
 end
 
 
@@ -629,7 +618,12 @@ return
 	MODIFIER_PROPERTY_MOVESPEED_ABSOLUTE_MAX,
 	MODIFIER_PROPERTY_IGNORE_CAST_ANGLE,
 	MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
+	MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
 }
+end
+
+function modifier_sandking_burrowstrike_custom_legendary:GetModifierDamageOutgoing_Percentage()
+return self.damage
 end
 
 
@@ -645,15 +639,12 @@ function modifier_sandking_burrowstrike_custom_legendary:GetModifierMoveSpeed_Ab
 
 local bonus = 0
 
-if self:GetCaster():HasModifier("modifier_sand_king_burrow_3") then 
+if self.caster:HasTalent("modifier_sand_king_burrow_3") then 
 	bonus = self.speed_bonus
-
 	if self.caster:HasModifier("modifier_sandking_burrowstrike_custom_speed") then 
 		bonus = bonus*self.speed_active
 	end 
 end
-
-
 return self.speed + bonus
 end
 
@@ -664,7 +655,6 @@ end
 function modifier_sandking_burrowstrike_custom_legendary:GetModifierModelScale()
 return 15
 end
-
 
 function modifier_sandking_burrowstrike_custom_legendary:GetModifierIncomingDamageConstant( params )
 
@@ -678,27 +668,23 @@ end
 
 if not IsServer() then return end
 
-if self:GetStackCount() > params.damage then
-    self:SetStackCount(self:GetStackCount() - params.damage)
-    local i = params.damage
-    return -i
-else
-    
-    local i = self:GetStackCount()
-    self:SetStackCount(0)
-    self:Destroy()
-    return -i
+local damage = math.min(params.damage*self.damage_reduce, self:GetStackCount())
+self.parent:AddShieldInfo({shield_mod = self, healing = damage, healing_type = "shield"})
+
+self:SetStackCount(self:GetStackCount() - damage)
+if self:GetStackCount() <= 0 then
+  self:Destroy()
 end
 
+return -damage
 end
+
 
 
 
 
 
 sandking_burrowstrike_custom_legendary_exit = class({})
-
-
 
 function sandking_burrowstrike_custom_legendary_exit:OnSpellStart()
 
@@ -709,7 +695,6 @@ local ability = self:GetCaster():FindAbilityByName("sandking_burrowstrike_custom
 if ability:IsHidden() then 
 	self:GetCaster():SwapAbilities("sandking_burrowstrike_custom_legendary_exit", "sandking_burrowstrike_custom_legendary", false, true)
 end 
-
 
 end
 
@@ -799,12 +784,6 @@ for _,target in pairs(targets) do
 	target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_sandking_burrowstrike_custom_stun_attacks", {duration = duration})
 end 
 
-
-if #targets > 0 then 
-	for i = 1,self:GetCaster():GetTalentValue("modifier_sand_king_burrow_4", "attacks") do 
-		self:GetAbility():ReduceCd()
-	end 
-end 
 
 
 local origin = self:GetParent():GetAbsOrigin()
@@ -1029,7 +1008,7 @@ local speed = ability:GetSpecialValueFor("burrow_speed")
 
 self.hit = false
 
-if self:GetCaster():HasModifier("modifier_sand_king_burrow_5") then 
+if self:GetCaster():HasTalent("modifier_sand_king_burrow_5") then 
 	speed = speed*(1 + self:GetCaster():GetTalentValue("modifier_sand_king_burrow_5", "speed")/100)
 end 
 
@@ -1068,17 +1047,8 @@ end
 
 
 
-
-
 function sandking_burrowstrike_custom_reverse:OnProjectileHit( target, location )
 if not target then return end
-
-if self.hit == false and self:GetCaster():HasAbility("sandking_burrowstrike_custom") then 
-	self.hit = true
-	self:GetCaster():FindAbilityByName("sandking_burrowstrike_custom"):ReduceCd()
-end 
-
-target:AddNewModifier(self:GetCaster(), self, "modifier_sandking_burrowstrike_custom_slow", {duration = self.slow_duration*(1 - target:GetStatusResistance())})
 
 target:EmitSound("SandKing.Burrow_attack")
 
@@ -1086,7 +1056,6 @@ local hit_effect = ParticleManager:CreateParticle("particles/units/heroes/hero_m
 ParticleManager:SetParticleControlEnt(hit_effect, 0, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), false) 
 ParticleManager:SetParticleControlEnt(hit_effect, 1, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), false) 
 ParticleManager:ReleaseParticleIndex(hit_effect)
-
 
 self:GetCaster():PerformAttack(target, true, true, true, false, false, false, true)
 end
@@ -1114,38 +1083,6 @@ end
 
 
 
-modifier_sandking_burrowstrike_custom_slow = class({})
-
-
-function modifier_sandking_burrowstrike_custom_slow:IsHidden() return true end
-function modifier_sandking_burrowstrike_custom_slow:IsPurgable() return true end
-function modifier_sandking_burrowstrike_custom_slow:DeclareFunctions()
-    return {
-        MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-    }
-end
-
-
-function modifier_sandking_burrowstrike_custom_slow:OnCreated(table)
-
-self.move =  self:GetCaster():GetTalentValue("modifier_sand_king_burrow_6", "slow")
-end
-
-
-function modifier_sandking_burrowstrike_custom_slow:GetModifierMoveSpeedBonus_Percentage()
-    return self.move
-end
-
-
-function modifier_sandking_burrowstrike_custom_slow:GetEffectName()
-    return "particles/units/heroes/hero_sniper/sniper_headshot_slow.vpcf"
-end
-
-
-function modifier_sandking_burrowstrike_custom_slow:GetEffectAttachType()
-    return PATTACH_OVERHEAD_FOLLOW
-end
-
 
 
 
@@ -1160,21 +1097,26 @@ end
 function modifier_sandking_burrowstrike_custom_tracker:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_ATTACK_LANDED,
 	MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT,
 	MODIFIER_PROPERTY_EVASION_CONSTANT,
-	MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE
+	MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
+  	MODIFIER_PROPERTY_CAST_RANGE_BONUS_STACKING,
 }
 end
 
 function modifier_sandking_burrowstrike_custom_tracker:GetModifierDamageOutgoing_Percentage()
-if not self:GetCaster():HasModifier("modifier_sand_king_burrow_2") then return end
+if not self.caster:HasTalent("modifier_sand_king_burrow_2") then return end
 return self.caster:GetTalentValue("modifier_sand_king_burrow_2", "damage_auto")
+end
+
+function modifier_sandking_burrowstrike_custom_tracker:GetModifierCastRangeBonusStacking()
+if not self.caster:HasTalent("modifier_sand_king_burrow_1") then return end 
+return self.caster:GetTalentValue("modifier_sand_king_burrow_1", "range")
 end
 
 
 function modifier_sandking_burrowstrike_custom_tracker:GetModifierMoveSpeedBonus_Constant()
-if not self.caster:HasModifier("modifier_sand_king_burrow_3") then return end 
+if not self.caster:HasTalent("modifier_sand_king_burrow_3") then return end 
 
 local base = self.caster:GetTalentValue("modifier_sand_king_burrow_3", "speed")
 local bonus = 1 
@@ -1182,12 +1124,11 @@ local bonus = 1
 if self.caster:HasModifier("modifier_sandking_burrowstrike_custom_speed") then 
 	bonus = self.caster:GetTalentValue("modifier_sand_king_burrow_3",  "bonus")
 end 
-
 return base*bonus
 end
 
 function modifier_sandking_burrowstrike_custom_tracker:GetModifierEvasion_Constant()
-if not self.caster:HasModifier("modifier_sand_king_burrow_3") then return end 
+if not self.caster:HasTalent("modifier_sand_king_burrow_3") then return end 
 
 local base = self.caster:GetTalentValue("modifier_sand_king_burrow_3", "evasion")
 local bonus = 1 
@@ -1195,22 +1136,11 @@ local bonus = 1
 if self.caster:HasModifier("modifier_sandking_burrowstrike_custom_speed") then 
 	bonus = self.caster:GetTalentValue("modifier_sand_king_burrow_3",  "bonus")
 end 
-
 return base*bonus
 end
 
 
 
-function modifier_sandking_burrowstrike_custom_tracker:OnAttackLanded(params)
-if not IsServer() then return end 
-if not self.caster:HasModifier("modifier_sand_king_burrow_5") then return end
-if self.caster ~= params.attacker then return end 
-if not params.target:IsHero() and not params.target:IsCreep() then return end
-if params.no_attack_cooldown then return end
-
-self:GetAbility():ReduceCd()
-
-end 
 
 
 
@@ -1232,3 +1162,48 @@ end
 modifier_sandking_burrowstrike_custom_quest = class({})
 function modifier_sandking_burrowstrike_custom_quest:IsHidden() return true end
 function modifier_sandking_burrowstrike_custom_quest:IsPurgable() return false end
+
+
+
+
+
+modifier_sandking_burrowstrike_custom_leash = class({})
+function modifier_sandking_burrowstrike_custom_leash:IsHidden() return true end
+function modifier_sandking_burrowstrike_custom_leash:IsPurgable() return false end
+function modifier_sandking_burrowstrike_custom_leash:CheckState()
+return
+{
+	[MODIFIER_STATE_TETHERED] = true
+}
+end
+
+
+function modifier_sandking_burrowstrike_custom_leash:GetStatusEffectName()
+return "particles/status_fx/status_effect_mars_spear.vpcf"
+end
+
+function modifier_sandking_burrowstrike_custom_leash:StatusEffectPriority() return MODIFIER_PRIORITY_HIGH  end
+
+
+function modifier_sandking_burrowstrike_custom_leash:OnCreated()
+self.speed = self:GetCaster():GetTalentValue("modifier_sand_king_burrow_5", "slow")
+end
+
+function modifier_sandking_burrowstrike_custom_leash:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
+}
+end
+
+function modifier_sandking_burrowstrike_custom_leash:GetModifierMoveSpeedBonus_Percentage()
+return self.speed
+end
+
+function modifier_sandking_burrowstrike_custom_leash:GetEffectName()
+return "particles/units/heroes/hero_sniper/sniper_headshot_slow.vpcf"
+end
+
+function modifier_sandking_burrowstrike_custom_leash:GetEffectAttachType()
+return PATTACH_OVERHEAD_FOLLOW
+end

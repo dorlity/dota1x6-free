@@ -16,26 +16,23 @@ function modifier_golem_bash:IsHidden() return true end
 
 function modifier_golem_bash:OnCreated(table)
 if not IsServer() then return end
+self.parent = self:GetParent()
+self.parent:AddAttackEvent_out(self, true)
+
 self.duration = self:GetAbility():GetSpecialValueFor("duration")
 self.damage = self:GetAbility():GetSpecialValueFor("damage")
 self.chance = self:GetAbility():GetSpecialValueFor("chance")
 end
 
-function modifier_golem_bash:DeclareFunctions()
-return 
-{
-  MODIFIER_EVENT_ON_ATTACK_LANDED
-}
-end
 
-function modifier_golem_bash:OnAttackLanded( params )
+
+function modifier_golem_bash:AttackEvent_out(params)
 if not IsServer() then return end
-if self:GetParent() == params.attacker then 
-  local random = RollPseudoRandomPercentage(self.chance,12,self:GetParent())
-  if random then 
-    params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_stunned", {duration = self.duration*(1 - params.target:GetStatusResistance())})
-    ApplyDamage({victim = params.target, damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, attacker = self:GetParent(),  ability = self:GetAbility()})
-         
-  end
-end
+if self:GetParent() ~= params.attacker then return end
+if not RollPseudoRandomPercentage(self.chance,1522,self:GetParent()) then return end
+
+params.target:EmitSound("BB.Goo_stun")
+params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_bashed", {duration = self.duration*(1 - params.target:GetStatusResistance())})
+DoDamage({victim = params.target, damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, attacker = self:GetParent(),  ability = self:GetAbility()})
+
 end

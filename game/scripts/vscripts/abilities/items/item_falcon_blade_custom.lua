@@ -3,6 +3,14 @@ LinkLuaModifier("modifier_item_falcon_blade_custom_active", "abilities/items/ite
 
 item_falcon_blade_custom = class({})
 
+function item_falcon_blade_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/items_fx/force_staff.vpcf", context )
+PrecacheResource( "particle","particles/falcon_blade_charge.vpcf", context )
+PrecacheResource( "particle","particles/status_fx/status_effect_forcestaff.vpcf", context )
+end
+
+
 function item_falcon_blade_custom:GetIntrinsicModifierName()
 	return "modifier_item_falcon_blade_custom"
 end
@@ -21,7 +29,6 @@ function item_falcon_blade_custom:GetCastRange(vLocation, hTarget)
 if IsClient() then 
     return self:GetSpecialValueFor("range")
 end
-
 return 99999
 end
 
@@ -95,7 +102,7 @@ function modifier_item_falcon_blade_custom_active:GetModifierDisableTurning() re
 
 function modifier_item_falcon_blade_custom_active:GetEffectName() return "particles/falcon_blade_charge.vpcf" end
 function modifier_item_falcon_blade_custom_active:GetStatusEffectName() return "particles/status_fx/status_effect_forcestaff.vpcf" end
-function modifier_item_falcon_blade_custom_active:StatusEffectPriority() return 100 end
+function modifier_item_falcon_blade_custom_active:StatusEffectPriority() return MODIFIER_PRIORITY_NORMAL  end
 
 function modifier_item_falcon_blade_custom_active:OnDestroy()
     if not IsServer() then return end
@@ -154,40 +161,51 @@ function modifier_item_falcon_blade_custom:IsHidden() return true end
 function modifier_item_falcon_blade_custom:IsPurgable() return false end
 function modifier_item_falcon_blade_custom:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_item_falcon_blade_custom:DeclareFunctions()
-    local funcs = {
-        MODIFIER_PROPERTY_HEALTH_BONUS,
-        MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
-        MODIFIER_PROPERTY_MANA_REGEN_CONSTANT,
-        MODIFIER_EVENT_ON_TAKEDAMAGE
-    }
-
-    return funcs
+return 
+{
+    MODIFIER_PROPERTY_HEALTH_BONUS,
+    MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
+    MODIFIER_PROPERTY_MANA_REGEN_CONSTANT,
+}
 end
 
+function modifier_item_falcon_blade_custom:OnCreated()
+self.ability = self:GetAbility()
+self.parent = self:GetParent()
+
+self.bonus_health = self.ability:GetSpecialValueFor("bonus_health")
+self.bonus_mana_regen = self.ability:GetSpecialValueFor("bonus_mana_regen")
+self.bonus_damage = self.ability:GetSpecialValueFor("bonus_damage")
+self.damage_cd = self.ability:GetSpecialValueFor("damage_cd")
+
+if self.parent:IsRealHero() then 
+    self.parent:AddDamageEvent_inc(self, true)
+end 
+
+end
 
 function modifier_item_falcon_blade_custom:GetModifierHealthBonus()
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_health") end
+return self.bonus_health 
 end
+
 function modifier_item_falcon_blade_custom:GetModifierConstantManaRegen()
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_mana_regen") end
+return self.bonus_mana_regen 
 end
+
 function modifier_item_falcon_blade_custom:GetModifierPreAttack_BonusDamage()
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_damage") end
+return self.bonus_damage 
 end
 
-
-
-function modifier_item_falcon_blade_custom:OnTakeDamage(params)
+function modifier_item_falcon_blade_custom:DamageEvent_inc(params)
 if not IsServer() then return end
-if self:GetParent() ~= params.unit then return end
-if self:GetParent() == params.attacker then return end
+if self.parent ~= params.unit then return end
+if self.parent == params.attacker then return end
 if not params.attacker:IsRealHero() and not params.attacker:IsIllusion() then return end
 if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end
-
 if params.damage < 5 then return end
-if self:GetAbility():GetCooldownTime() > self:GetAbility():GetSpecialValueFor("damage_cd") then return end
+if not self.ability or self.ability:IsNull() then return end
+if self.ability:GetCooldownTime() > self.damage_cd then return end
 
-self:GetAbility():EndCooldown()
-self:GetAbility():StartCooldown(self:GetAbility():GetSpecialValueFor("damage_cd"))
-
+self.ability:EndCooldown()
+self.ability:StartCooldown(self.damage_cd)
 end

@@ -2,6 +2,7 @@ var favourites = new Array();
 var nowrings = 9;
 var selected_sound_current = undefined;
 var nowselect = 0;
+var current_button
 
 var rings = new Array(
     new Array(//0 start
@@ -218,33 +219,44 @@ function OnMouseOut(num) {
     Game.AddCommand("-" + name_bind, StopWheel, "", 0);
     Game.CreateCustomKeyBind(GetGameKeybind(DOTAKeybindCommand_t.DOTA_KEYBIND_HERO_CHAT_WHEEL), '+' + name_bind);
 
+
+    current_button = GetGameKeybind(DOTAKeybindCommand_t.DOTA_KEYBIND_HERO_CHAT_WHEEL)
+    SetBindInterval()
+
+
     $("#Wheel").visible = false;
     $("#Bubble").visible = false;
     $("#PhrasesContainer").visible = false;
 })();
 
-
 GameEvents.Subscribe_custom( 'chat_dota_sound', ChatSound );
+
 function ChatSound( data )
 {
     let dotaHud = $.GetContextPanel().GetParent().GetParent().GetParent()
     let Hudchat = dotaHud.FindChildTraverse("HudChat")
     let LinesPanel = $("#PhraseChatContainer2")
-
+    let is_duo_game = false
+    if (Game.GetGameMode() == 2)
+    {
+        is_duo_game = true
+    }   
+    if (is_duo_game)
+    {
+        LinesPanel = Hudchat.FindChildTraverse("ChatLinesPanel")
+    }
     let hero_icon = "file://{images}/heroes/" + Game.GetHeroImage(data.player_id, data.hero_name) + ".png"
-
     let player_name = Players.GetPlayerName( data.player_id )
     let sound_name = $.Localize(data.sound_name)
     let color = "white;"
     let hero_tier =  "s2r://panorama/images/hero_badges/hero_badge_rank_" + data.tier + "_tiny_png.vtex"
     let phase_tier = data.phase_tier
     let phrase_color = "white;"
-
-    if (Game.IsPlayerMuted( data.player_id ) || Game.IsPlayerMutedVoice( data.player_id ) || Game.IsPlayerMutedText( data.player_id )) {
+    if (Game.IsPlayerMuted( data.player_id ) || Game.IsPlayerMutedVoice( data.player_id ) || Game.IsPlayerMutedText( data.player_id )) 
+    {
         return
     }
-
-    var playerInfo = Game.GetPlayerInfo( data.player_id );
+    let playerInfo = Game.GetPlayerInfo( data.player_id );
     if ( playerInfo )
     {
         if ( GameUI.CustomUIConfig().team_colors )
@@ -261,43 +273,95 @@ function ChatSound( data )
 
     let player_color_style = "font-size:18px;font-weight:bold;text-shadow: 1px 1.5px 0px 2 black;color:" + color
 
-
     if (phase_tier == 0)
     {
         phrase_color = "gradient( linear, 0% 0%, 100% 0%, from( #c0501a ), to( #f49327 ) );"
-    } else if (phase_tier == 1) 
+    } 
+    else if (phase_tier == 1) 
     {
         phrase_color = "gradient( linear, 0% 0%, 100% 0%, from( #b4e1f0 ), to( #85b6c7 ) );"
-    } else if (phase_tier == 2) 
+    } 
+    else if (phase_tier == 2) 
     {
         phrase_color = "gradient( linear, 0% 0%, 100% 0%, from( #c0911d ), to( #e8c216 ) );"
-    } else if (phase_tier == 3) 
+    } 
+    else if (phase_tier == 3) 
     {
         phrase_color = "gradient( linear, 0% 0%, 100% 0%, from( #6a98ed ), to( #32cdcf ) );"
-    } else if (phase_tier == 4) 
+    } 
+    else if (phase_tier == 4) 
     {
         phrase_color = "gradient( linear, 0% 0%, 100% 0%, from( #da250f ), to( #e0b816 ) );"
-    } else if (phase_tier == 5) 
+    } 
+    else if (phase_tier == 5) 
     {
         phrase_color = "gradient( linear, 0% 0%, 100% 0%, from( #cc743e ), to( #fee1ae ) );"
     }
 
     let phase_label_color_style = "font-size:18px;margin-left:5px;font-weight:bold;text-shadow: 1px 1.5px 0px 2 black;color:" + phrase_color
+    let style_original = "margin-left:37px;flow-children: right;width:100%;vertical-align:bottom;transition-property: opacity;transition-duration: 0.1s;padding-top: 2px;"
+    if (is_duo_game)
+    {
+        style_original = "margin-left:5px;flow-children: right;width:100%;vertical-align:bottom;transition-property: opacity;transition-duration: 0.1s;padding-top: 2px;"
+    }
 
-    let ChatPanelSound = $.CreatePanel("Panel", LinesPanel, "", { style:"margin-left:37px;flow-children: right;width:100%;vertical-align:bottom;transition-property: opacity;transition-duration: 0.1s;" });
+    let ChatPanelSound = $.CreatePanel("Panel", LinesPanel, "", { style: style_original });
+    let HeroTier = $.CreatePanel("Image", ChatPanelSound, "", { src:`${hero_tier}`, style:"width:32px;height:32px;margin-right:0px;margin-top:-5px;margin-bottom:-5px;" }); 
     let HeroIcon = $.CreatePanel("Image", ChatPanelSound, "", { src:`${hero_icon}`, style:"width:40px;height:23px;margin-right:4px;border:1px solid black;" }); 
-    let HeroTier = $.CreatePanel("Image", ChatPanelSound, "", { src:`${hero_tier}`, style:"width:20px;height:20px;margin-right:4px;" }); 
     let LabelPlayer = $.CreatePanel("Label", ChatPanelSound, "", { text:`${player_name}` + ":", style:`${player_color_style}` });
     let SoundIcon = $.CreatePanel("Image", ChatPanelSound, "", { class:"ChatWheelIcon", style:"width:20px;height:20px;", src:"file://{images}/hud/reborn/icon_scoreboard_mute_sound.psd" }); 
     let LabelSound = $.CreatePanel("Label", ChatPanelSound, "", { text:`${sound_name}`, style:`${phase_label_color_style}`});
 
-    $.Schedule( 7, function(){
-        if (ChatPanelSound) {
-            ChatPanelSound.style.opacity = "0";  
-        }
-    })
-    ChatPanelSound.DeleteAsync(8)
+    if (is_duo_game)
+    {
+        $.Schedule( 7, function()
+        {
+            ChatPanelSound.AddClass("ChatLine")
+            ChatPanelSound.AddClass("Expired")
+        })
+    }
+    else
+    {
+        $.Schedule( 7, function()
+        {
+            if (ChatPanelSound) 
+            {
+                ChatPanelSound.style.opacity = "0";  
+            }
+        })
+        ChatPanelSound.DeleteAsync(8)
+    }
 } 
+
+$.RegisterForUnhandledEvent("StyleClassesChanged", ClearChatBadgesEvent );
+
+function ClearChatBadgesEvent(panel)
+{
+	if (panel == null) { return }
+    if (panel.paneltype != "Label") { return }
+	if (panel.BHasClass("ChatLine"))
+    {
+        let HeroBadges = panel.FindChildrenWithClassTraverse( "HeroBadge" )
+        for (let badge of HeroBadges)
+        {
+            badge.visible = false
+        }
+    }
+}
+
 function GetGameKeybind(command) {
     return Game.GetKeybindForCommand(command);
+}
+
+function SetBindInterval()
+{
+    if (GetGameKeybind(DOTAKeybindCommand_t.DOTA_KEYBIND_HERO_CHAT_WHEEL) != current_button)
+    {
+        const name_bind = "WheelHeroButton" + Math.floor(Math.random() * 99999999);
+        Game.AddCommand("+" + name_bind, StartWheel, "", 0);
+        Game.AddCommand("-" + name_bind, StopWheel, "", 0);
+        Game.CreateCustomKeyBind(GetGameKeybind(DOTAKeybindCommand_t.DOTA_KEYBIND_HERO_CHAT_WHEEL), '+' + name_bind);
+        current_button = GetGameKeybind(DOTAKeybindCommand_t.DOTA_KEYBIND_HERO_CHAT_WHEEL)
+    }
+    $.Schedule( 1, SetBindInterval );
 }

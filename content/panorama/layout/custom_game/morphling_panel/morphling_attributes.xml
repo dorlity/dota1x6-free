@@ -1,0 +1,11 @@
+<!-- xml reconstructed by Source 2 Viewer 14.1.0.0 - https://valveresourceformat.github.io -->
+<root>
+	<styles>
+		<include src="s2r://panorama/styles/dotastyles.vcss_c" />
+		<include src="s2r://panorama/layout/custom_game/morphling_panel/morphling_attributes.vcss_c" />
+	</styles>
+	<scripts>
+		<include src="s2r://panorama/layout/custom_game/morphling_panel/morphling_attributes.vjs_c" />
+	</scripts>
+	<Panel />
+</root>

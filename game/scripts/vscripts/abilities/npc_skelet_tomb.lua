@@ -9,22 +9,18 @@ npc_skelet_tomb = class({})
 function npc_skelet_tomb:OnSpellStart()
 
 
-    self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_skelet_tomb_cd", {duration = self:GetCooldownTimeRemaining()})
-  
-    self.radius = self:GetSpecialValueFor("radius")
-    if not IsServer() then return end
+self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_skelet_tomb_cd", {duration = self:GetCooldownTimeRemaining()})
+
+self.radius = self:GetSpecialValueFor("radius")
+if not IsServer() then return end
 
 self:GetCaster():EmitSound("Hero_Undying.Tombstone")
-     local new_tomb = CreateUnitByName("npc_skelet_tomb", self:GetAbsOrigin()+RandomVector(RandomInt(-1, 1)+self.radius), true, nil, nil, DOTA_TEAM_CUSTOM_5)
-     new_tomb:AddNewModifier(self:GetCaster(), self, "modifier_tomb_thinker", {})
-     new_tomb:SetBaseMaxHealth(self:GetSpecialValueFor("hits"))
-     new_tomb:SetHealth(self:GetSpecialValueFor("hits"))
-     new_tomb.owner = self:GetCaster().owner
-     new_tomb:AddNewModifier(nil, nil, "modifier_waveupgrade", {})
-         
-
-    
-
+local new_tomb = CreateUnitByName("npc_skelet_tomb", self:GetAbsOrigin()+RandomVector(RandomInt(-1, 1)+self.radius), true, nil, nil, DOTA_TEAM_CUSTOM_5)
+new_tomb:AddNewModifier(self:GetCaster(), self, "modifier_tomb_thinker", {})
+new_tomb:SetBaseMaxHealth(self:GetSpecialValueFor("hits"))
+new_tomb:SetHealth(self:GetSpecialValueFor("hits"))
+new_tomb.host_team = self:GetCaster().host_team
+new_tomb:AddNewModifier(nil, nil, "modifier_waveupgrade", {})
 end
 
 modifier_tomb_thinker = class({})

@@ -5,6 +5,17 @@ LinkLuaModifier("modifier_custom_huskar_berserkers_will_shield", "abilities/husk
 custom_huskar_berserkers_will                  = class({})
 
 
+function custom_huskar_berserkers_will:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+
+
+PrecacheResource( "particle", "particles/brist_proc.vpcf", context )
+PrecacheResource( "particle", "particles/huskar/shard_shield.vpcf", context )
+PrecacheResource( "particle", "particles/econ/items/effigies/status_fx_effigies/se_effigy_ti6_lvl2.vpcf", context )
+
+end
+
+
 function custom_huskar_berserkers_will:GetHealthCost(level)
 return self:GetCaster():GetHealth()*self:GetSpecialValueFor("cost")/100
 end
@@ -28,6 +39,7 @@ modifier_custom_huskar_berserkers_will_shield = class({})
 function modifier_custom_huskar_berserkers_will_shield:IsHidden() return false end
 function modifier_custom_huskar_berserkers_will_shield:IsPurgable() return false end
 function modifier_custom_huskar_berserkers_will_shield:OnCreated(table)
+self.parent = self:GetParent()
 self.max_shield = (self:GetParent():GetMaxHealth() - self:GetParent():GetHealth())*self:GetAbility():GetSpecialValueFor("shield")/100
 
 self.heal_reduce = self:GetAbility():GetSpecialValueFor("heal_reduce")
@@ -97,19 +109,18 @@ if IsClient() then
   end 
 end
 
-if self:GetStackCount() > params.damage then
-  self:SetStackCount(self:GetStackCount() - params.damage)
-  local i = params.damage
-  return -i
-else
-  
-  local i = self:GetStackCount()
-  self:SetStackCount(0)
+if not IsServer() then return end
+local damage = math.min(params.damage, self:GetStackCount())
+self.parent:AddShieldInfo({shield_mod = self, healing = damage, healing_type = "shield"})
+
+self:SetStackCount(self:GetStackCount() - damage)
+if self:GetStackCount() <= 0 then
   self:Destroy()
-  return -i
 end
 
+return -damage
 end
+
 
 
 
@@ -119,5 +130,5 @@ return "particles/econ/items/effigies/status_fx_effigies/se_effigy_ti6_lvl2.vpcf
 end
 
 function modifier_custom_huskar_berserkers_will_shield:StatusEffectPriority()
-return 999999
+return MODIFIER_PRIORITY_ULTRA
 end

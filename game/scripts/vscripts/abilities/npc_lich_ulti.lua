@@ -67,7 +67,7 @@ local enemy_for_ability = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), hT
 local target = {}
 local j = 0
 
-for _,i in ipairs(enemy_for_ability) do 
+for _,i in pairs(enemy_for_ability) do 
   if ((i:GetTeamNumber() == self:GetCaster():GetTeamNumber() and i:GetUnitName() == "npc_lich_ice_unit") or
     (i:GetTeamNumber() ~= self:GetCaster():GetTeamNumber() and (i:IsCreep() or i:IsHero()))) and  
     (i ~= hTarget) then 
@@ -95,7 +95,7 @@ if hTarget:IsCreep() then
   damage = math.min(500, damage)
 end
 
-ApplyDamage({ victim = hTarget, attacker = self:GetCaster(), ability = self, damage = damage, damage_type = DAMAGE_TYPE_PURE, damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION})
+DoDamage({ victim = hTarget, attacker = self:GetCaster(), ability = self, damage = damage, damage_type = DAMAGE_TYPE_PURE, damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION})
 
 
 return true

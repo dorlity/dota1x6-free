@@ -12,17 +12,32 @@ function modifier_siege_attack:IsHidden() return true end
 function modifier_siege_attack:IsPurgable() return false end
 
 
-function modifier_siege_attack:DoScript(target)
-if not IsServer() then return end
-		local friends = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, 1000, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE , FIND_ANY_ORDER, false)
-		if #friends > 0 then 
+function modifier_siege_attack:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+self.duration = self.ability:GetSpecialValueFor("duration")
 
-		target:EmitSound("Item_Desolator.Target")
-  			for _,i in ipairs(friends) do
-				i:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_siege_plusarmor", {duration = self:GetAbility():GetSpecialValueFor("duration")*(1 - i:GetStatusResistance())})
-			end
-		end
+self.parent:AddAttackEvent_out(self, true)
 end
+
+
+function modifier_siege_attack:AttackEvent_out(params)
+if not IsServer() then return end
+if params.attacker ~= self.parent then return end
+
+local target = params.target
+target:EmitSound("Item_Desolator.Target")
+
+local friends = FindUnitsInRadius(self.parent:GetTeamNumber(), self.parent:GetAbsOrigin(), nil, 1000, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE , FIND_ANY_ORDER, false)
+if #friends > 0 then 
+
+for _,friend in pairs(friends) do
+		friend:AddNewModifier(self.parent, self.ability, "modifier_siege_plusarmor", {duration = self.duration})
+	end
+end
+
+end
+
 
 
 modifier_siege_plusarmor = class ({})
@@ -33,7 +48,7 @@ function modifier_siege_plusarmor:IsPurgable() return false end
 function modifier_siege_plusarmor:OnCreated(table)
 self.armor = self:GetAbility():GetSpecialValueFor("armor")
 if not IsServer() then return end
- self:GetParent():EmitSound("Juggernaut.WardDeath")  
+ self:GetParent():EmitSound("Hero_Dawnbreaker.Luminosity.Heal")  
 self:SetStackCount(1)
 end
 

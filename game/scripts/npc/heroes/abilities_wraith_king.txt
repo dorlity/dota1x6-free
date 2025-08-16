@@ -1,0 +1,277 @@
+
+"DOTAAbilities"
+{
+
+"Version"		"1"
+
+
+"skeleton_king_hellfire_blast_custom"
+{
+	"BaseClass"						"ability_lua"
+	"ScriptFile"					"abilities/wraith_king/skeleton_king_hellfire_blast"
+	"AbilityTextureName"			"skeleton_king_hellfire_blast"	
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET"
+	"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+	"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+	"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"	
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	"SpellDispellableType"			"SPELL_DISPELLABLE_YES_STRONG"
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_1"
+	
+	// Casting
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCastRange"				"525"
+	"AbilityCastPoint"				"0.35 0.35 0.35 0.35"
+
+	// Time		
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"13 12 11 10"
+
+	// Damage.
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityDamage"					"75 90 105 120"
+
+	// Cost
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityManaCost"				"95 110 125 140"
+
+	// Stats
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityModifierSupportValue"	"0.5"	// Applies two modifiers
+
+	"LinkedAbility"					"skeleton_king_hellfire_blast_custom_legendary"
+
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"blast_speed"			"1200"
+		"blast_stun_duration"	"1 1.2 1.4 1.6"
+		"blast_dot_duration"	"2.0"
+		"blast_slow"			"-20"
+		"blast_dot_damage"		"20 40 60 80"
+		"skelet_buff_duration"		"4"
+		"skelet_buff_speed"		"25"
+		"skelet_buff_move"		"25"
+				
+	}
+}
+
+
+
+
+
+
+"skeleton_king_hellfire_blast_custom_legendary"
+{
+	"BaseClass"						"ability_lua"
+	"ScriptFile"					"abilities/wraith_king/skeleton_king_hellfire_blast"
+	"AbilityTextureName"			"ghost"	
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_HIDDEN"
+	"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+	"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_1"
+	"MaxLevel"						"1"
+	
+	// Casting
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCastRange"				"800"
+	"AbilityCastPoint"				"0.1"
+
+	//"AbilityManaCost"				"95 110 125 140"
+
+
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"duration"				"6"
+		"damage"				"75"
+	}
+}
+
+
+
+
+
+"skeleton_king_vampiric_aura_custom"
+{
+	"BaseClass"						"ability_lua"
+	"ScriptFile"					"abilities/wraith_king/skeleton_king_vampiric_aura"
+	"AbilityTextureName"			"skeleton_king_bone_guard"	
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_AUTOCAST"
+	"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_2"
+		
+	// Casting
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCastPoint"				"0.1"
+
+	// Time		
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"30"
+
+	// Cost
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityManaCost"				"70 80 90 100"
+
+	"AbilityValues"
+	{
+		"skeleton_duration"			"30"
+		"max_skeleton_charges"		"2 3 4 5"
+		"spawn_interval"			"0.25"
+		"reincarnate_time"			"3"
+		"gold_bounty"						"5"
+		"xp_bounty"						"5"
+		"kill_radius"				"1200"
+		"damage"					"30 40 50 60"
+		"armor"						"2 4 6 8"
+		"health"					"250"
+		"move_speed"				"380"
+		"respawn_delay"				"3"
+		"death_damage"				"100"
+		"death_radius"				"300"
+	}
+}
+
+"skeleton_king_mortal_strike_custom"
+{
+	"BaseClass"						"ability_lua"
+	"ScriptFile"					"abilities/wraith_king/skeleton_king_mortal_strike"
+	"AbilityTextureName"			"skeleton_king_mortal_strike"	
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+	"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+	"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_3"
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_YES"
+	"AbilityUnitTargetFlags"		"DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES"
+    "IsBreakable"                   "1"
+
+	// Time		
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"5.5 5 4.5 4"
+
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"crit_mult"					"140 170 200 230"
+		
+	}
+}
+
+"skeleton_king_reincarnation_custom"
+{
+	"BaseClass"						"ability_lua"
+	"ScriptFile"					"abilities/wraith_king/skeleton_king_reincarnation"
+	"AbilityTextureName"			"skeleton_king_reincarnation"	
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+	"AbilityType"					"ABILITY_TYPE_ULTIMATE"
+	"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
+	"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO"
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_4"
+	"HasShardUpgrade"				"1"
+	"HasScepterUpgrade"				"1"
+
+	// Cost
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityManaCost"				"225"
+
+	"LinkedAbility"					"skeleton_king_reincarnation_custom_legendary"
+
+	// Time		
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"100 80 60"
+
+	// Stats
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityModifierSupportValue"	"0.2"	// Slow isn't the main function of this ability.
+
+	"AbilityValues"
+	{
+		"reincarnate_time"		"3.0 3.0 3.0"
+		"slow_radius"			"900"
+		"movespeed"				"-75"
+		"attackslow"			"-75"
+		"slow_duration"			"5.0"
+		"shard_duration"		"10"
+	}
+}
+
+
+
+
+
+"skeleton_king_reincarnation_custom_legendary"
+{
+	"BaseClass"						"ability_lua"
+	"ScriptFile"					"abilities/wraith_king/skeleton_king_reincarnation"
+	"AbilityTextureName"			"death_grip"	
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_HIDDEN"
+
+	"AbilityUnitDamageType"			"DAMAGE_TYPE_PURE"	
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	"MaxLevel"						"1"
+
+		
+	// Casting
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCastPoint"				"0"
+
+
+
+	// Cost
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityManaCost"				"50"
+
+	"AbilityValues"
+	{
+		"duration" 				"3"
+		"move"					"15"
+		"radius"				"400"
+		"heal"					"20"
+		"cd_inc"				"4"	
+		"interval"				"0.5"
+	}
+}
+
+
+
+
+"skeleton_king_innate_custom"
+{
+    "BaseClass"                     "ability_lua"
+    "ScriptFile"                    "abilities/wraith_king/skeleton_king_innate_custom"  
+
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+    "Innate"                        "1"
+    "IsBreakable"                   "1"
+    "MaxLevel"						"4"
+	"HasScepterUpgrade"				"1"
+
+	"DependentOnAbility"			"skeleton_king_reincarnation_custom"
+
+    "AbilityValues"
+    {
+    	"heal"			"25 30 35 40"
+    	"creeps"		"40"
+    	"duration"		"3"
+    	"speed"			"30 45 60 75"
+    	"move"			"10 15 20 25"
+
+    	"scepter_duration"	"1"
+    	"scepter_damage"	"25"
+    	"scepter_move"		"550"
+    }
+}
+
+
+
+
+
+
+}

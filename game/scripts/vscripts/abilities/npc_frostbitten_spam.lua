@@ -6,20 +6,21 @@ LinkLuaModifier("modifier_frostbitten_spam_cd", "abilities/npc_frostbitten_spam.
 npc_frostbitten_spam = class({})
 
 function npc_frostbitten_spam:OnSpellStart()
-    self:GetCaster():StartGesture(ACT_DOTA_CAST_ABILITY_4)
-    self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_frostbitten_spam_cd", {duration = self:GetCooldownTimeRemaining()})
-    self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_frostbitten_spam", {target = self:GetCursorTarget():entindex()})
+self:GetCaster():StartGesture(ACT_DOTA_CAST_ABILITY_4)
+self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_frostbitten_spam_cd", {duration = self:GetCooldownTimeRemaining()})
+self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_frostbitten_spam", {target = self:GetCursorTarget():entindex()})
 end
 
-function npc_frostbitten_spam:GetChannelTime() return self:GetSpecialValueFor("duration") end
+function npc_frostbitten_spam:GetChannelTime() 
+    return self:GetSpecialValueFor("duration") 
+end
  
 
 function npc_frostbitten_spam:OnChannelFinish(bInterrupted)
-
 self:GetCaster():FadeGesture(ACT_DOTA_CAST_ABILITY_4)
 self:GetCaster():RemoveModifierByName("modifier_frostbitten_spam")
-
 end 
+
 
 modifier_frostbitten_spam = class ({})
 
@@ -41,7 +42,7 @@ if not IsServer() then return end
 if not self.target:IsAlive() then return end
 if (self:GetCaster():GetAbsOrigin() - self.target:GetAbsOrigin()):Length2D() > self:GetAbility():GetSpecialValueFor("range") then return end
 
-CreateModifierThinker(self:GetCaster(), self:GetAbility(), "modifier_frostbitten_thinker", {duration = self:GetAbility():GetSpecialValueFor("delay"), caster = self:GetCaster():entindex()}, self.target:GetAbsOrigin() + RandomVector(RandomInt(-1, 1) + RandomInt(100, 350)), self:GetCaster():GetTeamNumber(), false)
+CreateModifierThinker(self:GetCaster(), self:GetAbility(), "modifier_frostbitten_thinker", {duration = self:GetAbility():GetSpecialValueFor("delay")}, self.target:GetAbsOrigin() + RandomVector(RandomInt(-1, 1) + RandomInt(100, 350)), self:GetCaster():GetTeamNumber(), false)
    
 end
 
@@ -57,49 +58,48 @@ function modifier_frostbitten_thinker:IsPurgable() return false end
 function modifier_frostbitten_thinker:OnCreated(table)
 if not IsServer() then return end
 
-    self.caster = EntIndexToHScript(table.caster)
+self.caster = self:GetCaster()
 
-    self.radius = self:GetAbility():GetSpecialValueFor("radius")
-    local particle_cast = "particles/units/heroes/hero_snapfire/hero_snapfire_ultimate_calldown.vpcf"
-    self.effect_cast = ParticleManager:CreateParticle(particle_cast, PATTACH_CUSTOMORIGIN, self:GetParent())
-    ParticleManager:SetParticleControl( self.effect_cast, 0, self:GetParent():GetOrigin() )
-    ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( self.radius, 0, -self.radius) )
-    ParticleManager:SetParticleControl( self.effect_cast, 2, Vector( self:GetRemainingTime(), 0, 0 ) )
+self.radius = self:GetAbility():GetSpecialValueFor("radius")
 
-
-
+self.effect_cast = ParticleManager:CreateParticle("particles/units/heroes/hero_snapfire/hero_snapfire_ultimate_calldown.vpcf", PATTACH_CUSTOMORIGIN, self:GetParent())
+ParticleManager:SetParticleControl( self.effect_cast, 0, self:GetParent():GetOrigin() )
+ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( self.radius, 0, -self.radius) )
+ParticleManager:SetParticleControl( self.effect_cast, 2, Vector( self:GetRemainingTime(), 0, 0 ) )
 end
 
 
 function modifier_frostbitten_thinker:OnDestroy(table)
 if not IsServer() then return end
     
+if self.effect_cast then
     ParticleManager:DestroyParticle( self.effect_cast, true )
     ParticleManager:ReleaseParticleIndex( self.effect_cast )
+end
 
-     local zap_pfx = ParticleManager:CreateParticle("particles/frostbitten_strike.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.caster)
-    ParticleManager:SetParticleControlEnt(zap_pfx, 0, self.caster, PATTACH_POINT_FOLLOW, "attach_staff", self.caster:GetAbsOrigin(), true)
-    ParticleManager:SetParticleControl(zap_pfx, 1, self:GetParent():GetAbsOrigin())
-    ParticleManager:ReleaseParticleIndex(zap_pfx)
+ local zap_pfx = ParticleManager:CreateParticle("particles/frostbitten_strike.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.caster)
+ParticleManager:SetParticleControlEnt(zap_pfx, 0, self.caster, PATTACH_POINT_FOLLOW, "attach_staff", self.caster:GetAbsOrigin(), true)
+ParticleManager:SetParticleControl(zap_pfx, 1, self:GetParent():GetAbsOrigin())
+ParticleManager:ReleaseParticleIndex(zap_pfx)
 
-    self:GetCaster():EmitSound("Ability.FrostNova")  
-   
-    local seed_particle = ParticleManager:CreateParticle("particles/econ/items/lich/frozen_chains_ti6/lich_frozenchains_frostnova.vpcf", PATTACH_WORLDORIGIN, nil)
-    ParticleManager:SetParticleControl(seed_particle, 0, self:GetParent():GetAbsOrigin())
-    ParticleManager:SetParticleControl(seed_particle, 1, self:GetParent():GetAbsOrigin())
-     ParticleManager:SetParticleControl(seed_particle, 2, self:GetParent():GetAbsOrigin())
-    ParticleManager:ReleaseParticleIndex(seed_particle)
+self:GetCaster():EmitSound("UI.Ability_frost")  
 
-    local  enemy_for_ability = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE , FIND_CLOSEST, false)
-     for _,i in ipairs(enemy_for_ability) do
-         if not i:IsMagicImmune() then 
+local seed_particle = ParticleManager:CreateParticle("particles/econ/items/lich/frozen_chains_ti6/lich_frozenchains_frostnova.vpcf", PATTACH_WORLDORIGIN, nil)
+ParticleManager:SetParticleControl(seed_particle, 0, self:GetParent():GetAbsOrigin())
+ParticleManager:SetParticleControl(seed_particle, 1, self:GetParent():GetAbsOrigin())
+ ParticleManager:SetParticleControl(seed_particle, 2, self:GetParent():GetAbsOrigin())
+ParticleManager:ReleaseParticleIndex(seed_particle)
 
-             i:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_frostbitten_spam_buff", {duration = self:GetAbility():GetSpecialValueFor("duration_slow")*(1 - i:GetStatusResistance())})
-             ApplyDamage({ victim = i, attacker = self:GetAbility():GetCaster(), ability = self:GetAbility(), damage = self:GetAbility():GetSpecialValueFor("damage"), damage_type = DAMAGE_TYPE_MAGICAL})
+local  enemy_for_ability = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE , FIND_CLOSEST, false)
+ for _,i in pairs(enemy_for_ability) do
+     if not i:IsMagicImmune() then 
 
-         end
+         i:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_frostbitten_spam_buff", {duration = self:GetAbility():GetSpecialValueFor("duration_slow")*(1 - i:GetStatusResistance())})
+         DoDamage({ victim = i, attacker = self:GetAbility():GetCaster(), ability = self:GetAbility(), damage = self:GetAbility():GetSpecialValueFor("damage"), damage_type = DAMAGE_TYPE_MAGICAL})
 
      end
+
+ end
    
 end
 

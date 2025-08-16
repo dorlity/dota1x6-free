@@ -144,7 +144,7 @@ if not IsServer() then return end
   ParticleManager:DestroyParticle( self.effect_cast, true )
   ParticleManager:ReleaseParticleIndex( self.effect_cast )
 
-  self:GetParent():EmitSound("Ability.FrostNova")
+  self:GetParent():EmitSound("UI.Ability_frost")
   local seed_particle = ParticleManager:CreateParticle("particles/econ/items/lich/frozen_chains_ti6/lich_frozenchains_frostnova.vpcf", PATTACH_WORLDORIGIN, nil)
   ParticleManager:SetParticleControl(seed_particle, 0, self:GetParent():GetAbsOrigin())
   ParticleManager:SetParticleControl(seed_particle, 1, self:GetParent():GetAbsOrigin())
@@ -152,11 +152,11 @@ if not IsServer() then return end
   ParticleManager:ReleaseParticleIndex(seed_particle)
 
   local  enemy_for_ability = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetAbility():GetSpecialValueFor("radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE , FIND_CLOSEST, false)
-  for _,i in ipairs(enemy_for_ability) do
+  for _,i in pairs(enemy_for_ability) do
       local damage = self.damage*i:GetMaxHealth()
 
       local damageTable = {victim = i,  damage = damage, damage_type = DAMAGE_TYPE_PURE, attacker = self:GetCaster(), ability = self:GetAbility(), damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION}
-      local actualy_damage = ApplyDamage(damageTable)
+      local actualy_damage = DoDamage(damageTable)
    
   end
 

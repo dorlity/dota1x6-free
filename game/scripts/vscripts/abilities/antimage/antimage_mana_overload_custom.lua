@@ -1,133 +1,112 @@
-LinkLuaModifier("modifier_antimage_mana_overload_custom_illusion", "abilities/antimage/antimage_mana_overload_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier( "modifier_antimage_mana_void_custom_legendary", "abilities/antimage/antimage_mana_overload_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_antimage_mana_void_custom_anim", "abilities/antimage/antimage_mana_overload_custom", LUA_MODIFIER_MOTION_NONE )
 
-antimage_mana_overload_custom = class({})
 
-function antimage_mana_overload_custom:OnInventoryContentsChanged()
-    if self:GetCaster():HasScepter() then
-        self:SetHidden(false)       
-        if not self:IsTrained() then
-            self:SetLevel(1)
-        end
-    else
-        self:SetHidden(true)
-    end
+antimage_spell_seal_custom = class({})
+
+
+function antimage_spell_seal_custom:OnAbilityPhaseStart()
+if not IsServer() then return end
+self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_antimage_mana_void_custom_anim", {})
+return true
 end
 
-function antimage_mana_overload_custom:OnHeroCalculateStatBonus()
-    self:OnInventoryContentsChanged()
+function antimage_spell_seal_custom:OnAbilityPhaseInterrupted()
+if not IsServer() then return end
+self:GetCaster():RemoveModifierByName("modifier_antimage_mana_void_custom_anim")
 end
 
-function antimage_mana_overload_custom:OnSpellStart()
+
+function antimage_spell_seal_custom:OnSpellStart()
+
+local caster = self:GetCaster()
+local target = self:GetCursorTarget()
+caster:RemoveModifierByName("modifier_antimage_mana_void_custom_anim")
+
+if target:TriggerSpellAbsorb(self) then return end
+
+local leakCast = ParticleManager:CreateParticle("particles/am_cast.vpcf", PATTACH_POINT_FOLLOW, target)
+ParticleManager:SetParticleControlEnt(leakCast, 0, caster, PATTACH_POINT_FOLLOW, "attach_attack1", caster:GetAbsOrigin(), true) 
+ParticleManager:SetParticleControlEnt(leakCast, 1, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true)
+ParticleManager:ReleaseParticleIndex(leakCast)
+
+target:AddNewModifier(caster, self, "modifier_antimage_mana_void_custom_legendary", {duration = self:GetSpecialValueFor("duration")})
+end
+
+
+
+modifier_antimage_mana_void_custom_legendary = class(mod_visible)
+function modifier_antimage_mana_void_custom_legendary:GetEffectName() return "particles/am_mana_mark.vpcf" end
+function modifier_antimage_mana_void_custom_legendary:GetEffectAttachType() return PATTACH_OVERHEAD_FOLLOW end
+function modifier_antimage_mana_void_custom_legendary:OnCreated(table)
+
+self.ability = self:GetAbility()
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+
+self.parent:AddSpellEvent(self, true)
+
+self.nomana_max = self.ability:GetSpecialValueFor("nomana_max")
+self.mana = self.ability:GetSpecialValueFor("mana")/100
+
+self.counter = self.caster:FindAbilityByName("antimage_counterspell_custom")
+
 if not IsServer() then return end
 
-local point = self:GetCursorPosition()
+self.damageTable = {victim = self.parent, ability = self.ability, attacker = self.caster, damage_type = DAMAGE_TYPE_MAGICAL}
 
-local duration = self:GetSpecialValueFor("duration")
-
-local outgoing_damage = self:GetSpecialValueFor("outgoing_damage")
-
-local incoming_damage = self:GetSpecialValueFor("incoming_damage")	
-
-local illusion = CreateIllusions( self:GetCaster(), self:GetCaster(), {duration=duration,outgoing_damage=outgoing_damage,incoming_damage=incoming_damage}, 1, 0, false, false )  
-
-for k, v in pairs(illusion) do
-	v.illusion_counter_spell = true
-	--v:SetControllableByPlayer(-1, true)
-	v.owner = self:GetCaster()
-	v.am_scepter = true
-	
-	v:AddNewModifier(self:GetCaster(), self, "modifier_antimage_mana_overload_custom_illusion", {})
-
-	local direction = (point - v:GetAbsOrigin())
-	direction.z = 0
-	direction = direction:Normalized()
-
-
-    for _,mod in pairs(self:GetCaster():FindAllModifiers()) do
-       if mod.StackOnIllusion ~= nil and mod.StackOnIllusion == true then
-          v:UpgradeIllusion(mod:GetName(), mod:GetStackCount() )
-       end
-    end
-      
-	local particle_start = ParticleManager:CreateParticle( "particles/units/heroes/hero_antimage/antimage_blink_start.vpcf", PATTACH_WORLDORIGIN, nil )
-	ParticleManager:SetParticleControl( particle_start, 0, v:GetAbsOrigin() )
-	ParticleManager:SetParticleControlForward( particle_start, 0, direction:Normalized() )
-	ParticleManager:ReleaseParticleIndex( particle_start )
-	EmitSoundOnLocationWithCaster( v:GetAbsOrigin(), "Hero_Antimage.Blink_out", v )
-
-	FindClearSpaceForUnit(v, point, true)
-
-	v:StartGesture(ACT_DOTA_CAST_ABILITY_2)
-
-	local particle_end = ParticleManager:CreateParticle( "particles/units/heroes/hero_antimage/antimage_blink_end.vpcf", PATTACH_ABSORIGIN_FOLLOW, v )
-	ParticleManager:SetParticleControl( particle_end, 0, v:GetOrigin() )
-	ParticleManager:SetParticleControlForward( particle_end, 0, direction:Normalized() )
-	ParticleManager:ReleaseParticleIndex( particle_end )
-	EmitSoundOnLocationWithCaster( v:GetOrigin(), "Hero_Antimage.Blink_in", v )
-
-	if self:GetCaster():HasModifier("modifier_antimage_blink_2") or self:GetCaster():HasModifier("modifier_antimage_blink_1") then 
-		v:AddNewModifier(self:GetCaster(), self, "modifier_antimage_blink_custom_evasion", {duration = self:GetCaster():GetTalentValue("modifier_antimage_blink_1", "duration", true)})
-	end
-
-
-	Timers:CreateTimer(0.1, function()
-		v:MoveToPositionAggressive(point)
-	end)
-end
-
+self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_silencer/silencer_last_word_status.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+ParticleManager:SetParticleControl(self.particle, 1, self:GetParent():GetAbsOrigin())
+self:AddParticle(self.particle, false, false, -1, false, false)
 end
 
 
-
-
-
-
-modifier_antimage_mana_overload_custom_illusion = class({})
-function modifier_antimage_mana_overload_custom_illusion:IsHidden() return true end
-function modifier_antimage_mana_overload_custom_illusion:IsPurgable() return false end
-function modifier_antimage_mana_overload_custom_illusion:OnCreated(table)
+function modifier_antimage_mana_void_custom_legendary:SpellEvent( params )
 if not IsServer() then return end
+if params.unit~=self.parent then return end
+if not params.ability:IsItem() and not params.ability:ProcsMagicStick() then return end
 
-self.ulti = self:GetParent():FindAbilityByName("antimage_mana_void_custom")
+self.parent:EmitSound("Hero_Antimage.ManaVoid")
 
-if not self.ulti or self.ulti:GetLevel() == 0 then 
-	self:Destroy()
-	return
+local particle = ParticleManager:CreateParticle( "particles/econ/items/antimage/antimage_weapon_basher_ti5/antimage_manavoid_ti_5.vpcf", PATTACH_POINT_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt( particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true )
+ParticleManager:SetParticleControl( particle, 1, Vector( 250, 0, 0 ) )
+ParticleManager:ReleaseParticleIndex( particle )
+
+local max_mana = self.parent:GetMaxMana() == 0 and self.nomana_max or self.parent:GetMaxMana()
+local damage = max_mana*self.mana
+
+local real_mana = self.parent:Script_ReduceMana(damage, self.ability)
+
+if self.caster:HasShard() and self.counter and not self.counter:IsNull() and self.counter:IsTrained() then
+	self.counter:ShardMana(real_mana)
+end 
+
+self.damageTable.damage = damage
+SendOverheadEventMessage(self.parent, 4, self.parent, damage, nil)
+
+DoDamage(self.damageTable)
 end
 
-self.max = self:GetAbility():GetSpecialValueFor("ulti_timer")
-self.ready = false
 
-self:StartIntervalThink(self.max)
+function modifier_antimage_mana_void_custom_legendary:GetStatusEffectName()
+return "particles/units/heroes/hero_kez/status_effect_kez_afterimage_buff.vpcf"
 end
-
-function modifier_antimage_mana_overload_custom_illusion:OnIntervalThink()
-if not IsServer() then return end
-self.ready = true
-
-self:StartIntervalThink(-1)
+ 
+function modifier_antimage_mana_void_custom_legendary:StatusEffectPriority()
+return MODIFIER_PRIORITY_ULTRA
 end
 
 
-function modifier_antimage_mana_overload_custom_illusion:DeclareFunctions()
+
+modifier_antimage_mana_void_custom_anim = class(mod_hidden)
+function modifier_antimage_mana_void_custom_anim:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_ATTACK
+	MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS
 }
 end
 
-
-function modifier_antimage_mana_overload_custom_illusion:OnAttack(params)
-if not IsServer() then return end
-if self:GetParent() ~= params.attacker then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end
-if params.target:IsMagicImmune() then return end
-if not self.ulti then return end
-if self.ready == false then return end
-if not params.target:IsAlive() then return end
-
-self:GetParent():CastAbilityOnTarget(params.target, self.ulti, -1)
-self:Destroy()
-
-
+function modifier_antimage_mana_void_custom_anim:GetActivityTranslationModifiers()
+return "basher"
 end

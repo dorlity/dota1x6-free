@@ -4,6 +4,8 @@ errorLabels = []
 
 function NetTableDebugErrors( data ) {
 
+	$.Msg('qqqqq')
+
 	var data = CustomNetTables.GetTableValue("debug", "errors");
 	$( "#DebugPanel" ).visible = true
 

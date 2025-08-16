@@ -10,13 +10,14 @@ modifier_techies_death_passive = class ({})
 
 function modifier_techies_death_passive:IsHidden() return true end
 
-function modifier_techies_death_passive:DeclareFunctions() return {
 
-    MODIFIER_EVENT_ON_DEATH
 
-} end
+function modifier_techies_death_passive:OnCreated(table)
+self.parent = self:GetParent()
+self.parent:AddDeathEvent(self)
+end
 
-function modifier_techies_death_passive:OnDeath( param )
+function modifier_techies_death_passive:DeathEvent( param )
     if not IsServer() then end 
 
    
@@ -34,11 +35,11 @@ function modifier_techies_death_passive:OnDeath( param )
         local enemy_for_ability = FindUnitsInRadius(self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0 , FIND_CLOSEST, false)
   
          if #enemy_for_ability > 0 then 
-         for _,i in ipairs(enemy_for_ability) do 
+         for _,i in pairs(enemy_for_ability) do 
             if i:GetTeam() ~= DOTA_TEAM_NEUTRALS and not i:IsBuilding() and not i:IsMagicImmune() then 
        
                i:AddNewModifier(self:GetAbility():GetCaster(), self:GetAbility(), "modifier_techies_death_debuf", {duration = self.duration*(1 - i:GetStatusResistance())})
-               ApplyDamage({ victim = i, attacker = self:GetAbility():GetCaster(), ability = self:GetAbility(), damage = self.damage, damage_type = DAMAGE_TYPE_PURE})
+               DoDamage({ victim = i, attacker = self:GetAbility():GetCaster(), ability = self:GetAbility(), damage = self.damage, damage_type = DAMAGE_TYPE_PURE})
             end
         end
     end

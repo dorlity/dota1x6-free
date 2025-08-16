@@ -11,49 +11,42 @@ hoodwink_decoy_custom = class({})
 
 
 function hoodwink_decoy_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-    
 PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_sharpshooter_range_finder.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_bushwhack_projectile.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_bushwhack_fail.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_bushwhack.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_bushwhack_target.vpcf", context )
-PrecacheResource( "particle", "particles/tree_fx/tree_simple_explosion.vpcf", context )
-
 end
 
-
-
-
+function hoodwink_decoy_custom:GetCooldown()
+return self:GetCaster():GetTalentValue("modifier_hoodwink_sharp_legendary", "cd")
+end
 
 function hoodwink_decoy_custom:OnSpellStart()
-if not IsServer() then return end
-
+local caster = self:GetCaster()
 local point = self:GetCursorPosition()
-local dir = (point - self:GetCaster():GetAbsOrigin())
-local range = (self:GetSpecialValueFor("AbilityCastRange")  + self:GetCaster():GetCastRangeBonus()) 
+local dir = (point - caster:GetAbsOrigin())
+local range = (self:GetSpecialValueFor("AbilityCastRange") + caster:GetCastRangeBonus()) 
 
 if dir:Length2D() > range then 
-	point = self:GetCaster():GetAbsOrigin() + dir:Normalized()*range
+	point = caster:GetAbsOrigin() + dir:Normalized()*range
 end 
 
 local duration = self:GetSpecialValueFor("lifetime")
 local damage_out = -100
 local damage_in = self:GetSpecialValueFor("incoming") - 100
-local illusion = CreateIllusions(  self:GetCaster(), self:GetCaster(), {duration=duration,outgoing_damage=damage_out,incoming_damage=damage_in}, 1, 0, false, false )  
+local illusion = CreateIllusions(  caster, caster, {duration=duration,outgoing_damage=damage_out,incoming_damage=damage_in}, 1, 0, false, false )  
 
-local scurry_ability = self:GetCaster():FindAbilityByName("hoodwink_scurry_custom")      
+local scurry_ability = caster:FindAbilityByName("hoodwink_scurry_custom")      
 
 
 for k, v in pairs(illusion) do
-	v:AddNewModifier(self:GetCaster(), scurry_ability, "modifier_hoodwink_scurry_custom_buff", {duration = duration})
-	v:AddNewModifier(self:GetCaster(), self, "modifier_hoodwink_decoy_custom_illusion", {x = point.x, y = point.y})
-	v:SetAbsOrigin(self:GetCaster():GetAbsOrigin())
+	v:AddNewModifier(caster, scurry_ability, "modifier_hoodwink_scurry_custom_buff", {duration = duration})
+	v:AddNewModifier(caster, self, "modifier_hoodwink_decoy_custom_illusion", {x = point.x, y = point.y})
+	v:SetAbsOrigin(caster:GetAbsOrigin())
 	v:SetHealth(v:GetMaxHealth())
-	v.owner = self:GetCaster()	
+	v.owner = caster	
 	v:SetOwner(nil)
 
-    for _,mod in pairs(self:GetCaster():FindAllModifiers()) do
+    for _,mod in pairs(caster:FindAllModifiers()) do
       if mod.StackOnIllusion ~= nil and mod.StackOnIllusion == true then
         v:UpgradeIllusion(mod:GetName(), mod:GetStackCount() )
       end
@@ -76,23 +69,28 @@ function modifier_hoodwink_decoy_custom_illusion:IsPurgable() return false end
 
 function modifier_hoodwink_decoy_custom_illusion:OnCreated(table)
 if not IsServer() then return end
-
+self.ability = self:GetAbility()
+self.caster = self:GetCaster()
 self.point = GetGroundPosition(Vector(table.x, table.y, 0), nil)
 self.parent = self:GetParent()
 
-self.ability = self:GetCaster():FindAbilityByName("hoodwink_sharpshooter_custom")
+self.man_ability = self.caster:FindAbilityByName("hoodwink_sharpshooter_custom")
 
-if not self.ability then return end
+if not self.man_ability then 
+	self:Destroy()
+	return 
+end
+
+self.ability:EndCd()
+
 self.start_point = self.parent:GetAbsOrigin()
 self.can_pass = GridNav:CanFindPath(self.start_point, self.point)
 
 local dist = (self.point - self.start_point):Length2D()
-local speed = self:GetParent():GetMoveSpeedModifier(self:GetParent():GetBaseMoveSpeed(), false)
+local speed = self.parent:GetMoveSpeedModifier(self.parent:GetBaseMoveSpeed(), false)
 self.timer = dist / speed + 0.3
 
-
-
-self.radius = self.ability:GetSpecialValueFor("arrow_range")
+self.radius = self.man_ability:GetSpecialValueFor("arrow_range")
 self:StartIntervalThink(FrameTime())
 end
 
@@ -115,7 +113,7 @@ function modifier_hoodwink_decoy_custom_illusion:OnIntervalThink()
 if not IsServer() then return end
 if not self.point then return end 
 if self.ended then return end
-if not self.ability or self.ability:GetLevel() < 1 then return end
+if not self.man_ability or self.man_ability:GetLevel() < 1 then return end
 
 local abs = self.parent:GetAbsOrigin()
 
@@ -143,7 +141,7 @@ if not self.modifier then
 	self:EffectVisual()
 
 	local origin = self.parent:GetAbsOrigin() + self.parent:GetForwardVector()
-	self.modifier = self.parent:AddNewModifier( self:GetCaster(), self.ability, "modifier_hoodwink_sharpshooter_custom", { duration = 2.5, x = origin.x, y = origin.y, } )
+	self.modifier = self.parent:AddNewModifier( self.caster, self.man_ability, "modifier_hoodwink_sharpshooter_custom", { duration = self.caster:GetTalentValue("modifier_hoodwink_sharp_legendary", "delay"), x = origin.x, y = origin.y, } )
 	self.parent:StartGesture(ACT_DOTA_CHANNEL_ABILITY_6)
 end 
 
@@ -159,17 +157,17 @@ end
 
 function modifier_hoodwink_decoy_custom_illusion:OnDestroy()
 if not IsServer() then return end 
-
-self:GetParent():Kill(nil, self:GetParent())
+self.ability:StartCd()
+self.parent:Kill(nil, self.parent)
 end 
 
 
 
 function modifier_hoodwink_decoy_custom_illusion:EffectVisual()
-local startpos = self:GetParent():GetAbsOrigin()
-local endpos = startpos + self:GetParent():GetForwardVector() * self.ability:GetSpecialValueFor( "arrow_range" )
+local startpos = self.parent:GetAbsOrigin()
+local endpos = startpos + self.parent:GetForwardVector() * self.man_ability:GetSpecialValueFor( "arrow_range" )
 
-self.particle = ParticleManager:CreateParticleForPlayer( "particles/units/heroes/hero_hoodwink/hoodwink_sharpshooter_range_finder.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent(), self:GetCaster():GetPlayerOwner() )
+self.particle = ParticleManager:CreateParticleForPlayer( "particles/units/heroes/hero_hoodwink/hoodwink_sharpshooter_range_finder.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent, self.caster:GetPlayerOwner() )
 ParticleManager:SetParticleControl( self.particle, 0, startpos )
 ParticleManager:SetParticleControl( self.particle, 1, endpos )
 
@@ -177,8 +175,8 @@ self:AddParticle( self.particle, false, false, -1, false, false  )
 end
 
 function modifier_hoodwink_decoy_custom_illusion:UpdateEffect()
-local startpos = self:GetParent():GetAbsOrigin()
-local endpos = startpos + self:GetParent():GetForwardVector() * self.ability:GetSpecialValueFor( "arrow_range" )
+local startpos = self.parent:GetAbsOrigin()
+local endpos = startpos + self.parent:GetForwardVector() * self.man_ability:GetSpecialValueFor( "arrow_range" )
 ParticleManager:SetParticleControl( self.particle, 1, endpos )
 end
 

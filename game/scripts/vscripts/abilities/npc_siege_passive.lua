@@ -11,19 +11,22 @@ function modifier_npc_siege_dmg:IsHidden() return true end
 function modifier_npc_siege_dmg:IsPurgable() return false end
 
 function modifier_npc_siege_dmg:OnCreated(table)
+
+self.parent = self:GetParent()
+self.parent:AddDeathEvent(self)
+	
 self.damage = self:GetAbility():GetSpecialValueFor("damage")
 end
 function modifier_npc_siege_dmg:DeclareFunctions()
    return   {
     MODIFIER_PROPERTY_TOTALDAMAGEOUTGOING_PERCENTAGE,
-    MODIFIER_EVENT_ON_DEATH
 
   }
 
  
 end
 
-function modifier_npc_siege_dmg:OnDeath( params ) 
+function modifier_npc_siege_dmg:DeathEvent( params ) 
 if not IsServer() then return end
 	if params.unit == self:GetParent() then 
 		local name = ""

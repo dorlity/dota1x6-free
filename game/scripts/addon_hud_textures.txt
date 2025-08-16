@@ -19,5 +19,38 @@
             "width"    "64"
             "height"   "64"
         }
+
+        "minimap_purple_orb" //EDIT THIS
+        {
+            "file"     "materials/vgui/hud/minimap_purple_orb.vmat" //EDIT THIS
+            "x"        "0"
+            "y"        "0"
+            "width"    "64"
+            "height"   "64"
+        }
+        "minimap_blue_orb" //EDIT THIS
+        {
+            "file"     "materials/vgui/hud/minimap_blue_orb.vmat" //EDIT THIS
+            "x"        "0"
+            "y"        "0"
+            "width"    "64"
+            "height"   "64"
+        }
+        "minimap_gray_orb" //EDIT THIS
+        {
+            "file"     "materials/vgui/hud/minimap_gray_orb.vmat" //EDIT THIS
+            "x"        "0"
+            "y"        "0"
+            "width"    "64"
+            "height"   "64"
+        }
+        "minimap_orange_orb" //EDIT THIS
+        {
+            "file"     "materials/vgui/hud/minimap_orange_orb.vmat" //EDIT THIS
+            "x"        "0"
+            "y"        "0"
+            "width"    "64"
+            "height"   "64"
+        }
     }
 }

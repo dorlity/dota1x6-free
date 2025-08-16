@@ -12,8 +12,15 @@ function UpdateHeroInfo(table, key, data )
         {	
         	CheckBannedHeroes()
 		}
-		
 
+		if (key == "players_heroes") 
+        {	
+  			$.Schedule(0.1, UpdateTeamHeroes)
+		}
+		if (key == "team_status")
+		{
+			UpdateTeamSelector()
+		}
 	}
 }
 
@@ -47,25 +54,29 @@ function CheckSelectedUnit()
 	if (local_hero == null) 
     {	
 		var PlayersHeroes = CustomNetTables.GetTableValue("test_mode", "players_heroes")
-    	for (const lua_data of Object.values(PlayersHeroes))
-		{
-			if (lua_data.id == Game.GetLocalPlayerID())
+
+		if (PlayersHeroes)
+    	{
+	    	for (const lua_data of Object.values(PlayersHeroes))
 			{
-				let ent = lua_data.ent 
-
-				let icon = $.GetContextPanel().FindChildTraverse("PlayerHero_icon")
-
-				if (icon && icon !== undefined)
+				if (lua_data.id == Game.GetLocalPlayerID())
 				{
-					local_hero = Entities.GetUnitName(ent)
-					let icon_name = "url('file://{images}/heroes/icons/" + String( Entities.GetUnitName(ent)) + ".png')"
-					icon.style.backgroundImage = icon_name
-				    icon.style.backgroundSize = "contain";
-				    icon.style.backgroundRepeat = "no-repeat";
+					let ent = lua_data.ent 
+
+					let icon = $.GetContextPanel().FindChildTraverse("PlayerHero_icon")
+
+					if (icon && icon !== undefined)
+					{
+						local_hero = Entities.GetUnitName(ent)
+						let icon_name = "url('file://{images}/heroes/icons/" + String( Entities.GetUnitName(ent)) + ".png')"
+						icon.style.backgroundImage = icon_name
+					    icon.style.backgroundSize = "contain";
+					    icon.style.backgroundRepeat = "no-repeat";
+					}
+					break
 				}
-				break
-			}
-		} 
+			} 
+		}
 	}
 
   	let ent = Players.GetLocalPlayerPortraitUnit()
@@ -333,9 +344,11 @@ function ClearWindow()
 
 	main.RemoveClass("TestMode_Content_Items")
 	main.RemoveClass("TestMode_Content_Talents")
+	main.RemoveClass("TestMode_Content_Hero_Talents")
 	main.RemoveClass("TestMode_Content_Heroes")
 	main.RemoveClass("TestMode_Content_BotItems")
 	main.RemoveClass("TestMode_Content_BotTalents")
+	main.RemoveClass("TestMode_Content_BotTalents_Hero_Talents")
 
 	let tempo = $.GetContextPanel().FindChildTraverse("TestMode_content_tempo")
 
@@ -356,6 +369,7 @@ function CloseContentWindow()
 	main.AddClass("TestMode_hidden")
 	main.RemoveClass("TestMode_Content_Items")
 	main.RemoveClass("TestMode_Content_Talents")
+	main.RemoveClass("TestMode_Content_Hero_Talents")
 
 	ClearWindow()
 }
@@ -368,15 +382,17 @@ var damage_items =
 	"item_monkey_king_bar",
 	"item_greater_crit",
 	"item_nullifier",
-	"item_desolator_custom",
+	"item_celestial_spear_custom",
 	"item_disperser",
 	"item_silver_edge_custom",
-	"item_mjollnir",
+	"item_mjollnir_custom",
 	"item_bloodthorn",
-	"item_revenants_brooch_custom",
+	"item_revenants_brooch",
 	"item_radiance_custom",
 	"item_dagon_5_custom",
 	"item_starforge_seal_custom",
+	"item_devastator_custom",
+	"item_angels_demise_custom"
 ]
 
 var surv_items = 
@@ -388,25 +404,26 @@ var surv_items =
 	"item_assault_custom",
 	"item_crimson_guard_custom",
 	"item_spell_breaker",
+	"item_eternal_shroud_custom",
+	"item_pipe_custom",
 	"item_guardian_greaves_custom",
-	"item_blade_mail_custom",
+	"item_soulguard_custom",
 	"item_butterfly_custom",
-	"item_skadi",
-	"item_sange_and_yasha",
+	"item_skadi_custom",
+	"item_sange_and_yasha_custom",
 	"item_bloodstone_custom",
-	"item_lotus_orb",
 	"item_aeon_disk_custom",
-	"item_sphere_custom"
 ]
 
 var util_items = 
 [
-	"item_heavens_halberd",
-	"item_abyssal_blade",
-	"item_sheepstick",
-	"item_rod_of_atos",
+	"item_heavens_halberd_custom",
+	"item_abyssal_blade_custom",
+	"item_sheepstick_custom",
+	"item_gungir_custom",
 	"item_manta_custom",
-	"item_celestial_spear_custom",
+	"item_lotus_orb",
+	"item_sphere_custom",
 	"item_harpoon_custom",
 	"item_hurricane_pike",
 	"item_wind_waker",
@@ -414,7 +431,6 @@ var util_items =
 	"item_octarine_core",
 	"item_blink",
 	"item_travel_boots_2_custom",
-	"item_gem",
 	"item_ultimate_scepter",
 	"item_aghanims_shard"
 
@@ -426,9 +442,7 @@ var neutral_items =
 	"item_book_of_shadows",
 	"item_mirror_shield",
 	"item_force_boots_custom",
-	"item_apex",
 	"item_pirate_hat",
-	"item_seer_stone_custom"
 
 ]
 
@@ -441,7 +455,6 @@ function ShowBotItems()
 		return
 	}
 
-	$.Msg('asdg')
 
 	let ent = selected_ent
 
@@ -495,14 +508,14 @@ function ShowBotItems()
 
 
 
-	let attribute_info_4 = $.CreatePanel("Panel", tempo, "");
-	attribute_info_4.AddClass("attribute_info")
+	//let attribute_info_4 = $.CreatePanel("Panel", tempo, "");
+	//attribute_info_4.AddClass("attribute_info")
 
-	let neutral_labal = $.CreatePanel("Label", attribute_info_4, "");
-	neutral_labal.AddClass("hero_label")
-	neutral_labal.text = $.Localize("#item_neutral")
+//	let neutral_labal = $.CreatePanel("Label", attribute_info_4, "");
+//	neutral_labal.AddClass("hero_label")
+//	neutral_labal.text = $.Localize("#item_neutral")
 
-	const neutral_row =  $.CreatePanel("Panel", tempo, "AllHeroes");
+	//const neutral_row =  $.CreatePanel("Panel", tempo, "AllHeroes");
 
 
 
@@ -522,10 +535,10 @@ function ShowBotItems()
 		CreateItemPanel(util_row, util_items[i], ent)
 	}
 
-	for (var i = 0; i < Object.keys(neutral_items).length; i++) 
-	{
-		CreateItemPanel(neutral_row, neutral_items[i], ent)
-	}
+	//for (var i = 0; i < Object.keys(neutral_items).length; i++) 
+	//{
+//		CreateItemPanel(neutral_row, neutral_items[i], ent)
+	//}
 }
 
 
@@ -549,8 +562,9 @@ function CreateItemPanel(panel, item_name, ent)
 var item_list = 
 [	
 	"item_aghanims_shard",
-	"item_essence_of_speed",
+	"item_patrol_razor",
 	"item_patrol_trap",
+	"item_patrol_vision",
 	"item_gem",
 	"item_gray_upgrade",
 	"item_blue_upgrade",
@@ -569,7 +583,8 @@ var item_list =
 	"item_alchemist_gold_daedalus",
 	"item_alchemist_gold_skadi",
 	"item_alchemist_gold_shiva",
-	"item_alchemist_gold_bfury",
+	"item_alchemist_gold_satanic",
+	"item_alchemist_gold_khanda",
 	"item_muerta_mercy_and_grace_full_custom",
 
 
@@ -611,8 +626,97 @@ function ShowItems()
 
 }
 
+function UpdateTeamHeroes()
+{
+
+	let team_selector = $.GetContextPanel().FindChildTraverse("team_selector")
+	if (!team_selector) return
+
+	let max_teams = Game.GetMaxTeams()
+	let max_in_team = Game.GetGameMode()
+	let players_heroes = CustomNetTables.GetTableValue("test_mode", "players_heroes")
+
+    var max_heroes = max_teams*max_in_team
+
+	for (var i = 1; i <= Object.keys(players_heroes).length; i++) 
+	{
+		if (players_heroes[i])
+		{	
+			var team = players_heroes[i].team
+			var pos_in_team = players_heroes[i].pos_in_team
+	    	var hero = Entities.GetUnitName(players_heroes[i].ent)
+
+			let panel = $.GetContextPanel().FindChildTraverse("teams_panel_" + team + "_" + pos_in_team)
+			if (panel)
+			{
+				panel.style.backgroundImage =  "url('file://{images}/heroes/icons/" + hero + ".png')"
+			    panel.style.backgroundSize = "contain";
+			    panel.style.backgroundRepeat = "no-repeat";
+			}
+		}
+	}
+}
+
+var spawn_for_team = 1
 
 
+function UpdateTeamSelector()
+{
+	let team_selector = $.GetContextPanel().FindChildTraverse("team_selector")
+	if (!team_selector) return
+
+	let team_status = CustomNetTables.GetTableValue("test_mode", "team_status")
+
+	if (!team_status) return
+
+	let spawn_data = team_status[spawn_for_team]
+	if (spawn_data && spawn_data.is_full == 1)
+	{
+		spawn_for_team = -1
+	}
+
+	for (var i = 1; i <= Object.keys(team_status).length; i++) 
+	{
+		let data = team_status[i]
+		let panel = $.GetContextPanel().FindChildTraverse("teams_panel_" + i)
+		if (panel && data)
+		{
+			if (data.is_full == 1)
+			{
+				panel.AddClass("teams_panel_full")
+				panel.RemoveClass("teams_panel_current")
+				panel.SetPanelEvent("onactivate", function(){});
+			}else
+			{
+				panel.RemoveClass("teams_panel_full")
+
+				if (spawn_for_team == -1)
+				{
+					spawn_for_team = i
+				} 
+
+				if (spawn_for_team == i)
+				{
+					panel.AddClass("teams_panel_current")
+				}else
+				{
+					panel.RemoveClass("teams_panel_current")
+				}
+				SetSelectTeam(panel, i)
+			}
+		}
+	}
+}
+
+function SetSelectTeam(panel, i)
+{
+	panel.SetPanelEvent("onactivate", function() 
+	{	
+		spawn_for_team = i
+		UpdateTeamSelector()
+		Game.EmitSound("UI.Click")	
+	});
+}
 
 
 function ShowHeroes()
@@ -624,7 +728,11 @@ function ShowHeroes()
 
 	current_state = 3
 
+
+
 	let main = $.GetContextPanel().FindChildTraverse("TestMode_Content")
+	let max_teams = Game.GetMaxTeams()
+	let max_in_team = Game.GetGameMode()
 
 	main.AddClass("TestMode_Content_Heroes")
 
@@ -632,6 +740,39 @@ function ShowHeroes()
 	tempo.AddClass("TestMode_content_tempo")
 	tempo.AddClass("flow_down")
 	tempo.AddClass("HeroList")
+
+	let team_selector = $.CreatePanel("Panel", tempo, "team_selector")
+	team_selector.AddClass("team_selector_panel")
+
+	let team_label_panel = $.CreatePanel("Panel", team_selector, "")
+	team_label_panel.AddClass("team_label_panel")
+
+	let team_label = $.CreatePanel("Label", team_label_panel, "")
+	team_label.AddClass("team_label")
+	team_label.text = "Команда"
+
+	let all_teams_panel = $.CreatePanel("Panel", team_selector, "")
+	all_teams_panel.AddClass("all_teams_panel")
+
+	let teams_panels = []
+
+	for (var i = 1; i <= max_teams; i++) 
+	{
+		teams_panels[i] = $.CreatePanel("Panel", all_teams_panel, "teams_panel_" + i)
+		teams_panels[i].AddClass("teams_panel")
+		teams_panels[i].style.width = String(max_in_team*50) + "px"
+
+		teams_panels[i].heroes = []
+
+		for (var j = 1; j <= max_in_team; j++) 
+		{
+			teams_panels[i].heroes[j] = $.CreatePanel("Panel", teams_panels[i], "teams_panel_" + i + "_" + j)
+			teams_panels[i].heroes[j].AddClass("teams_panel_hero")
+		}
+	}
+
+	UpdateTeamHeroes()
+	UpdateTeamSelector()
 
 	let table_heroes = CustomNetTables.GetTableValue("custom_pick", "hero_list")
 
@@ -770,13 +911,14 @@ function ShowBotTalents()
 
 	let main = $.GetContextPanel().FindChildTraverse("TestMode_Content")
 	main.AddClass("TestMode_Content_BotTalents")
+	main.RemoveClass("TestMode_Content_BotTalents_Hero_Talents")
 
 	let tempo = $.CreatePanel("Panel", main, "TestMode_content_tempo")
 	tempo.AddClass("TestMode_content_tempo")
 	tempo.AddClass("flow_down")
 
 
-	DrawTalents(tempo, selected_ent)
+	DrawTalents(tempo, selected_ent, true)
 }
 
 function ShowTalents()
@@ -809,8 +951,8 @@ function ShowTalents()
 	button.AddClass("TestMode_botton_pressed")
 
 	let main = $.GetContextPanel().FindChildTraverse("TestMode_Content")
-
 	main.AddClass("TestMode_Content_Talents")
+	main.RemoveClass("TestMode_Content_Hero_Talents")
 
 	let tempo = $.CreatePanel("Panel", main, "TestMode_content_tempo")
 	tempo.AddClass("TestMode_content_tempo")
@@ -823,8 +965,15 @@ function ShowTalents()
 
 
 
-function DrawTalents(main, ent)
+function DrawTalents(main, ent, show_bot)
 {
+
+    var hero = Entities.GetUnitName(ent)
+    var parent_panel = main.GetParent()
+
+    let use_new_system = false
+    if (Game.new_talent_system[hero])
+        use_new_system = true
 
 	let orange_layer = $.CreatePanel("Panel", main, "OrangeLayer")
 	orange_layer.AddClass("OrangeLayer")
@@ -836,18 +985,41 @@ function DrawTalents(main, ent)
 	blue_layer.AddClass("BlueLayer")
 
 	let general_layer = $.CreatePanel("Panel", main, "GeneralLayer")
-	general_layer.AddClass("GeneralLayer")
+	let general_layer_purple 
+	let general_layer_blue
+	let general_layer_gray
 
-	let general_layer_purple = $.CreatePanel("Panel", general_layer, "")
-	general_layer_purple.AddClass("GeneralPurple_Layer")
 
-	let general_layer_blue = $.CreatePanel("Panel", general_layer, "")
-	general_layer_blue.AddClass("GeneralBlue_Layer")
+	if (use_new_system == false)
+	{
+		general_layer.AddClass("GeneralLayer")
 
-	let general_layer_gray = $.CreatePanel("Panel", general_layer, "")
-	general_layer_gray.AddClass("GeneralGray_Layer")
+		general_layer_purple = $.CreatePanel("Panel", general_layer, "")
+		general_layer_purple.AddClass("GeneralPurple_Layer")
 
-    var hero = Entities.GetUnitName(ent)
+		general_layer_blue = $.CreatePanel("Panel", general_layer, "")
+		general_layer_blue.AddClass("GeneralBlue_Layer")
+
+		general_layer_gray = $.CreatePanel("Panel", general_layer, "")
+		general_layer_gray.AddClass("GeneralGray_Layer")
+	}else
+	{
+		parent_panel.RemoveClass("TestMode_Content_BotTalents")
+		parent_panel.RemoveClass("TestMode_Content_Talents")
+
+		if (show_bot)
+		{	
+			parent_panel.AddClass("TestMode_Content_BotTalents_Hero_Talents")
+		}else
+		{
+			parent_panel.AddClass("TestMode_Content_Hero_Talents")
+		}
+
+		general_layer.AddClass("GeneralLayer_hero_talents")
+		general_layer_gray = $.CreatePanel("Panel", general_layer, "")
+		general_layer_gray.AddClass("GeneralGray_Layer_hero_talents")
+	}
+
 
     var player_table = CustomNetTables.GetTableValue("upgrades_player", hero)
 
@@ -856,188 +1028,204 @@ function DrawTalents(main, ent)
     let blue_blocks = []
     let orange_blocks = []
 
-    for (var i = 1; i <= 4; i++)
+    if (use_new_system == false)
     {
-    	orange_blocks[i] = $.CreatePanel("Panel", orange_layer, "")
-    	orange_blocks[i].AddClass("Block_container")
+	    for (var i = 1; i <= 4; i++)
+	    {
+	    	orange_blocks[i] = $.CreatePanel("Panel", orange_layer, "")
+	    	orange_blocks[i].AddClass("Block_container")
 
-    	let container = $.CreatePanel("Panel", purple_layer, "")
-    	container.AddClass("Block_container")
+	    	let container = $.CreatePanel("Panel", purple_layer, "")
+	    	container.AddClass("Block_container")
 
-    	purple_blocks[i] = $.CreatePanel("Panel", container, "")
-    	purple_blocks[i].AddClass("TalentBlocks")
-    
-		container = $.CreatePanel("Panel", blue_layer, "")
-    	container.AddClass("Block_container")
+	    	purple_blocks[i] = $.CreatePanel("Panel", container, "")
+	    	purple_blocks[i].AddClass("TalentBlocks")
+	    
+			container = $.CreatePanel("Panel", blue_layer, "")
+	    	container.AddClass("Block_container")
 
-    	blue_blocks[i] = $.CreatePanel("Panel", container, "")
-    	blue_blocks[i].AddClass("TalentBlocks")
-
-    }	
-
-	for (const data of Object.values(Game.upgrades_data[hero])) 
+	    	blue_blocks[i] = $.CreatePanel("Panel", container, "")
+	    	blue_blocks[i].AddClass("TalentBlocks")
+	    }	
+	}else
 	{
-		let name = data[1]
-		let lvl
-		
-        if (player_table !== undefined)
-			lvl = player_table.upgrades[name]
+	    for (var i = 0; i <= 4; i++)
+	    {
+	    	let block_class = "Block_container_hero_skill"
+	    	if (i == 0)
+	    		block_class = "Block_container_hero"
 
-		let icon 
-		let icon_name
+	    	orange_blocks[i] = $.CreatePanel("Panel", orange_layer, "")
+	    	orange_blocks[i].AddClass(block_class)
 
-		if (data[3] == "orange")
-		{
-			icon = $.CreatePanel("Panel", orange_blocks[data[9]], name)
-			icon.AddClass("OrangeLayer_icon")
-            MouseOverTalent(icon, $.Localize('#upgrade_disc_' + name), name, lvl, false, true)
-            icon_name = data[6]
-		}
+	    	if (i == 0)
+	    	{
+	    		let icon = $.CreatePanel("Panel", orange_blocks[i], "")
+	    		icon.AddClass("Hero_talents_hero")
+		        icon.style.backgroundImage = 'url( "file://{images}/heroes/' + Game.GetHeroImage(Game.GetLocalPlayerID(), hero) + '.png" );'
+		        icon.style.backgroundSize = 'contain';
+		        icon.style.backgroundRepeat = 'no-repeat'
+	    	}
 
-		if (data[3] == "purple")
-		{
+	    	let container = $.CreatePanel("Panel", purple_layer, "")
+	    	container.AddClass(block_class)
 
-			let icon_and_level = $.CreatePanel("Panel", purple_blocks[data[8]], "")
-			icon_and_level.AddClass("icon_and_level")
-			icon_and_level.AddClass("purple_border")
+	    	purple_blocks[i] = $.CreatePanel("Panel", container, "")
+	    	purple_blocks[i].AddClass("TalentBlocks")
+	    
+			container = $.CreatePanel("Panel", blue_layer, "")
+	    	container.AddClass(block_class)
 
-			icon = $.CreatePanel("Panel", icon_and_level, name)
-			icon.AddClass("PurpleBlueLayer_icon")
-
-          	let talent_text = $.Localize('#upgrade_disc_' + name)
-            var final_text = ""
-
-            if (talent_text == "#upgrade_disc_" + name)
-            {
-                if (data[4] > 1) 
-                {
-                    let fake_lvl = lvl !== undefined ? lvl : 0
-                    final_text = $.Localize('#talent_disc_' + name + '_' + fake_lvl)
-                } else {
-                    final_text = $.Localize('#upgrade_disc_' + name + '_1')
-                }
-
-                MouseOver(icon, final_text )
-            }else 
-            {
-                MouseOverTalent(icon, talent_text, name, lvl, true)
-            }
+	    	blue_blocks[i] = $.CreatePanel("Panel", container, "")
+	    	blue_blocks[i].AddClass("TalentBlocks")
+	    }	
+	}
 
 
-            s = 'slevel_0'
+    let talent_table = Game.talents_values[hero]
+    Object.entries(talent_table).map(([key, data]) => (data["name"] = key, data["name_number"] = key[Object.keys(key).length - 1], data))
 
-            if (lvl !== undefined) 
-            {
-				s = 'epic_level_' + data[4] + lvl
+    talent_table = Object.values(talent_table)
+    talent_table.sort((a, b) => (a["skill_number"] - b["skill_number"]))
 
+    var skills_array = {}
+
+    for (const index in talent_table)
+    {
+        let number = talent_table[index]["skill_number"]
+        let name_number = talent_table[index]["name_number"]
+
+        if (name_number == "y")  name_number = "7"
+        if (!skills_array[number]) skills_array[number] = []   
+
+        talent_table[index]["name_number"] = Number(name_number)
+
+        skills_array[number].push(talent_table[index])
+    }
+
+
+    for (const skill in skills_array)
+	{
+
+        skills_array[skill].sort((a, b) => (a["name_number"] - b["name_number"]))
+
+        for (const data of skills_array[skill])
+        {
+            let icon_name = data["mini_icon"]
+            let skill_number = data["skill_number"]
+            let rarity = data["rarity"]
+            let name = data["name"]
+            let max_level = Game.GetMaxLevel(data)
+
+       		let lvl = undefined
+
+            if (player_table !== undefined)
+                lvl = player_table.upgrades[name]
+
+			let icon 
+
+			if (rarity == "orange")
+			{
+				icon = $.CreatePanel("Panel", orange_blocks[skill_number], name)
+				icon.AddClass("OrangeLayer_icon")
+	            MouseOverTalent(icon, '#upgrade_disc_' + name, name, lvl, false, true)
 			}
 
-            let level = $.CreatePanel("Panel", icon_and_level, name + "_level")
-            level.AddClass("PurpleBlueLayer_level")
-			level.AddClass("purple_border_top")
-            level.style.backgroundImage = 'url("file://{images}/custom_game/' + s + '.png")';
-            level.style.backgroundSize = "100%";
-            level.style.backgroundRepeat = "no-repeat";
+			if (rarity == "purple")
+			{
 
-			icon_name = data[9]
+				let icon_and_level = $.CreatePanel("Panel", purple_blocks[skill_number], "")
+				icon_and_level.AddClass("icon_and_level")
+				icon_and_level.AddClass("purple_border")
 
-		}
+				icon = $.CreatePanel("Panel", icon_and_level, name)
+				icon.AddClass("PurpleBlueLayer_icon")
 
+	            MouseOverTalent(icon, "#upgrade_disc_" + name, name, lvl, true)
+	            
+	            s = 'slevel_0'
 
-		if (data[3] == "blue")
-		{
-			let icon_and_level = $.CreatePanel("Panel", blue_blocks[data[8]], "")
-			icon_and_level.AddClass("icon_and_level")
-			icon_and_level.AddClass("blue_border")
+	            if (lvl !== undefined) 
+	            {
+					s = 'epic_level_' + max_level + lvl
 
-			icon = $.CreatePanel("Panel", icon_and_level, name)
-			icon.AddClass("PurpleBlueLayer_icon")
+				}
 
-          	let talent_text = $.Localize('#upgrade_disc_' + name)
-            var final_text = ""
-
-            if (talent_text == "#upgrade_disc_" + name)
-            {
-                if (data[4] > 1) 
-                {
-                    let fake_lvl = lvl !== undefined ? lvl : 0
-                    final_text = $.Localize('#talent_disc_' + name + '_' + fake_lvl)
-                } else {
-                    final_text = $.Localize('#upgrade_disc_' + name + '_1')
-                }
-
-                MouseOver(icon, final_text )
-            }else 
-            {
-                MouseOverTalent(icon, talent_text, name, lvl, true)
-            }
-			icon_name = data[9]
-
-        	s = 'slevel_0'
-
-            if (lvl !== undefined) 
-            {
-				s = 'blue_level_' + lvl
+	            let level = $.CreatePanel("Panel", icon_and_level, name + "_level")
+	            level.AddClass("PurpleBlueLayer_level")
+				level.AddClass("purple_border_top")
+	            level.style.backgroundImage = 'url("file://{images}/custom_game/' + s + '.png")';
+	            level.style.backgroundSize = "100%";
+	            level.style.backgroundRepeat = "no-repeat";
 			}
 
 
-			let level = $.CreatePanel("Panel", icon_and_level, name + "_level")
-            level.AddClass("PurpleBlueLayer_level")
-			level.AddClass("blue_border_top")
-            level.style.backgroundImage = 'url("file://{images}/custom_game/' + s + '.png")';
-            level.style.backgroundSize = "100%";
-            level.style.backgroundRepeat = "no-repeat";
+			if (rarity == "blue")
+			{
+				let icon_and_level = $.CreatePanel("Panel", blue_blocks[skill_number], "")
+				icon_and_level.AddClass("icon_and_level")
+				icon_and_level.AddClass("blue_border")
+
+				icon = $.CreatePanel("Panel", icon_and_level, name)
+				icon.AddClass("PurpleBlueLayer_icon")
+
+	            MouseOverTalent(icon, '#upgrade_disc_' + name, name, lvl, true)
+	            
+	        	s = 'slevel_0'
+
+	            if (lvl !== undefined) 
+	            {
+					s = 'blue_level_' + lvl
+				}
+
+
+				let level = $.CreatePanel("Panel", icon_and_level, name + "_level")
+	            level.AddClass("PurpleBlueLayer_level")
+				level.AddClass("blue_border_top")
+	            level.style.backgroundImage = 'url("file://{images}/custom_game/' + s + '.png")';
+	            level.style.backgroundSize = "100%";
+	            level.style.backgroundRepeat = "no-repeat";
+			}
+
+
+			if (icon && icon !== undefined)
+			{
+		        icon.style.backgroundImage = 'url("file://{images}/custom_game/icons/mini/' + hero + '/' + icon_name + '.png")';
+		        icon.style.backgroundSize = "contain";
+		        icon.style.backgroundRepeat = "no-repeat";
+
+		        if (lvl == undefined) 
+		        {
+		        	icon.AddClass("NoTalent")
+		        }
+		        SetClickEnt(icon, name, "AddTalent",  ent)
+		    }
 		}
-
-
-		if (icon && icon !== undefined)
-		{
-	        icon.style.backgroundImage = 'url("file://{images}/custom_game/icons/mini/' + hero + '/' + icon_name + '.png")';
-	        icon.style.backgroundSize = "contain";
-	        icon.style.backgroundRepeat = "no-repeat";
-
-	        if (lvl == undefined) 
-	        {
-	        	icon.AddClass("NoTalent")
-	        }
-	        SetClickEnt(icon, name, "AddTalent",  ent)
-	    }
 	}
 
 
 
-	for (const data of Object.values(Game.upgrades_data.all))
+    for (const name in Game.talents_values["general"]) 
 	{
-		let name = data[1]
+        let data = Game.talents_values["general"][name]
+        let rarity = data["rarity"]
+        let icon_name = data["skill_icon"]
+
 		let lvl
 		
         if (player_table !== undefined)
 			lvl = player_table.upgrades[name]
 
 		let icon 
-		let icon_name
 
-		let type = data[3]
-
-		if (type[1] !== undefined && type[1][1] !== undefined)
+		if (rarity == "gray")
 		{
-			for (const table of Object.values(type))
-			{
-				if (table == "gray" || table == "blue" || table == "purple")
-				{
-					type = table
-					break
-				}
-			}
-		}
-
-		if (type == "gray")
-		{
+			let general_bonus = data["general_bonus"]
 			icon = $.CreatePanel("Panel", general_layer_gray, name)
 			icon.AddClass("GeneralTalent")
 			icon.AddClass("gray_border")
 
-            var t = '+' + String(Math.trunc(data[8])) + $.Localize('#talent_disc_' + name)
+            var t = '+' + String(Math.trunc(general_bonus)) + $.Localize('#talent_disc_' + name)
             MouseOver(icon, t)
 
             let level = $.CreatePanel("Label", icon, name + '_count')
@@ -1047,33 +1235,37 @@ function DrawTalents(main, ent)
             level.text = String(lvl)
 
 		}
-		if (type == "blue")
+
+		if (use_new_system == false)
 		{
-			icon = $.CreatePanel("Panel", general_layer_blue, name)
-			icon.AddClass("GeneralTalent")
-			icon.AddClass("blue_border")
-			let fake_lvl = lvl !== undefined ? lvl : 1
-            MouseOver(icon, $.Localize('#upgrade_disc_' + name + '_' + fake_lvl))
 
-            let level = $.CreatePanel("Label", icon, name + '_count')
-            level.AddClass("GeneralTalent_count")
+			if (rarity == "blue")
+			{
+				icon = $.CreatePanel("Panel", general_layer_blue, name)
+				icon.AddClass("GeneralTalent")
+				icon.AddClass("blue_border")
+				let fake_lvl = lvl !== undefined ? lvl : 1
+	            MouseOverTalent(icon, '#upgrade_disc_' + name, name, lvl, true)
 
-            if (lvl !== undefined)
-            level.text = String(lvl)
+	            let level = $.CreatePanel("Label", icon, name + '_count')
+	            level.AddClass("GeneralTalent_count")
 
-		}
-		if (type == "purple")
-		{
-			icon = $.CreatePanel("Panel", general_layer_purple, name)
-			icon.AddClass("GeneralTalent")
-			icon.AddClass("purple_border")
+	            if (lvl !== undefined)
+	            level.text = String(lvl)
 
-            MouseOver(icon, $.Localize('#upgrade_disc_' + name) + '_1')
+			}
+			if (rarity == "purple")
+			{
+				icon = $.CreatePanel("Panel", general_layer_purple, name)
+				icon.AddClass("GeneralTalent")
+				icon.AddClass("purple_border")
+	            MouseOverTalent(icon, '#upgrade_disc_' + name, name, lvl, true)
+			}
 		}
 
 		if (icon && icon !== undefined)
 		{
-	        icon.style.backgroundImage = 'url("file://{images}/custom_game/icons/mini/general/' + data[6] + '.png")';
+	        icon.style.backgroundImage = 'url("file://{images}/custom_game/icons/mini/general/' + icon_name + '.png")';
 	        icon.style.backgroundSize = "contain";
 	        icon.style.backgroundRepeat = "no-repeat";
 
@@ -1214,7 +1406,7 @@ function SetClick(panel, value, event)
 		})
 
 		Game.EmitSound("UI.Click")	
-   		GameEvents.SendCustomGameEventToServer_custom(event, {value})
+   		GameEvents.SendCustomGameEventToServer_custom(event, {value: value, spawn_for_team: spawn_for_team})
 	});
 }
 

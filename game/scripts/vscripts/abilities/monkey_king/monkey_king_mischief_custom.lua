@@ -9,142 +9,123 @@ monkey_king_mischief_custom = class({})
 
 
 function monkey_king_mischief_custom:Precache(context)
-
-PrecacheResource( "particle", 'particles/units/heroes/hero_monkey_king/monkey_king_disguise.vpcf', context )
-
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+  
+PrecacheResource( "soundfile", "soundevents/npc_dota_hero_monkey_king.vsndevts", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_monkey_king/monkey_king_disguise.vpcf", context )
+PrecacheResource( "soundfile", "soundevents/vo_custom/monkey_king_vo_custom.vsndevts", context ) 
 end
+
+
+function monkey_king_mischief_custom:CreateTalent(name)
+
+self:GetCaster():RemoveModifierByName("modifier_monkey_king_transform")
+self:GetCaster():SwapAbilities("monkey_king_mischief", "monkey_king_mischief_custom", false, true)
+self:ToggleAutoCast()
+end
+
 
 function monkey_king_mischief_custom:GetCooldown(iLevel)
 return self:GetCaster():GetTalentValue("modifier_monkey_king_command_7", "cd")
 end
 
+function monkey_king_mischief_custom:GetCastRange()
+
+if IsClient() then 
+  return self:GetSpecialValueFor("range")
+else 
+  return 999999
+end
+
+end
+
+function monkey_king_mischief_custom:GetAbilityTextureName()
+if self:GetCaster():HasModifier("modifier_monkey_king_mischief_custom") then
+  return "monkey_king_untransform"
+end
+return "monkey_king_mischief"
+end
+
+function monkey_king_mischief_custom:GetBehavior()
+if self:GetCaster():HasModifier("modifier_monkey_king_mischief_custom") then 
+  return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IMMEDIATE +  DOTA_ABILITY_BEHAVIOR_AUTOCAST
+end 
+
+return DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_IMMEDIATE +  DOTA_ABILITY_BEHAVIOR_AUTOCAST
+end
+
+
 
 function monkey_king_mischief_custom:OnSpellStart()
 if not IsServer() then return end
-local point = self:GetCursorPosition()
-local radius = self:GetSpecialValueFor("radius")
-local flags = DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD
 
-
-ProjectileManager:ProjectileDodge(self:GetCaster())
-
-local main = self:GetCaster():FindAbilityByName("monkey_king_wukongs_command_custom")
-
-if main:GetLevel() < 1 then return end
-
-self:GetCaster():RemoveModifierByName("modifier_monkey_king_tree_dance_custom")
-FindClearSpaceForUnit(self:GetCaster(), self:GetCaster():GetAbsOrigin(), false)
-
-self:GetCaster():SwapAbilities(self:GetName(), "monkey_king_mischief_end_custom", false, true)
-self:GetCaster():FindAbilityByName("monkey_king_mischief_end_custom"):StartCooldown(0.5)
-
-
-local targets = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), point, nil, -1, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO, flags, FIND_CLOSEST, false)
-
-
-local caster_dir = self:GetCaster():GetForwardVector()
 local caster = self:GetCaster()
-local target_dir = nil 
+local mod = caster:FindModifierByName("modifier_monkey_king_mischief_custom")
 
-local old_monkey = nil
-local tp = false
-caster:Stop()
-
-caster:AddNewModifier(caster, self, "modifier_monkey_king_mischief_invun", {duration = self:GetSpecialValueFor("invun")})
-caster:AddNewModifier(caster, main, "modifier_monkey_king_mischief_custom", {duration = self:GetSpecialValueFor("duration")})
-
-EmitSoundOnLocationWithCaster(self:GetCaster():GetAbsOrigin(), "Hero_MonkeyKing.Transform.On", self:GetCaster())
-
-local new_pos = self:GetCaster():GetAbsOrigin()
-
-for _,target in pairs(targets) do 
-
-if (target:GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D() <= radius and tp == false then 
-
-    if target:HasModifier("modifier_monkey_king_wukongs_command_custom_soldier_active") then
-      tp = true
-      new_pos = target:GetAbsOrigin()
-      target_dir = target:GetForwardVector()
-
-      FindClearSpaceForUnit(target, self:GetCaster():GetAbsOrigin(), false)
-      target:SetForwardVector(caster_dir)
-      target:FaceTowards(target:GetAbsOrigin() + caster_dir*10)
-
-
-      old_monkey = target
-      FindClearSpaceForUnit(self:GetCaster(), new_pos, false)
-    else 
-      if target == self:GetCaster() then 
-        tp = true
-      end
-    end
-
-end
-
-
-
-if target:HasModifier("modifier_monkey_king_wukongs_command_custom_soldier_active") then 
-
-  target:RemoveModifierByName("modifier_monkey_king_jingu_mastery_custom_hit")
-  target:RemoveModifierByName("modifier_monkey_king_jingu_mastery_custom_buff")
-
-
-  local part = ParticleManager:CreateParticle("particles/units/heroes/hero_monkey_king/monkey_king_disguise.vpcf", PATTACH_WORLDORIGIN, nil)
-  ParticleManager:SetParticleControl(part, 0, target:GetAbsOrigin())
+if mod then 
+  mod:Destroy()
+  return
 end 
 
+local point = self:GetCursorPosition()
+local range = self:GetSpecialValueFor("range") + caster:GetCastRangeBonus()
+local duration = caster:GetTalentValue("modifier_monkey_king_command_7", "duration")
+
+local min_range = 150
+
+if point == caster:GetAbsOrigin() then 
+  point = caster:GetAbsOrigin() + caster:GetForwardVector()
+end 
+
+local vec = point - caster:GetAbsOrigin()
+
+if vec:Length2D() < min_range then 
+    point = caster:GetAbsOrigin() + vec:Normalized()*min_range
+end 
+
+if vec:Length2D() > range then 
+  point = caster:GetAbsOrigin() + vec:Normalized()*range
+end 
+
+
+local main = caster:FindAbilityByName("monkey_king_wukongs_command_custom")
+if main:GetLevel() < 1 then return end 
+
+
+local monkey_origin = main:SpawnMonkeyKingPointScepter(caster:GetAbsOrigin(), duration, true, true)
+local monkey_target = main:SpawnMonkeyKingPointScepter(point, duration, true, true)
+
+if not monkey_target or not monkey_origin then return end
+
+local monkey = monkey_origin
+if self:GetAutoCastState() == true then 
+  monkey = monkey_target
 end
 
-local monkey = main:SpawnMonkeyKingPointScepter(self:GetCaster():GetAbsOrigin(), nil, true, true)
-
-if target_dir == nil then 
-  target_dir = self:GetCaster():GetForwardVector()
-end
-
-if monkey == nil then 
-  caster:RemoveModifierByName("modifier_monkey_king_mischief_custom")
-  return
-end
+EmitSoundOnLocationWithCaster(caster:GetAbsOrigin(), "Hero_MonkeyKing.Transform.On", caster)
+caster:RemoveModifierByName("modifier_monkey_king_tree_dance_custom")
+caster:Stop()
+ProjectileManager:ProjectileDodge(caster)
+FindClearSpaceForUnit(caster, monkey:GetAbsOrigin(), false)
 
 
-if false and old_monkey ~= nil then 
 
-  local stack_mod = old_monkey:FindModifierByName("modifier_monkey_king_jingu_mastery_custom_hit")
-  local buff_mod = old_monkey:FindModifierByName("modifier_monkey_king_jingu_mastery_custom_buff")
-  local ability = old_monkey:FindAbilityByName("monkey_king_jingu_mastery_custom")
-
-  if stack_mod then 
-    local new_stack =monkey:AddNewModifier(monkey, ability, stack_mod:GetName(), {duration = stack_mod:GetRemainingTime()})
-    new_stack:SetStackCount(stack_mod:GetStackCount())
-    stack_mod:Destroy()
-  end
-
-  if buff_mod then 
-    local new_buff = monkey:AddNewModifier(monkey, ability, buff_mod:GetName(), {duration = buff_mod:GetRemainingTime()})
-    new_buff:SetStackCount(buff_mod:GetStackCount())
-    buff_mod:Destroy()
-  end
-
-end
-
-monkey:SetForwardVector(target_dir)
-monkey:FaceTowards(monkey:GetAbsOrigin() + target_dir*10)
+caster:AddNewModifier(caster, self, "modifier_monkey_king_mischief_invun", {duration = self:GetSpecialValueFor("invun")})
+caster:AddNewModifier(caster, self, "modifier_monkey_king_mischief_custom", {duration = duration, monkey = monkey:entindex()})
 
 
-if not monkey then return end 
+local targets = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), point, nil, -1, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD, FIND_CLOSEST, false)
 
-caster:AddNewModifier(caster, main, "modifier_monkey_king_mischief_custom", {monkey = monkey:entindex()})
+for _,target in pairs(targets) do 
+  local part = ParticleManager:CreateParticle("particles/units/heroes/hero_monkey_king/monkey_king_disguise.vpcf", PATTACH_WORLDORIGIN, nil)
+  ParticleManager:SetParticleControl(part, 0, target:GetAbsOrigin())
+  ParticleManager:ReleaseParticleIndex(part)
 
-
-local part = ParticleManager:CreateParticle("particles/units/heroes/hero_monkey_king/monkey_king_disguise.vpcf", PATTACH_WORLDORIGIN, nil)
-ParticleManager:SetParticleControl(part, 0, monkey:GetAbsOrigin())
-
-
- -- target:AddNewModifier(self:GetCaster(), self, "modifier_monkey_king_mischief_anim", {duration = 0.5})
-
+  FindClearSpaceForUnit(target, target:GetAbsOrigin(), false)
+end 
 
 self:EndCooldown()
-
+self:StartCooldown(0.3)
 end
 
 
@@ -153,50 +134,55 @@ end
 
 modifier_monkey_king_mischief_custom = class({})
 
-function modifier_monkey_king_mischief_custom:IsHidden()
-  return true
-end
-
-function modifier_monkey_king_mischief_custom:IsPurgable()
-  return false
-end
-
+function modifier_monkey_king_mischief_custom:IsHidden() return false end
+function modifier_monkey_king_mischief_custom:IsPurgable() return false end
 
 function modifier_monkey_king_mischief_custom:OnCreated(params)
 if not IsServer() then return end
-self.NoDraw = true
-self:GetParent():AddNoDraw()
-self:StartIntervalThink(0.3)
+
+self.caster = self:GetCaster()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.parent:NoDraw(self)
+self.parent:AddNoDraw()
 self.RemoveForDuel = true 
+
+
+self.monkey = EntIndexToHScript(params.monkey)
+self.pos = self:GetCaster():GetAbsOrigin()
+
+self.monkey:AddAttackEvent_inc(self)
+self.monkey:AddAttackFailEvent_inc(self)
 
 self.skills = {}
 
-self.skills[1] = self:GetParent():FindAbilityByName("monkey_king_boundless_strike_custom")
-self.skills[2] = self:GetParent():FindAbilityByName("monkey_king_tree_dance_custom")
-self.skills[3] = self:GetParent():FindAbilityByName("monkey_king_primal_spring_custom")
-self.skills[4] = self:GetParent():FindAbilityByName("monkey_king_jingu_mastery_custom")
-self.skills[5] = self:GetParent():FindAbilityByName("monkey_king_wukongs_command_custom")
+self.skills[1] = self.parent:FindAbilityByName("monkey_king_boundless_strike_custom")
+self.skills[2] = self.parent:FindAbilityByName("monkey_king_tree_dance_custom")
+self.skills[3] = self.parent:FindAbilityByName("monkey_king_primal_spring_custom")
+self.skills[4] = self.parent:FindAbilityByName("monkey_king_jingu_mastery_custom")
+--self.skills[5] = self.parent:FindAbilityByName("monkey_king_wukongs_command_custom")
 
 for _,skill in pairs(self.skills) do 
   skill:SetActivated(false)
 end
 
-
+self:StartIntervalThink(0.2)
 end
 
 
 
 function modifier_monkey_king_mischief_custom:OnIntervalThink()
 if not IsServer() then return end
-if not self.pos then return end
-FindClearSpaceForUnit(self:GetParent(), self.pos, false)
+if not self.monkey or self.monkey:IsNull() or self.monkey:HasModifier("modifier_monkey_king_wukongs_command_custom_inactive") then 
+  self:Destroy()
+  return
+end 
+
+self.parent:SetAbsOrigin(self.monkey:GetAbsOrigin())
 end
 
-function modifier_monkey_king_mischief_custom:OnRefresh(table)
-if not IsServer() then return end
-self.monkey = EntIndexToHScript(table.monkey)
-self.pos = self:GetCaster():GetAbsOrigin()
-end
+
 
 
 function modifier_monkey_king_mischief_custom:CheckState()
@@ -210,55 +196,50 @@ return {
     [MODIFIER_STATE_DISARMED] = true,
     [MODIFIER_STATE_INVULNERABLE] = true,
     [MODIFIER_STATE_OUT_OF_GAME] = true,
+    [MODIFIER_STATE_MUTED] = true,
   }
 end
 
 
 
-function modifier_monkey_king_mischief_custom:DeclareFunctions()
-return
-{
-  MODIFIER_EVENT_ON_ATTACK_LANDED,
-  MODIFIER_EVENT_ON_ATTACK_FAIL
-}
-end
-
-function modifier_monkey_king_mischief_custom:OnAttackLanded(params)
+function modifier_monkey_king_mischief_custom:AttackEvent_inc(params)
 if not IsServer() then return end
 if not params.attacker:IsHero() then return end
-if self.monkey == nil then 
+if self.monkey == nil or self.monkey:IsNull() then 
   self:Destroy()
   return
 end
 
 if self.monkey ~= params.target then return end
-
+print('attack!')
 self:Destroy()
 
 end
 
 
-function modifier_monkey_king_mischief_custom:OnAttackFail(params)
+function modifier_monkey_king_mischief_custom:AttackFailEvent_inc(params)
 if not IsServer() then return end
 if not params.attacker:IsHero() then return end
-if self.monkey == nil then 
+if self.monkey == nil or self.monkey:IsNull() then 
   self:Destroy()
   return
 end
 
 if self.monkey ~= params.target then return end
-
+if params.inflictor then return end
+if params.damage_category == 0 then return end
 
 self:Destroy()
-
 end
 
 
 function modifier_monkey_king_mischief_custom:OnDestroy()
 if not IsServer() then return end
-self:GetParent():RemoveNoDraw()
+self.parent:RemoveNoDraw()
 
-local ability = self:GetParent():FindAbilityByName("monkey_king_mischief_custom")
+self.ability:UseResources(false, false, false, true)
+
+local ability = self.parent:FindAbilityByName("monkey_king_mischief_custom")
 
 if ability then 
   ability:UseResources(false, false, false, true)
@@ -280,11 +261,11 @@ if self.monkey then
  self.monkey:RemoveModifierByName("modifier_monkey_king_wukongs_command_custom_soldier_active")
 end
 
-self:GetCaster():SwapAbilities("monkey_king_mischief_end_custom", "monkey_king_mischief_custom", false, true)
-
 local part = ParticleManager:CreateParticle("particles/units/heroes/hero_monkey_king/monkey_king_disguise.vpcf", PATTACH_WORLDORIGIN, nil)
-ParticleManager:SetParticleControl(part, 0, self:GetParent():GetAbsOrigin())
-EmitSoundOnLocationWithCaster(self:GetParent():GetAbsOrigin(), "Hero_MonkeyKing.Transform.On", self:GetParent())
+ParticleManager:SetParticleControl(part, 0, self.parent:GetAbsOrigin())
+ParticleManager:ReleaseParticleIndex(part)
+
+EmitSoundOnLocationWithCaster(self.parent:GetAbsOrigin(), "Hero_MonkeyKing.Transform.On", self.parent)
 end
 
 
@@ -293,15 +274,7 @@ end
 
 
 
-monkey_king_mischief_end_custom = class({})
 
-function monkey_king_mischief_end_custom:OnSpellStart()
-if not IsServer() then return end
-self:GetCaster():RemoveModifierByName("modifier_monkey_king_mischief_custom")
-
-
-
-end
 
 
 

@@ -13,7 +13,7 @@ function start()
 //support_proj.AddClass("background")
 //dev_blog.AddClass("background_hidden")
 
-  GameEvents.Subscribe('get_payment_url', get_payment_url)
+  GameEvents.Subscribe('get_payment_url', get_custom_loading_url)
 
   $.Schedule(2, function() {
     var chat = $.GetContextPanel().GetParent().FindChildTraverse("ChatMainPanel")
@@ -22,6 +22,7 @@ function start()
       chat.style.opacity = '0'
     }
   })
+
 
   var hittestBlocker = $.GetContextPanel().GetParent().FindChild("SidebarAndBattleCupLayoutContainer");
 
@@ -34,27 +35,47 @@ function start()
   // Hide_supp_back()
   })
  
-
   var main = $.GetContextPanel().FindChildTraverse("show_dota_pass")
   var social = $.GetContextPanel().FindChildTraverse("social_info")
   var tips = $.GetContextPanel().FindChildTraverse("tips_panel")
   var video = $.GetContextPanel().FindChildTraverse("info_video_main")
 
+  let str = $.Localize("#use_video")
+  let override_video = 0
+  let override_add = 0
 
-  if (main)
+  if (str == "1")
   {
-    main.style.opacity = String(use_plus)
-
-    if (use_plus)
-    {
-      InitPlusContent()
-    }
+    override_video = 1
+  }else if (str == "0")
+  {
+    override_add = 1
+  }else 
+  {
+    override_video = 1
   }
 
   if (social)
   {
     social.style.opacity = String(use_social)
   }
+
+  if (main)
+  {
+    main.style.opacity = String(use_plus)
+
+    if (override_add == 1)
+    {
+      main.style.opacity = "1"
+    }
+
+    if (use_plus || override_add == 1)
+    {
+      InitPlusContent()
+      social.style.opacity = 1
+    }
+  }
+
 
   if (tips)
   {
@@ -65,14 +86,25 @@ function start()
   {
     video.style.opacity = String(use_video)
 
-    if (use_video == 1)
+    if (override_video == 1)
+    {
+      video.style.opacity = "1"
+    }
+
+
+    if (use_video == 1 || override_video == 1)
     {
       InitVideoContent()
     }
   }
-
-
 }
+
+function get_custom_loading_url(kv)
+{
+  $.DispatchEvent("ExternalBrowserGoToURL", kv.url);
+}
+
+
 
 function shuffle(array) {
   array.sort(() => Math.random() - 0.5);
@@ -238,33 +270,6 @@ function ChangeVideoContent(change)
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function get_payment_url(kv)
-{
-
-  $.DispatchEvent("ExternalBrowserGoToURL", kv.url);
-}
-
 
 
 
@@ -551,10 +556,10 @@ $.Schedule(1.5, function()
 
 
 
-
 var current_plus = 1
 var plus_timer = 0
-var plus_timer_max = 10
+var plus_timer_max = 15
+var plus_max = 10
 
 var change_cd = 0.5
 var on_cd = false
@@ -566,6 +571,7 @@ function check_id()
   {
     return
   }
+  Game.EmitSound("UI.Click");
 
   if (Game.GetLocalPlayerID() == -1)
   {
@@ -584,7 +590,7 @@ function check_id()
 
 function InitPlusContent()
 {
-  ChangePlusContent(1)
+  ChangePlusContent(0)
 
   PlusTimer()
 
@@ -707,7 +713,7 @@ function ChangePlusContent(change)
   })
 
   current_plus = current_plus + change 
-  if (current_plus > 7)
+  if (current_plus > plus_max)
   {
     current_plus = 1
   }
@@ -715,7 +721,7 @@ function ChangePlusContent(change)
   {
     if (current_plus < 1)
     {
-      current_plus = 7
+      current_plus = plus_max
     }
   }
 
@@ -725,11 +731,11 @@ function ChangePlusContent(change)
 
   new_content.AddClass(show_style);
 
-  var text_style = 'Left'
+  var text_style = 'Right'
 
   if (current_plus % 2 == 0)
   {
-    text_style = 'Right'
+    text_style = 'Left'
   }
 
   var new_label = $.CreatePanel("Label", new_content, "TextPass_" + current_plus);

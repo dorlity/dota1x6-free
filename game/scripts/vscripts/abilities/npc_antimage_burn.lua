@@ -10,15 +10,16 @@ modifier_antimage_attack = class ({})
 function modifier_antimage_attack:IsHidden() return true end
 function modifier_antimage_attack:IsPurgable() return false end
 
-function modifier_antimage_attack:DeclareFunctions() return {
+function modifier_antimage_attack:DeclareFunctions() 
+return 
+{
+    MODIFIER_PROPERTY_PROCATTACK_FEEDBACK
+} 
+end
 
-    MODIFIER_EVENT_ON_ATTACK_LANDED
-
-} end
 
 
-
-function modifier_antimage_attack:OnAttackLanded( param )
+function modifier_antimage_attack:GetModifierProcAttack_Feedback( param )
 if not IsServer() then end 
 if self:GetParent() ~= param.attacker then return end
 if param.target:IsMagicImmune() then return end
@@ -30,7 +31,7 @@ if mana > param.target:GetMana() then
     mana = param.target:GetMana()
 end
 
-ApplyDamage({ victim = param.target, attacker = self:GetParent(), ability = self:GetAbility(), damage = mana, damage_type = DAMAGE_TYPE_MAGICAL, damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION})
+DoDamage({ victim = param.target, attacker = self:GetParent(), ability = self:GetAbility(), damage = mana, damage_type = DAMAGE_TYPE_MAGICAL, damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION})
             
 
 param.target:EmitSound("Hero_Antimage.ManaBreak")

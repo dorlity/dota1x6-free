@@ -15,19 +15,22 @@ modifier_warlock_boss_golem_fists_tracker = class({})
 
 function modifier_warlock_boss_golem_fists_tracker:IsHidden() return true end
 function modifier_warlock_boss_golem_fists_tracker:IsPurgable() return false end
-function modifier_warlock_boss_golem_fists_tracker:OnCreated(table)
-
-end
 
 function modifier_warlock_boss_golem_fists_tracker:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_DEATH,
-	MODIFIER_EVENT_ON_ATTACK_LANDED
+	MODIFIER_PROPERTY_PROCATTACK_FEEDBACK
 }
 end
 
-function modifier_warlock_boss_golem_fists_tracker:OnDeath(params)
+
+function modifier_warlock_boss_golem_fists_tracker:OnCreated()
+self.parent = self:GetParent()
+self.parent:AddDeathEvent(self)
+end
+
+
+function modifier_warlock_boss_golem_fists_tracker:DeathEvent(params)
 if not IsServer() then return end
 if not self:GetParent().summoner then return end
 if self:GetParent().summoner:IsNull() then return end
@@ -49,10 +52,10 @@ end
 
 
 
-function modifier_warlock_boss_golem_fists_tracker:OnAttackLanded(params)
+function modifier_warlock_boss_golem_fists_tracker:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.attacker then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end
+if not params.target:IsUnit() then return end
 
 params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_warlock_boss_golem_fists_debuff", {duration = self:GetAbility():GetSpecialValueFor("duration")})
 end
@@ -143,7 +146,7 @@ if not IsServer() then return end
 
 
 self:GetParent():EmitSound("Item.StarEmblem.Enemy")
-self.particle_peffect = ParticleManager:CreateParticle("particles/items3_fx/star_emblem.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())	
+self.particle_peffect = ParticleManager:CreateParticle("particles/general/generic_armor_reduction.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())	
 ParticleManager:SetParticleControl(self.particle_peffect, 0, self:GetParent():GetAbsOrigin())
 self:AddParticle(self.particle_peffect, false, false, -1, false, true)
 

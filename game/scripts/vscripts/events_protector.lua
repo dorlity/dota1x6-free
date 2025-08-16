@@ -32,7 +32,7 @@ CustomGameEventManager:RegisterListener("ok", function(_, data)
 		return
 	end
 	local player = PlayerResource:GetPlayer(playerID)
-	if player == nil then
+	if player == nil or player:IsNull() then
 		return
 	end
 
@@ -54,7 +54,7 @@ CustomGameEventManager:RegisterListener("ok", function(_, data)
 		k = server_key
 	})
 	if trigger_load then
-		for _, listener in ipairs(load_listeners) do
+		for _, listener in pairs(load_listeners) do
 			listener(player, playerID)
 		end
 	end
@@ -70,7 +70,7 @@ CustomGameEventManager.RegisterListener = function(self, name, listener)
 end
 
 CustomGameEventManager.Send_ServerToPlayer = function(self, player, name, data)
-	if player == nil then
+	if player == nil or player:IsNull() then
 		return
 	end
 	local server_key = server_keys[player:GetPlayerID()]

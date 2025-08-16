@@ -1,17 +1,420 @@
 LinkLuaModifier( "modifier_axe_culling_blade_custom", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_axe_culling_blade_custom_tracker", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_axe_culling_blade_custom_attack_kill", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_axe_culling_blade_custom_execute", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_axe_culling_blade_custom_kills", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_axe_culling_blade_custom_attack_stack", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_axe_culling_blade_custom_aegis", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_axe_culling_blade_custom_no_bonus", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_axe_culling_blade_custom_slow_lendary", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_axe_culling_blade_custom_slow_legendary", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_axe_culling_blade_custom_target_mod", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_axe_culling_blade_custom_timer_kill", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_axe_culling_blade_custom_legendary", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_axe_culling_blade_custom_status", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_axe_culling_blade_custom_legendary_attacks", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_axe_culling_blade_custom_slow", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_axe_culling_blade_custom_aura", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_axe_culling_blade_custom_root", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_axe_culling_blade_custom_root_cd", "abilities/axe/axe_culling_blade_custom", LUA_MODIFIER_MOTION_NONE )
 
 axe_culling_blade_custom = class({})
+
+function axe_culling_blade_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+
+PrecacheResource( "particle", "particles/units/heroes/hero_axe/axe_culling_blade_kill.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_axe/axe_culling_blade.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_axe/axe_cullingblade_sprint.vpcf", context )
+PrecacheResource( "particle", "particles/wk_stack.vpcf", context )
+PrecacheResource( "particle", "particles/lc_odd_charge_mark.vpcf", context )
+PrecacheResource( "particle", "particles/items3_fx/blink_overwhelming_start.vpcf", context )
+PrecacheResource( "particle", "particles/items3_fx/blink_overwhelming_end.vpcf", context )
+PrecacheResource( "particle", "particles/axe_execute.vpcf", context )
+PrecacheResource( "particle", "particles/axe_exe.vpcf", context )
+PrecacheResource( "particle", "particles/brist_lowhp_.vpcf", context )
+PrecacheResource( "particle", "particles/items4_fx/ascetic_cap.vpcf", context )
+end
+
+function axe_culling_blade_custom:GetAbilityTextureName()
+if self:GetCaster():HasModifier("modifier_axe_persona_custom") then
+    return "axe_culling_blade_unleashed"
+end
+return "axe_culling_blade"
+end
+
+function axe_culling_blade_custom:GetIntrinsicModifierName()
+if not self:GetCaster():IsRealHero() then return end
+return "modifier_axe_culling_blade_custom_tracker"
+end
+
+axe_culling_blade_custom.mods = 
+{
+	"modifier_custom_juggernaut_healing_ward_reduction_aura",
+	"modifier_tormentor_custom",
+	"modifier_bane_nightmare_custom_legendary",
+}
+
+function axe_culling_blade_custom:InvalidMods(target)
+for _,mod in pairs(self.mods) do
+	if target:HasModifier(mod) then
+		return true
+	end
+end
+return false
+end
+
+--[[
+function axe_culling_blade_custom:GetCastPoint()
+local bonus = self:GetCaster():HasTalent("modifier_axe_hero_8") and self:GetCaster():GetTalentValue("modifier_axe_hero_8", "cast") or 0
+return self:GetSpecialValueFor("AbilityCastPoint") + bonus
+end]]
+
+function axe_culling_blade_custom:OnAbilityPhaseStart()
+local k = 1
+if false and self:GetCaster():HasTalent("modifier_axe_hero_8") then 
+	k = 1.5
+end 
+self:GetCaster():StartGestureWithPlaybackRate(ACT_DOTA_CAST_ABILITY_4, k)
+return true
+end 
+
+function axe_culling_blade_custom:OnAbilityPhaseInterrupted()
+self:GetCaster():FadeGesture(ACT_DOTA_CAST_ABILITY_4)
+end
+
+
+function axe_culling_blade_custom:OnSpellStart()
+local caster = self:GetCaster()
+local target = self:GetCursorTarget()
+
+local damage_mod = target:FindModifierByName("modifier_axe_culling_blade_custom_attack_stack")
+local damage = self:GetSpecialValueFor("damage")
+
+if damage_mod then 
+	damage = damage + damage_mod:GetStackCount()*caster:GetTalentValue("modifier_axe_culling_3", "damage_stack")*caster:GetAverageTrueAttackDamage(nil)/100
+	damage_mod:Destroy()
+end 
+
+if not self:InvalidMods(target) then 
+	kill_mod = target:AddNewModifier(target, nil, "modifier_death", {})
+	kill_mod_2 = target:AddNewModifier(target, nil, "modifier_axe_culling_blade_custom_aegis", {})
+end
+
+if target:GetHealth() > damage or self:InvalidMods(target) then 
+	DoDamage({ victim = target, attacker = caster, damage = damage, damage_type = DAMAGE_TYPE_PURE, ability = self, custom_flag = CUSTOM_FLAG_AXE_CULLING_BLADE})	
+else 
+	self:CullingBladeKill(target, true, true)
+	target:Kill(self, caster)
+end
+
+if not self:InvalidMods(target) then 
+	kill_mod:Destroy()
+	kill_mod_2:Destroy()
+end
+
+end
+
+
+
+function axe_culling_blade_custom:CullingBladeKill(target, success, effect)
+if not IsServer() then return end
+local caster = self:GetCaster()
+local direction = (target:GetOrigin()-caster:GetOrigin()):Normalized()
+
+local particle_cast = "particles/units/heroes/hero_axe/axe_culling_blade.vpcf"
+local sound_cast = "Hero_Axe.Culling_Blade_Fail"
+
+if success then
+	particle_cast = "particles/units/heroes/hero_axe/axe_culling_blade_kill.vpcf"
+    if caster:HasModifier("modifier_axe_persona_custom") then
+        particle_cast = "particles/econ/items/axe/ti9_jungle_axe/ti9_jungle_axe_culling_blade_kill.vpcf"
+    end
+	sound_cast = "Hero_Axe.Culling_Blade_Success"
+end
+
+local effect_cast = ParticleManager:CreateParticle( particle_cast, PATTACH_ABSORIGIN_FOLLOW, target )
+ParticleManager:SetParticleControl( effect_cast, 4, target:GetOrigin() )
+ParticleManager:SetParticleControlForward( effect_cast, 3, direction )
+ParticleManager:SetParticleControlForward( effect_cast, 4, direction )
+ParticleManager:ReleaseParticleIndex( effect_cast )
+target:EmitSound(sound_cast)
+
+local duration = self:GetSpecialValueFor("speed_duration")
+if not success then return end
+
+self:EndCooldown()
+
+if caster:HasModifier("modifier_axe_persona_custom") then
+	caster:EmitSound("Hero_Axe.JungleWeapon.Dunk")
+end
+
+if not target:IsValidKill(caster) then return end
+
+if caster:GetQuest() == "Axe.Quest_8" then 
+	caster:UpdateQuest(1)
+end
+local mod = caster:FindModifierByName("modifier_axe_coat_of_blood_custom")
+if mod then 
+	mod:AddStack()
+end
+caster:AddNewModifier( caster, self, "modifier_axe_culling_blade_custom", { duration = duration })
+end
+
+
+
+
+modifier_axe_culling_blade_custom = class(mod_visible)
+function modifier_axe_culling_blade_custom:OnCreated( kv )
+self.caster = self:GetCaster()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.armor_bonus = self.ability:GetSpecialValueFor( "armor_buff" )
+self.ms_bonus = self.ability:GetSpecialValueFor( "speed_bonus" )
+
+if not IsServer() then return end
+local particle_name = "particles/units/heroes/hero_axe/axe_cullingblade_sprint.vpcf"
+if self.caster:HasModifier("modifier_axe_persona_custom") and self.parent == self.caster then
+    particle_name = "particles/econ/items/axe/ti9_jungle_axe/ti9_jungle_axe_culling_blade_sprint.vpcf"
+    local bonus_particle_buff = ParticleManager:CreateParticle("particles/econ/items/axe/ti9_jungle_axe/ti9_jungle_axe_cullingblade_sprint_axe.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.caster)
+    ParticleManager:SetParticleControlEnt(bonus_particle_buff, 2, self.caster, PATTACH_ABSORIGIN_FOLLOW, "attach_eye_l", self.caster:GetAbsOrigin(), true)
+    ParticleManager:SetParticleControlEnt(bonus_particle_buff, 3, self.caster, PATTACH_ABSORIGIN_FOLLOW, "attach_eye_r", self.caster:GetAbsOrigin(), true)
+    self:AddParticle(bonus_particle_buff, false, false, -1, false, false)
+end
+
+self.parent:GenericParticle(particle_name, self)
+end
+
+function modifier_axe_culling_blade_custom:DeclareFunctions()
+return 
+{
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS
+}
+end
+
+function modifier_axe_culling_blade_custom:GetModifierMoveSpeedBonus_Percentage()
+return self.ms_bonus
+end
+
+function modifier_axe_culling_blade_custom:GetModifierPhysicalArmorBonus()
+return self.armor_bonus
+end
+
+
+modifier_axe_culling_blade_custom_tracker = class(mod_hidden)
+function modifier_axe_culling_blade_custom_tracker:OnCreated(table)
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.has_slow = self.parent:HasTalent("modifier_axe_culling_1")
+self.slow_chance = self.parent:GetTalentValue("modifier_axe_culling_1", "chance", true)
+
+self.has_stack = self.parent:HasTalent("modifier_axe_culling_3")
+self.stack_duration = self.parent:GetTalentValue("modifier_axe_culling_3", "duration", true)
+self.damage_bonus = self.parent:GetTalentValue("modifier_axe_culling_3", "damage")
+
+self.has_heal = self.parent:HasTalent("modifier_axe_culling_2")
+self.heal_target = self.parent:GetTalentValue("modifier_axe_culling_2", "heal")/100
+self.heal_health = self.parent:GetTalentValue("modifier_axe_culling_2", "health", true)
+self.heal_bonus = self.parent:GetTalentValue("modifier_axe_culling_2", "bonus", true)
+
+self.has_aura = self.parent:HasTalent("modifier_axe_hero_4")
+self.aura_radius = self.parent:GetTalentValue("modifier_axe_hero_4", "radius", true)
+self.PercentStr = self.parent:GetTalentValue("modifier_axe_hero_4", "str")/100
+
+self.has_root = self.parent:HasTalent("modifier_axe_culling_4")
+self.root_duration = self.parent:GetTalentValue("modifier_axe_culling_4", "root", true)
+self.root_health = self.parent:GetTalentValue("modifier_axe_culling_4", "health", true)
+self.root_cd = self.parent:GetTalentValue("modifier_axe_culling_4", "talent_cd", true)
+
+if not IsServer() then return end
+self.parent:AddDamageEvent_out(self, true)
+
+self:SetHasCustomTransmitterData(true)
+self:UpdateTalent()
+end
+
+function modifier_axe_culling_blade_custom_tracker:UpdateTalent(name)
+if not IsServer() then return end
+
+if name == "modifier_axe_culling_1" or self.parent:HasTalent("modifier_axe_culling_1") then
+	self.has_slow = true
+	self.parent:AddAttackEvent_out(self, true)
+end
+
+if name == "modifier_axe_hero_4" or self.parent:HasTalent("modifier_axe_hero_4") then
+	self.has_aura = true
+	self.PercentStr = self.parent:GetTalentValue("modifier_axe_hero_4", "str")/100
+end
+
+if name == "modifier_axe_culling_2" or self.parent:HasTalent("modifier_axe_culling_2") then
+	self.has_heal = true
+	self.heal_target = self.parent:GetTalentValue("modifier_axe_culling_2", "heal")/100
+	self.parent:AddAttackEvent_out(self, true)
+end
+
+if name == "modifier_axe_culling_3" or self.parent:HasTalent("modifier_axe_culling_3") then
+	self.has_stack = true
+	self.damage_bonus = self.parent:GetTalentValue("modifier_axe_culling_3", "damage")
+	self.parent:AddAttackEvent_out(self, true)
+end
+
+if name == "modifier_axe_culling_4" or self.parent:HasTalent("modifier_axe_culling_4") then
+	self.has_root = true
+	self.parent:AddAttackEvent_out(self, true)
+end
+
+self:SendBuffRefreshToClients()
+end
+
+function modifier_axe_culling_blade_custom_tracker:AddCustomTransmitterData() 
+return 
+{
+  damage_bonus = self.damage_bonus
+} 
+end
+
+function modifier_axe_culling_blade_custom_tracker:HandleCustomTransmitterData(data)
+self.damage_bonus = data.damage_bonus
+end
+
+function modifier_axe_culling_blade_custom_tracker:DeclareFunctions()
+return
+{
+  	MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
+}
+end
+
+function modifier_axe_culling_blade_custom_tracker:GetModifierDamageOutgoing_Percentage()
+return self.damage_bonus
+end
+
+function modifier_axe_culling_blade_custom_tracker:AttackEvent_out(params)
+if not IsServer() then return end
+if self.parent ~= params.attacker then return end
+
+local target = params.target
+if not target:IsUnit() then return end
+
+if self.has_slow then
+	if RollPseudoRandomPercentage(self.slow_chance, 1971, self.parent) then
+		target:AddNewModifier(self.parent, self.ability, "modifier_axe_culling_blade_custom_slow", {})
+	end
+end
+
+if self.has_stack then
+	target:AddNewModifier(self.parent, self.ability, "modifier_axe_culling_blade_custom_attack_stack", {duration = self.stack_duration})
+
+	if not self.parent:HasTalent("modifier_axe_call_legendary") then
+		self.parent:AddNewModifier(self.parent, self.ability, "modifier_axe_culling_blade_custom_target_mod", {target = target:entindex()})
+	end
+end
+
+if self.has_heal then
+	local heal = target:GetHealth()*self.heal_target
+	heal = self.parent:GetHealthPercent() <= self.heal_health and heal*self.heal_bonus or heal
+	self.parent:GenericHeal(heal, self.ability, true, nil, "modifier_axe_culling_2")
+end
+
+if self.has_root and target:GetHealthPercent() <= self.root_health and not target:HasModifier("modifier_axe_culling_blade_custom_root_cd") and not target:IsDebuffImmune() and target:IsHero() then
+	target:AddNewModifier(self.parent, self.ability, "modifier_axe_culling_blade_custom_root_cd", {duration = self.root_cd})
+	target:AddNewModifier(self.parent, self.ability, "modifier_axe_culling_blade_custom_root", {duration = self.root_duration*(1 - target:GetStatusResistance())})
+end
+
+end
+
+function modifier_axe_culling_blade_custom_tracker:DamageEvent_out(params)
+if not IsServer() then return end
+if self.parent ~= params.attacker then return end
+if params.custom_flag ~= CUSTOM_FLAG_AXE_CULLING_BLADE then return end
+
+local target = params.unit
+local success = false
+if target:GetHealth()<=1 and not self.ability:InvalidMods(target) then 
+	success = true
+end
+self.ability:CullingBladeKill(target, success, true)
+end
+
+function modifier_axe_culling_blade_custom_tracker:IsAura() return self.has_aura or self.has_root end
+function modifier_axe_culling_blade_custom_tracker:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_ENEMY end
+function modifier_axe_culling_blade_custom_tracker:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO end
+function modifier_axe_culling_blade_custom_tracker:GetModifierAura() return "modifier_axe_culling_blade_custom_aura" end
+function modifier_axe_culling_blade_custom_tracker:GetAuraRadius() return self.aura_radius end
+function modifier_axe_culling_blade_custom_tracker:GetAuraDuration() return 0.1 end
+
+modifier_axe_culling_blade_custom_attack_stack = class(mod_hidden)
+function modifier_axe_culling_blade_custom_attack_stack:OnCreated(table)
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+
+self.max = self.caster:GetTalentValue("modifier_axe_culling_3", "max")
+
+if not IsServer() then return end
+self.RemoveForDuel = true
+self.effect_cast = self.parent:GenericParticle("particles/wk_stack.vpcf", self, true)
+
+self:SetStackCount(1)
+end
+
+function modifier_axe_culling_blade_custom_attack_stack:OnRefresh(table)
+if not IsServer() then return end
+if self:GetStackCount() >= self.max  then return end
+self:IncrementStackCount()
+end
+
+function modifier_axe_culling_blade_custom_attack_stack:OnStackCountChanged(iStackCount)
+if not IsServer() then return end
+
+if self:GetStackCount() < self.max then 
+	if self.effect_cast then
+		ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( 0, self:GetStackCount(), 0 ) )
+	end
+else 
+	if self.effect_cast then 
+		ParticleManager:DestroyParticle(self.effect_cast, true)
+		ParticleManager:ReleaseParticleIndex(self.effect_cast)
+		self.effect_cast = nil
+	end 
+	self.effect_mark = self.parent:GenericParticle("particles/lc_odd_charge_mark.vpcf", self, true)
+end 
+
+end
+
+
+modifier_axe_culling_blade_custom_target_mod = class(mod_hidden)
+function modifier_axe_culling_blade_custom_target_mod:OnCreated(params)
+if not IsServer() then return end 
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.damage = self.ability:GetSpecialValueFor("damage")
+self.target = EntIndexToHScript(params.target)
+self.damage_bonus = self.parent:GetTalentValue("modifier_axe_culling_3", "damage_stack")/100
+
+self:OnIntervalThink()
+self:StartIntervalThink(0.5)
+end 
+
+function modifier_axe_culling_blade_custom_target_mod:OnRefresh(params)
+if not IsServer() then return end 
+self.target = EntIndexToHScript(params.target)
+self:OnIntervalThink()
+end 
+
+function modifier_axe_culling_blade_custom_target_mod:OnIntervalThink()
+if not IsServer() then return end
+if not IsValid(self.target) or not self.target:HasModifier("modifier_axe_culling_blade_custom_attack_stack") or self.parent:HasTalent("modifier_axe_call_legendary") then
+	self:Destroy()
+	return
+end
+local mod = self.target:FindModifierByName("modifier_axe_culling_blade_custom_attack_stack")
+
+local damage = self.damage + mod:GetStackCount()*self.damage_bonus*self.parent:GetAverageTrueAttackDamage(nil)
+self.parent:UpdateUIlong({override_stack = math.floor(damage*(1 + self.parent:GetSpellAmplification(false))), no_min = 1, style = "AxeCulling"})
+end
+
+function modifier_axe_culling_blade_custom_target_mod:OnDestroy()
+if not IsServer() then return end
+self.parent:UpdateUIlong({override_stack = 0, no_min = 1, style = "AxeCulling"})
+end
+
+
 
 
 
@@ -19,723 +422,56 @@ axe_culling_blade_custom = class({})
 
 axe_culling_blade_custom_legendary = class({})
 
-
-axe_culling_blade_custom_legendary.save_mods = 
-{
-	[""] = true,
-}
-
-
-
-function axe_culling_blade_custom_legendary:Precache(context)
-
-    
-PrecacheResource( "particle", "particles/units/heroes/hero_axe/axe_culling_blade_kill.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_axe/axe_culling_blade.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_axe/axe_cullingblade_sprint.vpcf", context )
-PrecacheResource( "particle", "particles/axe_culling_stack.vpcf", context )
-PrecacheResource( "particle", "particles/items3_fx/blink_overwhelming_start.vpcf", context )
-PrecacheResource( "particle", "particles/items3_fx/blink_overwhelming_end.vpcf", context )
-PrecacheResource( "particle", "particles/axe_execute.vpcf", context )
-PrecacheResource( "particle", "particles/axe_exe.vpcf", context )
-PrecacheResource( "particle", "particles/brist_lowhp_.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_axe/axe_cullingblade_sprint.vpcf", context )
-PrecacheResource( "particle", "particles/axe_slow.vpcf", context )
-
+function axe_culling_blade_custom_legendary:CreateTalent()
+self:SetHidden(false)
+self:SetLevel(1)
 end
-
-
-
-
-function axe_culling_blade_custom:GetCastRange(vLocation, hTarget)
-
-local upgrade = 0
-if self:GetCaster():HasModifier("modifier_axe_culling_3") then 
-  --upgrade = self:GetCaster():GetTalentValue("modifier_axe_culling_3", "range")
-end
-
-return self.BaseClass.GetCastRange(self , vLocation , hTarget) + upgrade 
-end
-
-
-function axe_culling_blade_custom:GetCastPoint()
-local bonus = 0
-
-
-if self:GetCaster():HasModifier("modifier_axe_culling_5") then 
-  bonus = self:GetCaster():GetTalentValue("modifier_axe_culling_5", "cast")
-end
-
- return self:GetSpecialValueFor("AbilityCastPoint") + bonus
- 
-end
-
-
-
-function axe_culling_blade_custom:GetCooldown()
-local bonus = 0
-
-
-if self:GetCaster():HasModifier("modifier_axe_culling_5") then 
-  bonus = self:GetCaster():GetTalentValue("modifier_axe_culling_5", "cd")
-end
-
- return self:GetSpecialValueFor("AbilityCooldown") + bonus
- 
-end
-
-
-
-
-function axe_culling_blade_custom:GetManaCost(level)
-
-
-return self.BaseClass.GetManaCost(self,level) 
-end
-
-
-function axe_culling_blade_custom:GetIntrinsicModifierName()
-return "modifier_axe_culling_blade_custom_tracker"
-end
-
-
-function axe_culling_blade_custom:OnAbilityPhaseStart()
-
-local k = 1
-if self:GetCaster():HasModifier("modifier_axe_culling_5") then 
-	k = 1.5
-end 
-
-self:GetCaster():StartGestureWithPlaybackRate(ACT_DOTA_CAST_ABILITY_4, k)
-
-return true
-end 
-
-
-function axe_culling_blade_custom:OnAbilityPhaseInterrupted()
-
-self:GetCaster():FadeGesture(ACT_DOTA_CAST_ABILITY_4)
-end 
-
-function axe_culling_blade_custom:OnSpellStart(new_target)
-if not IsServer() then return end
-local target = self:GetCursorTarget()
-
---self:GetCaster():FadeGesture(ACT_DOTA_CAST_ABILITY_4)
-
-
-if new_target then 
-	target = new_target
-end
-
-local damage_mod = target:FindModifierByName("modifier_axe_culling_blade_custom_attack_kill")
-
-local k = 1
-local damage = self:GetSpecialValueFor("damage") + self:GetCaster():GetTalentValue("modifier_axe_culling_3","damage")
-
-if damage_mod then 
-	damage = damage + damage_mod:GetStackCount()*self:GetCaster():GetTalentValue("modifier_axe_culling_4", "damage")*target:GetMaxHealth()/100
-end 
-
-if not target:HasModifier("modifier_custom_juggernaut_healing_ward_reduction_aura") then 
-
-	kill_mod = target:AddNewModifier(target, nil, "modifier_death", {})
-	kill_mod_2 = target:AddNewModifier(target, nil, "modifier_axe_culling_blade_custom_aegis", {})
-end
-
-if target:GetHealth() > damage or target:HasModifier("modifier_custom_juggernaut_healing_ward_reduction_aura") then 
-
-	ApplyDamage({ victim = target, attacker = self:GetCaster(), damage = damage, damage_type = DAMAGE_TYPE_PURE, ability = self, })	
-
-	if self:GetCaster():HasModifier("modifier_axe_culling_6") then 
-		target:AddNewModifier(self:GetCaster(), self, "modifier_axe_culling_blade_custom_timer_kill", {duration = self:GetCaster():GetTalentValue("modifier_axe_culling_6", "duration")})
-	end 
-
-else 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_axe_culling_blade_custom_no_bonus", {})
-
-	self:CullingBladeKill(target, true, true)
-	target:Kill(self, self:GetCaster())
-	self:GetCaster():RemoveModifierByName("modifier_axe_culling_blade_custom_no_bonus")
-end
-
-if not target:HasModifier("modifier_custom_juggernaut_healing_ward_reduction_aura") then 
-	kill_mod:Destroy()
-	kill_mod_2:Destroy()
-end
-
-
-end
-
-
-
-
-
-function axe_culling_blade_custom:CullingBladeKill(target, success, effect)
-if not IsServer() then return end
-
-
-local direction = (target:GetOrigin()-self:GetCaster():GetOrigin()):Normalized()
-
-local particle_cast = ""
-local sound_cast = ""
-
-if success then
-	particle_cast = "particles/units/heroes/hero_axe/axe_culling_blade_kill.vpcf"
-	sound_cast = "Hero_Axe.Culling_Blade_Success"
-else
-	particle_cast = "particles/units/heroes/hero_axe/axe_culling_blade.vpcf"
-	sound_cast = "Hero_Axe.Culling_Blade_Fail"
-end
-
-if effect then 
-
-	local effect_cast = ParticleManager:CreateParticle( particle_cast, PATTACH_ABSORIGIN_FOLLOW, target )
-	ParticleManager:SetParticleControl( effect_cast, 4, target:GetOrigin() )
-	ParticleManager:SetParticleControlForward( effect_cast, 3, direction )
-	ParticleManager:SetParticleControlForward( effect_cast, 4, direction )
-	ParticleManager:ReleaseParticleIndex( effect_cast )
-	target:EmitSound(sound_cast)
-
-end
-
-local duration = self:GetSpecialValueFor("speed_duration")
-
-
-if success then
-
-	self:EndCooldown()
-
-	if target:IsValidKill(self:GetCaster()) then 
-		if self:GetCaster():GetQuest() == "Axe.Quest_8" then 
-			self:GetCaster():UpdateQuest(1)
-		end
-		self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_axe_culling_blade_custom_kills", {})
-		self:GetCaster():AddNewModifier( self:GetCaster(), self, "modifier_axe_culling_blade_custom", { duration = duration } )
-	end
-
-	
-end
-
-
-
-
-
-end
-
-
-
-
-
-
-
-modifier_axe_culling_blade_custom = class({})
-
-function modifier_axe_culling_blade_custom:IsPurgable()
-	return true
-end
-
-function modifier_axe_culling_blade_custom:OnCreated( kv )
-	self.armor_bonus = self:GetAbility():GetSpecialValueFor( "armor_buff" )
-	self.ms_bonus = self:GetAbility():GetSpecialValueFor( "speed_bonus" )
-end
-
-
-
-function modifier_axe_culling_blade_custom:DeclareFunctions()
-	local funcs = {
-		MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-		MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS
-	}
-
-	return funcs
-end
-
-function modifier_axe_culling_blade_custom:GetModifierMoveSpeedBonus_Percentage()
-	return self.ms_bonus
-end
-
-function modifier_axe_culling_blade_custom:GetModifierPhysicalArmorBonus()
-	return self.armor_bonus
-end
-
-
-
-function modifier_axe_culling_blade_custom:GetEffectName()
-	return "particles/units/heroes/hero_axe/axe_cullingblade_sprint.vpcf"
-end
-
-function modifier_axe_culling_blade_custom:GetEffectAttachType()
-	return PATTACH_ABSORIGIN_FOLLOW
-end
-
-
-modifier_axe_culling_blade_custom_tracker = class({})
-function modifier_axe_culling_blade_custom_tracker:IsHidden() return true end
-function modifier_axe_culling_blade_custom_tracker:IsPurgable() return false end
-function modifier_axe_culling_blade_custom_tracker:DeclareFunctions()
-return
-{
-	MODIFIER_EVENT_ON_ATTACK_LANDED,
-    MODIFIER_PROPERTY_CAST_RANGE_BONUS_STACKING,
-	MODIFIER_EVENT_ON_TAKEDAMAGE
-}
-end
-
-
-
-
-
-function modifier_axe_culling_blade_custom_tracker:GetModifierCastRangeBonusStacking()
-if not self:GetCaster():HasModifier("modifier_axe_culling_3") then return end 
-
-return self:GetCaster():GetTalentValue("modifier_axe_culling_3", "range")
-end
-
-
-
-function modifier_axe_culling_blade_custom_tracker:OnCreated(table)
-
-self.attack_duration = self:GetCaster():GetTalentValue("modifier_axe_culling_4",  "duration", true)
-
-self.radius = self:GetCaster():GetTalentValue("modifier_axe_culling_5", "radius", true)
-self.health = self:GetCaster():GetTalentValue("modifier_axe_culling_5", "health", true)
-
-if not IsServer() then return end
-
-self.parent = self:GetParent()
-
-self:StartIntervalThink(0.2)
-end
-
-
-
-function modifier_axe_culling_blade_custom_tracker:OnIntervalThink()
-if not IsServer() then return end
-
-if self.parent:HasModifier("modifier_axe_culling_1") then 
-	self.PercentStr = self.parent:GetTalentValue("modifier_axe_culling_1", "str_pct")/100
-end 
-
-if self.parent:HasModifier("modifier_axe_culling_4") then
-
-	local damage = self:GetAbility():GetSpecialValueFor("damage") + self.parent:GetTalentValue("modifier_axe_culling_3","damage")
-	local target_mod = self.parent:FindModifierByName("modifier_axe_culling_blade_custom_target_mod")
-
-	if target_mod and target_mod.target and not target_mod.target:IsNull() then 
-
-		local damage_mod = target_mod.target:FindModifierByName("modifier_axe_culling_blade_custom_attack_kill")
-
-		if damage_mod then 
-			damage = damage + damage_mod:GetStackCount()*self.parent:GetTalentValue("modifier_axe_culling_4", "damage")*target_mod.target:GetMaxHealth()/100
-		end 
-	end 
-
-	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self.parent:GetPlayerOwnerID()), "axe_culling_change",  {damage = math.floor(damage*(1 + self.parent:GetSpellAmplification(false))) })
-end 
-
-
-if not self.parent:HasModifier("modifier_axe_culling_5") then return end 
-
-local units = self.parent:FindTargets(self.radius)
-
-flag = false
-
-for _,unit in pairs(units) do 
-	if unit:GetHealthPercent() <= self.health and unit:IsRealHero() then 
-		flag = true
-		break
-	end 
-end 
-
-if flag == true then 
-	self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_axe_culling_blade_custom_status", {})
-else 
-	self.parent:RemoveModifierByName("modifier_axe_culling_blade_custom_status")
-end 
-
-end
-
-
-function modifier_axe_culling_blade_custom_tracker:OnTakeDamage(params)
-if not IsServer() then return end
-if self.parent ~= params.attacker then return end
-
-local target = params.unit
-
-local is_ulti = params.inflictor and not self.parent:HasModifier("modifier_axe_culling_blade_custom_no_bonus") and (params.inflictor == self:GetAbility() or params.inflictor == self.parent:FindAbilityByName("axe_culling_blade_custom_legendary"))
-
-if is_ulti then 
-
-
-	local success = false
-	local effect = false
-
-	if target:GetHealth()<=1 and not target:HasModifier("modifier_custom_juggernaut_healing_ward_reduction_aura") then 
-		success = true
-		effect = true
-	end
-
-	effect = true
-
-	self:GetAbility():CullingBladeKill(target, success, effect)
-
-end 
-
-end
-
-
-function modifier_axe_culling_blade_custom_tracker:OnAttackLanded(params)
-if not IsServer() then return end
-if self.parent ~= params.attacker then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end
-
-
-
-if self.parent:HasModifier("modifier_axe_culling_2") then 
-	local damage = params.target:GetHealth()*self.parent:GetTalentValue("modifier_axe_culling_2", "damage")/100
-
-	self.parent:AddNewModifier(self.parent, self, "modifier_axe_culling_blade_custom_no_bonus", {})
-	local real_damage = ApplyDamage({ victim = params.target, attacker = self.parent, damage = damage, damage_type = DAMAGE_TYPE_PURE, ability = self:GetAbility(), })	
-	self.parent:GenericHeal(real_damage, self:GetAbility(), true)
-
-	self.parent:RemoveModifierByName("modifier_axe_culling_blade_custom_no_bonus")
-end 
-
-
-if not self.parent:HasModifier("modifier_axe_culling_4") then return end
-
-params.target:AddNewModifier(self.parent, self:GetAbility(), "modifier_axe_culling_blade_custom_attack_kill", {duration = self.attack_duration})
-self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_axe_culling_blade_custom_target_mod", {duration = 3, target = params.target:entindex()})
-
-end
-
-
-
-
-
-
-
-
-
-
-
-modifier_axe_culling_blade_custom_attack_kill = class({})
-function modifier_axe_culling_blade_custom_attack_kill:IsHidden() return false end
-function modifier_axe_culling_blade_custom_attack_kill:IsPurgable() return false end
-function modifier_axe_culling_blade_custom_attack_kill:GetTexture() return "buffs/culling_attack" end
-
-
-function modifier_axe_culling_blade_custom_attack_kill:OnCreated(table)
-
-self.max = self:GetCaster():GetTalentValue("modifier_axe_culling_4", "max")
-self.heal_reduce = self:GetCaster():GetTalentValue("modifier_axe_culling_4", "heal_reduce")
-self.damage = self:GetCaster():GetTalentValue("modifier_axe_culling_4", "damage")/100
-
-if not IsServer() then return end
-self.RemoveForDuel = true
-self:SetStackCount(1)
-end
-
-function modifier_axe_culling_blade_custom_attack_kill:OnRefresh(table)
-if not IsServer() then return end
-if self:GetStackCount() >= self.max  then return end
-
-self:IncrementStackCount()
-end
-
-
-
-function modifier_axe_culling_blade_custom_attack_kill:OnStackCountChanged(iStackCount)
-if self:GetStackCount() == 0 then return end
-if self.effect_mark then return end
-if not self.effect_cast then 
-
-    self.effect_cast = ParticleManager:CreateParticle( "particles/axe_culling_stack.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent() )
-    ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( 0, self:GetStackCount(), 0 ) )
-    self:AddParticle(self.effect_cast,false, false, -1, false, false)
-else 
-
-  if self:GetStackCount() < self.max then 
-  	ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( 0, self:GetStackCount(), 0 ) )
-  else 
-  	if self.effect_cast then 
-  		ParticleManager:DestroyParticle(self.effect_cast, true)
-  		ParticleManager:ReleaseParticleIndex(self.effect_cast)
-  	end 
-
-    self.effect_mark = ParticleManager:CreateParticle( "particles/lc_odd_charge_mark.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent() )
-    ParticleManager:SetParticleControl( self.effect_mark, 1, Vector( 0, self:GetStackCount(), 0 ) )
-    self:AddParticle(self.effect_mark,false, false, -1, false, false)
-
-  end 
-end
-
-end
-
-
-function modifier_axe_culling_blade_custom_attack_kill:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET,
-	MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE,
-	MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE,
-	MODIFIER_PROPERTY_TOOLTIP
-}
-end
-
-
-function modifier_axe_culling_blade_custom_attack_kill:OnTooltip()
-
-return self:GetStackCount()*self.damage*self:GetParent():GetMaxHealth()
-end
-
-
-function modifier_axe_culling_blade_custom_attack_kill:GetModifierLifestealRegenAmplify_Percentage()
-	return self:GetStackCount()*self.heal_reduce
-end
-
-function modifier_axe_culling_blade_custom_attack_kill:GetModifierHealAmplify_PercentageTarget()
-	return self:GetStackCount()*self.heal_reduce
-end
-
-function modifier_axe_culling_blade_custom_attack_kill:GetModifierHPRegenAmplify_Percentage()
-	return self:GetStackCount()*self.heal_reduce
-end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function axe_culling_blade_custom_legendary:GetCooldown(iLevel)
-return self:GetCaster():GetTalentValue("modifier_axe_culling_legendary", "cd")
+return self:GetCaster():GetTalentValue("modifier_axe_culling_legendary", "talent_cd")
 end
-
-
 
 function axe_culling_blade_custom_legendary:OnSpellStart()
-if not IsServer() then return end
-
-if self:GetCursorTarget():TriggerSpellAbsorb(self) then return end
-
-
-self:GetCaster():AddNewModifier( self:GetCaster(), self, "modifier_axe_culling_blade_custom_legendary", { duration = self:GetCaster():GetTalentValue("modifier_axe_culling_legendary", "duration") } )
-
-
+local caster = self:GetCaster()
 local target =  self:GetCursorTarget()
-local direction = (target:GetOrigin()-self:GetCaster():GetOrigin()):Normalized()
+if target:TriggerSpellAbsorb(self) then return end
 
-local old_pos = self:GetCaster():GetAbsOrigin()
+if target:GetHealthPercent() > caster:GetTalentValue("modifier_axe_culling_legendary", "health") then 
+	self:EndCooldown()
+	self:StartCooldown(caster:GetTalentValue("modifier_axe_culling_legendary", "cd_low"))
+end
+
+local direction = (target:GetOrigin()-caster:GetOrigin()):Normalized()
+
+local old_pos = caster:GetAbsOrigin()
     
-
 local effect = ParticleManager:CreateParticle("particles/items3_fx/blink_overwhelming_start.vpcf", PATTACH_WORLDORIGIN, nil)
 ParticleManager:SetParticleControl(effect, 0, old_pos)
+ParticleManager:ReleaseParticleIndex( effect )
 
-FindClearSpaceForUnit(self:GetCaster(), self:GetCursorTarget():GetAbsOrigin(), true)
-ProjectileManager:ProjectileDodge(self:GetCaster())
+FindClearSpaceForUnit(caster, self:GetCursorTarget():GetAbsOrigin(), true)
+ProjectileManager:ProjectileDodge(caster)
 
 effect = ParticleManager:CreateParticle("particles/items3_fx/blink_overwhelming_end.vpcf", PATTACH_WORLDORIGIN, nil)
-ParticleManager:SetParticleControl(effect, 0, self:GetCaster():GetAbsOrigin())
+ParticleManager:SetParticleControl(effect, 0, caster:GetAbsOrigin())
+ParticleManager:ReleaseParticleIndex( effect )
 
-local damage = self:GetCursorTarget():GetHealth()*self:GetCaster():GetTalentValue("modifier_axe_culling_legendary", "damage")/100
+target:AddNewModifier(caster, self, "modifier_axe_culling_blade_custom_slow_legendary", {})
 
-if target:IsCreep() then 
-	damage = damage/3
+local particle_name = "particles/units/heroes/hero_axe/axe_culling_blade_kill.vpcf"
+if caster:HasModifier("modifier_axe_persona_custom") then
+    particle_name = "particles/econ/items/axe/ti9_jungle_axe/ti9_jungle_axe_culling_blade_kill.vpcf"
 end
-
-
-if not target:HasModifier("modifier_custom_juggernaut_healing_ward_reduction_aura") then 
-
-	kill_mod = target:AddNewModifier(target, nil, "modifier_death", {})
-	kill_mod_2 = target:AddNewModifier(target, nil, "modifier_axe_culling_blade_custom_aegis", {})
-end
-
-ApplyDamage({ victim = target, attacker = self:GetCaster(), damage = damage, damage_type = DAMAGE_TYPE_PURE, ability = self, })
-
-
-
-
-if not target:IsMagicImmune() then 
-	target:AddNewModifier(self:GetCaster(), self, "modifier_axe_culling_blade_custom_slow_lendary", {duration = 0.5})
-end
-
-
-if not target:HasModifier("modifier_custom_juggernaut_healing_ward_reduction_aura") then 
-	kill_mod:Destroy()
-	kill_mod_2:Destroy()
-end
-
-
-
-local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_axe/axe_culling_blade_kill.vpcf", PATTACH_ABSORIGIN_FOLLOW, target )
+local effect_cast = ParticleManager:CreateParticle( particle_name, PATTACH_ABSORIGIN_FOLLOW, target )
 ParticleManager:SetParticleControl( effect_cast, 4, target:GetOrigin() )
 ParticleManager:SetParticleControlForward( effect_cast, 3, direction )
 ParticleManager:SetParticleControlForward( effect_cast, 4, direction )
 ParticleManager:ReleaseParticleIndex( effect_cast )
 target:EmitSound("Axe.Culling_legendary")
 target:EmitSound("Axe.Culling_legendary2")
-
-if target:GetHealthPercent() > self:GetCaster():GetTalentValue("modifier_axe_culling_legendary", "health") then 
-	self:EndCooldown()
-	self:StartCooldown(self:GetCaster():GetTalentValue("modifier_axe_culling_legendary", "cd_low"))
-end
-
 end
 
 
-
-modifier_axe_culling_blade_custom_execute = class({})
-function modifier_axe_culling_blade_custom_execute:IsHidden() return false end
-function modifier_axe_culling_blade_custom_execute:IsPurgable() return false end
-function modifier_axe_culling_blade_custom_execute:GetTexture() return "buffs/culling_execute" end
-
-function modifier_axe_culling_blade_custom_execute:GetEffectName()  
-return "particles/axe_execute.vpcf"
-end
-
-function modifier_axe_culling_blade_custom_execute:OnCreated()
-if not IsServer() then return end
-    self:GetCaster():EmitSound("Axe.Culling_execute")
-self.particle_peffect = ParticleManager:CreateParticle("particles/axe_exe.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())	
-ParticleManager:SetParticleControl(self.particle_peffect, 0, self:GetParent():GetAbsOrigin())
-end
-
-function modifier_axe_culling_blade_custom_execute:OnDestroy()
-if not IsServer() then return end
-if not self.particle_peffect then return end
-
-ParticleManager:DestroyParticle(self.particle_peffect, false)
-   ParticleManager:ReleaseParticleIndex(self.particle_peffect)
-end
-
-
-
-
-
-
-
-modifier_axe_culling_blade_custom_kills = class({})
-function modifier_axe_culling_blade_custom_kills:IsHidden() return false end
-function modifier_axe_culling_blade_custom_kills:IsPurgable() return false end
-function modifier_axe_culling_blade_custom_kills:GetTexture() return "buffs/culling_kills" end
-function modifier_axe_culling_blade_custom_kills:RemoveOnDeath() return false end
-function modifier_axe_culling_blade_custom_kills:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
-	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
-	MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
-	MODIFIER_PROPERTY_TOOLTIP,
-	MODIFIER_EVENT_ON_TAKEDAMAGE,
-	MODIFIER_PROPERTY_TOOLTIP2
-}
-end
-
-
-function modifier_axe_culling_blade_custom_kills:GetModifierBonusStats_Strength()
-if not self:GetCaster():HasModifier("modifier_axe_culling_1") then return end 
-
-return self:GetStackCount()*self:GetCaster():GetTalentValue("modifier_axe_culling_1", "str")
-end 
-
-
-function modifier_axe_culling_blade_custom_kills:OnTooltip2()
-if not self:GetCaster():HasModifier("modifier_axe_culling_6") then return end
-if self:GetStackCount() < self.kills_max then return end
-
-return self.kills_heal*100
-end
-
-
-
-function modifier_axe_culling_blade_custom_kills:OnTakeDamage( params )
-if not self:GetCaster():HasModifier("modifier_axe_culling_6") then return end
-if self:GetStackCount() < self.kills_max then return end
-if self:GetParent() == params.unit then return end
-if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end
-
-if self:GetParent() ~= params.attacker then return end
-if not params.inflictor then return end
-if params.unit:IsBuilding() or params.unit:IsIllusion() then return end
-
-local heal = params.damage*self.kills_heal
-
-if params.unit:IsCreep() then 
-	heal = heal*self.kills_heal_creeps
-end
-
-self:GetParent():GenericHeal(heal, self:GetAbility(), true, "particles/items3_fx/octarine_core_lifesteal.vpcf")
-
-end
-
-
-
-
-function modifier_axe_culling_blade_custom_kills:GetModifierSpellAmplify_Percentage()
-if not self:GetCaster():HasModifier("modifier_axe_culling_6") then
-	return 0
-end
-
-local stack = math.min(self:GetStackCount(), self.kills_max)
-
-return stack*self.kills_damage
-end
-
-function modifier_axe_culling_blade_custom_kills:OnCreated(table)
-
-self.kills_damage = self:GetCaster():GetTalentValue("modifier_axe_culling_6", "damage", true)
-self.kills_max = self:GetCaster():GetTalentValue("modifier_axe_culling_6", "max", true)
-self.kills_heal = self:GetCaster():GetTalentValue("modifier_axe_culling_6", "heal", true)/100
-self.kills_heal_creeps = self:GetCaster():GetTalentValue("modifier_axe_culling_6", "heal_creeps", true)
-
-if not IsServer() then return end
-self:SetStackCount(1)
-
-self:StartIntervalThink(0.5)
-end
-
-function modifier_axe_culling_blade_custom_kills:GetModifierPhysicalArmorBonus()
-return self:GetAbility():GetSpecialValueFor("armor_bonus")*self:GetStackCount()
-end
-
-
-function modifier_axe_culling_blade_custom_kills:OnRefresh(table)
-if not IsServer() then return end
-self:IncrementStackCount()
-
-end
-
-
-function modifier_axe_culling_blade_custom_kills:OnIntervalThink()
-if not IsServer() then return end 
-if not self:GetParent():HasModifier("modifier_axe_culling_6") then return end 
-if self:GetStackCount() < self.kills_max then return end
-
-local particle_peffect = ParticleManager:CreateParticle("particles/brist_lowhp_.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-ParticleManager:SetParticleControl(particle_peffect, 0, self:GetCaster():GetAbsOrigin())
-ParticleManager:SetParticleControl(particle_peffect, 2, self:GetCaster():GetAbsOrigin())
-ParticleManager:ReleaseParticleIndex(particle_peffect)
-self:GetCaster():EmitSound("BS.Thirst_legendary_active")
-
-self:StartIntervalThink(-1)
-end 
-
-
-
-function modifier_axe_culling_blade_custom_kills:OnTooltip()
-return self:GetStackCount()
-end
 
 modifier_axe_culling_blade_custom_aegis = class({})
 function modifier_axe_culling_blade_custom_aegis:IsHidden() return true end
@@ -743,132 +479,201 @@ function modifier_axe_culling_blade_custom_aegis:IsPurgable() return false end
 
 
 
-modifier_axe_culling_blade_custom_no_bonus = class({})
-function modifier_axe_culling_blade_custom_no_bonus:IsHidden() return true end
-function modifier_axe_culling_blade_custom_no_bonus:IsPurgable() return false end
-
-
-
-
-
-
-
-
-
-
-
-modifier_axe_culling_blade_custom_slow_lendary = class({})
-function modifier_axe_culling_blade_custom_slow_lendary:IsHidden() return true end
-function modifier_axe_culling_blade_custom_slow_lendary:IsPurgable() return true end
-function modifier_axe_culling_blade_custom_slow_lendary:DeclareFunctions()
+modifier_axe_culling_blade_custom_slow_legendary = class(mod_hidden)
+function modifier_axe_culling_blade_custom_slow_legendary:DeclareFunctions()
 return
 {
 	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
 }
 end
 
-function modifier_axe_culling_blade_custom_slow_lendary:GetModifierMoveSpeedBonus_Percentage()
-return -100
+function modifier_axe_culling_blade_custom_slow_legendary:GetModifierMoveSpeedBonus_Percentage()
+return self.slow
+end
+
+function modifier_axe_culling_blade_custom_slow_legendary:OnCreated()
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+self.slow = -100
+
+if not IsServer() then return end
+self:SetStackCount(self.caster:GetTalentValue("modifier_axe_culling_legendary", "attacks"))
+self.interval = 0.25
+self:OnIntervalThink()
+self:StartIntervalThink(self.interval)
+end
+
+function modifier_axe_culling_blade_custom_slow_legendary:OnIntervalThink()
+if not IsServer() then return end
+
+self.caster:AddNewModifier(self.caster, self.ability, "modifier_axe_culling_blade_custom_legendary_attacks", {})
+self.caster:PerformAttack(self.parent, true, true, true, true, false, false, true)
+self.caster:RemoveModifierByName("modifier_axe_culling_blade_custom_legendary_attacks")
+self:DecrementStackCount()
+if self:GetStackCount() <= 0 then
+	self:Destroy()
+end
+
 end
 
 
-modifier_axe_culling_blade_custom_target_mod = class({})
-function modifier_axe_culling_blade_custom_target_mod:IsHidden() return true end
-function modifier_axe_culling_blade_custom_target_mod:IsPurgable() return false end
-function modifier_axe_culling_blade_custom_target_mod:OnCreated(params)
-if not IsServer() then return end 
 
-self.target = EntIndexToHScript(params.target)
-end 
+modifier_axe_culling_blade_custom_slow = class(mod_hidden)
+function modifier_axe_culling_blade_custom_slow:IsPurgable() return true end
+function modifier_axe_culling_blade_custom_slow:OnCreated()
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
 
-function modifier_axe_culling_blade_custom_target_mod:OnRefresh(params)
-if not IsServer() then return end 
+self.max = self.caster:GetTalentValue("modifier_axe_culling_1", "duration")
+self.slow = self.caster:GetTalentValue("modifier_axe_culling_1", "slow")
+self.interval = self.caster:GetTalentValue("modifier_axe_culling_1", "interval")
+self.damage = self.caster:GetTalentValue("modifier_axe_culling_1", "damage")*self.interval
 
-self.target = EntIndexToHScript(params.target)
-end 
+if not IsServer() then return end
+self.parent:EmitSound("DOTA_Item.Maim")
+self.parent:GenericParticle("particles/items2_fx/sange_maim.vpcf", self)
 
+self.damageTable = {victim = self.parent, attacker = self.caster, damage_type = self.caster:GetTalentValue("modifier_axe_culling_1", "damage_type"), ability = self.ability}
+self:SetStackCount(self.max)
+self:StartIntervalThink(self.interval)
+end
 
+function modifier_axe_culling_blade_custom_slow:OnRefresh()
+if not IsServer() then return end
+self.parent:EmitSound("DOTA_Item.Maim")
+self:SetStackCount(self.max)
+end
 
-modifier_axe_culling_blade_custom_timer_kill = class({})
-function modifier_axe_culling_blade_custom_timer_kill:IsHidden() return true end
-function modifier_axe_culling_blade_custom_timer_kill:IsPurgable() return false end
-function modifier_axe_culling_blade_custom_timer_kill:RemoveOnDeath() return false end
-function modifier_axe_culling_blade_custom_timer_kill:DeclareFunctions()
+function modifier_axe_culling_blade_custom_slow:OnIntervalThink()
+if not IsServer() then return end
+self.damageTable.damage = self.damage*self.caster:GetAverageTrueAttackDamage(nil)/100
+DoDamage(self.damageTable, "modifier_axe_culling_1")
+
+self:DecrementStackCount()
+if self:GetStackCount() <= 0 then 
+	self:Destroy()
+end
+
+end
+
+function modifier_axe_culling_blade_custom_slow:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_DEATH
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
 }
 end
 
-
-function modifier_axe_culling_blade_custom_timer_kill:OnDeath(params)
-if not IsServer() then return end 
-if params.unit ~= self:GetParent() then return end
-if params.inflictor and (params.inflictor == self:GetAbility() or params.inflictor == self:GetCaster():FindAbilityByName("axe_culling_blade_custom_legendary")) then return end
-
-
-self:GetAbility():CullingBladeKill(self:GetParent(), true, true)
-
-self:Destroy()
-end 
-
-
-modifier_axe_culling_blade_custom_legendary = class({})
-
-function modifier_axe_culling_blade_custom_legendary:IsPurgable()
-	return true
-end
-
-function modifier_axe_culling_blade_custom_legendary:OnCreated( kv )
-	self.speed = self:GetCaster():GetTalentValue("modifier_axe_culling_legendary", "speed")
+function modifier_axe_culling_blade_custom_slow:GetModifierMoveSpeedBonus_Percentage()
+return self.slow
 end
 
 
+modifier_axe_culling_blade_custom_aura = class(mod_hidden)
+function modifier_axe_culling_blade_custom_aura:OnCreated()
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
 
-function modifier_axe_culling_blade_custom_legendary:DeclareFunctions()
-	local funcs = {
-		MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
-	}
+if not IsServer() then return end
 
-	return funcs
+if self.caster:HasTalent("modifier_axe_hero_4") then
+	self.PercentStr = self.caster:GetTalentValue("modifier_axe_hero_4", "str_reduce")/100
 end
 
-function modifier_axe_culling_blade_custom_legendary:GetModifierAttackSpeedBonus_Constant()
-return self.speed
+if self.caster:HasTalent("modifier_axe_culling_4") then
+	self.interval = 0.3
+	self.root_health = self.caster:GetTalentValue("modifier_axe_culling_4", "health")
+	self:StartIntervalThink(self.interval)
+end
+
+end
+
+function modifier_axe_culling_blade_custom_aura:OnIntervalThink()
+if not IsServer() then return end
+if not self.caster:IsAlive() then return end
+if self.parent:GetHealthPercent() > self.root_health then return end
+
+self.caster:AddNewModifier(self.caster, self.ability, "modifier_axe_culling_blade_custom_status", {duration = self.interval*2})
+end
+
+function modifier_axe_culling_blade_custom_aura:OnDestroy()
+if not IsServer() then return end
+if not self.caster:HasTalent("modifier_axe_hero_4") then return end
+self.parent:PercentRefresh()
 end
 
 
 
-function modifier_axe_culling_blade_custom_legendary:GetEffectName()
-	return "particles/units/heroes/hero_axe/axe_cullingblade_sprint.vpcf"
-end
-
-function modifier_axe_culling_blade_custom_legendary:GetEffectAttachType()
-	return PATTACH_ABSORIGIN_FOLLOW
-end
-
-
-modifier_axe_culling_blade_custom_status = class({})
-function modifier_axe_culling_blade_custom_status:IsHidden() return false end
-function modifier_axe_culling_blade_custom_status:IsPurgable() return false end
-function modifier_axe_culling_blade_custom_status:GetTexture() return "buffs/culling_status" end
+modifier_axe_culling_blade_custom_status = class(mod_hidden)
 function modifier_axe_culling_blade_custom_status:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING
+	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+	MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS
 }
 end
-
 
 function modifier_axe_culling_blade_custom_status:GetModifierStatusResistanceStacking()
 return self.status
 end
 
+function modifier_axe_culling_blade_custom_status:GetModifierMoveSpeedBonus_Percentage()
+return self.move
+end
+
+function modifier_axe_culling_blade_custom_status:GetActivityTranslationModifiers()
+return "chase"
+end
 
 function modifier_axe_culling_blade_custom_status:OnCreated()
-self.status = self:GetCaster():GetTalentValue("modifier_axe_culling_5", "status")
+self.parent = self:GetParent()
+
+self.status = self.parent:GetTalentValue("modifier_axe_culling_4", "status")
+self.move = self.parent:GetTalentValue("modifier_axe_culling_4", "move")
 
 if not IsServer() then return end
-local particle = ParticleManager:CreateParticle( "particles/items4_fx/ascetic_cap.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-self:AddParticle( particle, false, false, -1, false, false  )
+self.parent:GenericParticle("particles/items4_fx/ascetic_cap.vpcf", self)
+end
+
+
+
+modifier_axe_culling_blade_custom_root = class({})
+function modifier_axe_culling_blade_custom_root:IsHidden() return true end
+function modifier_axe_culling_blade_custom_root:IsPurgable() return true end
+function modifier_axe_culling_blade_custom_root:CheckState()
+return
+{
+    [MODIFIER_STATE_ROOTED] = true
+}
+end
+
+function modifier_axe_culling_blade_custom_root:OnCreated(table)
+if not IsServer() then return end
+self.parent = self:GetParent()
+self.parent:EmitSound("Pudge.Hook_Root")
+self.parent:GenericParticle("particles/items3_fx/hook_root.vpcf", self)
+end
+
+modifier_axe_culling_blade_custom_root_cd = class(mod_hidden)
+function modifier_axe_culling_blade_custom_root_cd:OnCreated()
+self.RemoveForDuel = true
+end
+
+
+modifier_axe_culling_blade_custom_legendary_attacks = class(mod_hidden)
+function modifier_axe_culling_blade_custom_legendary_attacks:OnCreated()
+self.damage = self:GetParent():GetTalentValue("modifier_axe_culling_legendary", "damage") - 100
+end
+
+function modifier_axe_culling_blade_custom_legendary_attacks:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE
+}
+end
+
+function modifier_axe_culling_blade_custom_legendary_attacks:GetModifierDamageOutgoing_Percentage()
+return self.damage
 end

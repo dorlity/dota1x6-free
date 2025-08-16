@@ -10,16 +10,18 @@ var courier_selected = null;
 var player_table_shop = CustomNetTables.GetTableValue("sub_data", String(Players.GetLocalPlayer()));
 
 var active_sale = 0;
+var active_sale_global = 0;
 var active_sale_heroes = {}
+var selected_category = "tips"
 
 CustomNetTables.SubscribeNetTableListener( "sub_data", UpdatePlayerShopTable );
 
 var new_items =
 {
-	"npc_dota_hero_queenofpain": true,
-	"npc_dota_hero_skeleton_king": true,
-	"npc_dota_hero_monkey_king": true
+	"npc_dota_hero_drow_ranger": true,
 }
+
+
 
 var styles_id = 
 {
@@ -71,6 +73,24 @@ var razor_arcana_items_blocked =
     13473 : true,
     13569 : true,
     24100 : true,
+    19091 : true,
+    19092 : true,
+    19093 : true,
+    19094 : true,
+    19088 : true,
+    19089 : true,
+}
+
+var pudge_persona_unique =
+{
+    999252 : true,
+    999253 : true,
+}
+
+var crystal_maiden_persona_unique =
+{
+    265591 : true,
+    265592 : true,
 }
 
 
@@ -87,6 +107,7 @@ var SETS_TEXTURE_FULL_ICON =
     // phantom
     athena : "econ/sets/v2/bane_of_the_deathstalkers",
     lodas : "econ/sets/v2/dread_gleaming_seal",
+    song_shadow_dragon : "custom_game/shop/heroes/phantom_assassin/shadow_dragon",
     gothic : "econ/sets/v2/gothic_whisper",
 
     // huskar
@@ -131,8 +152,46 @@ var SETS_TEXTURE_FULL_ICON =
     grim_destiny : "econ/sets/v2/grim_destiny",
     vile_reliquary : "econ/sets/v2/vile_reliquary",
     veil_tyrant : "econ/sets/v2/tyrant_of_the_veil",
-    king_kringle : "econ/sets/v2/npc_dota_hero_skeleton_king_0",
+    king_kringle : "custom_game/shop/heroes/wraith_king/kringle",
     arcana_true_king : "econ/sets/v2/the_one_true_king_bundle",
+
+    // pudge
+    pudge_dapper_disguise : "econ/sets/v2/dapper_disguise",
+    ftp_dendi : "econ/sets/v2/murder_of_crows",
+    pudge_forbidden : "econ/sets/v2/cursed_cryptbreaker",
+    doomsday_ripper : "econ/sets/v2/pudge_doomsday_ripper",
+    mindless_slaughter : "econ/sets/v2/mindless_slaughter",
+    pudge_persona : "econ/sets/v2/pudge_doll_of_the_dead",
+
+    // lina
+    scarlet_flare : "econ/sets/v2/lina_the_scarlet_flare",
+    blazing_cosmos : "econ/sets/v2/glory_of_the_elderflame",
+    lina_calavera : "econ/sets/v2/lina_dead_heat",
+
+    // zuus
+    return_of_the_king : "econ/sets/v2/bearing_of_the_king_restored",
+    wastorn_heavens : "econ/sets/v2/wartorn_heavens",
+
+    // drow ranger
+    drow_stranger : "econ/sets/v2/stranger_in_the_wandering_isles",
+    drow_crownfall : "custom_game/shop/heroes/drow_ranger/ravencloack",
+    drow_kharen : "econ/sets/v2/sight_of_the_kharen_faithful",
+    drow_eldwurm : "econ/sets/v2/eldwurms_touch",
+    drow_oaths : "econ/sets/v2/oaths_of_the_dragonborn",
+    drow_arcana : "econ/sets/v2/dread_retribution_bundle",
+
+    ogre_shoreline : "econ/sets/v2/shoreline_sapper",
+    ogre_pyrexae : "econ/sets/v2/pyrexae_polymorph_perfected",
+    ogre_freebot : "econ/sets/v2/freeboot_fortunes",
+
+    terror_foulfell : "econ/sets/v2/foulfell_corruptor",
+    terror_chasm : "econ/sets/v2/chasm_of_the_broken_code",
+    terror_forgotten : "econ/sets/v2/forgotten_station",
+
+    crystal_winterwarden : "econ/sets/v2/winters_warden",
+    crystal_prelate : "econ/sets/v2/crystal_maiden_prelate_of_the_wyvern_legion",
+    crystal_white_wind : "econ/sets/v2/whitewind_battlemage",
+    crystal_persona : "econ/sets/v2/npc_dota_hero_crystal_maiden_1",
 }
 
 var OTHER_BACKGROUND_HEROES =
@@ -140,6 +199,10 @@ var OTHER_BACKGROUND_HEROES =
     npc_dota_hero_legion_commander : "queenofpain",
     npc_dota_hero_nevermore : "silencer",
     npc_dota_hero_monkey_king : "slark",
+    npc_dota_hero_zuus : "zues",
+    npc_dota_hero_drow_ranger : "vengeful_spirit",
+    npc_dota_hero_terrorblade : "templar_assassin",
+    npc_dota_hero_crystal_maiden : "lycan",
 }
  
 var SETS_PRIORITY = 
@@ -157,6 +220,7 @@ var SETS_PRIORITY =
         "rare",
         "lodas",
         "athena",
+        "song_shadow_dragon",
         "gothic",
     ],
     "npc_dota_hero_juggernaut" : 
@@ -219,6 +283,39 @@ var SETS_PRIORITY =
         "king_kringle",
         "veil_tyrant",
         "grim_destiny",
+    ],
+    "npc_dota_hero_lina":
+    [
+        "rare",
+        "lina_calavera",
+        "blazing_cosmos",
+        "scarlet_flare",
+    ],
+    "npc_dota_hero_pudge":
+    [
+        "rare",
+        "pudge_persona",
+        "doomsday_ripper",
+        "pudge_dapper_disguise",
+        "mindless_slaughter",
+        "ftp_dendi",
+        "pudge_forbidden"
+    ],
+    "npc_dota_hero_zuus":
+    [
+        "rare",
+        "wastorn_heavens",
+        "return_of_the_king",
+    ],
+    "npc_dota_hero_drow_ranger":
+    [
+        "rare",
+        "drow_arcana",
+        "drow_eldwurm",
+        "drow_crownfall",
+        "drow_stranger",
+        "drow_kharen",
+        "drow_oaths"
     ],
 }
 
@@ -549,6 +646,14 @@ var ITEM_CHANGED_INFORMATION =
     {
         "model" : [8, 23678, 11], //ноги
         "styles" : [23678, 2]
+    },
+    4734 :
+    {
+        "model" : [0, 4734],
+    },
+    6226 :
+    {
+        "model" : [0, 6226],
     },
     5133 :
     {
@@ -1194,11 +1299,11 @@ var ITEM_CHANGED_INFORMATION =
         "model" : [0, 24300],
         "changed_icons" : 
         [
-            ["skeleton_king_vampiric_aura_custom", "skeleton_king_vampiric_aura_frostivus"],
+            ["skeleton_king_bone_guard_custom", "skeleton_king_bone_guard_frostivus"],
         ],
         "changed_effects" : 
         [
-            ["skeleton_king_vampiric_aura_custom", "skeleton_king_vampiric_aura"],
+            ["skeleton_king_bone_guard_custom", "skeleton_king_bone_guard"],
         ],
     },
     24229 :
@@ -1326,7 +1431,7 @@ var ITEM_CHANGED_INFORMATION =
         ],
         "changed_effects" : 
         [
-            ["skeleton_king_vampiric_aura_custom", "skeleton_king_vampiric_aura"],
+            ["skeleton_king_bone_guard_custom", "skeleton_king_bone_guard"],
             ["skeleton_king_mortal_strike_custom", "skeleton_king_mortal_strike"],
         ],
     },
@@ -1339,7 +1444,7 @@ var ITEM_CHANGED_INFORMATION =
         ],
         "changed_effects" : 
         [
-            ["skeleton_king_vampiric_aura_custom", "skeleton_king_vampiric_aura"],
+            ["skeleton_king_bone_guard_custom", "skeleton_king_bone_guard"],
             ["skeleton_king_mortal_strike_custom", "skeleton_king_mortal_strike"],
         ],
     },
@@ -1358,14 +1463,14 @@ var ITEM_CHANGED_INFORMATION =
         "changed_icons" : 
         [
             ["skeleton_king_hellfire_blast_custom", "skeleton_king/arcana/skeleton_king_hellfire_blast_arcana"],
-            ["skeleton_king_vampiric_aura_custom", "skeleton_king/arcana/skeleton_king_vampiric_aura_arcana"],
+            ["skeleton_king_bone_guard_custom", "skeleton_king/arcana/skeleton_king_bone_guard_arcana"],
             ["skeleton_king_mortal_strike_custom", "skeleton_king/arcana/skeleton_king_mortal_strike_arcana"],
             ["skeleton_king_reincarnation_custom", "skeleton_king/arcana/skeleton_king_reincarnation_arcana"],
         ],
         "changed_effects" : 
         [
             ["skeleton_king_hellfire_blast_custom", "skeleton_king_hellfire_blast"],
-            ["skeleton_king_vampiric_aura_custom", "skeleton_king_vampiric_aura"],
+            ["skeleton_king_bone_guard_custom", "skeleton_king_bone_guard"],
             ["skeleton_king_mortal_strike_custom", "skeleton_king_mortal_strike"],
             ["skeleton_king_reincarnation_custom", "skeleton_king_reincarnation"],
         ],
@@ -1377,14 +1482,14 @@ var ITEM_CHANGED_INFORMATION =
         "changed_icons" : 
         [
             ["skeleton_king_hellfire_blast_custom", "skeleton_king/arcana/skeleton_king_hellfire_blast_arcana"],
-            ["skeleton_king_vampiric_aura_custom", "skeleton_king/arcana/skeleton_king_vampiric_aura_arcana"],
+            ["skeleton_king_bone_guard_custom", "skeleton_king/arcana/skeleton_king_bone_guard_arcana"],
             ["skeleton_king_mortal_strike_custom", "skeleton_king/arcana/skeleton_king_mortal_strike_arcana"],
             ["skeleton_king_reincarnation_custom", "skeleton_king/arcana/skeleton_king_reincarnation_arcana"],
         ],
         "changed_effects" : 
         [
             ["skeleton_king_hellfire_blast_custom", "skeleton_king_hellfire_blast"],
-            ["skeleton_king_vampiric_aura_custom", "skeleton_king_vampiric_aura"],
+            ["skeleton_king_bone_guard_custom", "skeleton_king_bone_guard"],
             ["skeleton_king_mortal_strike_custom", "skeleton_king_mortal_strike"],
             ["skeleton_king_reincarnation_custom", "skeleton_king_reincarnation"],
         ],
@@ -1898,7 +2003,1671 @@ var ITEM_CHANGED_INFORMATION =
     "model" : [0, 18594],
     "styles" : [18594, 0]
 },
+
+// Zeus
+9052 :
+{
+    "model" : [0, 9052],
+    "styles" : [9052, 1],
+},
+90521 :
+{
+    "model" : [0, 9052],
+    "styles" : [9052, 0],
+},
+9037 :
+{
+    "model" : [0, 9037],
+    "styles" : [9037, 1],
+},
+90371 :
+{
+    "model" : [0, 9037],
+    "styles" : [9037, 0],
+},
+9038 :
+{
+    "model" : [0, 9038],
+    "styles" : [9038, 1],
+},
+90381 :
+{
+    "model" : [0, 9038],
+    "styles" : [9038, 0],
+},
+9039 :
+{
+    "model" : [0, 9039],
+    "styles" : [9039, 1],
+},
+90391 :
+{
+    "model" : [0, 9039],
+    "styles" : [9039, 0],
+},
+7954 :
+{
+    "model" : [0, 7954],
+    "styles" : [7954, 0],
+},
+7953 :
+{
+    "model" : [0, 7953],
+    "styles" : [7953, 0],
+},
+7952 :
+{
+    "model" : [0, 7952],
+    "styles" : [7952, 0],
+},
+7951 :
+{
+    "model" : [0, 7951],
+    "styles" : [7951, 0],
+},
+5412 :
+{
+    "model" : [0, 5412],
+    "styles" : [5412, 0],
+    "changed_icons" : 
+    [
+        ["zuus_lightning_bolt", "zuus_lightning_bolt_immortal"],
+    ],
+    "changed_effects" : 
+    [
+        ["zuus_lightning_bolt_custom", "zuus_lightning_bolt"],
+    ],
+},
+12323 :
+{
+    "model" : [0, 12323],
+    "styles" : [12323, 0],
+    "changed_icons" : 
+    [
+        ["zuus_arc_lightning", "zeus/ti8_immortal_arms/zeus_arc_lightning_immortal"],
+    ],
+    "changed_effects" : 
+    [
+        ["zuus_arc_lightning_custom", "zuus_arc_lightning"],
+    ],
+},
+24680 :
+{
+    "model" : [0, 24680],
+    "styles" : [24680, 0],
+    //"changed_icons" : 
+    //[
+    //    ["zuus_static_field", "zeus/zeus_2021_immortal_back_ability_icon/zeus_2021_immortal_static_field_crimson"],
+    //],
+    "changed_effects" : 
+    [
+        ["zuus_heavenly_jump_custom", "zuus_heavenly_jump"],
+    ],
+},
+19112 :
+{
+    "model" : [0, 19112],
+    "styles" : [19112, 0],
+    //"changed_icons" : 
+    //[
+    //    ["zuus_static_field", "zeus/zeus_2021_immortal_back_ability_icon/zeus_2021_immortal_static_field"],
+    //],
+    "changed_effects" : 
+    [
+        ["zuus_heavenly_jump_custom", "zuus_heavenly_jump"],
+    ],
+},
+18563 :
+{
+    "model" : [0, 18563],
+    "styles" : [18563, 0],
+    //"changed_icons" : 
+    //[
+    //    ["zuus_static_field", "zeus/zeus_2021_immortal_back_ability_icon/zeus_2021_immortal_static_field_gold"],
+    //],
+    "changed_effects" : 
+    [
+        ["zuus_heavenly_jump_custom", "zuus_heavenly_jump"],
+    ],
+},
+6914 :
+{
+    "model" : [0, 6914],
+    "styles" : [6914, 0],
+    "changed_icons" : 
+    [
+        ["zuus_thundergods_wrath", "zuus_thundergods_wrath_alt1"],
+        //["zuus_static_field", "zuus_static_field_alt1"],
+    ],
+    "changed_effects" : 
+    [
+        ["zuus_thundergods_wrath_custom", "zuus_thundergods_wrath"],
+    ],
+},
+// Lina
+12217 :
+{
+	"model" : [0, 12217],
+    "styles" : [12217, 0],
+},
+122171 :
+{
+	"model" : [0, 12217],
+    "styles" : [12217, 1],
+},
+12228 :
+{
+	"model" : [0, 12228],
+    "styles" : [12228, 0],
+},
+122281 :
+{
+	"model" : [0, 12228],
+    "styles" : [12228, 1],
+},
+12229 :
+{
+	"model" : [0, 12229],
+    "styles" : [12229, 0],
+},
+122291 :
+{
+	"model" : [0, 12229],
+    "styles" : [12229, 1],
+},
+12227 :
+{
+	"model" : [0, 12227],
+    "styles" : [12227, 0],
+},
+122271 :
+{
+	"model" : [0, 12227],
+    "styles" : [12227, 1],
+},
+14247 :
+{
+	"model" : [0, 14247],
+    "styles" : [14247, 0],
+},
+14248 :
+{
+	"model" : [0, 14248],
+    "styles" : [14248, 0],
+},
+14250 :
+{
+	"model" : [0, 14250],
+    "styles" : [14250, 0],
+},
+14251 :
+{
+	"model" : [0, 14251],
+    "styles" : [14251, 0],
+},
+27551 :
+{
+	"model" : [0, 27551],
+    "styles" : [27551, 0],
+},
+27550 :
+{
+	"model" : [0, 27550],
+    "styles" : [27550, 0],
+},
+27548 :
+{
+	"model" : [0, 27548],
+    "styles" : [27548, 0],
+},
+27564 :
+{
+	"model" : [0, 27564],
+    "styles" : [27564, 0],
+},
+8003 :
+{
+	"model" : [0, 8003],
+    "styles" : [8003, 0],
+    "changed_icons" : 
+    [
+        ["lina_laguna_blade", "lina/lina_ti6_immortal/lina_laguna_blade"],
+    ],
+    "changed_effects" : 
+    [
+        ["lina_laguna_blade_custom", "lina_laguna_blade"],
+    ],
+},
+7741 :
+{
+	"model" : [0, 7741],
+    "styles" : [7741, 0],
+    "changed_icons" : 
+    [
+        ["lina_light_strike_array", "lina/lina_ti7_immortal/lina_lightstrike_array_gold"],
+    ],
+    "changed_effects" : 
+    [
+        ["lina_light_strike_array_custom", "lina_light_strike_array"],
+    ],
+},
+9243 :
+{
+	"model" : [0, 9243],
+    "styles" : [9243, 0],
+    "changed_icons" : 
+    [
+        ["lina_light_strike_array", "lina/lina_ti7_immortal/lina_light_strike_array"],
+    ],
+    "changed_effects" : 
+    [
+        ["lina_light_strike_array_custom", "lina_light_strike_array"],
+    ],
+},
+4794 :
+{
+	"model" : [0, 4794],
+    "styles" : [4794, 0],
+    "changed_icons" : 
+    [
+        ["lina_dragon_slave", "lina_dragon_slave_alt1"],
+        ["lina_fiery_soul", "lina_fiery_soul_alt1"],
+    ],
+    "changed_effects" : 
+    [
+        ["lina_dragon_slave_custom", "lina_dragon_slave"],
+    ],
+},
+// Pudge
+
+13510 :
+{
+    "model" : [0, 13510],
+    "styles" : [13510, 0],
+},
+13511 :
+{
+    "model" : [0, 13511],
+    "styles" : [13511, 0],
+},
+13513 :
+{
+    "model" : [0, 13513],
+    "styles" : [13513, 0],
+},
+13515 :
+{
+    "model" : [0, 13515],
+    "styles" : [13515, 0],
+},
+13514 :
+{
+    "model" : [0, 13514],
+    "styles" : [13514, 0],
+},
+6007 :
+{
+    "model" : [0, 6007],
+    "styles" : [6007, 0],
+},
+6204 :
+{
+    "model" : [0, 6204],
+    "styles" : [6204, 0],
+},
+6202 :
+{
+    "model" : [0, 6202],
+    "styles" : [6202, 0],
+},
+6203 :
+{
+    "model" : [0, 6203],
+    "styles" : [6203, 0],
+},
+6212 :
+{
+    "model" : [0, 6212],
+    "styles" : [6212, 0],
+},
+6116 :
+{
+    "model" : [0, 6116],
+    "styles" : [6116, 0],
+},
+6115 :
+{
+    "model" : [0, 6115],
+    "styles" : [6115, 0],
+},
+26083 :
+{
+    "model" : [0, 26083],
+    "styles" : [26083, 0],
+},
+26087 :
+{
+    "model" : [0, 26087],
+    "styles" : [26087, 0],
+},
+26086 :
+{
+    "model" : [0, 26086],
+    "styles" : [26086, 0],
+},
+26085 :
+{
+    "model" : [0, 26085],
+    "styles" : [26085, 0],
+},
+26084 :
+{
+    "model" : [0, 26084],
+    "styles" : [26084, 0],
+},
+26082 :
+{
+    "model" : [0, 26082],
+    "styles" : [26082, 0],
+},
+7311 :
+{
+    "model" : [0, 7311],
+    "styles" : [7311, 0],
+},
+7945 :
+{
+    "model" : [0, 7945],
+    "styles" : [7945, 0],
+},
+7371 :
+{
+    "model" : [0, 7371],
+    "styles" : [7371, 0],
+},
+7376 :
+{
+    "model" : [0, 7376],
+    "styles" : [7376, 0],
+},
+7320 :
+{
+    "model" : [0, 7320],
+    "styles" : [7320, 0],
+},
+7362 :
+{
+    "model" : [0, 7362],
+    "styles" : [7362, 0],
+},
+7363 :
+{
+    "model" : [0, 7363],
+    "styles" : [7363, 0],
+},
+14033 :
+{
+    "model" : [0, 14033],
+    "styles" : [14033, 0],
+},
+14034 :
+{
+    "model" : [0, 14034],
+    "styles" : [14034, 0],
+},
+14035 :
+{
+    "model" : [0, 14035],
+    "styles" : [14035, 0],
+},
+14036 :
+{
+    "model" : [0, 14036],
+    "styles" : [14036, 0],
+},
+14038 :
+{
+    "model" : [0, 14038],
+    "styles" : [14038, 0],
+},
+14039 :
+{
+    "model" : [0, 14039],
+    "styles" : [14039, 0],
+},
+14037 :
+{
+    "model" : [0, 14037],
+    "styles" : [14037, 0],
+},
+5347 :
+{
+    "model" : [0, 5347],
+    "styles" : [5347, 0],
+    "changed_effects" : 
+    [
+        ["pudge_meat_hook_custom", "pudge_meat_hook"],
+    ],
+},
+4007 :
+{
+    "model" : [0, 4007],
+    "styles" : [4007, 0],
+    "changed_effects" : 
+    [
+        ["pudge_meat_hook_custom", "pudge_meat_hook"],
+    ],
+},
+8004 :
+{
+    "model" : [0, 8004],
+    "styles" : [8004, 0],
+    "changed_icons" : 
+    [
+        ["pudge_meat_hook", "pudge/immortal/pudge_meat_hook"],
+    ],
+    "changed_effects" : 
+    [
+        ["pudge_meat_hook_custom", "pudge_meat_hook"],
+    ],
+},
+8038 :
+{
+    "model" : [0, 8038],
+    "styles" : [8038, 0],
+    "changed_icons" : 
+    [
+        ["pudge_meat_hook", "pudge/immortal_gold/pudge_meat_hook"],
+    ],
+    "changed_effects" : 
+    [
+        ["pudge_meat_hook_custom", "pudge_meat_hook"],
+    ],
+},
+8010 :
+{
+    "model" : [0, 8010],
+    "styles" : [8010, 0],
+    "changed_icons" : 
+    [
+        ["pudge_meat_hook", "pudge/immortal_gold/pudge_meat_hook"],
+    ],
+    "changed_effects" : 
+    [
+        ["pudge_meat_hook_custom", "pudge_meat_hook"],
+    ],
+},
+13788 :
+{
+    "model" : [0, 13788],
+    "styles" : [13788, 0],
+    "changed_icons" : 
+    [
+        ["pudge_meat_hook", "pudge/ti_10_pudge_immortal_hook/pudge_meat_hook_immortal"],
+    ],
+    "changed_effects" : 
+    [
+        ["pudge_meat_hook_custom", "pudge_meat_hook"],
+    ],
+},
+137881 :
+{
+    "model" : [0, 13788],
+    "styles" : [13788, 1],
+    "changed_icons" : 
+    [
+        ["pudge_meat_hook", "pudge/ti_10_pudge_immortal_hook/pudge_meat_hook_immortal_alt"],
+    ],
+    "changed_effects" : 
+    [
+        ["pudge_meat_hook_custom", "pudge_meat_hook"],
+    ],
+},
+6458 :
+{
+    "model" : [0, 6458],
+    "styles" : [6458, 0],
+    "changed_effects" : 
+    [
+        ["pudge_meat_hook_custom", "pudge_meat_hook"],
+    ],
+},
+9231 :
+{
+    "model" : [0, 9231],
+    "styles" : [9231, 0],
+    "changed_icons" : 
+    [
+        ["pudge_rot", "pudge/ti7_pudge_immortal/pudge_rot_alt"],
+    ],
+    "changed_effects" : 
+    [
+        ["pudge_rot_custom", "pudge_rot"],
+    ],
+},
+999251 :
+{
+    "model" : [0, 13786],
+    "styles" : [13786, 0],
+    "changed_icons" : 
+    [
+        ["pudge_meat_hook", "pudge/persona_toy_butcher/pudge_meat_hook_persona1"],
+        ["pudge_rot", "pudge/persona_toy_butcher/pudge_rot_persona1"],
+        ["pudge_flesh_heap", "pudge/persona_toy_butcher/pudge_flesh_heap_persona1"],
+        ["pudge_dismember", "pudge/persona_toy_butcher/pudge_dismember_persona1"],
+    ],
+    "changed_effects" : 
+    [
+        ["pudge_meat_hook_custom", "pudge_meat_hook"],
+    ],
+},
+999252 :
+{
+    "model" : [0, 27558],
+    "styles" : [27558, 0],
+    "changed_icons" : 
+    [
+        ["pudge_meat_hook", "pudge/persona_toy_butcher_calavera/pudge_meat_hook_persona_calavera1"],
+        ["pudge_rot", "pudge/persona_toy_butcher/pudge_rot_persona1"],
+        ["pudge_flesh_heap", "pudge/persona_toy_butcher/pudge_flesh_heap_persona1"],
+        ["pudge_dismember", "pudge/persona_toy_butcher/pudge_dismember_persona1"],
+    ],
+    "changed_effects" : 
+    [
+        ["pudge_meat_hook_custom", "pudge_meat_hook"],
+    ],
+},
+999253 :
+{
+    "model" : [0, 30361],
+    "styles" : [30361, 0],
+    "changed_icons" : 
+    [
+        ["pudge_meat_hook", "pudge/persona_frostivus/pudge_meat_hook_persona_frostivus1"],
+        ["pudge_rot", "pudge/persona_toy_butcher/pudge_rot_persona1"],
+        ["pudge_flesh_heap", "pudge/persona_toy_butcher/pudge_flesh_heap_persona1"],
+        ["pudge_dismember", "pudge/persona_toy_butcher/pudge_dismember_persona1"],
+    ],
+    "changed_effects" : 
+    [
+        ["pudge_meat_hook_custom", "pudge_meat_hook"],
+    ],
+},
+7742 :
+{
+    "model" : [0, 7742],
+    "styles" : [7742, 0],
+    "changed_icons" : 
+    [
+        ["pudge_rot", "pudge/ti7_pudge_immortal/pudge_rot_alt2"],
+    ],
+    "changed_effects" : 
+    [
+        ["pudge_rot_custom", "pudge_rot"],
+    ],
+},  
+7756 :
+{
+    "model" : [0, 7756],
+    "styles" : [7756, 0],
+    "changed_icons" : 
+    [
+        ["pudge_meat_hook", "pudge/arcana/pudge_meat_hook_arcana"],
+        ["pudge_rot", "pudge/arcana/pudge_rot_arcana"],
+        ["pudge_flesh_heap", "pudge/arcana/pudge_flesh_heap_arcana"],
+        ["pudge_dismember", "pudge/arcana/pudge_dismember_arcana"],
+    ],
+    "changed_effects" : 
+    [
+        ["pudge_dismember_custom", "pudge_dismember"],
+    ],
+},
+77561 :
+{
+    "model" : [0, 7756],
+    "styles" : [7756, 1],
+    "changed_icons" : 
+    [
+        ["pudge_meat_hook", "pudge/arcana/pudge_meat_hook_arcana_style1"],
+        ["pudge_rot", "pudge/arcana/pudge_rot_arcana_style1"],
+        ["pudge_flesh_heap", "pudge/arcana/pudge_flesh_heap_arcana_style1"],
+        ["pudge_dismember", "pudge/arcana/pudge_dismember_arcana_style1"],
+    ],
+    "changed_effects" : 
+    [
+        ["pudge_dismember_custom", "pudge_dismember"],
+    ],
+},
+13508 :
+{
+    "model" : [0, 13508],
+    "styles" : [13508, 0],
+},
+13509 :
+{
+    "model" : [0, 13509],
+    "styles" : [13509, 0],
+},
+
+28170 : 
+{ 
+    "model" : [0, 28170], 
+    "styles" : [28170, 0] 
+},
+
+28171 : 
+{ 
+    "model" : [0, 28171], 
+    "styles" : [28171, 0] 
+},
+
+28172 : 
+{ 
+    "model" : [0, 28172], 
+    "styles" : [28172, 0] 
+},
+
+28238 : 
+{ 
+    "model" : [0, 28238], 
+    "styles" : [28238, 0] 
+},
+
+28239 : 
+{ 
+    "model" : [0, 28239], 
+    "styles" : [28239, 0] 
+},
+
+281701 :
+{
+    "model" : [0, 28170],
+    "styles" : [28170, 1]
+},
+
+281711 :
+{
+    "model" : [0, 28171],
+    "styles" : [28171, 1]
+},
+
+281721 :
+{
+    "model" : [0, 28172],
+    "styles" : [28172, 1]
+},
+
+282381 :
+{
+    "model" : [0, 28238],
+    "styles" : [28238, 1]
+},
+
+282391 :
+{
+    "model" : [0, 28239],
+    "styles" : [28239, 1]
+},
+
+19309 :
+{
+    "model" : [0, 19309],
+    "styles" : [19309, 0],
+},
+19310 :
+{
+    "model" : [0, 19310],
+    "styles" : [19310, 0],
+},
+19311 :
+{
+    "model" : [0, 19311],
+    "styles" : [19311, 0],
+},
+17868 :
+{
+    "model" : [0, 17868],
+    "styles" : [17868, 0],
+},
+17869 :
+{
+    "model" : [0, 17869],
+    "styles" : [17869, 0],
+},
+17870 :
+{
+    "model" : [0, 17870],
+    "styles" : [17870, 0],
+},
+17871 :
+{
+    "model" : [0, 17871],
+    "styles" : [17871, 0],
+},
+27133 :
+{
+    "model" : [0, 27133],
+    "styles" : [27133, 0],
+},
+30363 :
+{
+    "model" : [0, 30363],
+    "styles" : [30363, 0],
+},
+30280 :
+{
+    "model" : [0, 30280],
+    "styles" : [30280, 0],
+},
+27131 :
+{
+    "model" : [0, 27131],
+    "styles" : [27131, 0],
+},
+29302 :
+{
+    "model" : [0, 29302],
+    "styles" : [29302, 0],
+},
+29303 :
+{
+    "model" : [0, 29303],
+    "styles" : [29303, 0],
+},
+29304 :
+{
+    "model" : [0, 29304],
+    "styles" : [29304, 0],
+},
+271331 :
+{
+    "model" : [0, 27133],
+    "styles" : [27133, 1],
+},
+303631 :
+{
+    "model" : [0, 30363],
+    "styles" : [30363, 1],
+},
+302801 :
+{
+    "model" : [0, 30280],
+    "styles" : [30280, 1],
+},
+271311 :
+{
+    "model" : [0, 27131],
+    "styles" : [27131, 1],
+},
+293021 :
+{
+    "model" : [0, 29302],
+    "styles" : [29302, 1],
+},
+293031 :
+{
+    "model" : [0, 29303],
+    "styles" : [29303, 1],
+},
+293041 :
+{
+    "model" : [0, 29304],
+    "styles" : [29304, 1],
+},
+13338 :
+{
+    "model" : [0, 13338],
+    "styles" : [13338, 0],
+},
+13339 :
+{
+    "model" : [0, 13339],
+    "styles" : [13339, 0],
+},
+13377 :
+{
+    "model" : [0, 13377],
+    "styles" : [13377, 0],
+},
+13378 :
+{
+    "model" : [0, 13378],
+    "styles" : [13378, 0],
+},
+13379 :
+{
+    "model" : [0, 13379],
+    "styles" : [13379, 0],
+},
+13380 :
+{
+    "model" : [0, 13380],
+    "styles" : [13380, 0],
+},
+13337 :
+{
+    "model" : [0, 13337],
+    "styles" : [13337, 0],
+},
+7053 :
+{
+    "model" : [0, 7053],
+    "styles" : [7053, 0],
+},
+7055 :
+{
+    "model" : [0, 7055],
+    "styles" : [7055, 0],
+},
+7057 :
+{
+    "model" : [0, 7057],
+    "styles" : [7057, 0],
+},
+7058 :
+{
+    "model" : [0, 7058],
+    "styles" : [7058, 0],
+},
+7052 :
+{
+    "model" : [0, 7052],
+    "styles" : [7052, 0],
+},
+7056 :
+{
+    "model" : [0, 7056],
+    "styles" : [7056, 0],
+},
+7054 :
+{
+    "model" : [0, 7054],
+    "styles" : [7054, 0],
+    "changed_icons" : 
+    [
+        ["drow_ranger_frost_arrows_custom", "drow_ranger/dragons_touch_ability_icons/drow_ranger_frost_arrows"],
+        ["drow_ranger_wave_of_silence_custom", "drow_ranger/dragons_touch_ability_icons/drow_ranger_wave_of_silence"],
+        ["drow_ranger_multishot_custom", "drow_ranger/dragons_touch_ability_icons/drow_ranger_trueshot"],
+        ["drow_ranger_marksmanship_custom", "drow_ranger/dragons_touch_ability_icons/drow_ranger_marksmanship"],
+    ],
+},
+13010 :
+{
+    "model" : [0, 13010],
+    "styles" : [13010, 0],
+},
+13011 :
+{
+    "model" : [0, 13011],
+    "styles" : [13011, 0],
+},
+13001 :
+{
+    "model" : [0, 13001],
+    "styles" : [13001, 0],
+},
+13002 :
+{
+    "model" : [0, 13002],
+    "styles" : [13002, 0],
+},
+13004 :
+{
+    "model" : [0, 13004],
+    "styles" : [13004, 0],
+},
+13005 :
+{
+    "model" : [0, 13005],
+    "styles" : [13005, 0],
+},
+13006 :
+{
+    "model" : [0, 13006],
+    "styles" : [13006, 0],
+},
+12946 :
+{
+    "model" : [0, 12946],
+    "styles" : [12946, 0],
+    "changed_icons" : 
+    [
+        ["drow_ranger_marksmanship_custom", "drow_ranger_marksmanship_ti9"],
+    ],
+    "changed_effects" : 
+    [
+        ["drow_ranger_frost_arrows_custom", "drow_ranger_frost_arrows"],
+        ["drow_ranger_marksmanship_custom", "drow_ranger_marksmanship"],
+    ],
+},
+5386 :
+{
+    "model" : [0, 5386],
+    "styles" : [5386, 0],
+    "changed_effects" : 
+    [
+        ["drow_ranger_frost_arrows_custom", "drow_ranger_frost_arrows"],
+    ],
+},
+8006 :
+{
+    "model" : [0, 8006],
+    "styles" : [8006, 0],
+    "changed_icons" : 
+    [
+        ["drow_ranger_wave_of_silence_custom", "drow_ranger/immortal/drow_ranger_wave_of_silence"],
+    ],
+    "changed_effects" : 
+    [
+        ["drow_ranger_wave_of_silence_custom", "drow_ranger_wave_of_silence"],
+    ],
+},
+8035 :
+{
+    "model" : [0, 8035],
+    "styles" : [8035, 0],
+    "changed_icons" : 
+    [
+        ["drow_ranger_wave_of_silence_custom", "drow_ranger/immortal/drow_ranger_wave_of_silence"],
+    ],
+    "changed_effects" : 
+    [
+        ["drow_ranger_wave_of_silence_custom", "drow_ranger_wave_of_silence"],
+    ],
+},
+8037 :
+{
+    "model" : [0, 8037],
+    "styles" : [8037, 0],
+    "changed_icons" : 
+    [
+        ["drow_ranger_wave_of_silence_custom", "drow_ranger/immortal_gold/drow_ranger_wave_of_silence"],
+    ],
+    "changed_effects" : 
+    [
+        ["drow_ranger_wave_of_silence_custom", "drow_ranger_wave_of_silence"],
+    ],
+},
+6785 :
+{
+    "model" : [0, 6785],
+    "styles" : [6785, 0],
+},
+19091 :
+{
+    "model" : [0, 19091],
+    "styles" : [19091, 0],
+},
+19092 :
+{
+    "model" : [0, 19092],
+    "styles" : [19092, 0],
+},
+19093 :
+{
+    "model" : [0, 19093],
+    "styles" : [19093, 0],
+},
+19094 :
+{
+    "model" : [0, 19094],
+    "styles" : [19094, 0],
+},
+19088 :
+{
+    "model" : [0, 19088],
+    "styles" : [19088, 0],
+},
+19089 :
+{
+    "model" : [0, 19089],
+    "styles" : [19089, 0],
+},
+190911 :
+{
+    "model" : [0, 19091],
+    "styles" : [19091, 1],
+},
+190921 :
+{
+    "model" : [0, 19092],
+    "styles" : [19092, 1],
+},
+190931 :
+{
+    "model" : [0, 19093],
+    "styles" : [19093, 1],
+},
+190941 :
+{
+    "model" : [0, 19094],
+    "styles" : [19094, 1],
+},
+190881 :
+{
+    "model" : [0, 19088],
+    "styles" : [19088, 1],
+},
+190891 :
+{
+    "model" : [0, 19089],
+    "styles" : [19089, 1],
+},
+19090 :
+{
+    "model" : [0, 21837],
+    "styles" : [21837, 0],
+    "changed_icons" : 
+    [
+        ["drow_ranger_frost_arrows_custom", "drow_ranger_frost_arrow_arcana"],
+        ["drow_ranger_wave_of_silence_custom", "drow_ranger_silence_arcana"],
+        ["drow_ranger_multishot_custom", "drow_ranger_multishot_arcana"],
+        ["drow_ranger_marksmanship_custom", "drow_ranger_marksmanship_arcana"],
+    ],
+    "changed_effects" : 
+    [
+        ["drow_ranger_frost_arrows_custom", "drow_ranger_frost_arrows"],
+        ["drow_ranger_wave_of_silence_custom", "drow_ranger_wave_of_silence"],
+        ["drow_ranger_multishot_custom", "drow_ranger_multishot"],
+        ["drow_ranger_marksmanship_custom", "drow_ranger_marksmanship"],
+    ],
+},
+190901 :
+{
+    "model" : [0, 21837],
+    "styles" : [21837, 1],
+    "changed_icons" : 
+    [
+        ["drow_ranger_frost_arrows_custom", "drow_ranger_frost_arrow_arcana_alt1"],
+        ["drow_ranger_wave_of_silence_custom", "drow_ranger_silence_arcana_alt1"],
+        ["drow_ranger_multishot_custom", "drow_ranger_multishot_arcana_alt1"],
+        ["drow_ranger_marksmanship_custom", "drow_ranger_marksmanship_arcana_alt1"],
+    ],
+    "changed_effects" : 
+    [
+        ["drow_ranger_frost_arrows_custom", "drow_ranger_frost_arrows"],
+        ["drow_ranger_wave_of_silence_custom", "drow_ranger_wave_of_silence"],
+        ["drow_ranger_multishot_custom", "drow_ranger_multishot"],
+        ["drow_ranger_marksmanship_custom", "drow_ranger_marksmanship"],
+    ],
+},
+
+
+13670 :
+{
+    "model" : [0, 13670],
+    "styles" : [13670, 0],
+    "changed_icons" : 
+    [
+        ["ogre_magi_fireblast", "ogre_magi/arcana/ogre_magi_fireblast_arcana"],
+        ["ogre_magi_ignite", "ogre_magi/arcana/ogre_magi_ignite_arcana"],
+        ["ogre_magi_bloodlust", "ogre_magi/arcana/ogre_magi_bloodlust_arcana"],
+        ["ogre_magi_multicast", "ogre_magi/arcana/ogre_magi_multicast_arcana"],
+    ],
+    "changed_effects" : 
+    [
+        ["ogre_magi_fireblast_custom", "ogre_magi_fireblast"],
+        ["ogre_magi_ignite_custom", "ogre_magi_ignite"],
+    ],
+},
+136701 :
+{
+    "model" : [0, 13670],
+    "styles" : [13670, 1],
+    "changed_icons" : 
+    [
+        ["ogre_magi_fireblast", "ogre_magi/arcana/ogre_magi_fireblast_arcana_alt1"],
+        ["ogre_magi_ignite", "ogre_magi/arcana/ogre_magi_ignite_arcana_alt1"],
+        ["ogre_magi_bloodlust", "ogre_magi/arcana/ogre_magi_bloodlust_arcana_alt2"],
+        ["ogre_magi_multicast", "ogre_magi/arcana/ogre_magi_multicast_arcana_alt1"],
+    ],
+    "changed_effects" : 
+    [
+        ["ogre_magi_fireblast_custom", "ogre_magi_fireblast"],
+        ["ogre_magi_ignite_custom", "ogre_magi_ignite"],
+    ],
+},
+12318 :
+{
+    "model" : [0, 12318],
+    "styles" : [12318, 0],
+    "changed_icons" : 
+    [
+        ["ogre_magi_bloodlust", "ogre_magi_bloodlust_ti8"],
+    ],
+    "changed_effects" : 
+    [
+        ["ogre_magi_bloodlust_custom", "ogre_magi_bloodlust"],
+    ],
+},
+7910 :
+{
+    "model" : [0, 7910],
+    "styles" : [7910, 0],
+    "changed_icons" : 
+    [
+        ["ogre_magi_multicast", "ogre_magi/auspice_of_the_whyrlegyge/ogre_magi_multicast"],
+    ],
+    "changed_effects" : 
+    [
+        ["ogre_magi_multicast_custom", "ogre_magi_multicast"],
+    ],
+},
+79101 :
+{
+    "model" : [0, 7910],
+    "styles" : [7910, 1],
+    "changed_icons" : 
+    [
+        ["ogre_magi_multicast", "ogre_magi/auspice_of_the_whyrlegyge/ogre_magi_multicast"],
+    ],
+    "changed_effects" : 
+    [
+        ["ogre_magi_multicast_custom", "ogre_magi_multicast"],
+    ],
+},
+9226 :
+{
+    "model" : [0, 9226],
+    "styles" : [9226, 0],
+},
+92261 :
+{
+    "model" : [0, 9226],
+    "styles" : [9226, 1],
+},
+9229 :
+{
+    "model" : [0, 9229],
+    "styles" : [9229, 0],
+},
+92291 :
+{
+    "model" : [0, 9229],
+    "styles" : [9229, 1],
+},
+9227 :
+{
+    "model" : [0, 9227],
+    "styles" : [9227, 0],
+},
+92271 :
+{
+    "model" : [0, 9227],
+    "styles" : [9227, 1],
+},
+9224 :
+{
+    "model" : [0, 9224],
+    "styles" : [9224, 0],
+},
+92241 :
+{
+    "model" : [0, 9224],
+    "styles" : [9224, 1],
+},
+9225 :
+{
+    "model" : [0, 9225],
+    "styles" : [9225, 0],
+},
+92251 :
+{
+    "model" : [0, 9225],
+    "styles" : [9225, 1],
+},
+18098 :
+{
+    "model" : [0, 18098],
+    "styles" : [18098, 0],
+},
+18099 :
+{
+    "model" : [0, 18099],
+    "styles" : [18099, 0],
+},
+18100 :
+{
+    "model" : [0, 18100],
+    "styles" : [18100, 0],
+},
+18101 :
+{
+    "model" : [0, 18101],
+    "styles" : [18101, 0],
+},
+18097 :
+{
+    "model" : [0, 18097],
+    "styles" : [18097, 0],
+},
+19370 :
+{
+    "model" : [0, 19370],
+    "styles" : [19370, 0],
+},
+19372 :
+{
+    "model" : [0, 19372],
+    "styles" : [19372, 0],
+},
+19373 :
+{
+    "model" : [0, 19373],
+    "styles" : [19373, 0],
+},
+19374 :
+{
+    "model" : [0, 19374],
+    "styles" : [19374, 0],
+},
+19371 :
+{
+    "model" : [0, 19371],
+    "styles" : [19371, 0],
+},
+5957 :
+{
+    "model" : [0, 5957],
+    "styles" : [5957, 0],
+    "changed_icons" : 
+    [
+        ["custom_terrorblade_reflection", "terrorblade_reflection_alt1"],
+        ["custom_terrorblade_conjure_image", "terrorblade_conjure_image_alt1"],
+        ["custom_terrorblade_metamorphosis", "terrorblade_metamorphosis_alt1"],
+        ["custom_terrorblade_sunder", "terrorblade_sunder_alt1"],
+    ],
+    "changed_effects" : 
+    [
+        ["custom_terrorblade_reflection", "terrorblade_reflection"],
+        ["custom_terrorblade_conjure_image", "terrorblade_conjure_image"],
+        ["custom_terrorblade_metamorphosis", "terrorblade_metamorphosis"],
+        ["custom_terrorblade_sunder", "terrorblade_sunder"],
+    ],
+},
+12917 :
+{
+    "model" : [0, 12917],
+    "styles" : [12917, 0],
+},
+9750 :
+{
+    "model" : [0, 9750],
+    "styles" : [9750, 0],
+    "changed_icons" : 
+    [
+        ["custom_terrorblade_sunder", "terrorblade/ti8_immortal_back/terrorblade_sunder_immortal"],
+    ],
+    "changed_effects" : 
+    [
+        ["custom_terrorblade_sunder", "terrorblade_sunder"],
+    ],
+},
+9497 : 
+{
+    "model" : [0, 9497],
+    "styles" : [9497, 0],
+},
+9498 : 
+{
+    "model" : [0, 9498],
+    "styles" : [9498, 0],
+},
+9499 : 
+{
+    "model" : [0, 9499],
+    "styles" : [9499, 0],
+},
+9500 : 
+{
+    "model" : [0, 9500],
+    "styles" : [9500, 0],
+},
+14338 : 
+{
+    "model" : [0, 14338],
+    "styles" : [14338, 0],
+},
+14340 : 
+{
+    "model" : [0, 14340],
+    "styles" : [14340, 0],
+},
+14341 : 
+{
+    "model" : [0, 14341],
+    "styles" : [14341, 0],
+},
+14342 : 
+{
+    "model" : [0, 14342],
+    "styles" : [14342, 0],
+},
+26447 : 
+{
+    "model" : [0, 26447],
+    "styles" : [26447, 0],
+},
+26448 : 
+{
+    "model" : [0, 26448],
+    "styles" : [26448, 0],
+},
+26449 : 
+{
+    "model" : [0, 26449],
+    "styles" : [26449, 0],
+},
+26445 : 
+{
+    "model" : [0, 26445],
+    "styles" : [26445, 0],
+},
+7404 :
+{
+    "model" : [0, 7404],
+    "styles" : [7404, 0],
+    "changed_effects" : 
+    [
+        ["custom_terrorblade_metamorphosis", "terrorblade_metamorphosis"],
+    ],
+},
+9501 :
+{
+    "model" : [0, 9501],
+    "styles" : [9501, 0],
+    "changed_effects" : 
+    [
+        ["custom_terrorblade_metamorphosis", "terrorblade_metamorphosis"],
+    ],
+},
+14339 :
+{
+    "model" : [0, 14339],
+    "styles" : [14339, 0],
+    "changed_effects" : 
+    [
+        ["custom_terrorblade_metamorphosis", "terrorblade_metamorphosis"],
+    ],
+},
+7033 :
+{
+    "model" : [0, 7033],
+    "styles" : [7033, 0],
+    "changed_effects" : 
+    [
+        ["custom_terrorblade_metamorphosis", "terrorblade_metamorphosis"],
+    ],
+},
+8276 :
+{
+    "model" : [0, 8276],
+    "styles" : [8276, 0],
+    "changed_effects" : 
+    [
+        ["custom_terrorblade_metamorphosis", "terrorblade_metamorphosis"],
+    ],
+},
+26446 :
+{
+    "model" : [0, 26446],
+    "styles" : [26446, 0],
+    "changed_effects" : 
+    [
+        ["custom_terrorblade_metamorphosis", "terrorblade_metamorphosis"],
+    ],
+},
+7385 :
+{
+    "model" : [0, 7385],
+    "styles" : [7385, 0],
+    "changed_icons" : 
+    [
+        ["crystal_maiden_freezing_field_custom", "crystal_maiden_freezing_field_alt1"],
+    ],
+    "changed_effects" : 
+    [
+        ["crystal_maiden_freezing_field_custom", "crystal_maiden_freezing_field"],
+    ],
+},
+9205 :
+{
+    "model" : [0, 9205],
+    "styles" : [9205, 0],
+    "changed_icons" : 
+    [
+        ["crystal_maiden_frostbite_custom", "crystal_maiden_frostbite_immortal"],
+    ],
+    "changed_effects" : 
+    [
+        ["crystal_maiden_frostbite_custom", "crystal_maiden_frostbite"],
+    ],
+},
+6686 :
+{
+    "model" : [0, 6686],
+    "styles" : [6686, 0],
+    "changed_icons" : 
+    [
+        ["crystal_maiden_crystal_nova_custom", "crystal_maiden_crystal_nova_icecowl"],
+    ],
+    "changed_effects" : 
+    [
+        ["crystal_maiden_crystal_nova_custom", "crystal_maiden_crystal_nova"],
+    ],
+},
+13532 :
+{
+    "model" : [0, 13532],
+    "styles" : [13532, 0],
+    "changed_icons" : 
+    [
+        ["crystal_maiden_arcane_aura_custom", "crystal_maiden_brilliance_aura_ti9"],
+    ],
+    "changed_effects" : 
+    [
+        ["crystal_maiden_arcane_aura_custom", "crystal_maiden_brilliance_aura"],
+    ],
+},
+13669 :
+{
+    "model" : [0, 13669],
+    "styles" : [13669, 0],
+    "changed_icons" : 
+    [
+        ["crystal_maiden_arcane_aura_custom", "crystal_maiden_brilliance_aura_ti9_gold"],
+    ],
+    "changed_effects" : 
+    [
+        ["crystal_maiden_arcane_aura_custom", "crystal_maiden_brilliance_aura"],
+    ],
+},
+6784 :
+{
+    "model" : [0, 6784],
+    "styles" : [6784, 0],
+},
+9626 :
+{
+    "model" : [0, 9626],
+    "styles" : [9626, 0],
+},
+9625 :
+{
+    "model" : [0, 9625],
+    "styles" : [9625, 0],
+},
+9624 :
+{
+    "model" : [0, 9624],
+    "styles" : [9624, 0],
+},
+9628 :
+{
+    "model" : [0, 9628],
+    "styles" : [9628, 0],
+},
+9627 :
+{
+    "model" : [0, 9627],
+    "styles" : [9627, 0],
+},
+13486 :
+{
+    "model" : [0, 13486],
+    "styles" : [13486, 0],
+},
+13487 :
+{
+    "model" : [0, 13487],
+    "styles" : [13487, 0],
+},
+13488 :
+{
+    "model" : [0, 13488],
+    "styles" : [13488, 0],
+},
+13489 :
+{
+    "model" : [0, 13489],
+    "styles" : [13489, 0],
+},
+13490 :
+{
+    "model" : [0, 13490],
+    "styles" : [13490, 0],
+},
+14558 :
+{
+    "model" : [0, 14558],
+    "styles" : [14558, 0],
+},
+145581 :
+{
+    "model" : [0, 14558],
+    "styles" : [14558, 1],
+},
+145582 :
+{
+    "model" : [0, 14558],
+    "styles" : [14558, 2],
+},
+14559 :
+{
+    "model" : [0, 14559],
+    "styles" : [14559, 0],
+},
+145591 :
+{
+    "model" : [0, 14559],
+    "styles" : [14559, 1],
+},
+145592 :
+{
+    "model" : [0, 14559],
+    "styles" : [14559, 2],
+},
+14560 :
+{
+    "model" : [0, 14560],
+    "styles" : [14560, 0],
+},
+145601 :
+{
+    "model" : [0, 14560],
+    "styles" : [14560, 1],
+},
+145602 :
+{
+    "model" : [0, 14560],
+    "styles" : [14560, 2],
+},
+14561 :
+{
+    "model" : [0, 14561],
+    "styles" : [14561, 0],
+},
+145611 :
+{
+    "model" : [0, 14561],
+    "styles" : [14561, 1],
+},
+145612 :
+{
+    "model" : [0, 14561],
+    "styles" : [14561, 2],
+},
+14562 :
+{
+    "model" : [0, 14562],
+    "styles" : [14562, 0],
+},
+145621 :
+{
+    "model" : [0, 14562],
+    "styles" : [14562, 1],
+},
+145622 :
+{
+    "model" : [0, 14562],
+    "styles" : [14562, 2],
+},
+26559 :
+{
+    "model" : [0, 26559],
+    "styles" : [26559, 0],
+    "changed_icons" : 
+    [
+        ["crystal_maiden_crystal_nova_custom", "crystal_maiden_crystal_nova_persona"],
+        ["crystal_maiden_frostbite_custom", "crystal_maiden_frostbite_persona"],
+        ["crystal_maiden_arcane_aura_custom", "crystal_maiden_brilliance_aura_persona"],
+        ["crystal_maiden_freezing_field_custom", "crystal_maiden_freezing_field_persona"],
+    ],
+    "changed_effects" : 
+    [
+        ["crystal_maiden_crystal_nova_custom", "crystal_maiden_crystal_nova"],
+        ["crystal_maiden_freezing_field_custom", "crystal_maiden_freezing_field"],
+    ],
+},
+265591 :
+{
+    "model" : [0, 24884],
+    "styles" : [24884, 0],
+    "changed_icons" : 
+    [
+        ["crystal_maiden_crystal_nova_custom", "crystal_maiden_crystal_nova_persona"],
+        ["crystal_maiden_frostbite_custom", "crystal_maiden_frostbite_persona"],
+        ["crystal_maiden_arcane_aura_custom", "crystal_maiden_brilliance_aura_persona"],
+        ["crystal_maiden_freezing_field_custom", "crystal_maiden_freezing_field_persona"],
+    ],
+    "changed_effects" : 
+    [
+        ["crystal_maiden_crystal_nova_custom", "crystal_maiden_crystal_nova"],
+        ["crystal_maiden_freezing_field_custom", "crystal_maiden_freezing_field"],
+    ],
+},
+265592 :
+{
+    "model" : [0, 28140],
+    "styles" : [28140, 0],
+    "changed_icons" : 
+    [
+        ["crystal_maiden_crystal_nova_custom", "crystal_maiden_crystal_nova_persona"],
+        ["crystal_maiden_frostbite_custom", "crystal_maiden_frostbite_persona"],
+        ["crystal_maiden_arcane_aura_custom", "crystal_maiden_brilliance_aura_persona"],
+        ["crystal_maiden_freezing_field_custom", "crystal_maiden_freezing_field_persona"],
+    ],
+    "changed_effects" : 
+    [
+        ["crystal_maiden_crystal_nova_custom", "crystal_maiden_crystal_nova"],
+        ["crystal_maiden_freezing_field_custom", "crystal_maiden_freezing_field"],
+    ],
+},
+
+
 }
+
+
 function UpdatePlayerShopTable(table, key, data ) 
 {
 	if (table == "sub_data") 
@@ -1925,12 +3694,20 @@ function init()
     GameEvents.Subscribe_custom('show_active_vote', show_active_vote)
     GameEvents.Subscribe_custom('show_new_shop_heroes', show_new_shop_heroes)
 
+    GameEvents.Subscribe_custom('shop_new_promo', shop_new_promo)
+
     GameEvents.Subscribe_custom('get_payment_url', get_payment_url)
+
+    GameEvents.Subscribe_custom('answer_promo_code', answer_promo_code)
+
+    GameEvents.Subscribe_custom('shop_global_sale', shop_global_sale)
 
 
     let data = CustomNetTables.GetTableValue("server_data", String(Players.GetLocalPlayer()));
 
-    if (data && data.total_games && data.total_games >= max_games)
+    let lang = $.Localize("#lang")
+
+    if ((data && data.total_games && data.total_games >= max_games) || lang == "rus")
     {
        shop_button.style.opacity = "1";
     }else 
@@ -2067,6 +3844,7 @@ function init()
             }
             InitShopItemsForHero(ItemsList)
             UpdateOnlyCouriers()
+            InitItems()
         });  
     }
 
@@ -2169,13 +3947,17 @@ function change_show_level_lua(kv)
 }
 
 
-
-
-function show_new_shop_heroes(kv)
+function shop_new_promo(kv)
 {
 
-
     let data = CustomNetTables.GetTableValue("server_data", String(Players.GetLocalPlayer()));
+
+    let lang = $.Localize("#lang")
+
+    if (lang != "rus")
+    {
+        return
+    }
 
     if (data && data.total_games && data.total_games >= max_games)
     {
@@ -2184,7 +3966,103 @@ function show_new_shop_heroes(kv)
        return
     }
 
+    let main = $.GetContextPanel().FindChildTraverse("new_promo_alert")
 
+    let icon = $.GetContextPanel().FindChildTraverse("new_promo_alert_icon")
+    let body = $.GetContextPanel().FindChildTraverse("new_promo_alert_body")
+    let arrow = $.GetContextPanel().FindChildTraverse("new_promo_alert_arrow")
+
+    let text_top = $.GetContextPanel().FindChildTraverse("new_promo_alert_top_text")
+    let text_bot = $.GetContextPanel().FindChildTraverse("new_promo_alert_bot_text")
+
+    if (icon)
+    {
+        icon.style.opacity = 1
+    }
+
+    body.AddClass("new_promo_alert_body_blue")
+    arrow.AddClass("new_promo_alert_arrow_blue")
+
+    text_top.text = $.Localize("#new_promo_alert")
+    text_bot.text = $.Localize("#new_promo_alert_reward")
+
+    main.RemoveClass("new_promo_alert_hidden")
+    main.AddClass("new_promo_alert")
+
+    $.Schedule(12, function ()
+    {
+        main.AddClass("new_promo_alert_hidden")
+        main.RemoveClass("new_promo_alert")
+
+    })
+}
+
+
+
+function shop_global_sale(kv)
+{
+
+    let data = CustomNetTables.GetTableValue("server_data", String(Players.GetLocalPlayer()));
+
+    let lang = $.Localize("#lang")
+
+    if ((data && data.total_games && data.total_games >= max_games) || lang == "rus")
+    {
+    }else 
+    {
+       return
+    }
+
+    let main = $.GetContextPanel().FindChildTraverse("new_promo_alert")
+    let icon = $.GetContextPanel().FindChildTraverse("new_promo_alert_icon")
+    let body = $.GetContextPanel().FindChildTraverse("new_promo_alert_body")
+    let arrow = $.GetContextPanel().FindChildTraverse("new_promo_alert_arrow")
+
+    let text_top = $.GetContextPanel().FindChildTraverse("new_promo_alert_top_text")
+    let text_bot = $.GetContextPanel().FindChildTraverse("new_promo_alert_bot_text")
+
+    active_sale_global = 1
+
+    if (icon)
+    {
+        icon.style.opacity = 0
+    }
+
+    body.AddClass("new_promo_alert_body_orange")
+    arrow.AddClass("new_promo_alert_arrow_orange")
+
+    text_top.text = $.Localize("#global_sale_top")
+    text_bot.text = $.Localize("#global_sale_bot")
+
+    main.RemoveClass("new_promo_alert_hidden")
+    main.AddClass("new_promo_alert")
+
+    $.Schedule(12, function ()
+    {
+        main.AddClass("new_promo_alert_hidden")
+        main.RemoveClass("new_promo_alert")
+
+    })
+}
+
+
+
+
+
+function show_new_shop_heroes(kv)
+{
+
+
+    let data = CustomNetTables.GetTableValue("server_data", String(Players.GetLocalPlayer()));
+
+    let lang = $.Localize("#lang")
+
+    if ((data && data.total_games && data.total_games >= max_games) || lang == "rus")
+    {
+    }else 
+    {
+       return
+    }
 
     let main = $.GetContextPanel().FindChildTraverse("active_vote_show")
 
@@ -2231,11 +4109,24 @@ function show_new_shop_heroes(kv)
 
 function show_active_vote()
 {
+
+    let data = CustomNetTables.GetTableValue("server_data", String(Players.GetLocalPlayer()));
+
+    $.Msg('vote!')
+
+    let lang = $.Localize("#lang")
+
+    if ((data && data.total_games && data.total_games >= max_games) || lang == "rus")
+    {
+    }else 
+    {
+       return
+    }
+
 	let main = $.GetContextPanel().FindChildTraverse("active_vote_show")
 
 	main.RemoveClass("active_vote_show_hidden")
 	main.AddClass("active_vote_show")
-
 
 	var heroes_to_vote = CustomNetTables.GetTableValue("sub_data", "heroes_vote").vote_table;
 
@@ -2286,9 +4177,12 @@ GameUI.CustomUIConfig().OpenShop = function Shop_window_show()
 		var button_sub = $.GetContextPanel().FindChildTraverse("ButtonBuySubscribe")
 
 
-		let data = CustomNetTables.GetTableValue("server_data", String(Players.GetLocalPlayer()));
 
-		if (data && data.total_games && data.total_games >= max_games)
+        let data = CustomNetTables.GetTableValue("server_data", String(Players.GetLocalPlayer()));
+
+        let lang = $.Localize("#lang")
+
+        if ((data && data.total_games && data.total_games >= max_games) || lang == "rus")
 		{
 			button_shard.RemoveClass("BuyCurrencyButton_not")
 			button_shard.AddClass("BuyCurrencyButton")
@@ -2548,17 +4442,44 @@ function init_shop()
 function InitSale()
 {
 
-    if (active_sale == 0)
-    {
 
-        let panel = $.GetContextPanel().FindChildTraverse("active_sale_panel")
-        if (panel)
-        {
-            panel.DeleteAsync(0)
-        }
+    let last_panel = $.GetContextPanel().FindChildTraverse("active_sale_panel")
+    if (last_panel)
+    {
+        last_panel.DeleteAsync(0)
+    }
+
+    if (active_sale == 0 && active_sale_global == 0)
+    {
        return
     }
     let main = $.GetContextPanel().FindChildTraverse('shop_window_header_shop')
+
+
+    if (active_sale_global == 1)
+    {
+        let panel = $.CreatePanel("Panel", main, "active_sale_panel");
+        panel.AddClass("active_sale_global_panel")
+
+        let top = $.CreatePanel("Panel", panel, "");
+        top.AddClass("active_sale_top")
+
+        let bot = $.CreatePanel("Panel", panel, "");
+        bot.AddClass("active_sale_bot")
+
+
+        let text = $.CreatePanel("Label", top, "");
+        text.AddClass("active_sale_text")
+        text.html = true
+        text.text = $.Localize("#global_sale_shop")
+
+
+        let text_bot = $.CreatePanel("Label", bot, "");
+        text_bot.AddClass("active_sale_text_bot")
+        text_bot.html = true
+        text_bot.text = $.Localize("#global_sale_shop_bot")
+        return
+    }
 
     let panel = $.CreatePanel("Panel", main, "active_sale_panel");
     panel.AddClass("active_sale_panel")
@@ -2723,13 +4644,22 @@ function CreateHeroPanel(panel, hero_name, stat) {
 
 	if (player_data_local["heroes_data"][hero_name]['has_level'] == 1)
 	{
-		HeroLevelLabel.text = player_data_local["heroes_data"][hero_name]["level"]
-		BlockHero.AddClass("BlockHero_" + String(player_data_local["heroes_data"][hero_name]["tier"]))
+        let level = Number(player_data_local["heroes_data"][hero_name]["level"])
+        let tier = Number(player_data_local["heroes_data"][hero_name]["tier"])
+		HeroLevelLabel.text = level
 
+        if (level < 10)
+        {
+            HeroLevelLabel.AddClass("HeroLevelLabel_1")
+        }
+
+		BlockHero.AddClass("BlockHero_" + String(tier))
+        LevelPanel.AddClass("LevelPanel_" + String(tier))
+        HeroImage.AddClass("HeroImage_" + String(tier))
 
 	}else 
 	{
-
+        LevelPanel.style.opacity = 0
 		HeroLevelLabel.text = 0
 	}
 
@@ -3069,6 +4999,14 @@ function InitSounds()
 {
 	$("#ButtonLabelDefault").text = $.Localize("#chat_wheel_general") + GetGameKeybind(DOTAKeybindCommand_t.DOTA_KEYBIND_CHAT_WHEEL)
 	$("#ButtonLabelHero").text = $.Localize("#chat_wheel_hero") + GetGameKeybind(DOTAKeybindCommand_t.DOTA_KEYBIND_HERO_CHAT_WHEEL)
+    $("#SoundWheelSettingsButton").SetPanelEvent('onmouseover', function() 
+    {
+        $.DispatchEvent('DOTAShowTextTooltip', $("#SoundWheelSettingsButton"), "#chatwheel_settings_info") 
+    });
+    $("#SoundWheelSettingsButton").SetPanelEvent('onmouseout', function() 
+    {
+        $.DispatchEvent('DOTAHideTextTooltip', $("#SoundWheelSettingsButton"));
+    });
 
 	let sounds_panel_rus = $.GetContextPanel().FindChildTraverse("ChatWheelSoundsList1")
 	let sounds_panel_eng = $.GetContextPanel().FindChildTraverse("ChatWheelSoundsList2")
@@ -3507,7 +5445,7 @@ GameUI.CustomUIConfig().OpenShopPlus = function select_shop_button(panel, button
 		$("#ChooseCategory").style.visibility = "visible"
 		$("#CategoryPets").style.visibility = "collapse"
 		$("#CategoryItems").style.visibility = "collapse"
-
+        $("#CategoryCosmetics").style.visibility = "collapse"
 	}
 
 	//if (panel == "shop_window_5")
@@ -5316,6 +7254,7 @@ function OpenItemsContent(panel)
     $("#ChooseCategory").style.visibility = "collapse"
     $("#CategoryPets").style.visibility = "collapse"
     $("#CategoryItems").style.visibility = "collapse"
+    $("#CategoryCosmetics").style.visibility = "collapse"
     $("#ItemsList").style.visibility = "collapse"
     $("#HeroListItems").style.visibility = "visible"
     $.GetContextPanel().FindChildTraverse(panel).style.visibility = "visible"
@@ -5337,9 +7276,6 @@ function OpenInventoryContent(panel)
 
 function InitItems()
 {
-	
-
-
 	let items_panel = $.GetContextPanel().FindChildTraverse("HeroListItems")
     if (items_panel)
     {
@@ -5347,12 +7283,28 @@ function InitItems()
         InitHeroesItems()
     }
 
+    let cosmetics_panel = $.GetContextPanel().FindChildTraverse("CategoryCosmeticsContent")
+    if (cosmetics_panel)
+    {
+        cosmetics_panel.RemoveAndDeleteChildren()
+        InitCosmeticsItems(cosmetics_panel)
+    }
 
 	let CategoryPets = $.GetContextPanel().FindChildTraverse("CategoryPets")
 
 	if (CategoryPets)
 	{
+
 		CategoryPets.RemoveAndDeleteChildren()
+
+        let text_panel = $.CreatePanel("Panel", CategoryPets, "");
+        text_panel.AddClass("pets_info_panel");
+
+        let text_panel_text = $.CreatePanel("Label", text_panel, "");
+        text_panel_text.AddClass("pets_info_text");
+        text_panel_text.html = true
+
+        text_panel_text.text = $.Localize("#pets_info_text")
 
 		let pets_info_table = CustomNetTables.GetTableValue("shop_items", "pets")
 
@@ -5372,26 +7324,571 @@ function InitItems()
 
 			for (var i = 0; i < new_table.length; i++)
 			{
-
 				if (HasItemInventory(new_table[i][0]))
 				{
 					CreateItemInShop(CategoryPets, new_table[i])
 				}
-
 			}
 
 			for (var i = 0; i < new_table.length; i++)
 			{
-
 				if (!HasItemInventory(new_table[i][0]))
 				{
 					CreateItemInShop(CategoryPets, new_table[i])
 				}
-
 			}
 		}    
 
 	}
+}
+
+function InitCosmeticsItems(main_panel)
+{
+
+    if (selected_category == "tips")
+    {
+        InitTipsShop(main_panel)
+    }
+    else if (selected_category == "high_five")
+    {
+        InitHighFiveShop(main_panel)
+    }
+}
+
+function InitHighFiveShop(main_panel)
+{
+    let high_five_info_table = CustomNetTables.GetTableValue("shop_items", "high_five")
+    let high_five_js_table = []
+    let high_five_container = CreateCosmeticSlotLine(main_panel, "high_five")
+    var player_data_local = CustomNetTables.GetTableValue("sub_data", Players.GetLocalPlayer());
+
+    for (var item = 1; item <= Object.keys(high_five_info_table).length; item++)
+    {
+        if (high_five_info_table[item][2] != 0)
+        {
+            high_five_js_table[item-1] = []
+            high_five_js_table[item-1].push(high_five_info_table[item][1], high_five_info_table[item][2], high_five_info_table[item][3], high_five_info_table[item][4], high_five_info_table[item][5], high_five_info_table[item][6])   
+        }
+    }
+
+    high_five_js_table.sort(function (a, b) 
+    {
+        return Number(a[3])-Number(b[3])
+    });
+
+    for (var i = 0; i < high_five_js_table.length; i++)
+    {
+        if (high_five_js_table[i])
+        {
+            if (HasItemInventory(high_five_js_table[i][0]))
+            {
+                CreateItemInShopCosmeticsHighFive(high_five_container, high_five_js_table[i], player_data_local)
+            }
+        }
+    }
+
+    for (var i = 0; i < high_five_js_table.length; i++)
+    {
+        if (high_five_js_table[i])
+        {
+            if (!HasItemInventory(high_five_js_table[i][0]))
+            {
+                CreateItemInShopCosmeticsHighFive(high_five_container, high_five_js_table[i], player_data_local)
+            }
+        }
+    }
+}
+
+function InitTipsShop(main_panel)
+{
+    let tips_info_table = CustomNetTables.GetTableValue("shop_items", "tips")
+    let tips_js_table = []
+    let tips_container = CreateCosmeticSlotLine(main_panel, "tips")
+    let player_tips_data = GetPlayerTips()
+    for (var item = 1; item <= Object.keys(tips_info_table).length; item++)
+    {
+        if (tips_info_table[item][2] != 0)
+        {
+            tips_js_table[item-1] = []
+            tips_js_table[item-1].push(tips_info_table[item][1], tips_info_table[item][2], tips_info_table[item][3], tips_info_table[item][4], tips_info_table[item][5], tips_info_table[item][6])   
+        }
+    }
+    tips_js_table.sort(function (a, b) 
+    {
+        return Number(a[3])-Number(b[3])
+    });
+    for (var i = 0; i < tips_js_table.length; i++)
+    {
+        if (tips_js_table[i])
+        {
+            if (HasItemInventory(tips_js_table[i][0]))
+            {
+                CreateItemInShopCosmeticsTips(tips_container, tips_js_table[i], player_tips_data)
+            }
+        }
+    }
+    for (var i = 0; i < tips_js_table.length; i++)
+    {
+        if (tips_js_table[i])
+        {
+            if (!HasItemInventory(tips_js_table[i][0]))
+            {
+                CreateItemInShopCosmeticsTips(tips_container, tips_js_table[i], player_tips_data)
+            }
+        }
+    }
+}
+function CreateItemInShopCosmeticsHighFive(panel, info, player_data_sub) 
+{
+ 	var BlockItem = $.CreatePanel("Panel", panel, "item_id_" + info[0]);
+	BlockItem.AddClass("BlockItemChat");
+	var BlockItemImage = $.CreatePanel("Panel", BlockItem, "BlockItemImage");
+	BlockItemImage.AddClass("BlockItemImageChat_high_five");
+	var BlockItemLabel = $.CreatePanel("Label", BlockItem, "");
+	BlockItemLabel.AddClass("BlockItemLabelChat");
+	var BlockItemBuyButton = $.CreatePanel("Panel", BlockItem, "button");
+	BlockItemBuyButton.AddClass("BlockItemBuyButtonChat");
+	var BlockItemBuyButtonCenter = $.CreatePanel("Panel", BlockItemBuyButton, "");
+	BlockItemBuyButtonCenter.AddClass("BlockItemBuyButtonCenter");
+	var BlockItemBuyButtonLabel = $.CreatePanel("Label", BlockItemBuyButtonCenter, "");
+	BlockItemBuyButtonLabel.AddClass("BlockItemBuyButtonLabelChat");
+	BlockItemBuyButtonLabel.text = $.Localize("#shop_buy")
+	BlockItemBuyButtonLabel.style.marginRight = "8px"
+	var shardcost_icon = $.CreatePanel("Panel", BlockItemBuyButtonCenter, "");
+	shardcost_icon.AddClass("shardcost_icon");
+	var BlockItemBuyButtonLabel = $.CreatePanel("Label", BlockItemBuyButtonCenter, "");
+	BlockItemBuyButtonLabel.AddClass("BlockItemBuyButtonLabel");
+	BlockItemBuyButtonLabel.text = info[3]
+	var player_data_local = player_table_shop
+
+	if (info)
+	{
+
+        BlockItem.SetPanelEvent('onmouseover', function() 
+        {
+            var BlockHoverPanel = $.CreatePanel("Panel", $.GetContextPanel().FindChildTraverse("CategoryCosmeticsVideo"), "BlockHoverPanel");
+            BlockHoverPanel.AddClass("BlockHoverPanel");
+            BlockHoverPanel.hittest = false;
+            var width = 300
+            var height = 185;
+            BlockHoverPanel.style.width = String(width) + 'px';
+            BlockHoverPanel.style.height = String(height) + 'px';
+            var x = BlockItem.actualxoffset + BlockItem.actuallayoutwidth + 20
+            var y = BlockItem.actualyoffset + BlockItem.actuallayoutheight/2 + 30
+
+            if ((x + width) > BlockItem.GetParent().actuallayoutwidth)
+            {
+                x = BlockItem.actualxoffset - width*BlockItem.actualuiscale_x - 20
+                BlockHoverPanel.AddClass("BlockHoverPanelLeft")
+            }else 
+            {
+                BlockHoverPanel.AddClass("BlockHoverPanelRight")
+            }
+
+            BlockHoverPanel.SetPositionInPixels(x/BlockItem.actualuiscale_x , y/BlockItem.actualuiscale_y, 0)
+
+            if ((info[1] == 10 || info[1] == '10') && !HasItemInventory(info[0]))
+            {
+                Game.EmitSound("HighFive.Midas_cast")
+            }
+
+            var video = $.CreatePanel("MoviePanel", BlockHoverPanel, 'video', 
+            {
+                style: "",
+                src: "file://{resources}/"+ info[5],
+                repeat: "true",
+                hittest: "false",
+                autoplay: "onload"
+            });
+            video.AddClass("BlockHoverPanelVideo")
+        });
+
+        BlockItem.SetPanelEvent('onmouseout', function() 
+        {
+            let BlockHoverPanel = $.GetContextPanel().FindChildTraverse("BlockHoverPanel")
+
+            if (BlockHoverPanel)
+                BlockHoverPanel.DeleteAsync(0)
+        });
+
+		if (HasItemInventory(info[0]))
+		{
+			BlockItemBuyButton.style.visibility = "collapse"
+			BlockItem.AddClass("BlockItem_purchased")
+			var BlockItemActivateButton = $.CreatePanel("Panel", BlockItem, "button_activate");
+			BlockItemActivateButton.AddClass("BlockItemBuyButtonChat");
+			var BlockItemActivateButtonLabel = $.CreatePanel("Label", BlockItemActivateButton, "BlockItemActivateButtonLabel");
+			BlockItemActivateButtonLabel.AddClass("BlockItemBuyButtonLabel");
+            let check_active = false
+            if (GetCurrentHighFive(info[1], player_data_sub))
+            {
+                check_active = true
+            }
+            if (check_active)
+            {
+                BlockItemActivateButtonLabel.text = $.Localize("#shop_unequip")
+                SetHighFiveUpdate(BlockItem, info[1], true)
+                BlockItemActivateButton.AddClass("BlockItemBuyButton_unequip")
+                BlockItemActivateButton.RemoveClass("BlockItemBuyButton_equip")
+            }
+            else
+            {
+                BlockItemActivateButtonLabel.text = $.Localize("#shop_equip")
+                SetHighFiveUpdate(BlockItem, info[1])
+                BlockItemActivateButton.RemoveClass("BlockItemBuyButton_unequip")
+                BlockItemActivateButton.AddClass("BlockItemBuyButton_equip")
+            }
+		} 
+		else 
+		{
+			if (player_data_local && player_data_local["points"] >= info[3])
+			{
+				BlockItemBuyButton.RemoveClass("BlockItemBuyButton_nomoney")
+				BlockItemBuyButton.AddClass("BlockItemBuyButton_money")
+				BlockItemBuyButtonLabel.RemoveClass("BlockItemBuyButtonLabel_nomoney")
+				BlockItemBuyButtonLabel.AddClass("BlockItemBuyButtonLabel")
+				BlockItem.AddClass("BlockItem_money")
+				BlockItem.RemoveClass("BlockItem_nomoney")
+				BlockItem.SetPanelEvent("onactivate", function() 
+				{ 
+					CreateBuyWindow(info[0], info[3], info[2], 0, null, null, null, info[1])
+				})
+			} 
+			else 
+			{
+				BlockItem.RemoveClass("BlockItem_money")
+				BlockItem.AddClass("BlockItem_nomoney")
+				BlockItemBuyButton.AddClass("BlockItemBuyButton_nomoney")
+				BlockItemBuyButton.RemoveClass("BlockItemBuyButton_money")
+				BlockItemBuyButtonLabel.AddClass("BlockItemBuyButtonLabel_nomoney")
+				BlockItemBuyButtonLabel.RemoveClass("BlockItemBuyButtonLabel")
+			}
+            if (!PLAYER_VIEW_ITEMS_FOR_BUY)
+            {
+                BlockItem.style.visibility = "collapse"
+            }
+		}
+		BlockItemLabel.text = $.Localize("#" + info[2])
+		BlockItemImage.style.backgroundImage = 'url("' + info[4] + '")';
+		BlockItemImage.style.backgroundSize = "100%"
+	}
+}
+
+function GetCurrentHighFive(id, sub_data)
+{
+    if (sub_data && sub_data.selected_high_five == id)
+    {
+        return true
+    }
+    return false
+}
+
+function CreateItemInShopCosmeticsTips(panel, info, player_tips_data) 
+{
+ 	var BlockItem = $.CreatePanel("Panel", panel, "item_id_" + info[0]);
+	BlockItem.AddClass("BlockItemChat");
+	var BlockItemImage = $.CreatePanel("Panel", BlockItem, "BlockItemImage");
+	BlockItemImage.AddClass("BlockItemImageChat");
+	var BlockItemLabel = $.CreatePanel("Label", BlockItem, "");
+	BlockItemLabel.AddClass("BlockItemLabelChat");
+	var BlockItemBuyButton = $.CreatePanel("Panel", BlockItem, "button");
+	BlockItemBuyButton.AddClass("BlockItemBuyButtonChat");
+	var BlockItemBuyButtonCenter = $.CreatePanel("Panel", BlockItemBuyButton, "");
+	BlockItemBuyButtonCenter.AddClass("BlockItemBuyButtonCenter");
+	var BlockItemBuyButtonLabel = $.CreatePanel("Label", BlockItemBuyButtonCenter, "");
+	BlockItemBuyButtonLabel.AddClass("BlockItemBuyButtonLabelChat");
+	BlockItemBuyButtonLabel.text = $.Localize("#shop_buy")
+	BlockItemBuyButtonLabel.style.marginRight = "8px"
+	var shardcost_icon = $.CreatePanel("Panel", BlockItemBuyButtonCenter, "");
+	shardcost_icon.AddClass("shardcost_icon");
+	var BlockItemBuyButtonLabel = $.CreatePanel("Label", BlockItemBuyButtonCenter, "");
+	BlockItemBuyButtonLabel.AddClass("BlockItemBuyButtonLabel");
+	BlockItemBuyButtonLabel.text = info[3]
+	var player_data_local = player_table_shop
+
+	if (info)
+	{
+        BlockItem.SetPanelEvent('onmouseover', function() 
+        {
+
+
+            var BlockHoverPanel = $.CreatePanel("Panel", $.GetContextPanel().FindChildTraverse("CategoryCosmeticsVideo"), "BlockHoverPanel");
+            BlockHoverPanel.AddClass("BlockHoverPanel");
+            BlockHoverPanel.hittest = false;
+
+            var width = 300
+            var height = 185;
+            BlockHoverPanel.style.width = String(width) + 'px';
+            BlockHoverPanel.style.height = String(height) + 'px';
+
+            var x = BlockItem.actualxoffset + BlockItem.actuallayoutwidth + 20
+            var y = BlockItem.actualyoffset + BlockItem.actuallayoutheight/2 + 30
+
+            if ((x + width) > BlockItem.GetParent().actuallayoutwidth)
+            {
+                x = BlockItem.actualxoffset - width*BlockItem.actualuiscale_x - 20
+                BlockHoverPanel.AddClass("BlockHoverPanelLeft")
+            }else 
+            {
+                BlockHoverPanel.AddClass("BlockHoverPanelRight")
+            }
+
+            BlockHoverPanel.SetPositionInPixels(x/BlockItem.actualuiscale_x , y/BlockItem.actualuiscale_y, 0)
+
+            var video = $.CreatePanel("MoviePanel", BlockHoverPanel, 'video', 
+            {
+                style: "",
+                src: "file://{resources}/"+ info[5],
+                repeat: "true",
+                hittest: "false",
+                autoplay: "onload"
+            });
+            video.AddClass("BlockHoverPanelVideo")
+        });
+
+        BlockItem.SetPanelEvent('onmouseout', function() 
+        {
+            let BlockHoverPanel = $.GetContextPanel().FindChildTraverse("BlockHoverPanel")
+
+            if (BlockHoverPanel)
+                BlockHoverPanel.DeleteAsync(0)
+        });
+
+		if (HasItemInventory(info[0]))
+		{
+			BlockItemBuyButton.style.visibility = "collapse"
+			BlockItem.AddClass("BlockItem_purchased")
+			var BlockItemActivateButton = $.CreatePanel("Panel", BlockItem, "button_activate");
+			BlockItemActivateButton.AddClass("BlockItemBuyButtonChat");
+			var BlockItemActivateButtonLabel = $.CreatePanel("Label", BlockItemActivateButton, "BlockItemActivateButtonLabel");
+			BlockItemActivateButtonLabel.AddClass("BlockItemBuyButtonLabel");
+            let check_active = false
+            if (player_tips_data != null)
+            {
+                if (GetPlayerTips(info[1]))
+                {
+                    check_active = true
+                }
+            }
+            if (check_active)
+            {
+                BlockItemActivateButtonLabel.text = $.Localize("#shop_unequip")
+                SetTipUpdate(BlockItem, info[1], true)
+                BlockItemActivateButton.AddClass("BlockItemBuyButton_unequip")
+                BlockItemActivateButton.RemoveClass("BlockItemBuyButton_equip")
+            }
+            else
+            {
+                BlockItemActivateButtonLabel.text = $.Localize("#shop_equip")
+                SetTipUpdate(BlockItem, info[1])
+                BlockItemActivateButton.RemoveClass("BlockItemBuyButton_unequip")
+                BlockItemActivateButton.AddClass("BlockItemBuyButton_equip")
+            }
+		} 
+		else 
+		{
+			if (player_data_local && player_data_local["points"] >= info[3])
+			{
+				BlockItemBuyButton.RemoveClass("BlockItemBuyButton_nomoney")
+				BlockItemBuyButton.AddClass("BlockItemBuyButton_money")
+				BlockItemBuyButtonLabel.RemoveClass("BlockItemBuyButtonLabel_nomoney")
+				BlockItemBuyButtonLabel.AddClass("BlockItemBuyButtonLabel")
+				BlockItem.AddClass("BlockItem_money")
+				BlockItem.RemoveClass("BlockItem_nomoney")
+				BlockItem.SetPanelEvent("onactivate", function() 
+				{ 
+					CreateBuyWindow(info[0], info[3], info[2], 0, null, null, null, info[1])
+				})
+			} 
+			else 
+			{
+				BlockItem.RemoveClass("BlockItem_money")
+				BlockItem.AddClass("BlockItem_nomoney")
+				BlockItemBuyButton.AddClass("BlockItemBuyButton_nomoney")
+				BlockItemBuyButton.RemoveClass("BlockItemBuyButton_money")
+				BlockItemBuyButtonLabel.AddClass("BlockItemBuyButtonLabel_nomoney")
+				BlockItemBuyButtonLabel.RemoveClass("BlockItemBuyButtonLabel")
+			}
+            if (!PLAYER_VIEW_ITEMS_FOR_BUY)
+            {
+                BlockItem.style.visibility = "collapse"
+            }
+		}
+		BlockItemLabel.text = $.Localize("#" + info[2])
+		BlockItemImage.style.backgroundImage = 'url("' + info[4] + '")';
+		BlockItemImage.style.backgroundSize = "100%"
+	}
+}
+
+function GetPlayerTips(item_id)
+{
+    let player_table = player_table_shop
+	if (player_table && player_table.player_tips)
+	{
+		for (var d = 1; d <= Object.keys(player_table.player_tips).length; d++) 
+		{
+			if (player_table.player_tips[d])
+			{
+				if (String(player_table.player_tips[d]) == String(item_id))
+				{
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+function SetTipUpdate(panel, tip_id, fdelete)
+{
+    panel.SetPanelEvent("onactivate", function() 
+    { 
+        if (fdelete == null)
+        {
+            Game.EmitSound("UI.Shop_Buy_equip")
+            GameEvents.SendCustomGameEventToServer_custom( "update_tip_list", {tip_id: tip_id, delete : false} );
+        }
+        else
+        {
+            Game.EmitSound("UI.Shop_Buy_unequip")
+            GameEvents.SendCustomGameEventToServer_custom( "update_tip_list", {tip_id: tip_id, delete : true} );
+        }
+        $.Schedule( 0.35, function()
+        {
+            InitItems()
+        })
+    }); 
+}
+
+function SetHighFiveUpdate(panel, high_five, fdelete)
+{
+    panel.SetPanelEvent("onactivate", function() 
+    { 
+        if (fdelete == null)
+        {
+            Game.EmitSound("UI.Shop_Buy_equip")
+            GameEvents.SendCustomGameEventToServer_custom( "select_current_high_five", {high_five_id: high_five} );
+        }
+        else
+        {
+            Game.EmitSound("UI.Shop_Buy_unequip")
+            GameEvents.SendCustomGameEventToServer_custom( "select_current_high_five", {high_five_id: 0} );
+        }
+        $.Schedule( 0.35, function()
+        {
+            InitItems()
+        })
+    }); 
+}
+
+function CreateCosmeticSlotLine(panel, name)
+{
+    let panels_category_swap = $.CreatePanel("Panel", panel, "");
+    panels_category_swap.AddClass("panels_category_swap");
+
+    let panels_category_swap_buttons = $.CreatePanel("Panel", panels_category_swap, "");
+    panels_category_swap_buttons.AddClass("panels_category_swap_buttons");
+
+    if (name == "tips")
+    {   
+        let keybind_panel = $.CreatePanel("Panel", panel, "");
+        keybind_panel.AddClass("keybind_panel");
+
+        let keybind_tip_name = $.CreatePanel("Label", keybind_panel, "");
+        keybind_tip_name.AddClass("keybind_name");
+        keybind_tip_name.html = true
+        keybind_tip_name.text = $.Localize("#button_second_wheel") + " <b><font color='#f1b257'>" + GetGameKeybind(DOTAKeybindCommand_t.DOTA_KEYBIND_CHAT_WHEEL2) + "</font></b>"
+
+        let keybind_tip_name_info = $.CreatePanel("Label", keybind_panel, "");
+        keybind_tip_name_info.AddClass("keybind_name_info");
+        keybind_tip_name_info.html = true
+        keybind_tip_name_info.text = $.Localize("#button_second_wheel_info") 
+    }
+
+
+    if (name == "high_five")
+    {   
+        let keybind_panel = $.CreatePanel("Panel", panel, "");
+        keybind_panel.AddClass("keybind_panel");
+
+        let keybind_tip_name = $.CreatePanel("Label", keybind_panel, "");
+        keybind_tip_name.AddClass("keybind_name");
+        keybind_tip_name.html = true
+        keybind_tip_name.text = $.Localize("#button_high_five") + " <b><font color='#f1b257'>" + GetGameKeybind(DOTAKeybindCommand_t.DOTA_KEYBIND_CONTROL_GROUP4) + "</font></b>"
+
+        let keybind_tip_name_info = $.CreatePanel("Label", keybind_panel, "");
+        keybind_tip_name_info.AddClass("keybind_name_info");
+        keybind_tip_name_info.html = true
+        keybind_tip_name_info.text = $.Localize("#button_high_five_info") 
+    }
+
+
+    let slot_panel = $.CreatePanel("Panel", panel, "");
+    slot_panel.AddClass("slot_panel");
+
+    let active_buttons_category_tips = $.CreatePanel("Panel", panels_category_swap_buttons, "");
+    active_buttons_category_tips.AddClass("active_buttons_category");
+    active_buttons_category_tips.AddClass("active_buttons_category_first");
+
+    let active_buttons_category_tips_icon = $.CreatePanel("Panel", active_buttons_category_tips, "");
+    active_buttons_category_tips_icon.AddClass("active_buttons_category_icon");
+    active_buttons_category_tips_icon.AddClass("active_buttons_category_tip_icon");
+
+    let active_buttons_category_tips_label = $.CreatePanel("Label", active_buttons_category_tips, "");
+    active_buttons_category_tips_label.AddClass("active_buttons_category_label")
+    active_buttons_category_tips_label.html = true
+    active_buttons_category_tips_label.text = $.Localize("#tips")
+
+    let active_buttons_category_five = $.CreatePanel("Panel", panels_category_swap_buttons, "");
+    active_buttons_category_five.AddClass("active_buttons_category");
+    active_buttons_category_five.AddClass("active_buttons_category_not_first");
+
+    let active_buttons_category_five_icon = $.CreatePanel("Panel", active_buttons_category_five, "");
+    active_buttons_category_five_icon.AddClass("active_buttons_category_icon");
+    active_buttons_category_five_icon.AddClass("active_buttons_category_high_five_icon");
+
+    let active_buttons_category_five_label = $.CreatePanel("Label", active_buttons_category_five, "");
+    active_buttons_category_five_label.AddClass("active_buttons_category_label")
+    active_buttons_category_five_label.html = true
+    active_buttons_category_five_label.text = $.Localize("#high_five")
+
+    active_buttons_category_tips.SetPanelEvent("onactivate", function() 
+    { 
+        Game.EmitSound("UI.Click")
+        let cosmetics_panel = $.GetContextPanel().FindChildTraverse("CategoryCosmeticsContent")
+        if (cosmetics_panel)
+        {
+            selected_category = "tips"
+            cosmetics_panel.RemoveAndDeleteChildren()
+            InitTipsShop(cosmetics_panel)
+        }
+    })
+    active_buttons_category_five.SetPanelEvent("onactivate", function() 
+    { 
+        Game.EmitSound("UI.Click")
+        let cosmetics_panel = $.GetContextPanel().FindChildTraverse("CategoryCosmeticsContent")
+        if (cosmetics_panel)
+        {
+            selected_category = "high_five"
+            cosmetics_panel.RemoveAndDeleteChildren()
+            InitHighFiveShop(cosmetics_panel)
+        }
+    })
+    if (name == "tips")
+    {
+        active_buttons_category_tips.AddClass("active_buttons_category_current");
+        active_buttons_category_tips_label.AddClass("active_buttons_category_label_current");
+        active_buttons_category_tips_icon.AddClass("active_buttons_category_icon_current_tip");
+    }
+    else if (name == "high_five")
+    {
+        active_buttons_category_five.AddClass("active_buttons_category_current");
+        active_buttons_category_five_label.AddClass("active_buttons_category_label_current");
+        active_buttons_category_five_icon.AddClass("active_buttons_category_icon_current_high_five");
+    }
+    let main_parent = $.CreatePanel("Panel", slot_panel, "panel_"+name);
+    main_parent.AddClass("SlotType");
+    return main_parent
 }
 
 function InitInventory()
@@ -5560,32 +8057,37 @@ function CreateItemInShop(panel, info)
 		} 
 		else 
 		{
-			if (player_data_local && player_data_local["points"] >= info[3])
+			if (player_data_local)
 			{
-				BlockItemBuyButton.RemoveClass("BlockItemBuyButton_nomoney")
-				BlockItemBuyButton.AddClass("BlockItemBuyButton_money")
-				
-				BlockItemBuyButtonLabel.RemoveClass("BlockItemBuyButtonLabel_nomoney")
-				BlockItemBuyButtonLabel.AddClass("BlockItemBuyButtonLabel")
+                if (player_data_local["points"] >= info[3])
+                {
+    				BlockItemBuyButton.RemoveClass("BlockItemBuyButton_nomoney")
+    				BlockItemBuyButton.AddClass("BlockItemBuyButton_money")
+    				
+    				BlockItemBuyButtonLabel.RemoveClass("BlockItemBuyButtonLabel_nomoney")
+    				BlockItemBuyButtonLabel.AddClass("BlockItemBuyButtonLabel")
 
-				BlockItem.AddClass("BlockItem_money")
-				BlockItem.RemoveClass("BlockItem_nomoney")
+				    BlockItem.AddClass("BlockItem_money")
+				    BlockItem.RemoveClass("BlockItem_nomoney")
+                }else
+                {
+                    BlockItem.RemoveClass("BlockItem_money")
+                    BlockItem.AddClass("BlockItem_nomoney")
 
+                    BlockItemBuyButton.AddClass("BlockItemBuyButton_nomoney")
+                    BlockItemBuyButton.RemoveClass("BlockItemBuyButton_money")
+
+                    BlockItemBuyButtonLabel.AddClass("BlockItemBuyButtonLabel_nomoney")
+                    BlockItemBuyButtonLabel.RemoveClass("BlockItemBuyButtonLabel") 
+                }
 				BlockItem.SetPanelEvent("onactivate", function() 
 				{ 
-					CreateBuyWindow(info[0], info[3], info[2], 0)
+					CreateBuyWindow(info[0], info[3], info[2], 0, null, (player_data_local["points"] < info[3]), null, null, 1)
 				})
 			} 
 			else 
 			{
-				BlockItem.RemoveClass("BlockItem_money")
-				BlockItem.AddClass("BlockItem_nomoney")
 
-				BlockItemBuyButton.AddClass("BlockItemBuyButton_nomoney")
-				BlockItemBuyButton.RemoveClass("BlockItemBuyButton_money")
-
-				BlockItemBuyButtonLabel.AddClass("BlockItemBuyButtonLabel_nomoney")
-				BlockItemBuyButtonLabel.RemoveClass("BlockItemBuyButtonLabel")
 			}
             if (!PLAYER_VIEW_ITEMS_FOR_BUY)
             {
@@ -5715,8 +8217,9 @@ function UpdateEquiupPet(id)
 }
 
 
-function CreateBuyWindow(id, cost, name, sound, hero, no_money, styles)
+function CreateBuyWindow(id, cost, name, sound, hero, no_money, styles, fast_active_tip, pet_video)
 {
+
     let main = $.GetContextPanel().FindChildTraverse("window_shop")
 
     Game.EmitSound("UI.Shop_Buy_start")
@@ -5777,6 +8280,22 @@ function CreateBuyWindow(id, cost, name, sound, hero, no_money, styles)
 //  label_button_2.AddClass("label_button_buy")
 //  label_button_2.text = $.Localize("#close")
 
+    if (pet_video != null)
+    {
+        buy_panel.AddClass("buy_panel_pet_video")
+
+        var video = $.CreatePanel("MoviePanel", buy_panel, 'video', 
+        {
+            style: "",
+            src: "file://{resources}/videos/custom_game/shop/pets/" + name + ".webm",
+            repeat: "true",
+            hittest: "false",
+            autoplay: "onload"
+        });
+        video.AddClass("PanelVideoPet")
+    }
+
+
 
     if (id != -1 && ITEM_CHANGED_INFORMATION[id] != null)
     {
@@ -5812,10 +8331,12 @@ function CreateBuyWindow(id, cost, name, sound, hero, no_money, styles)
                 ButtonItemStyleBuyPanel.AddClass("ButtonItemStyleBuyPanel");
                 ButtonItemStyleBuyPanel.style.backgroundColor = styles[i][2]
                 var ButtonItemStyleBuyPanelActiveIcon = $.CreatePanel("Panel", ButtonItemStyleBuyPanel, "");
-                ButtonItemStyleBuyPanelActiveIcon.AddClass("ButtonItemStyleBuyPanelActiveIcon");
+              //  ButtonItemStyleBuyPanelActiveIcon.AddClass("ButtonItemStyleBuyPanelActiveIcon");
+
                 if (i == 1)
                 {
                     ButtonItemStyleBuyPanel.SetHasClass("ButtonItemStyle_active", true)
+                    ButtonItemStyleBuyPanel.SetHasClass("ButtonItemStyleBuyPanel_active", true)
                 }
                 ChangeScenePreviewItem(buy_panel, ButtonItemStyleBuyPanel, ITEM_CHANGED_INFORMATION[styles[i][1]], scene_panel_visual)
             }
@@ -5899,7 +8420,7 @@ function CreateBuyWindow(id, cost, name, sound, hero, no_money, styles)
     }
 
 
-    if (no_money == null)
+    if (no_money == null || no_money == false)
     {
         button_buy_buy.SetPanelEvent("onactivate", function() 
         { 
@@ -5924,6 +8445,11 @@ function CreateBuyWindow(id, cost, name, sound, hero, no_money, styles)
             else
             {
                 GameEvents.SendCustomGameEventToServer_custom( "shop_buy_item_player", { item_id : id, votes : votes} );
+            }
+
+            if (fast_active_tip != null)
+            {
+                GameEvents.SendCustomGameEventToServer_custom( "update_tip_list", {tip_id: fast_active_tip, delete : false} );
             }
             
             buy_panel.RemoveClass("buy_panel")
@@ -6014,15 +8540,16 @@ function CreatePlusWindow()
 	let data = CustomNetTables.GetTableValue("server_data", String(Players.GetLocalPlayer()));
 
 
-	if (data == undefined || data.total_games == undefined) 
-	{
-		return
-	}
+    let lang = $.Localize("#lang")
 
-	if (data.total_games < max_games)
-	{
-		return
-	}
+    if ((data && data.total_games && data.total_games >= max_games) || lang == "rus")
+    {
+
+    }else 
+    {
+        return
+    }
+
 
 	let main = $.GetContextPanel().FindChildTraverse("window_shop")
 
@@ -6295,18 +8822,18 @@ function CreatePlusWindow()
 function OpenBuyCurrency()
 {
 
-	let data = CustomNetTables.GetTableValue("server_data", String(Players.GetLocalPlayer()));
 
+    let data = CustomNetTables.GetTableValue("server_data", String(Players.GetLocalPlayer()));
 
-	if (data == undefined || data.total_games == undefined) 
+    let lang = $.Localize("#lang")
+
+    if ((data && data.total_games && data.total_games >= max_games) || lang == "rus")
 	{
-		return
-	}
 
-	if (data.total_games < max_games)
-	{
-		return
-	}
+	}else 
+    {
+        return
+    }
 
 	let main = $.GetContextPanel().FindChildTraverse("window_shop")
 
@@ -6326,8 +8853,6 @@ function OpenBuyCurrency()
 
 	let closebuy = $.CreatePanel("Panel", currency_panel_buying, "")
 	closebuy.AddClass("closebuy")
-
-
 
 	blur_panel.SetPanelEvent("onactivate", function() 
 	{	
@@ -6350,9 +8875,6 @@ function OpenBuyCurrency()
 		}
 	});
 
-
-
-
 	closebuy.SetPanelEvent("onactivate", function() 
 	{	
 		if (currency_panel_buying)
@@ -6373,8 +8895,6 @@ function OpenBuyCurrency()
 			blur_panel.RemoveClass("shop_window_blur")
 		}
 	});
-
-
 
 
 	let label_header = $.CreatePanel("Label", currency_panel_buying, "")
@@ -6437,18 +8957,12 @@ function OpenBuyCurrency()
 	})
 
 
-
-
 	let BuyButtonSiteURLLabel = $.CreatePanel("Label", BuyButtonSiteURL, "")
 	BuyButtonSiteURLLabel.AddClass("BuyButtonSiteURLLabel")
 	BuyButtonSiteURLLabel.text = $.Localize("#shop_buy_shards_1_button")
 
-
-
-
 	let choose_2 = $.CreatePanel("Panel", block_with_choose, "")
 	choose_2.AddClass("choose_block")
-
 
 	let ShardIconCurrencyBuy_2 = $.CreatePanel("Panel", choose_2, "")
 	ShardIconCurrencyBuy_2.AddClass("ShardIconCurrencyBuy")
@@ -6467,8 +8981,6 @@ function OpenBuyCurrency()
 	let ShardNameCurrencyBuy_2 = $.CreatePanel("Label", choose_2, "")
 	ShardNameCurrencyBuy_2.AddClass("ShardNameCurrencyBuy")
 	ShardNameCurrencyBuy_2.text = $.Localize("#shop_buy_shards_2")
-
-
 
 	let BuyButtonSiteURL_2 = $.CreatePanel("Panel", choose_2, "");
 	BuyButtonSiteURL_2.AddClass("BuyButtonSiteURL")
@@ -6491,8 +9003,6 @@ function OpenBuyCurrency()
 	})
 
 
-
-
 	let BuyButtonSiteURLLabel_2 = $.CreatePanel("Label", BuyButtonSiteURL_2, "")
 	BuyButtonSiteURLLabel_2.AddClass("BuyButtonSiteURLLabel")
 	BuyButtonSiteURLLabel_2.text = $.Localize("#shop_buy_shards_2_button")
@@ -6512,9 +9022,6 @@ function OpenBuyCurrency()
 	let ShardIconCurrencyBuy_3_sale_text = $.CreatePanel("Label", ShardIconCurrencyBuy_3_sale, "")
 	ShardIconCurrencyBuy_3_sale_text.AddClass("ShardIconCurrencyBuy_sale_text")
 	ShardIconCurrencyBuy_3_sale_text.text = $.Localize("#shop_buy_shards_3_sale")
-
-
-
 
 	let ShardNameCurrencyBuy_3 = $.CreatePanel("Label", choose_3, "")
 	ShardNameCurrencyBuy_3.AddClass("ShardNameCurrencyBuy")
@@ -6542,17 +9049,9 @@ function OpenBuyCurrency()
 		})
 	})
 
-
-
 	let BuyButtonSiteURLLabel_3 = $.CreatePanel("Label", BuyButtonSiteURL_3, "")
 	BuyButtonSiteURLLabel_3.AddClass("BuyButtonSiteURLLabel")
 	BuyButtonSiteURLLabel_3.text = $.Localize("#shop_buy_shards_3_button")
-
-
-
-
-
-
 
 	let choose_4 = $.CreatePanel("Panel", block_with_choose, "")
 	choose_4.AddClass("choose_block")
@@ -6570,13 +9069,9 @@ function OpenBuyCurrency()
 	ShardIconCurrencyBuy_4_sale_text.AddClass("ShardIconCurrencyBuy_sale_text")
 	ShardIconCurrencyBuy_4_sale_text.text = $.Localize("#shop_buy_shards_4_sale")
 
-
-
-
 	let ShardNameCurrencyBuy_4 = $.CreatePanel("Label", choose_4, "")
 	ShardNameCurrencyBuy_4.AddClass("ShardNameCurrencyBuy")
 	ShardNameCurrencyBuy_4.text = $.Localize("#shop_buy_shards_4")
-
 
 	let BuyButtonSiteURL_4 = $.CreatePanel("Panel", choose_4, "");
 	BuyButtonSiteURL_4.AddClass("BuyButtonSiteURL")
@@ -6599,18 +9094,201 @@ function OpenBuyCurrency()
 		})
 	})
 
-
-
 	let BuyButtonSiteURLLabel_4 = $.CreatePanel("Label", BuyButtonSiteURL_4, "")
 	BuyButtonSiteURLLabel_4.AddClass("BuyButtonSiteURLLabel")
 	BuyButtonSiteURLLabel_4.text = $.Localize("#shop_buy_shards_4_button")
-
 
 }
 
 
 
+function answer_promo_code(data)
+{
+    let result = data.status
+    let ru_text = data.ru
+    let eng_text = data.eng
+    let lang = $.Localize("#lang")
+    let name = data.name
+    let amount = data.amount
 
+    if ((name != "") && (amount != 0))
+    {
+        ru_text = $.Localize("#promo_active_" + name) + String(amount)
+
+        if (name == "dota_plus")
+        {
+            ru_text = ru_text + $.Localize("#promo_active_dota_plus_2")
+        }
+
+        eng_text = ru_text
+    }
+
+
+    let entry = $.GetContextPanel().FindChildTraverse("PromoEntry")
+    let status = $.GetContextPanel().FindChildTraverse("promo_text_status")
+
+    if (status)
+    {
+
+        if (lang == "rus")
+        {
+            status.text = ru_text
+        }else 
+        {
+            status.text = eng_text
+        }
+
+        if (result == 0)
+        {
+            status.AddClass("promo_text_status_yes")
+            Game.EmitSound("UI.Promo_active")
+
+            if (entry)
+            {
+                entry.text = ""
+            }
+        }else 
+        {
+            status.AddClass("promo_text_status_no")
+            Game.EmitSound("UI.Promo_fail")
+        }
+    }
+}
+
+
+
+function OpenPromoWindow()
+{
+    let main = $.GetContextPanel().FindChildTraverse("window_shop")
+
+    Game.EmitSound("UI.Shop_Buy_start")
+
+    let blur_panel = $.GetContextPanel().FindChildTraverse("shop_window_blur")
+    blur_panel.RemoveClass("shop_window_blur_hidden")
+    blur_panel.AddClass("shop_window_blur")
+
+    let currency_panel_buying = $.CreatePanel("Panel", main, "currency_panel_buying")
+    currency_panel_buying.AddClass("promo_panel")
+    currency_panel_buying.hittest = true
+    currency_panel_buying.SetPanelEvent("onactivate", function() {})
+
+    let promo_content = $.CreatePanel("Panel", currency_panel_buying, "")
+    promo_content.AddClass("promo_panel_content")
+
+    let telegram_content = $.CreatePanel("Panel", currency_panel_buying, "")
+    telegram_content.AddClass("telegram_content")
+
+
+    let telegram_icon = $.CreatePanel("Panel", telegram_content, "")
+    telegram_icon.AddClass("telegram_icon")
+
+    let telegram_text = $.CreatePanel("Label", telegram_content, "")
+    telegram_text.AddClass("promo_telegram_text")
+    telegram_text.text = $.Localize("#promo_telegram_text")
+
+    let closebuy = $.CreatePanel("Panel", currency_panel_buying, "")
+    closebuy.AddClass("closebuy")
+  
+    telegram_content.SetPanelEvent("onactivate", function() 
+    {  
+        $.DispatchEvent("ExternalBrowserGoToURL", 'https://t.me/Dota1x6');
+    })
+
+
+    telegram_text.SetPanelEvent("onactivate", function() 
+    {  
+        $.DispatchEvent("ExternalBrowserGoToURL", 'https://t.me/Dota1x6');
+    })
+
+    blur_panel.SetPanelEvent("onactivate", function() 
+    {   
+        if (currency_panel_buying)
+        {
+            
+            currency_panel_buying.RemoveClass("promo_panel")
+            currency_panel_buying.AddClass("promo_panel_hide")
+
+            $.Schedule( 0.35, function()
+            {
+                currency_panel_buying.DeleteAsync(0)
+            })
+
+            Game.EmitSound("UI.Shop_Category_Open")
+
+
+            blur_panel.AddClass("shop_window_blur_hidden")
+            blur_panel.RemoveClass("shop_window_blur")
+        }
+    });
+
+    closebuy.SetPanelEvent("onactivate", function() 
+    {   
+        if (currency_panel_buying)
+        {
+            
+            currency_panel_buying.RemoveClass("promo_panel")
+            currency_panel_buying.AddClass("promo_panel_hide")
+
+            $.Schedule( 0.35, function()
+            {
+                currency_panel_buying.DeleteAsync(0)
+            })
+
+            Game.EmitSound("UI.Shop_Category_Open")
+
+
+            blur_panel.AddClass("shop_window_blur_hidden")
+            blur_panel.RemoveClass("shop_window_blur")
+        }
+    });
+
+
+    let label_header = $.CreatePanel("Label", promo_content, "")
+    label_header.AddClass("promo_panel_header")
+    label_header.text = $.Localize("#promo_button_header")
+
+    let promo_entry_and_button = $.CreatePanel("Panel", promo_content, "");
+    promo_entry_and_button.AddClass("promo_entry_and_button")
+
+    let text_entry = $.CreatePanel(`TextEntry`, promo_entry_and_button, "PromoEntry", {});
+    text_entry.AddClass("promo_text_entry")
+
+
+    let promo_button = $.CreatePanel("Panel", promo_entry_and_button, "");
+    promo_button.AddClass("promo_button")
+
+    let promo_button_text = $.CreatePanel("Label", promo_button, "")
+    promo_button_text.AddClass("promo_button_text")
+    promo_button_text.text = $.Localize("#promo_button_active")
+
+
+    let promo_text_status = $.CreatePanel("Label", promo_content, "promo_text_status")
+    promo_text_status.AddClass("promo_text_status")
+
+    promo_button.SetPanelEvent("onactivate", function() 
+    {   
+        Game.EmitSound("UI.Click")
+        let entry = $.GetContextPanel().FindChildTraverse("PromoEntry")
+        let status = $.GetContextPanel().FindChildTraverse("promo_text_status")
+
+        if (promo_text_status)
+        {
+            status.RemoveClass("promo_text_status_yes")
+            status.RemoveClass("promo_text_status_no")
+            status.text = ""
+        }
+
+
+        if (entry)
+        {   
+            let text = (entry.text).toUpperCase();
+            GameEvents.SendCustomGameEventToServer_custom( "send_promo_code", {text : text});
+        }
+
+
+    });
+
+}
 
 
 
@@ -6642,9 +9320,6 @@ function InitVote()
 		var top_panel_text =  $.CreatePanel("Label", top_panel, "");
 		top_panel_text.AddClass("heroes_vote_list_top_text")
 		top_panel_text.text = $.Localize('#vote_top_end')
-
- 
-
 
 
 		var mid_panel_text =  $.CreatePanel("Label",  $("#shop_window_6"), "");
@@ -6683,7 +9358,7 @@ function InitVote()
 		player_vote_count = sub_data.votes_count
 	}
 
-	let full_vote = 0	
+	let full_vote = 1	
 
 	let heroes_vote_list = $.CreatePanel("Panel", $("#shop_window_6"), "heroes_vote_list");
 	heroes_vote_list.AddClass("heroes_vote_list")
@@ -6695,13 +9370,16 @@ function InitVote()
 
 	for (var i = 1; i <= Object.keys(heroes_to_vote).length; i++) 
 	{
-		full_vote = full_vote + Number(heroes_to_vote[i][2])
+        if (Number(heroes_to_vote[i][2]) >= full_vote)
+        {
+            full_vote = Number(heroes_to_vote[i][2])
+        }
 	}
 
 
 	for (var i = 1; i <= Object.keys(heroes_to_vote).length; i++) 
 	{
-		let percent = Math.round((heroes_to_vote[i][2] / full_vote) * 100)
+		let percent = Math.round((heroes_to_vote[i][2] / full_vote) * 95)
 
 		if (full_vote == 0)
 		{
@@ -6887,8 +9565,6 @@ function InitVote()
 	let number_entry = $.CreatePanel(`NumberEntry`, button_buy_votes_entry, "NumberEntryBuyVotes", {value : 1, min : 1, max : count_max});
 
 	UpdateButVotes(1)
-
-
 
 	if (number_entry)
 	{
@@ -7613,6 +10289,8 @@ function InitShopItemsForHero(panel)
     {
         panel.RemoveAndDeleteChildren()
         let items = CustomNetTables.GetTableValue("heroes_items_info", String(current_shop_hero_choose))
+
+
         if (items)
         {
             if (SETS_PRIORITY[current_shop_hero_choose])
@@ -7713,20 +10391,40 @@ function CreateSlotTypeInfo(panel, name)
         hero_image_sets.style.backgroundImage = 'url("s2r://panorama/images/' + SETS_TEXTURE_FULL_ICON[name] + '.png")';
         hero_image_sets.style.backgroundSize = "100%"
 
+        $.Msg(set_this_info)
 
-        let buy_full_set_button = $.CreatePanel("Panel", sets_texture, "");
-        buy_full_set_button.AddClass("buy_full_set_button");
+        if (name != "pudge_persona")
+        {
+            let buy_full_set_button = $.CreatePanel("Panel", sets_texture, "");
+            buy_full_set_button.AddClass("buy_full_set_button");
 
-        let set_center_button = $.CreatePanel("Panel", buy_full_set_button, "");
-        set_center_button.AddClass("set_center_button");
+            let set_center_button = $.CreatePanel("Panel", buy_full_set_button, "");
+            set_center_button.AddClass("set_center_button");
+            let shardcost_icon_sets = $.CreatePanel("Panel", set_center_button, "");
+            shardcost_icon_sets.AddClass("buy_full_set_icon");
+            let price_info_sets = $.CreatePanel("Label", set_center_button, "");
+            price_info_sets.AddClass("buy_full_set_label");
 
-        let shardcost_icon_sets = $.CreatePanel("Panel", set_center_button, "");
-        shardcost_icon_sets.AddClass("buy_full_set_icon");
-    
-        let price_info_sets = $.CreatePanel("Label", set_center_button, "");
-        price_info_sets.AddClass("buy_full_set_label");
+            if (set_this_info[3] != null && set_this_info[3] != 0 && set_this_info[4] != null && set_this_info[4] != 0)
+            {
+                var buy_full_set_old_panel = $.CreatePanel("Panel", buy_full_set_button, "");
+                buy_full_set_old_panel.AddClass("buy_full_set_old_panel");
 
-        price_info_sets.text = set_this_info[2]
+                let buy_full_set_old_text = $.CreatePanel("Label", buy_full_set_old_panel, "");
+                buy_full_set_old_text.AddClass("buy_full_set_old_text");
+                buy_full_set_old_text.text = set_this_info[2]
+
+                price_info_sets.text = set_this_info[4]
+
+                var buy_full_set_line = $.CreatePanel("Panel", buy_full_set_old_panel, "");
+                buy_full_set_line.AddClass("buy_full_set_line");
+
+                buy_full_set_button.AddClass("buy_full_set_button_sale");
+            }else 
+            {
+                price_info_sets.text = set_this_info[2]
+            }
+        }
 
         if (set_this_info[3] > 0)
         {
@@ -7743,8 +10441,6 @@ function CreateSlotTypeInfo(panel, name)
         return main_parent
     }
 }
-
-
 
 function CreateItemShopItemHero(panel, info) 
 {
@@ -7819,8 +10515,6 @@ function CreateItemShopItemHero(panel, info)
 
             var BlockItemBuyButton_line = $.CreatePanel("Panel", BlockItemBuyButton, "button_line");
             BlockItemBuyButton_line.AddClass("BlockItemBuyButton_line");
-
-            BlockItemBuyButton_line
 
             BlockItemBuyButton.AddClass("BlockItemBuyButtonCenter_sale");
         }
@@ -7930,6 +10624,14 @@ function CreateItemShopItemHero(panel, info)
                 // ДОБАВИТЬ СЮДА ТУПА СТИЛЬКА ЕСЛИ  НАДО
                 BlockItemBuyButton.style.opacity = "0"
             }
+            else if (pudge_persona_unique[info["item_id"]] && !HasItemInventory(999251))
+            {
+                BlockItemBuyButton.style.opacity = "0"
+            }
+            else if (crystal_maiden_persona_unique[info["item_id"]] && !HasItemInventory(26559))
+            {
+                BlockItemBuyButton.style.opacity = "0"
+            }
             else
             {
 
@@ -8009,7 +10711,15 @@ function CreateItemShopItemHero(panel, info)
         }
 
         BlockItemLabel.text = $.Localize(info["name"])
-        BlockItemImage.style.backgroundImage = 'url("s2r://panorama/images/' + info["icon"] + '.png")';
+
+        if (info["local_icon"] && info["local_icon"] == 1)
+        {
+            BlockItemImage.style.backgroundImage = 'url("file://{images}/custom_game/shop/heroes/' + info["icon"] + '.png")'
+        }else 
+        {
+            BlockItemImage.style.backgroundImage = 'url("s2r://panorama/images/' + info["icon"] + '.png")';
+        }
+
         BlockItemImage.style.backgroundSize = "100%"
     }
 }
@@ -8675,6 +11385,7 @@ function GetAllItemsInSet(set_name, hero_name)
         0,
         0,
         0,
+        0,
     ]
     let items = CustomNetTables.GetTableValue("heroes_items_info", String(hero_name))
     if (items)
@@ -8688,17 +11399,17 @@ function GetAllItemsInSet(set_name, hero_name)
 
                 if (items[Object.keys(items)[i]]["sale_price"] && items[Object.keys(items)[i]]["sale_price"] > 0)
                 {
-                    set_info[2] = set_info[2] + items[Object.keys(items)[i]]["sale_price"]
+                    set_info[4] = set_info[4] + items[Object.keys(items)[i]]["sale_price"]
 
                     if (items[Object.keys(items)[i]]["sale"] && items[Object.keys(items)[i]]["sale"] > 0)
                     {
                         set_info[3] = set_info[3] + items[Object.keys(items)[i]]["sale"]
                     }
 
-                }else 
-                {
-                    set_info[2] = set_info[2] + items[Object.keys(items)[i]]["price"]
                 }
+                
+                set_info[2] = set_info[2] + items[Object.keys(items)[i]]["price"]
+                
             }
         }
     }
@@ -8710,10 +11421,14 @@ function GetAllItemsInSet(set_name, hero_name)
  
 function UpdateOnlyCouriers()
 {
+
+
+
     let CategoryPets = $.GetContextPanel().FindChildTraverse("CategoryPets")
     if (CategoryPets)
     {
         CategoryPets.RemoveAndDeleteChildren()
+
         let pets_info_table = CustomNetTables.GetTableValue("shop_items", "pets")
         let new_table = []
         if (pets_info_table)
@@ -8754,7 +11469,10 @@ function UpdateOnlyCouriers()
 function ChangeScenePreviewItem(buy_panel, ButtonItemStyleBuyPanel, style, item_scene_panel_preview)
 {
     ButtonItemStyleBuyPanel.SetPanelEvent("onactivate", function() 
-    { 
+    {
+
+        Game.EmitSound("UI.Click")
+
         let find_info = style["styles"]
         let full_scene_panel_preview_model = buy_panel.FindChildTraverse("full_scene_panel_preview_model")
         if (full_scene_panel_preview_model)
@@ -8766,11 +11484,13 @@ function ChangeScenePreviewItem(buy_panel, ButtonItemStyleBuyPanel, style, item_
         if (ButtonStylesBuyPanel)
         {
             for (var i = 0; i < ButtonStylesBuyPanel.GetChildCount(); i++) 
-            {
+            {  
                 ButtonStylesBuyPanel.GetChild(i).SetHasClass("ButtonItemStyle_active", false)
+                ButtonStylesBuyPanel.GetChild(i).SetHasClass("ButtonItemStyleBuyPanel_active", false)
             }
         }
         ButtonItemStyleBuyPanel.SetHasClass("ButtonItemStyle_active", true)
+        ButtonItemStyleBuyPanel.SetHasClass("ButtonItemStyleBuyPanel_active", true)
     })
 }
 

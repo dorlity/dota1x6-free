@@ -4,16 +4,45 @@ LinkLuaModifier("modifier_item_mask_of_madness_custom_slow", "abilities/items/it
 
 item_mask_of_madness_custom = class({})
 
+
+function item_mask_of_madness_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/items2_fx/mask_of_madness.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_marci/marci_rebound_bounce_impact_debuff.vpcf", context )
+PrecacheResource( "particle","particles/status_fx/status_effect_monkey_king_spring_slow.vpcf", context )
+PrecacheResource( "particle","particles/econ/items/drow/drow_head_mania/mask_of_madness_mania.vpcf", context )
+PrecacheResource( "particle","particles/econ/items/drow/drow_head_mania/mask_of_madness_active_mania.vpcf", context )
+end
+
+
+function item_mask_of_madness_custom:GetAbilityTextureName()
+if not self or not self:GetCaster() then return end 
+if self:GetCaster():HasModifier("modifier_item_mask_of_madness_custom_speed") then
+    return "items/mask_of_madness_active"
+end
+return "mask_of_madness"
+end
+
+
+
 function item_mask_of_madness_custom:GetIntrinsicModifierName()
 	return "modifier_item_mask_of_madness_custom"
 end
 
 function item_mask_of_madness_custom:OnSpellStart()
-if not IsServer() then return end
+local parent = self:GetParent()
+local mod = parent:FindModifierByName("modifier_item_mask_of_madness_custom_speed")
 
+if mod then
+    mod:Destroy()
+    return
+end
 
-self:GetParent():EmitSound("DOTA_Item.MaskOfMadness.Activate")
-self:GetParent():AddNewModifier(self:GetParent(), self, "modifier_item_mask_of_madness_custom_speed", {duration = self:GetSpecialValueFor("berserk_duration")})
+self:EndCooldown()
+self:StartCooldown(0.3)
+
+parent:EmitSound("DOTA_Item.MaskOfMadness.Activate")
+parent:AddNewModifier(parent, self, "modifier_item_mask_of_madness_custom_speed", {duration = self:GetSpecialValueFor("berserk_duration")})
 end
 
 
@@ -23,20 +52,24 @@ function modifier_item_mask_of_madness_custom:IsHidden() return true end
 function modifier_item_mask_of_madness_custom:IsPurgable() return false end
 function modifier_item_mask_of_madness_custom:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_item_mask_of_madness_custom:DeclareFunctions()
-local funcs = {
+return 
+{
     MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
-    MODIFIER_EVENT_ON_TAKEDAMAGE
 }
-
-return funcs
 end
 
 function modifier_item_mask_of_madness_custom:OnCreated()
 
-self.damage = self:GetAbility():GetSpecialValueFor("bonus_damage")
-self.lifesteal = self:GetAbility():GetSpecialValueFor("lifesteal_percent")/100
-self.lifesteal_creeps = self:GetAbility():GetSpecialValueFor("creep_lifesteal_reduction_pct")/100
+self.ability = self:GetAbility()
+self.damage = self.ability:GetSpecialValueFor("bonus_damage")
+self.lifesteal = self.ability:GetSpecialValueFor("lifesteal_percent")/100
+self.lifesteal_creeps = self.ability:GetSpecialValueFor("creep_lifesteal_reduction_pct")/100
 self.parent = self:GetParent()
+
+if self.parent:IsRealHero() then 
+    self.parent:AddDamageEvent_out(self, true)
+end
+
 end 
 
 
@@ -45,22 +78,15 @@ return self.damage
 end
 
 
-
-function modifier_item_mask_of_madness_custom:OnTakeDamage(params)
+function modifier_item_mask_of_madness_custom:DamageEvent_out(params)
 if not IsServer() then return end 
-if not params.attacker then return end 
-if self.parent ~= params.attacker then return end 
-if not params.unit:IsHero() and not params.unit:IsCreep() then return end 
-if params.inflictor then return end
-if self.parent == params.unit then return end
+if not self.parent:CheckLifesteal(params, 2) then return end
 
 local heal = params.damage*self.lifesteal
-
 if params.unit:IsCreep() then 
     heal = heal * (1 - self.lifesteal_creeps)
 end 
-
-self.parent:GenericHeal(heal, self:GetAbility(), true)
+self.parent:GenericHeal(heal, self.ability, true)
 end 
 
 
@@ -72,30 +98,40 @@ function modifier_item_mask_of_madness_custom_speed:IsHidden() return false end
 function modifier_item_mask_of_madness_custom_speed:IsPurgable() return true end
 
 function modifier_item_mask_of_madness_custom_speed:OnCreated(table)
-self.speed = self:GetAbility():GetSpecialValueFor("berserk_bonus_attack_speed")
-
-self.slow_duration = self:GetAbility():GetSpecialValueFor("slow_duration")
-self.movespeed = self:GetAbility():GetSpecialValueFor("berserk_bonus_movement_speed")
-self.armor_max = self:GetAbility():GetSpecialValueFor("armor_max")
-self.armor_inc = self:GetAbility():GetSpecialValueFor("armor_inc")*-1
-
 self.ability = self:GetAbility()
 self.parent = self:GetParent()
 
+self.speed = self.ability:GetSpecialValueFor("berserk_bonus_attack_speed")
+
+self.slow_duration = self.ability:GetSpecialValueFor("slow_duration")
+self.movespeed = self.ability:GetSpecialValueFor("berserk_bonus_movement_speed")
+self.armor_reduce = self.ability:GetSpecialValueFor("armor_reduce")
+
+
 if not IsServer() then return end
 
-local particle = ParticleManager:CreateParticle("particles/items2_fx/mask_of_madness.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-ParticleManager:SetParticleControl(particle, 0, self:GetParent():GetAbsOrigin())
-self:AddParticle(particle, false, false, -1, false, false)   
+self.parent:AddAttackEvent_out(self, true)
 
-self:OnIntervalThink()
-self:StartIntervalThink(1 + FrameTime())
+local default_particle = "particles/items2_fx/mask_of_madness.vpcf"
+if self:GetCaster():HasModifier("modifier_drow_ranger_madness_custom") then
+    default_particle = "particles/econ/items/drow/drow_head_mania/mask_of_madness_mania.vpcf"
+    local new_particle = ParticleManager:CreateParticle("particles/econ/items/drow/drow_head_mania/mask_of_madness_active_mania.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+    ParticleManager:SetParticleControlEnt(new_particle, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_mom_l", self:GetParent():GetAbsOrigin(), true)
+    ParticleManager:SetParticleControlEnt(new_particle, 1, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_mom_r", self:GetParent():GetAbsOrigin(), true)
+    self:AddParticle(new_particle, false, false, -1, false, false)
 end
 
-function modifier_item_mask_of_madness_custom_speed:OnIntervalThink()
-if not IsServer() then return end 
+local particle = ParticleManager:CreateParticle(default_particle, PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+ParticleManager:SetParticleControl(particle, 0, self:GetParent():GetAbsOrigin())
+self:AddParticle(particle, false, false, -1, false, false)   
+end
 
-self:IncrementStackCount()
+function modifier_item_mask_of_madness_custom_speed:OnDestroy()
+if not IsServer() then return end
+if self.ability and not self.ability:IsNull() then
+    self.ability:UseResources(false, false, false, true)
+end
+
 end
 
 
@@ -103,11 +139,9 @@ function modifier_item_mask_of_madness_custom_speed:DeclareFunctions()
 return
 {
     MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-    MODIFIER_EVENT_ON_ATTACK_LANDED,
     MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
     MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT
 }
-
 end
 
 function modifier_item_mask_of_madness_custom_speed:CheckState()
@@ -116,30 +150,28 @@ return
     [MODIFIER_STATE_SILENCED] = true
 }
 end
-function modifier_item_mask_of_madness_custom_speed:GetModifierPhysicalArmorBonus()
-return self.armor_inc*self:GetStackCount()
-end
 
+function modifier_item_mask_of_madness_custom_speed:GetModifierPhysicalArmorBonus()
+return self.armor_reduce
+end
 
 function modifier_item_mask_of_madness_custom_speed:GetModifierAttackSpeedBonus_Constant()
 return self.speed
 end
 
-
 function modifier_item_mask_of_madness_custom_speed:GetModifierMoveSpeedBonus_Constant()
 return self.movespeed
 end
 
-
-
-function modifier_item_mask_of_madness_custom_speed:OnAttackLanded(params)
+function modifier_item_mask_of_madness_custom_speed:AttackEvent_out(params)
 if not IsServer() then return end 
 if self.parent ~= params.attacker then return end 
-if not params.target:IsHero() and not params.target:IsCreep() then return end 
-if not self:GetAbility() then return end
+if not params.target:IsUnit() then return end 
+if not IsValid(self.ability) then return end
 
 params.target:AddNewModifier(self.parent, self.ability, "modifier_item_mask_of_madness_custom_slow", {duration = self.slow_duration*(1 - params.target:GetStatusResistance())})
 end
+
 
 
 modifier_item_mask_of_madness_custom_slow = class({})
@@ -174,5 +206,5 @@ function modifier_item_mask_of_madness_custom_slow:GetStatusEffectName()
 end
 
 function modifier_item_mask_of_madness_custom_slow:StatusEffectPriority()
-    return 11111
+    return MODIFIER_PRIORITY_NORMAL 
 end

@@ -3,7 +3,15 @@ LinkLuaModifier("modifier_warlock_boss_shadow_word_heal", "abilities/warlock_bos
 
 warlock_boss_shadow_word = class({})
 
+function warlock_boss_shadow_word:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
+PrecacheResource( "particle", "particles/warlock_aoe_cast.vpcf", context )
+PrecacheResource( "particle", "particles/warlock_wave.vpcf", context )
+PrecacheResource( "particle", "particles/econ/items/warlock/warlock_ti9/warlock_ti9_shadow_word_debuff.vpcf", context )
+PrecacheResource( "particle", "particles/econ/items/warlock/warlock_ti9/warlock_ti9_shadow_word_buff.vpcf", context )
+
+end
 
 function warlock_boss_shadow_word:OnAbilityPhaseStart()
 
@@ -134,10 +142,10 @@ function modifier_warlock_boss_shadow_word_heal:OnIntervalThink()
 if not IsServer() then return end
 
 if self:GetParent():GetTeamNumber() == self:GetCaster():GetTeamNumber() then 
-	my_game:GenericHeal(self:GetParent(), self.heal*self:GetParent():GetMaxHealth(), self:GetAbility())
+	dota1x6:GenericHeal(self:GetParent(), self.heal*self:GetParent():GetMaxHealth(), self:GetAbility())
 else
 	SendOverheadEventMessage(self:GetParent(), 4, self:GetParent(), self:GetParent():GetMaxHealth()*self.damage, nil)
-	ApplyDamage({victim = self:GetParent(), damage = self.damage*self:GetParent():GetMaxHealth(), damage_type = DAMAGE_TYPE_PURE, damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION, attacker = self:GetCaster(), ability = self:GetAbility()})
+	DoDamage({victim = self:GetParent(), damage = self.damage*self:GetParent():GetMaxHealth(), damage_type = DAMAGE_TYPE_PURE, damage_flags = DOTA_DAMAGE_FLAG_NO_SPELL_AMPLIFICATION, attacker = self:GetCaster(), ability = self:GetAbility()})
 end
 
 

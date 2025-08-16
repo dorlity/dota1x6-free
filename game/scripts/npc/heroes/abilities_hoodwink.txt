@@ -1,0 +1,274 @@
+
+"DOTAAbilities"
+{
+
+"Version"		"1"
+
+
+
+
+
+"hoodwink_acorn_shot_custom"
+{
+	"BaseClass"						"ability_lua"
+	"ScriptFile"					"abilities/hoodwink/hoodwink_acorn_shot_custom"	
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING | DOTA_ABILITY_BEHAVIOR_AUTOCAST"
+	"AbilityUnitDamageType"			"DAMAGE_TYPE_PHYSICAL"	
+	"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
+	"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_CREEP"
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	"AbilityTextureName"			"hoodwink_acorn_shot"
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_1"
+	"AbilityCooldown"				"10"
+	"AbilityCastRange"				"575"
+	"AbilityCastPoint"				"0.2"
+	"AbilityManaCost"				"70 80 90 100"
+	"LinkedAbility"					"hoodwink_acorn_shot_custom_2"
+
+	"AbilityValues"
+	{		
+		"bonus_range"			"100"
+		"acorn_shot_damage"		"45 90 135 180"
+		"base_damage_pct"		"80"
+		"bounce_count"			"2 3 4 5"
+		"bounce_range"			"525"
+		"debuff_duration"		"0.3"
+		"slow"					"100"
+		"bounce_delay"			"0.15"
+		"tree_duration"			"12"
+		"tree_vision"			"300"
+		
+	}
+}
+
+
+"hoodwink_bushwhack_custom"
+{
+	"BaseClass"						"ability_lua"
+	"ScriptFile"					"abilities/hoodwink/hoodwink_bushwhack_custom"	
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_AOE"
+	"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_TREE | DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_CREEP"
+	"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"
+	"SpellDispellableType"			"SPELL_DISPELLABLE_YES_STRONG"
+	"AbilityTextureName"			"hoodwink_bushwhack"
+	"AbilityCastRange"				"1000"
+	"AbilityCastPoint"				"0.2"
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_2"
+	"AbilityCooldown"				"14"
+	"AbilityManaCost"				"90 100 110 120"
+	
+	
+	
+	"AbilityValues"
+	{
+		"trap_radius"		"265"
+		"debuff_duration"		"1.5 1.7 1.9 2.1"
+		"projectile_speed"	"1200"
+		"total_damage"		"90 180 270 360"
+		"animation_rate"	"0.3"
+		"visual_height"		"50"
+		
+	}
+}
+"hoodwink_scurry_custom"
+{
+	"BaseClass"						"ability_lua"
+	"ScriptFile"					"abilities/hoodwink/hoodwink_scurry_custom"	
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+	"AbilityTextureName"			"hoodwink_scurry"
+	"AbilityCastPoint"				"0.0"
+	"AbilityCastRange"				"275"	
+	"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_3"
+	"AbilityCooldown"				"0.0"
+	"AbilityCharges"				"2"
+	"AbilityChargeRestoreTime"		"18 16 14 12"
+	"AbilityManaCost"				"35"
+
+
+	"AbilityValues"
+	{
+		"movement_speed_pct"			"20 25 30 35"
+		"duration"						"3.5 4 4.5 5"
+		"cast_range"						"75 150 225 300"
+		"attack_range"						"75 150 225 300"
+		"evasion_bonus"						"2"
+		
+	}
+}
+
+
+
+"hoodwink_sharpshooter_custom"
+{
+	"BaseClass"						"ability_lua"
+	"ScriptFile"					"abilities/hoodwink/hoodwink_sharpshooter_custom"	
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING"
+	"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"	
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
+	"AbilityType"					"ABILITY_TYPE_ULTIMATE"
+	"AbilityTextureName"			"hoodwink_sharpshooter"
+	"AbilityCastAnimation"			"ACT_DOTA_CHANNEL_ABILITY_6"
+	"AbilityCastRange"				"2300"
+	"AbilityCastPoint"				"0.0"
+	"AbilityCooldown"				"28"
+	"AbilityManaCost"				"100 150 200"
+	"LinkedAbility"					"hoodwink_sharpshooter_release_custom"
+
+	"HasScepterUpgrade"				"1"
+
+	"AbilityValues"
+	{
+		"arrow_speed"		"2200"
+		"arrow_width"		"125"
+		"arrow_range"		"2300"
+		"arrow_vision"		"350"
+		"max_charge_time"			"3.0"
+		"max_damage"				"600 975 1350"
+		"recoil_distance"			"350"
+		"recoil_height"				"75"
+		"recoil_duration"			"0.4"
+		"max_slow_debuff_duration"	"5.0"
+		"misfire_time"				"5.0"
+		"slow_move_pct"				"30 40 50"
+		"turn_rate"					"60"
+		"base_power"				"0.2"
+
+		"scepter_range"				"200"
+		"scepter_height"			"125"
+		"scepter_acorn_count"				"2"
+		"scepter_acorn_radius"				"900"
+		"scepter_bushwhack"			"1.5"
+	}
+}
+
+"hoodwink_sharpshooter_release_custom"	
+{
+	"BaseClass"						"ability_lua"
+	"ScriptFile"					"abilities/hoodwink/hoodwink_sharpshooter_custom"	
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK"
+	"AbilityType"					"ABILITY_TYPE_ULTIMATE"
+	"AbilityTextureName"			"hoodwink_sharpshooter_release"
+	"AbilityCastPoint"				"0.0"
+	"AbilityCastRange"				"999999"
+		"AbilityCastAnimation"			"ACT_DOTA_CAST_ABILITY_7"
+		"MaxLevel"						"3"
+		"LinkedAbility"					"hoodwink_decoy_custom"
+
+}
+
+"hoodwink_decoy_custom"
+{
+    "BaseClass"                        "ability_lua"
+    "ScriptFile"                    "abilities/hoodwink/hoodwink_decoy_custom"    
+    "AbilityBehavior"                "DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_IMMEDIATE | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+    "AbilityTextureName"            "hoodwink_decoy"
+    "AbilityCastAnimation"            "ACT_DOTA_CAST_ABILITY_2"
+    "MaxLevel"                        "1"
+    "AbilityCastPoint"                "0"
+    "AbilityCooldown"                "10.0"
+    "AbilityManaCost"                "50"
+  	"AbilityCastRange"				"1500"
+		"LinkedAbility"					"hoodwink_sharpshooter_custom"
+    
+	"AbilityValues"
+    {
+		"lifetime"			"15"
+		"delay"				"2"
+		"damage"			"20"
+		"damage_inc"		"20"
+		"damage_duration"	"15"
+		"max"				"4"
+		"incoming"			"200"
+		"break"				"2"			
+    }
+}
+
+
+
+"hoodwink_hunters_boomerang"
+{
+	// General
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_HIDDEN | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE"
+	"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_BOTH"
+	"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+	"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"	
+	"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO"
+	"SpellDispellableType"			"SPELL_DISPELLABLE_YES"
+	"FightRecapLevel"				"1"
+	"AbilitySound"					"Hero_VengefulSpirit.MagicMissile"
+
+	"MaxLevel"						"1"
+	"IsGrantedByShard"				"1"
+
+	// Casting
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCastRange"				"1100"
+	"AbilityCastPoint"				"0.2"
+	
+	// Time		
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityCooldown"				"10"
+
+	// Cost
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityManaCost"				"125"
+
+	// Special
+	//-------------------------------------------------------------------------------------------------------------
+	"AbilityValues"
+	{
+		"speed"					"900"
+		"radius"				
+		{
+			"value"		"150"
+			"affected_by_aoe_increase"	"1"	
+		}
+		"damage"				"200"
+		"mark_duration"			"7.0"
+		"slow_pct"				"25"
+		"spell_amp"				"25"
+		"status_resistance"		"0"
+		"spread"				
+		{
+			"value"		"400"
+			"affected_by_aoe_increase"	"1"	
+		}
+		"min_throw_duration"			"0.5"
+		"max_throw_duration"			"1.2"
+	}
+	"AbilityCastAnimation"		"ACT_DOTA_CAST_ABILITY_2"
+}
+
+
+"hoodwink_innate_custom"
+{
+	// General
+	//-------------------------------------------------------------------------------------------------------------
+	"BaseClass"						"ability_lua"
+	"ScriptFile"					"abilities/hoodwink/hoodwink_innate_custom"	
+
+	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_NOT_LEARNABLE | DOTA_ABILITY_BEHAVIOR_SKIP_FOR_KEYBINDS | DOTA_ABILITY_BEHAVIOR_INNATE_UI"
+	"DependentOnAbility"			"hoodwink_sharpshooter_custom"
+	"Innate"						"1"
+	"MaxLevel"						"4"
+	"IsBreakable"					"1"
+
+	"AbilityValues"
+	{
+		"radius"						
+		{
+			"value"		"275"
+			"affected_by_aoe_increase"	"1"	
+		}
+
+		"evasion"	"20 25 30 35"		
+	}
+}
+
+
+
+
+
+}

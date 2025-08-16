@@ -1,4 +1,4 @@
-set dota2_path=C:\Program Files (x86)\Steam\steamapps\common\dota 2 beta
+set dota2_path=C:\Program Files\Steam\steamapps\common\dota 2 beta
 set custom_game_folder=xeno_free
 
 mkdir "%dota2_path%\game\dota_addons\%custom_game_folder%"

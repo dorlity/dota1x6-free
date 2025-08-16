@@ -7,16 +7,18 @@ item_spell_breaker = class({})
 function item_spell_breaker:GetIntrinsicModifierName()
 	return "modifier_item_spell_breaker"
 end
-
+function item_spell_breaker:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/spell_breaker.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_muerta/muerta_spell_amp_steal_debuff.vpcf", context )
+PrecacheResource( "particle","particles/items3_fx/status_effect_mage_slayer_debuff.vpcf", context )
+end
 
 function item_spell_breaker:OnSpellStart()
 if not IsServer() then return end 
 
-self:GetCaster():EmitSound("Hero_Antimage.Counterspell.Cast")
+self:GetCaster():EmitSound("Items.Spell_breaker")
 self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_item_spell_breaker_shield", {duration = self:GetSpecialValueFor("duration_active")})
-
-
-
 end 
 
 
@@ -24,71 +26,67 @@ modifier_item_spell_breaker = class({})
 
 function modifier_item_spell_breaker:IsHidden() return true end
 function modifier_item_spell_breaker:IsPurgable() return false end
-function modifier_item_spell_breaker:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_item_spell_breaker:DeclareFunctions()
-    local funcs = {
-        MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS,
-        MODIFIER_PROPERTY_MANA_REGEN_CONSTANT,
-        MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-        MODIFIER_PROPERTY_STATS_INTELLECT_BONUS,
-        MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
-        MODIFIER_PROPERTY_STATS_AGILITY_BONUS,
-        MODIFIER_EVENT_ON_ATTACK_LANDED,
-    }
-
-    return funcs
+return 
+{
+    MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS,
+    MODIFIER_PROPERTY_MANA_REGEN_CONSTANT,
+    MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT,
+    MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+    MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
+}
 end
 
 
 function modifier_item_spell_breaker:OnCreated()
 
-self.duration = self:GetAbility():GetSpecialValueFor("duration")
-self.dps = self:GetAbility():GetSpecialValueFor("dps")
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+self.parent:AddAttackEvent_out(self, true)
+
+self.duration = self.ability:GetSpecialValueFor("duration")
+self.damage = self.ability:GetSpecialValueFor("bonus_damage")
+self.regen = self.ability:GetSpecialValueFor("bonus_mana_regen")
+self.health_regen = self.ability:GetSpecialValueFor("bonus_health_regen")
+self.resist = self.ability:GetSpecialValueFor("bonus_magical_armor")
+self.speed = self.ability:GetSpecialValueFor("bonus_attack_speed")
 end 
 
-function modifier_item_spell_breaker:OnAttackLanded(params)
+function modifier_item_spell_breaker:AttackEvent_out(params)
 if not IsServer() then return end 
-if self:GetParent() ~= params.attacker then return end 
-if not params.target:IsHero() and not params.target:IsCreep() then return end
+if self.parent ~= params.attacker then return end 
+if not params.target:IsUnit() then return end
 
-params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_item_spell_breaker_passive", {dps = self.dps, duration = self.duration})
+params.target:AddNewModifier(self.parent , self.ability, "modifier_item_spell_breaker_passive", {duration = self.duration})
 end
 
 
 
 function modifier_item_spell_breaker:GetModifierMagicalResistanceBonus()
-if self:GetParent():HasModifier("modifier_item_pipe_custom") then return end
-if self:GetParent():HasModifier("modifier_item_eternal_shroud_custom") then return end
-if self:GetParent():HasModifier("modifier_item_mage_slayer") then return end
+if self.parent :HasModifier("modifier_item_pipe_custom") then return end
+if self.parent :HasModifier("modifier_item_eternal_shroud_custom") then return end
+if self.parent :HasModifier("modifier_item_mage_slayer") then return end
 
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_magical_armor") end
+return self.resist
 end
 
-
-function modifier_item_spell_breaker:GetModifierBonusStats_Strength()
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_stats") end
-end
-
-function modifier_item_spell_breaker:GetModifierBonusStats_Agility()
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_stats") end
-end
-
-function modifier_item_spell_breaker:GetModifierBonusStats_Intellect()
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_stats") end
-end
 
 
 function modifier_item_spell_breaker:GetModifierConstantManaRegen()
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_mana_regen") end
+return self.regen
 end
 
-
-
+function modifier_item_spell_breaker:GetModifierConstantHealthRegen()
+return self.health_regen
+end
 
 function modifier_item_spell_breaker:GetModifierAttackSpeedBonus_Constant()
-    if self:GetAbility() then return self:GetAbility():GetSpecialValueFor("bonus_attack_speed") end
+return self.speed
 end
 
+function modifier_item_spell_breaker:GetModifierPreAttack_BonusDamage()
+return self.damage
+end
 
 
 
@@ -125,12 +123,11 @@ return
 
 end
 function modifier_item_spell_breaker_shield:GetModifierIncomingDamage_Percentage(params)
-
 --if self:GetParent() ~= params.unit then return end
 if params.inflictor == nil then return end
-if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end
+--if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end
 
-if  Not_spell_damage[params.inflictor:GetName()] then return end
+if Not_spell_damage[params.inflictor:GetName()] then return end
 
 return self.damage
 end
@@ -158,15 +155,19 @@ return "particles/items3_fx/status_effect_mage_slayer_debuff.vpcf"
 end
 
 function modifier_item_spell_breaker_passive:StatusEffectPriority()
-return 10000
+return MODIFIER_PRIORITY_NORMAL 
 end
 
 function modifier_item_spell_breaker_passive:OnCreated()
 
-self.dps = self:GetAbility():GetSpecialValueFor("dps")
-self.interval = 0.5
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+self.caster = self:GetCaster()
 
-self.amp = self:GetAbility():GetSpecialValueFor("spell_amp_debuff")
+self.dps = self.ability:GetSpecialValueFor("dps")
+self.interval = self.ability:GetSpecialValueFor("interval")
+self.amp = self.ability:GetSpecialValueFor("spell_amp_debuff")
+self.damageTable = {victim = self.parent, attacker = self.caster, damage = self.dps*self.interval, ability = self.ability, damage_type = DAMAGE_TYPE_MAGICAL}
 
 if not IsServer() then return end 
 
@@ -181,14 +182,14 @@ return
 end
 
 function modifier_item_spell_breaker_passive:GetModifierSpellAmplify_Percentage() 
-if self:GetParent():HasModifier("modifier_item_mage_slayer_debuff") then return end
+if self.parent:HasModifier("modifier_item_mage_slayer_debuff") then return end
 return self.amp
 end
 
 
 function modifier_item_spell_breaker_passive:OnIntervalThink()
 if not IsServer() then return end 
-
-
-ApplyDamage({victim = self:GetParent(), attacker = self:GetCaster(), damage = self.dps*self.interval, ability = self:GetAbility(), damage_type = DAMAGE_TYPE_MAGICAL})
+if not self.caster or self.caster:IsNull() then return end
+if not self.ability or self.ability:IsNull() then return end
+DoDamage(self.damageTable)
 end

@@ -15,7 +15,7 @@ end
 function check_cd( unit , ability , n)
 if not IsServer() then return end
 	local near = FindUnitsInRadius(unit:GetTeamNumber(), unit:GetAbsOrigin(), nil, 2000, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_BASIC, 0, 0, false)
- 		for _,i in ipairs(near) do
+ 		for _,i in pairs(near) do
  					if unit ~= i then
  					local a = i:FindAbilityByName(ability)
  						if a then

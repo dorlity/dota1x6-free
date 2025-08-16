@@ -1,15 +1,156 @@
 LinkLuaModifier( "modifier_alchemist_chemical_rage_custom", "abilities/alchemist/alchemist_chemical_rage_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_alchemist_chemical_rage_custom_legendary", "abilities/alchemist/alchemist_chemical_rage_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_alchemist_chemical_rage_transformation", "abilities/alchemist/alchemist_chemical_rage_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_alchemist_chemical_rage_slow", "abilities/alchemist/alchemist_chemical_rage_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_alchemist_chemical_rage_tracker", "abilities/alchemist/alchemist_chemical_rage_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_alchemist_chemical_rage_custom_incoming", "abilities/alchemist/alchemist_chemical_rage_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_alchemist_chemical_rage_speed", "abilities/alchemist/alchemist_chemical_rage_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_alchemist_chemical_rage_custom_unslow", "abilities/alchemist/alchemist_chemical_rage_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_alchemist_chemical_rage_armor", "abilities/alchemist/alchemist_chemical_rage_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_alchemist_chemical_rage_custom_attack", "abilities/alchemist/alchemist_chemical_rage_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_alchemist_chemical_rage_custom_low_cd", "abilities/alchemist/alchemist_chemical_rage_custom", LUA_MODIFIER_MOTION_NONE )
 
 
 alchemist_chemical_rage_custom = class({})
+
+
+
+
+function alchemist_chemical_rage_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_chemical_rage.vpcf", context )
+PrecacheResource( "particle", "particles/alch_cleave.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_chemical_rage_hero_effect.vpcf", context )
+PrecacheResource( "particle", "particles/alchemist/rage_legendary.vpcf", context )
+PrecacheResource( "particle", "particles/econ/items/bounty_hunter/prince_ratsia/prince_ratsia_jinada.vpcf", context )
+PrecacheResource( "particle", "particles/items4_fx/nullifier_mute.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_berserk_buff.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_egg.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_streaks.vpcf", context )
+end
+
+
+function alchemist_chemical_rage_custom:GetIntrinsicModifierName()
+if not self:GetCaster():IsRealHero() then return end
+return "modifier_alchemist_chemical_rage_tracker"
+end
+
+
+function alchemist_chemical_rage_custom:GetCooldown(iLevel)
+local cooldown_reduction = 0
+if self:GetCaster():HasTalent("modifier_alchemist_hero_4") then
+	cooldown_reduction = self:GetCaster():GetTalentValue("modifier_alchemist_hero_4", "cd")
+end
+return self.BaseClass.GetCooldown(self, iLevel) + cooldown_reduction
+end
+
+
+function alchemist_chemical_rage_custom:OnSpellStart()
+local caster = self:GetCaster()
+local buff_duration = self:GetSpecialValueFor("duration") + caster:GetTalentValue("modifier_alchemist_hero_4", "duration")
+
+caster:StartGesture(ACT_DOTA_ALCHEMIST_CHEMICAL_RAGE_START)
+caster:AddNewModifier(caster, self, "modifier_alchemist_chemical_rage_custom", {duration = buff_duration, passive = 0})
+
+caster:EmitSound("Hero_Alchemist.ChemicalRage.Cast")
+ProjectileManager:ProjectileDodge( self:GetCaster() )
+end
+
+
+
+
+modifier_alchemist_chemical_rage_custom = class(mod_visible)
+function modifier_alchemist_chemical_rage_custom:AllowIllusionDuplicate() return true end
+function modifier_alchemist_chemical_rage_custom:OnCreated( table )
+
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.bat = self.ability:GetSpecialValueFor( "base_attack_time" )
+self.bva_bonus = self.parent:GetTalentValue("modifier_alchemist_rage_3", "bva")
+
+self.health_regen = self.ability:GetSpecialValueFor( "bonus_health_regen" )
+self.movespeed = self.ability:GetSpecialValueFor( "bonus_movespeed" )
+
+if not IsServer() then return end
+
+self.parent:Purge( false, true, false, false, false )
+
+if self.parent:HasTalent("modifier_alchemist_hero_8") then 
+	local duration = self.parent:GetTalentValue("modifier_alchemist_hero_8", "duration", true)
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_generic_debuff_immune", {effect = 1, duration = duration})
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_alchemist_chemical_rage_custom_incoming", {duration = duration})
+end 
+
+self.ability:EndCd()
+
+local ability = self.parent:FindAbilityByName("alchemist_enrage_potion")
+if ability then
+	ability:SetActivated(true)
+end
+
+self.RemoveForDuel = true
+
+self.parent:GenericParticle(self.parent:HasModifier("modifier_alchemist_radiance_item_custom") and "particles/econ/items/alchemist/alchemist_aurelian_weapon/alchemist_chemical_rage_aurelian.vpcf" or "particles/units/heroes/hero_alchemist/alchemist_chemical_rage.vpcf", self)
+self.parent:EmitSound("Hero_Alchemist.ChemicalRage")
+end
+
+
+
+
+function modifier_alchemist_chemical_rage_custom:OnDestroy()
+if not IsServer() then return end
+
+self.parent:StartGesture(ACT_DOTA_ALCHEMIST_CHEMICAL_RAGE_END)
+
+self.ability:StartCd()
+
+self.parent:StopSound("Hero_Alchemist.ChemicalRage")
+
+local ability = self.parent:FindAbilityByName("alchemist_enrage_potion")
+if ability then
+	ability:SetActivated(false)
+end
+
+self.parent:RemoveModifierByName("modifier_alchemist_chemical_rage_custom_legendary")
+end
+
+
+function modifier_alchemist_chemical_rage_custom:DeclareFunctions()
+return 
+{
+	MODIFIER_PROPERTY_BASE_ATTACK_TIME_CONSTANT,
+	MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT,
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT,
+	MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
+	MODIFIER_PROPERTY_TRANSLATE_ATTACK_SOUND,
+}
+end
+
+
+function modifier_alchemist_chemical_rage_custom:GetModifierBaseAttackTimeConstant()
+local bonus = 0 
+if self.parent:HasModifier("modifier_alchemist_chemical_rage_custom_legendary") then 
+	bonus = self.bva_bonus
+end 
+return self.bat + bonus
+end
+
+function modifier_alchemist_chemical_rage_custom:GetModifierConstantHealthRegen()
+return self.health_regen
+end
+
+function modifier_alchemist_chemical_rage_custom:GetModifierMoveSpeedBonus_Constant()
+return self.movespeed
+end
+
+function modifier_alchemist_chemical_rage_custom:GetHeroEffectName()
+return "particles/units/heroes/hero_alchemist/alchemist_chemical_rage_hero_effect.vpcf"
+end
+
+function modifier_alchemist_chemical_rage_custom:GetActivityTranslationModifiers()
+return "chemical_rage"
+end
+
+function modifier_alchemist_chemical_rage_custom:GetAttackSound()
+return "Hero_Alchemist.ChemicalRage.Attack"
+end
 
 
 
@@ -19,541 +160,232 @@ alchemist_chemical_rage_custom = class({})
 
 alchemist_enrage_potion = class({})
 
-
-function alchemist_chemical_rage_custom:GetManaCost(level)
-
-
-if self:GetCaster():HasModifier("modifier_alchemist_rage_6") then
-	return self:GetCaster():GetTalentValue("modifier_alchemist_rage_6", "mana")
-end
- 
-return self.BaseClass.GetManaCost(self,level)
-end
-
-
-function alchemist_chemical_rage_custom:GetBehavior()
-if self:GetCaster():HasModifier("modifier_alchemist_rage_6") then
-	return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IGNORE_PSEUDO_QUEUE + DOTA_ABILITY_BEHAVIOR_IMMEDIATE
-end
-return DOTA_ABILITY_BEHAVIOR_NO_TARGET
-end
-
-
-
-function alchemist_chemical_rage_custom:Precache(context)
-
-PrecacheResource( "particle", 'particles/units/heroes/hero_alchemist/alchemist_attack_blur.vpcf', context )
-    
-PrecacheResource( "particle", "particles/alch_rage_stack.vpcf", context )
-PrecacheResource( "particle", "particles/alchemist/rage_legendary.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_chemical_rage.vpcf", context )
-PrecacheResource( "particle", "particles/alch_cleave.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_chemical_rage_hero_effect.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_berserk_buff.vpcf", context )
-
-end
-
-function alchemist_chemical_rage_custom:GetIntrinsicModifierName()
-return "modifier_alchemist_chemical_rage_tracker"
-end
-
-
-function alchemist_chemical_rage_custom:GetCooldown(iLevel)
-local cooldown_reduction = 0
-if self:GetCaster():HasModifier("modifier_alchemist_rage_1") then
-	cooldown_reduction = self:GetCaster():GetTalentValue("modifier_alchemist_rage_1", "cd")
-end
-return self.BaseClass.GetCooldown(self, iLevel) + cooldown_reduction
-
-end
-
-
-
-
-
-function alchemist_chemical_rage_custom:OnSpellStart()
-	if not IsServer() then return end
-
-
-	local duration = self:GetSpecialValueFor( "transformation_time" )
-	self:GetCaster():AddNewModifier( self:GetCaster(),  self, "modifier_alchemist_chemical_rage_transformation", { duration = duration } )
-	self:GetCaster():EmitSound("Hero_Alchemist.ChemicalRage.Cast")
-	ProjectileManager:ProjectileDodge( self:GetCaster() )
-	self:GetCaster():Purge( false, true, false, false, false )
-end
-
-modifier_alchemist_chemical_rage_transformation = class({})
-
-function modifier_alchemist_chemical_rage_transformation:IsHidden() return true end
-function modifier_alchemist_chemical_rage_transformation:IsPurgable() return false end
-
-function modifier_alchemist_chemical_rage_transformation:OnCreated()
-	if not IsServer() then return end
-	self:GetCaster():StartGesture(ACT_DOTA_ALCHEMIST_CHEMICAL_RAGE_START)
-end
-
-function modifier_alchemist_chemical_rage_transformation:OnDestroy()
-	if not IsServer() then return end
-	local buff_duration = self:GetAbility():GetSpecialValueFor("duration")
-	self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_alchemist_chemical_rage_custom", {duration = buff_duration})
-end
-
-modifier_alchemist_chemical_rage_custom = class({})
-
-function modifier_alchemist_chemical_rage_custom:IsPurgable()
-	return false
-end
-
-function modifier_alchemist_chemical_rage_custom:AllowIllusionDuplicate()
-	return true
-end
-
-
-
-
-
-
-function modifier_alchemist_chemical_rage_custom:OnCreated( kv )
-self.bat = self:GetAbility():GetSpecialValueFor( "base_attack_time" )
-
-self.speed_max = self:GetCaster():GetTalentValue("modifier_alchemist_rage_4", "max", true)
-self.speed_duration = self:GetCaster():GetTalentValue("modifier_alchemist_rage_4", "duration", true)
-
-self.legendary_bva = self:GetCaster():GetTalentValue("modifier_alchemist_rage_legendary", "bva")
-
-self.armor_duration = self:GetCaster():GetTalentValue("modifier_alchemist_rage_3", "duration", true)
-self.armor_chance = self:GetCaster():GetTalentValue("modifier_alchemist_rage_3", "chance", true)
-
-self.slow_duration = self:GetCaster():GetTalentValue("modifier_alchemist_rage_5", "slow_duration", true)
-
-self.health_regen = self:GetAbility():GetSpecialValueFor( "bonus_health_regen" )
-self.movespeed = self:GetAbility():GetSpecialValueFor( "bonus_movespeed" ) + self:GetCaster():GetTalentValue("modifier_alchemist_rage_5", "speed")
-
-if not IsServer() then return end
-
-if self:GetCaster():HasModifier("modifier_alchemist_rage_5") then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_alchemist_chemical_rage_custom_unslow", {duration = self:GetCaster():GetTalentValue("modifier_alchemist_rage_5", "duration")})
-end 
-
-
-if self:GetCaster():HasModifier("modifier_alchemist_rage_6") then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_alchemist_chemical_rage_custom_incoming", {duration = self:GetCaster():GetTalentValue("modifier_alchemist_rage_6", "duration")})
-end 
-
-
-if self:GetParent():HasModifier("modifier_alchemist_rage_legendary") then 
-	self:GetParent():SwapAbilities("alchemist_chemical_rage_custom", "alchemist_enrage_potion", false, true)
-end
-
-
-
-self.RemoveForDuel = true
-
-
-local effect_cast = ParticleManager:CreateParticle("particles/units/heroes/hero_alchemist/alchemist_chemical_rage.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-self:AddParticle( effect_cast, false, false, -1, false, false  )
-self:GetParent():EmitSound("Hero_Alchemist.ChemicalRage")
-
-
-end
-
-
-
-
-
-
-function modifier_alchemist_chemical_rage_custom:OnRefresh( kv )
-if not IsServer() then return end
-self:OnCreated(table)
-end
-
-function modifier_alchemist_chemical_rage_custom:OnDestroy()
-if not IsServer() then return end
-self:GetParent():RemoveModifierByName("modifier_alchemist_chemical_rage_speed")
-
-local ability = self:GetParent():FindAbilityByName("alchemist_enrage_potion")
-self:GetParent():RemoveModifierByName("modifier_alchemist_chemical_rage_custom_legendary")
-
-self:GetParent():StopSound("Hero_Alchemist.ChemicalRage")
-
-if not ability then return end 
-
-if ability:GetToggleState() then 
-	ability:ToggleAbility()
-end 
-
-if self:GetParent():HasModifier("modifier_alchemist_rage_legendary") and not ability:IsHidden() then 
-	self:GetParent():SwapAbilities("alchemist_chemical_rage_custom", "alchemist_enrage_potion", true, false)
+function alchemist_enrage_potion:CreateTalent(name)
+local caster = self:GetCaster()
+self:SetHidden(false)
+self:SetActivated(caster:HasModifier("modifier_alchemist_chemical_rage_custom"))
+
+if name == "modifier_alchemist_rage_legendary" and dota1x6.current_wave >= upgrade_orange then 
+  local max = caster:GetTalentValue("modifier_alchemist_rage_legendary", "orbs_count")
+  for i = 1, max do
+  	dota1x6:CreateUpgradeOrb(caster, 1)
+  end
 end
 
 end
-
-function modifier_alchemist_chemical_rage_custom:DeclareFunctions()
-	local funcs = {
-	MODIFIER_PROPERTY_BASE_ATTACK_TIME_CONSTANT,
-	MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT,
-	MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT,
-	MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
-	MODIFIER_PROPERTY_TRANSLATE_ATTACK_SOUND,
-	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-	MODIFIER_EVENT_ON_ATTACK_LANDED,
-	}
-
-	return funcs
-end
-
-
-
-function modifier_alchemist_chemical_rage_custom:OnStackCountChanged(iStackCount)
-if true then return end
-if self:GetStackCount() == 0 then 
-	if self.effect_cast then
-		ParticleManager:DestroyParticle(self.effect_cast, true)
-		ParticleManager:ReleaseParticleIndex(self.effect_cast)
-		self.effect_cast = nil
-	end 
-	return
-end
-
-if not self.effect_cast then 
-
-  local particle_cast = "particles/alch_rage_stack.vpcf"
-  self.effect_cast = ParticleManager:CreateParticle( particle_cast, PATTACH_OVERHEAD_FOLLOW, self:GetParent() )
-  ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( 0, self:GetStackCount(), 0 ) )
-
-  self:AddParticle(self.effect_cast,false, false, -1, false, false)
-else 
-
-  ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( 0, self:GetStackCount(), 0 ) )
-
-end
-
-end
-
-
-
-
-function modifier_alchemist_chemical_rage_custom:OnAttackLanded(params)
-if not IsServer() then return end 
-if params.attacker ~= self:GetParent() then return end
-if params.attacker:IsIllusion() then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end
-
-if self:GetParent():HasModifier("modifier_alchemist_rage_5") then 
-	params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_alchemist_chemical_rage_slow", {duration = self.slow_duration})
-end 
-
-if self:GetParent():HasModifier("modifier_alchemist_rage_3") then 
-
-	if RollPseudoRandomPercentage(self.armor_chance,2317,self:GetParent()) then 
-		self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_alchemist_chemical_rage_armor", {duration = self.armor_duration})
-		params.target:AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_alchemist_chemical_rage_armor", {duration = self.armor_duration})
-	end 
-end 
-
-if self:GetParent():HasModifier("modifier_alchemist_rage_4") then 
-	self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_alchemist_chemical_rage_speed", {duration = self.speed_duration})
-
-	if self:GetStackCount() < self.speed_max then 
-		self:IncrementStackCount()
-	end 
-end 
-
-if self:GetParent():HasModifier("modifier_alchemist_rage_2") then 
-	local k = self:GetCaster():GetTalentValue("modifier_alchemist_rage_2", "cleave")/100
-	DoCleaveAttack(self:GetParent(), params.target, nil, params.damage * k  , 150, 360, 650, "particles/alch_cleave.vpcf")
-end
-
-end
-
-
-
-
-
-
-
-function modifier_alchemist_chemical_rage_custom:GetModifierBaseAttackTimeConstant()
-local bonus = 0 
-if self:GetParent():HasModifier("modifier_alchemist_chemical_rage_custom_legendary") then 
-	bonus = self.legendary_bva
-end 
-	return self.bat + bonus
-end
-
-function modifier_alchemist_chemical_rage_custom:GetModifierAttackSpeedBonus_Constant()
-local bonus = 0
-if self:GetStackCount() > 0 then 
-	bonus = self:GetStackCount()*self:GetCaster():GetTalentValue("modifier_alchemist_rage_4", "speed")
-end 
-
-	return bonus
-end
-
-
-function modifier_alchemist_chemical_rage_custom:GetModifierConstantHealthRegen()
-local bonus = 0
-if self:GetStackCount() > 0 then 
-	bonus = self:GetStackCount()*self:GetCaster():GetTalentValue("modifier_alchemist_rage_4", "heal")
-end 
-
-	return self.health_regen + bonus
-end
-
-function modifier_alchemist_chemical_rage_custom:GetModifierMoveSpeedBonus_Constant()
-	return self.movespeed
-end
-
-
-
-
-function modifier_alchemist_chemical_rage_custom:GetHeroEffectName()
-	return "particles/units/heroes/hero_alchemist/alchemist_chemical_rage_hero_effect.vpcf"
-end
-
-function modifier_alchemist_chemical_rage_custom:GetActivityTranslationModifiers()
-    return "chemical_rage"
-end
-
-function modifier_alchemist_chemical_rage_custom:GetAttackSound()
-    return "Hero_Alchemist.ChemicalRage.Attack"
-end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-modifier_alchemist_chemical_rage_custom_legendary = class({})
-
-function modifier_alchemist_chemical_rage_custom_legendary:IsPurgable()
-	return false
-end
-
-function modifier_alchemist_chemical_rage_custom_legendary:IsHidden()
-	return true
-end
-
-
-function modifier_alchemist_chemical_rage_custom_legendary:CheckState()
-	return {
-		[MODIFIER_STATE_DISARMED] = true,
-	--	[MODIFIER_STATE_SILENCED] = true,
-		[MODIFIER_STATE_MUTED] = true,
-	}
-end
-
-
-function modifier_alchemist_chemical_rage_custom_legendary:OnCreated( kv )
-
-self.status = self:GetCaster():GetTalentValue("modifier_alchemist_rage_legendary", "status")
-self.bonus_range = self:GetCaster():GetTalentValue("modifier_alchemist_rage_legendary", "bonus_range")
-
-if not IsServer() then return end
-
-self.caster = self:GetCaster()
-
-self.attack_count = 0
-self.attack_max = 1/self.caster:GetAttacksPerSecond(true)
-
-self.interval = 0.01
-
---function modifier_alchemist_chemical_rage_custom_legendary:GetEffectName() return "particles/alchemist/rage_legendary.vpcf" end
-
-local effect = ParticleManager:CreateParticle("particles/alchemist/rage_legendary.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
---ParticleManager:SetParticleControlEnt(effect, 2, self:GetCaster(), PATTACH_OVERHEAD_FOLLOW, nil, self:GetCaster():GetAbsOrigin(), false) 
-self:AddParticle( effect, false, false, -1, false, false  )
-
-
-self.particle = ParticleManager:CreateParticle("particles/items4_fx/nullifier_mute.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())
-ParticleManager:SetParticleControl(self.particle, 1, self:GetParent():GetAbsOrigin())
-self:AddParticle(self.particle, false, false, -1, false, false)
-
-for i = 1,3 do 
-
-	local effect_cast = ParticleManager:CreateParticle("particles/units/heroes/hero_alchemist/alchemist_berserk_buff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-	self:AddParticle( effect_cast, false, false, -1, false, false  )
-end 
-
-self.rotate = 0
-self:StartIntervalThink(self.interval)
-end
-
-
-function modifier_alchemist_chemical_rage_custom_legendary:OnIntervalThink()
-if not IsServer() then return end
-local enemies = FindUnitsInRadius( self:GetParent():GetTeamNumber(), self:GetParent():GetAbsOrigin(), nil, self:GetParent():Script_GetAttackRange() + self.bonus_range, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_CLOSEST, false )
-
-for id, enemy in pairs(enemies) do
-	if enemy:IsAttackImmune() or enemy:GetUnitName() == "npc_teleport" then
-		table.remove(enemies, id)
-	end
-end
-
-if #enemies <= 0 then self.rotate = 0 return end
-
-self.rotate = 1
-local direction = enemies[1]:GetAbsOrigin() - self:GetParent():GetAbsOrigin()
-direction.z = 0
-direction = direction:Normalized()
-
-
-self.attack_count = self.attack_count + self.interval
-self.attack_max = 1/self.caster:GetAttacksPerSecond(true)
-
-if self.attack_count >= self.attack_max 
- and not self.caster:IsStunned() and not self.caster:IsHexed() and not my_game:CheckDisarm(self.caster) and not self.caster:IsChanneling() then 
-
-	self.attack_count = 0
-
-	self:GetParent():FadeGesture(ACT_DOTA_ATTACK)
-	self:GetParent():FadeGesture(ACT_DOTA_ATTACK2)
-	self:GetParent():StartGestureWithPlaybackRate(ACT_DOTA_ATTACK, self:GetParent():GetDisplayAttackSpeed() / 100)
-
-	self.caster:PerformAttack(enemies[1], true, true, true, false, true, false, false)
-end 
-
-
-
-if not self:GetParent():IsCurrentlyHorizontalMotionControlled() and not self:GetParent():IsCurrentlyVerticalMotionControlled() then
-	self:GetParent():SetForwardVector(direction)
-	self:GetParent():FaceTowards(enemies[1]:GetAbsOrigin())
-end
-
-end
-
-
-function modifier_alchemist_chemical_rage_custom_legendary:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_DISABLE_TURNING,
-	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
-	MODIFIER_PROPERTY_IGNORE_CAST_ANGLE,
-	MODIFIER_PROPERTY_CASTTIME_PERCENTAGE,
-}
-end
-
-function modifier_alchemist_chemical_rage_custom_legendary:GetModifierDisableTurning()
-	return self.rotate
-end
-
-
-function modifier_alchemist_chemical_rage_custom_legendary:GetModifierStatusResistanceStacking()
-return self.status
-end
-
-
-function modifier_alchemist_chemical_rage_custom_legendary:GetModifierIgnoreCastAngle()
-		return 1
-end
-
-function modifier_alchemist_chemical_rage_custom_legendary:GetModifierPercentageCasttime()
-		return 100
-end
-
-
-
-
-
-
-modifier_alchemist_chemical_rage_slow = class({})
-function modifier_alchemist_chemical_rage_slow:IsHidden() return true end
-function modifier_alchemist_chemical_rage_slow:IsPurgable() return true end
-
-
-function modifier_alchemist_chemical_rage_slow:OnCreated(table)
-
-self.slow = self:GetCaster():GetTalentValue("modifier_alchemist_rage_5", "slow")
-end
-
-
-
-function modifier_alchemist_chemical_rage_slow:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
-}
-end
-
-function modifier_alchemist_chemical_rage_slow:GetModifierMoveSpeedBonus_Percentage()
-return self.slow
-end
-
-
-
-
 
 
 
 
 function alchemist_enrage_potion:GetCooldown()
-return self:GetCaster():GetTalentValue("modifier_alchemist_rage_legendary", "cd")
+return self:GetCaster():GetTalentValue("modifier_alchemist_rage_legendary", "cd", true)
 end
 
-function alchemist_enrage_potion:OnToggle() 
+function alchemist_enrage_potion:OnSpellStart() 
 local caster = self:GetCaster()
 
-if self:GetToggleState() then
-		self:GetCaster():EmitSound("Alch.Rage_voice")
-		self:GetCaster():EmitSound("Hero_Alchemist.BerserkPotion.Cast")
-		self:GetCaster():EmitSound("Hero_Alchemist.BerserkPotion.Target")
-    self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_alchemist_chemical_rage_custom_legendary", {})
-else
-    self:GetCaster():RemoveModifierByName("modifier_alchemist_chemical_rage_custom_legendary")
-end
-
-
-self:EndCooldown()
-self:StartCooldown(self:GetCaster():GetTalentValue("modifier_alchemist_rage_legendary", "cd"))
+caster:EmitSound("Alch.Weapon_legendary_vo")
+caster:EmitSound("Alch.Weapon_legendary2")
+caster:EmitSound("Alch.Weapon_legendary")
+caster:AddNewModifier(caster, self, "modifier_alchemist_chemical_rage_custom_legendary", {duration = caster:GetTalentValue("modifier_alchemist_rage_legendary", "duration", true)})
 end
 
 
 
 
 
+modifier_alchemist_chemical_rage_custom_legendary = class(mod_visible)
+function modifier_alchemist_chemical_rage_custom_legendary:OnCreated( kv )
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-modifier_alchemist_chemical_rage_custom_incoming = class({})
-function modifier_alchemist_chemical_rage_custom_incoming:IsHidden() return true end
-function modifier_alchemist_chemical_rage_custom_incoming:IsPurgable() return false end
+self.bonus_range = self.parent:GetTalentValue("modifier_alchemist_rage_4", "range")
 
-function modifier_alchemist_chemical_rage_custom_incoming:OnCreated(table)
-self.damage_reduce = self:GetCaster():GetTalentValue("modifier_alchemist_rage_6", "damage")
+self.cast_bonus = self.parent:HasTalent("modifier_alchemist_rage_4") and 100 or 0
+self.rotate = 0
+self.ignore_cast = self.parent:HasTalent("modifier_alchemist_rage_4") and 1 or 0
+
+self.bonus_move = self.parent:GetTalentValue("modifier_alchemist_rage_4", "move")
+
+self.heal_creeps = self.parent:GetTalentValue("modifier_alchemist_rage_3", "creeps", true)
+self.heal = self.parent:GetTalentValue("modifier_alchemist_rage_3", "heal")/100
+
+if not IsServer() then return end
+self.ability:EndCd()
+
+if self.parent:HasTalent("modifier_alchemist_rage_3") then
+	self.parent:AddDamageEvent_out(self, true)
+end
+
+local mod = self.parent:FindModifierByName("modifier_general_stats")
+if mod then
+	mod:OnIntervalThink()
+end
+
+self.attack_count = 0
+self.attack_max = 1/self.parent:GetAttacksPerSecond(true)
+
+self.interval = 0.01
+
+self.parent:GenericParticle("particles/generic_gameplay/rune_arcane_owner.vpcf", self)
+self.parent:GenericParticle("particles/alchemist/rage_legendary.vpcf", self)
+self.parent:GenericParticle("particles/generic_gameplay/rune_doubledamage_owner.vpcf", self)
+
+for i = 1,2 do 
+	self.parent:GenericParticle("particles/units/heroes/hero_alchemist/alchemist_berserk_buff.vpcf", self)
+end 
+
+self.parent:CalculateStatBonus(true)
+
+if not self.parent:HasTalent("modifier_alchemist_rage_4") then return end
+
+self:StartIntervalThink(self.interval)
+end
+
+
+function modifier_alchemist_chemical_rage_custom_legendary:OnDestroy()
+if not IsServer() then return end
+self.ability:StartCd()
+if not self.parent:HasModifier("modifier_alchemist_chemical_rage_custom") then
+	self.ability:SetActivated(false)
+end
+
+local mod = self.parent:FindModifierByName("modifier_general_stats")
+if mod then
+	mod:OnIntervalThink()
+end
+
+self.parent:CalculateStatBonus(true)
+end
+
+
+function modifier_alchemist_chemical_rage_custom_legendary:OnIntervalThink()
 if not IsServer() then return end
 
+local enemies = self.parent:FindTargets(self.parent:Script_GetAttackRange() + self.bonus_range)
 
-self.particle_1 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff.vpcf"
-self.particle_2 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_egg.vpcf"
-self.particle_3 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_streaks.vpcf"
-self.sound = "Hero_Pangolier.TailThump.Shield"
+for id, enemy in pairs(enemies) do
+	if enemy:IsAttackImmune() or not enemy:IsUnit() or not self.parent:CanEntityBeSeenByMyTeam(enemy) then
+		table.remove(enemies, id)
+	end
+end
+
+self.attack_count = self.attack_count + self.interval
+self.attack_max = 1/self.parent:GetAttacksPerSecond(true)
+
+if #enemies <= 0 then self.rotate = 0 return end
+
+self.rotate = 1
+local direction = enemies[1]:GetAbsOrigin() - self.parent:GetAbsOrigin()
+direction.z = 0
+direction = direction:Normalized()
+
+
+if self.attack_count >= self.attack_max 
+ and not self.parent:IsStunned() and not self.parent:IsHexed() and not dota1x6:CheckDisarm(self.parent) and not self.parent:IsChanneling() then 
+
+	self.attack_count = 0
+
+	self.parent:FadeGesture(ACT_DOTA_ATTACK)
+	self.parent:FadeGesture(ACT_DOTA_ATTACK2)
+	self.parent:StartGestureWithPlaybackRate(ACT_DOTA_ATTACK, self.parent:GetDisplayAttackSpeed()/100)
+
+	self.parent:PerformAttack(enemies[1], true, true, false, false, true, false, false)
+
+	local mod = self.parent:FindModifierByName("modifier_alchemist_corrosive_weaponry_custom")
+	if mod then
+		mod:AttackRecordEvent_out({attacker = self.parent, target = enemies[1]})
+	end
+end 
+
+if not self.parent:IsCurrentlyHorizontalMotionControlled() and not self.parent:IsCurrentlyVerticalMotionControlled() then
+	self.parent:SetForwardVector(direction)
+	self.parent:FaceTowards(enemies[1]:GetAbsOrigin())
+end
+
+end
+
+function modifier_alchemist_chemical_rage_custom_legendary:CheckState()
+if not self.parent:HasTalent("modifier_alchemist_rage_4") then return end
+return
+{
+	[MODIFIER_STATE_DISARMED] = true
+}
+end
+
+function modifier_alchemist_chemical_rage_custom_legendary:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_DISABLE_TURNING,
+	MODIFIER_PROPERTY_IGNORE_CAST_ANGLE,
+	MODIFIER_PROPERTY_CASTTIME_PERCENTAGE,
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT,
+	MODIFIER_PROPERTY_MODEL_SCALE
+}
+end
+
+function modifier_alchemist_chemical_rage_custom_legendary:GetModifierMoveSpeedBonus_Constant()
+return self.bonus_move
+end
+
+function modifier_alchemist_chemical_rage_custom_legendary:GetModifierDisableTurning()
+return self.rotate
+end
+
+function modifier_alchemist_chemical_rage_custom_legendary:GetModifierIgnoreCastAngle()
+return self.ignore_cast
+end
+
+function modifier_alchemist_chemical_rage_custom_legendary:GetModifierPercentageCasttime()
+return self.cast_bonus
+end
+
+function modifier_alchemist_chemical_rage_custom_legendary:GetModifierModelScale()
+return 20
+end
+
+
+
+function modifier_alchemist_chemical_rage_custom_legendary:DamageEvent_out(params)
+if not IsServer() then return end
+if not self.parent:HasTalent("modifier_alchemist_rage_3") then return end
+if not self.parent:CheckLifesteal(params) then return end
+
+local heal = params.damage*self.heal
+heal = params.unit:IsCreep() and heal/self.heal_creeps or heal
+
+self.parent:GenericHeal(heal, self.ability, true, "", "modifier_alchemist_rage_3")
+end
+
+
+
+
+
+
+
+modifier_alchemist_chemical_rage_custom_incoming = class(mod_hidden)
+function modifier_alchemist_chemical_rage_custom_incoming:OnCreated(table)
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.damage_reduce = self.parent:GetTalentValue("modifier_alchemist_hero_8", "damage_reduce")
+if not IsServer() then return end
+
+self.parent:EmitSound("UI.Generic_shield")
 self.buff_particles = {}
-
-self:GetCaster():EmitSound( self.sound)
-
-
-self.buff_particles[1] = ParticleManager:CreateParticle(self.particle_1, PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-ParticleManager:SetParticleControlEnt(self.buff_particles[1], 1, self:GetCaster(), PATTACH_ABSORIGIN_FOLLOW, nil, Vector(0,0,0), false) 
+self.buff_particles[1] = ParticleManager:CreateParticle("particles/units/heroes/hero_pangolier/pangolier_tailthump_buff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt(self.buff_particles[1], 1, self.parent, PATTACH_ABSORIGIN_FOLLOW, nil, Vector(0,0,0), false) 
 self:AddParticle(self.buff_particles[1], false, false, -1, true, false)
 ParticleManager:SetParticleControl( self.buff_particles[1], 3, Vector( 255, 255, 255 ) )
 
-self.buff_particles[2] = ParticleManager:CreateParticle(self.particle_2, PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-ParticleManager:SetParticleControlEnt(self.buff_particles[2], 1, self:GetCaster(), PATTACH_ABSORIGIN_FOLLOW, nil, Vector(0,0,0), false) 
+self.buff_particles[2] = ParticleManager:CreateParticle("particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_egg.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt(self.buff_particles[2], 1, self.parent, PATTACH_ABSORIGIN_FOLLOW, nil, Vector(0,0,0), false) 
 self:AddParticle(self.buff_particles[2], false, false, -1, true, false)
 
-self.buff_particles[3] = ParticleManager:CreateParticle(self.particle_3, PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-ParticleManager:SetParticleControlEnt(self.buff_particles[3], 1, self:GetCaster(), PATTACH_ABSORIGIN_FOLLOW, nil, Vector(0,0,0), false) 
+self.buff_particles[3] = ParticleManager:CreateParticle("particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_streaks.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt(self.buff_particles[3], 1, self.parent, PATTACH_ABSORIGIN_FOLLOW, nil, Vector(0,0,0), false) 
 self:AddParticle(self.buff_particles[3], false, false, -1, true, false)
-
 end
-
-
 
 function modifier_alchemist_chemical_rage_custom_incoming:DeclareFunctions()
 return
@@ -570,17 +402,6 @@ end
 
 
 
-modifier_alchemist_chemical_rage_custom_unslow = class({})
-function modifier_alchemist_chemical_rage_custom_unslow:IsHidden() return true end
-function modifier_alchemist_chemical_rage_custom_unslow:IsPurgable() return false end
-function modifier_alchemist_chemical_rage_custom_unslow:CheckState()
-return
-{
-	[MODIFIER_STATE_UNSLOWABLE] = true
-}
-end
-
-
 
 
 modifier_alchemist_chemical_rage_tracker = class({})
@@ -594,50 +415,153 @@ return
 end
 
 function modifier_alchemist_chemical_rage_tracker:GetModifierAttackRangeBonus()
-if not self:GetCaster():HasModifier("modifier_alchemist_rage_2") then return end 
-
-return self:GetCaster():GetTalentValue("modifier_alchemist_rage_2", "range")
+return self.range_bonus
 end 
 
 
-modifier_alchemist_chemical_rage_speed = class({})
-function modifier_alchemist_chemical_rage_speed:IsHidden() return true end
-function modifier_alchemist_chemical_rage_speed:IsPurgable() return false end
-function modifier_alchemist_chemical_rage_speed:OnDestroy()
-if not IsServer() then return end 
+function modifier_alchemist_chemical_rage_tracker:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-local mod = self:GetCaster():FindModifierByName("modifier_alchemist_chemical_rage_custom")
-if mod then 
-	mod:SetStackCount(0)
-end 
+self.cleave = self.parent:GetTalentValue("modifier_alchemist_rage_2", "cleave")/100
+self.range_bonus = self.parent:GetTalentValue("modifier_alchemist_rage_2", "range")
+
+self.attack_duration = self.parent:GetTalentValue("modifier_alchemist_rage_1", "duration", true)
+
+self.low_health = self.parent:GetTalentValue("modifier_alchemist_hero_8", "health", true)
+self.low_cd = self.parent:GetTalentValue("modifier_alchemist_hero_8", "cd", true)
+self.low_duration = self.parent:GetTalentValue("modifier_alchemist_hero_8", "duration", true)
+
+if not IsServer() then return end
+self:SetHasCustomTransmitterData(true)
+self:UpdateTalent()
+end
+
+function modifier_alchemist_chemical_rage_tracker:UpdateTalent(name)
+if not IsServer() then return end
+
+if name == "modifier_alchemist_rage_1" or self.parent:HasTalent("modifier_alchemist_rage_1") then
+	self.parent:AddAttackEvent_out(self)
+end
+
+if name == "modifier_alchemist_rage_2" or self.parent:HasTalent("modifier_alchemist_rage_2") then
+	self.parent:AddAttackEvent_out(self)
+	self.cleave = self.parent:GetTalentValue("modifier_alchemist_rage_2", "cleave")/100
+	self.range_bonus = self.parent:GetTalentValue("modifier_alchemist_rage_2", "range")
+end
+
+if name == "modifier_alchemist_hero_8" or self.parent:HasTalent("modifier_alchemist_hero_8") then
+	self.parent:AddDamageEvent_inc(self, true)
+end
+
+self:SendBuffRefreshToClients()
+end
+
+function modifier_alchemist_chemical_rage_tracker:AddCustomTransmitterData() 
+return 
+{
+  range_bonus = self.range_bonus,
+} 
+end
+
+function modifier_alchemist_chemical_rage_tracker:HandleCustomTransmitterData(data)
+self.range_bonus = data.range_bonus
+end
+
+function modifier_alchemist_chemical_rage_tracker:DamageEvent_inc(params)
+if not IsServer() then return end
+if not self.parent:HasTalent("modifier_alchemist_hero_8") then return end
+if self.parent ~= params.unit then return end
+if self.parent:PassivesDisabled() then return end
+if not self.parent:IsAlive() then return end
+if self.parent:GetHealthPercent() > self.low_health then return end
+if self.parent:HasModifier("modifier_death") then return end
+if self.parent:HasModifier("modifier_alchemist_chemical_rage_custom_low_cd") then return end
+
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_alchemist_chemical_rage_custom_low_cd", {duration = self.low_cd})
+
+self.parent:EmitSound("Alchemist.Lowhp_bkb")
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_generic_debuff_immune", {effect = 1, duration = self.low_duration})
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_alchemist_chemical_rage_custom_incoming", {duration = self.low_duration})
+end
+
+
+
+function modifier_alchemist_chemical_rage_tracker:AttackEvent_out(params)
+if not IsServer() then return end
+if self.parent ~= params.attacker then return end
+if not params.target:IsUnit() then return end
+
+if self.parent:HasTalent("modifier_alchemist_rage_2") then
+	DoCleaveAttack(self.parent, params.target, nil, params.damage * self.cleave  , 150, 360, 650, "particles/alch_cleave.vpcf")
+end
+
+if self.parent:HasTalent("modifier_alchemist_rage_1") then
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_alchemist_chemical_rage_custom_attack", {duration = self.attack_duration, target = params.target:entindex()})
+end
 
 end
 
 
-modifier_alchemist_chemical_rage_armor = class({})
-function modifier_alchemist_chemical_rage_armor:IsHidden() return true end
-function modifier_alchemist_chemical_rage_armor:IsPurgable() return false end
-function modifier_alchemist_chemical_rage_armor:OnCreated()
-self.armor = self:GetCaster():GetTalentValue("modifier_alchemist_rage_3", "armor")
 
-if self:GetCaster():GetTeamNumber() ~= self:GetParent():GetTeamNumber() then 
-	self.armor = self.armor*-1
 
-	if IsServer() then 
-		self:GetParent():EmitSound("DOTA_Item.Maim")
-	end 
 
-end 
+modifier_alchemist_chemical_rage_custom_attack = class(mod_visible)
+function modifier_alchemist_chemical_rage_custom_attack:GetTexture() return "buffs/alchemist/rage_1" end
+function modifier_alchemist_chemical_rage_custom_attack:OnCreated()
+self.parent = self:GetParent()
 
-end 
+self.attacks = self.parent:GetTalentValue("modifier_alchemist_rage_1", "attacks")
+self.damage = self.parent:GetTalentValue("modifier_alchemist_rage_1", "damage")
+self.gold = self.parent:GetTalentValue("modifier_alchemist_rage_1", "gold")
+self.creeps = self.parent:GetTalentValue("modifier_alchemist_rage_1", "creeps")
 
-function modifier_alchemist_chemical_rage_armor:DeclareFunctions()
+self:SetStackCount(1)
+end
+
+function modifier_alchemist_chemical_rage_custom_attack:OnRefresh(table)
+if not IsServer() then return end
+
+self:IncrementStackCount()
+
+if self:GetStackCount() < self.attacks then return end
+local target = EntIndexToHScript(table.target)
+if target and not target:IsNull() then
+	target:EmitSound("Alch.gold_attack")
+
+	local bonus_gold = target:IsRealHero() and self.gold or self.gold/self.creeps
+
+	self.parent:ModifyGold(bonus_gold , true , DOTA_ModifyGold_Unspecified)
+
+	local digit = string.len(tostring(math.floor(bonus_gold))) + 1
+	local effect_cast_2 = ParticleManager:CreateParticle( "particles/units/heroes/hero_alchemist/alchemist_lasthit_msg_gold.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+	ParticleManager:SetParticleControl( effect_cast_2, 1, Vector( 0, bonus_gold, 0 ) )
+	ParticleManager:SetParticleControl( effect_cast_2, 2, Vector( 1, digit, 0 ) )
+	ParticleManager:SetParticleControl( effect_cast_2, 3, Vector( 255, 255, 0 ) )
+	ParticleManager:ReleaseParticleIndex( effect_cast_2 )
+
+	local item_effect = ParticleManager:CreateParticle( "particles/econ/items/bounty_hunter/prince_ratsia/prince_ratsia_jinada.vpcf", PATTACH_CUSTOMORIGIN_FOLLOW, target)
+	ParticleManager:SetParticleControlEnt(item_effect, 0, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true )
+	ParticleManager:SetParticleControlEnt(item_effect, 1, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetOrigin(), true )
+	ParticleManager:ReleaseParticleIndex(item_effect)
+end
+
+
+self:Destroy()
+end
+
+function modifier_alchemist_chemical_rage_custom_attack:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS
+	MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE
 }
 end
 
-function modifier_alchemist_chemical_rage_armor:GetModifierPhysicalArmorBonus()
-return self.armor
+function modifier_alchemist_chemical_rage_custom_attack:GetModifierPreAttack_BonusDamage()
+if self:GetStackCount() ~= self.attacks - 1 then return end
+return self.damage
 end
+
+
+modifier_alchemist_chemical_rage_custom_low_cd = class(mod_cd)
+function modifier_alchemist_chemical_rage_custom_low_cd:GetTexture() return "buffs/alchemist/hero_8" end

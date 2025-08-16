@@ -9,18 +9,16 @@ modifier_tusk_passive = class ({})
 
 function modifier_tusk_passive:IsHidden() return true end
 
-function modifier_tusk_passive:DeclareFunctions() return {
 
-    MODIFIER_EVENT_ON_DEATH
-
-} end
 
 function modifier_tusk_passive:OnCreated(table)
-    if not IsServer() then return end
+if not IsServer() then return end
+self.parent = self:GetParent()
+self.parent:AddDeathEvent(self)
 self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_phased", {})
 end
 
-function modifier_tusk_passive:OnDeath( param )
+function modifier_tusk_passive:DeathEvent( param )
     if not IsServer() then end 
       
     if param.unit == self:GetParent() then

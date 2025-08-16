@@ -125,7 +125,7 @@ end
 function modifier_toxin_aura:OnIntervalThink()
 if not IsServer() then return end
 self:GetParent():EmitSound("Hero_Viper.NetherToxin.Damage")
-ApplyDamage({victim = self:GetParent(), attacker = self:GetCaster(), damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility()})
+DoDamage({victim = self:GetParent(), attacker = self:GetCaster(), damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility()})
  
 end
 

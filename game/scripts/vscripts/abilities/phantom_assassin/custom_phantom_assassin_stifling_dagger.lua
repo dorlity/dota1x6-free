@@ -1,77 +1,63 @@
 LinkLuaModifier("modifier_custom_phantom_assassin_stifling_dagger_attack", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_custom_phantom_assassin_stifling_dagger_slow", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_phantom_assassin_stifling_dagger_armor", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_phantom_assassin_stifling_dagger_stackig_damage", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_custom_phantom_assassin_stifling_dagger_tracker", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_phantom_assassin_stifling_dagger_poison", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_custom_phantom_assassin_stifling_dagger_poisonstack", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_phantom_assassin_stifling_dagger_sleep_thinker", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_phantom_assassin_stifling_dagger_sleep", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_phantom_assassin_stifling_dagger_sleep_cd", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_phantom_assassin_stifling_legendary_stack", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_phantom_assassin_stifling_legendary_caster", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_phantom_assassin_stifling_blink", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_HORIZONTAL)
+LinkLuaModifier("modifier_custom_phantom_assassin_stifling_legendary_cast", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_phantom_assassin_stifling_double_proc", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_phantom_assassin_stifling_vision", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_phantom_assassin_stifling_heal", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_phantom_assassin_stifling_absorb", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_phantom_assassin_stifling_absorb_cd", "abilities/phantom_assassin/custom_phantom_assassin_stifling_dagger", LUA_MODIFIER_MOTION_NONE)
 
 
 custom_phantom_assassin_stifling_dagger = class({})
 
-custom_phantom_assassin_stifling_dagger.cd_inc = {1, 1.5, 2}
-
-custom_phantom_assassin_stifling_dagger.attack_heal = {20, 30, 40}
-
-custom_phantom_assassin_stifling_dagger.healing_speed = 10
-custom_phantom_assassin_stifling_dagger.healing_speed_duration = 3
-custom_phantom_assassin_stifling_dagger.jump_speed = 1500
-custom_phantom_assassin_stifling_dagger.jump_range = 200
-
-custom_phantom_assassin_stifling_dagger.sleep_radius = 500
-custom_phantom_assassin_stifling_dagger.sleep_duration = 2.5
-custom_phantom_assassin_stifling_dagger.sleep_delay = 0.5
-custom_phantom_assassin_stifling_dagger.sleep_cd = 40
-custom_phantom_assassin_stifling_dagger.sleep_heal = 0.15
 
 
-custom_phantom_assassin_stifling_dagger.legendary_interval = 0.15
-custom_phantom_assassin_stifling_dagger.legendary_duration = 8
-custom_phantom_assassin_stifling_dagger.legendary_max = 4
-custom_phantom_assassin_stifling_dagger.legendary_cast = 0.15
+custom_phantom_assassin_stifling_dagger.legendary_proj = {}
 
 
-custom_phantom_assassin_stifling_dagger.incoming_damage = {3, 5}
-custom_phantom_assassin_stifling_dagger.incoming_heal = {-5, -8}
-custom_phantom_assassin_stifling_dagger.incoming_max = 5
-custom_phantom_assassin_stifling_dagger.incoming_duration = 7
+function custom_phantom_assassin_stifling_dagger:CreateTalent()
+local caster = self:GetCaster()
+local ability = caster:FindAbilityByName("custom_phantom_assassin_stifling_dagger_legendary")
 
+if ability then 
+  ability:SetHidden(false)
+end
 
-custom_phantom_assassin_stifling_dagger.poison_inc = 50
-custom_phantom_assassin_stifling_dagger.poison_init = 50
-custom_phantom_assassin_stifling_dagger.poison_duration = 4
-
+end
 
 
 
 function custom_phantom_assassin_stifling_dagger:Precache(context)
-PrecacheResource( "particle", "particles/units/heroes/hero_phantom_assassin/phantom_assassin_attack_blur_b.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_phantom_assassin/phantom_assassin_attack_blur.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_phantom_assassin/phantom_assassin_attack_blur_crit", context )
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+
+PrecacheResource( "particle","particles/units/heroes/hero_phantom_assassin/phantom_assassin_stifling_dagger.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_phantom_assassin/phantom_assassin_stifling_dagger_debuff.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_bloodseeker/bloodseeker_bloodbath.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_phantom_assassin/phantom_assassin_shard_fan_of_knives.vpcf", context )
+PrecacheResource( "particle","particles/generic_gameplay/generic_sleep.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_centaur/centaur_shard_buff_strength_counter_stack.vpcf", context )
+PrecacheResource( "particle","particles/items_fx/force_staff.vpcf", context )
+PrecacheResource( "particle","particles/status_fx/status_effect_forcestaff.vpcf", context )
+
+PrecacheResource( "particle","particles/phantom_assassin/dagger_linear.vpcf", context )
+PrecacheResource( "particle","particles/phantom_assassin/dagger_stack.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_venomancer/venomancer_poison_debuff.vpcf", context )
+PrecacheResource( "particle","particles/blur_linken.vpcf", context )
 
 
-PrecacheResource( "particle", "particles/units/heroes/hero_phantom_assassin/phantom_assassin_stifling_dagger.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_phantom_assassin/phantom_assassin_stifling_dagger_debuff.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_centaur/centaur_shard_buff_strength_counter_stack.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_bloodseeker/bloodseeker_bloodbath.vpcf", context )
-
-my_game:PrecacheShopItems("npc_dota_hero_phantom_assassin", context)
-
+dota1x6:PrecacheShopItems("npc_dota_hero_phantom_assassin", context)
 end
+
+
 
 
 function custom_phantom_assassin_stifling_dagger:GetAbilityTextureName()
-if self:GetCaster():HasModifier("modifier_phantom_assassin_persona_custom") then
+if self:GetCaster():HasModifier("modifier_phantom_assassin_persona_custom") or self:GetCaster():HasModifier("modifier_phantom_assassin_persona_custom_2") or self:GetCaster():HasModifier("modifier_phantom_assassin_persona_custom_3") then
   return "phantom_assassin/persona/phantom_assassin_stifling_dagger_persona1"
 end
-
 if self:GetCaster():HasModifier("modifier_pa_immortal_helmet_custom") then
     return "phantom_assassin/ti8_immortal_helmet/phantom_assassin_stifling_dagger_immortal"
 end
@@ -82,15 +68,21 @@ return "phantom_assassin_stifling_dagger"
 end
 
 
-
-
-
+function custom_phantom_assassin_stifling_dagger:GetCooldown(iLevel)
+local upgrade_cooldown = 0 
+if self:GetCaster():HasTalent("modifier_phantom_assassin_dagger_1") then 
+  upgrade_cooldown = self:GetCaster():GetTalentValue("modifier_phantom_assassin_dagger_1", "cd")
+end
+return self.BaseClass.GetCooldown(self, iLevel) + upgrade_cooldown
+end
 
 function custom_phantom_assassin_stifling_dagger:GetCastPoint()
-if self:GetCaster():HasModifier("modifier_phantom_assassin_dagger_legendary") then return self.legendary_cast
-else return 0.3 end end
-
-
+local bonus = 0
+if self:GetCaster():HasTalent("modifier_phantom_assassin_dagger_1") then 
+  bonus = self:GetCaster():GetTalentValue("modifier_phantom_assassin_dagger_1", "cast")
+end
+return self.BaseClass.GetCastPoint(self) + bonus
+end
 
 function custom_phantom_assassin_stifling_dagger:GetIntrinsicModifierName()
 if not self:GetCaster():IsRealHero() then return end
@@ -98,462 +90,266 @@ return "modifier_custom_phantom_assassin_stifling_dagger_tracker"
 end
 
 function custom_phantom_assassin_stifling_dagger:GetAOERadius()
-  return self:GetSpecialValueFor("additional_targets_radius")
+return self:GetSpecialValueFor("additional_targets_radius")
 end
-
 
 function custom_phantom_assassin_stifling_dagger:GetBehavior()
-
-if self:GetCaster():HasModifier("modifier_phantom_assassin_dagger_heal") then 
-  return DOTA_ABILITY_BEHAVIOR_UNIT_TARGET + DOTA_ABILITY_BEHAVIOR_AOE + DOTA_ABILITY_BEHAVIOR_AUTOCAST
-end
-
-return DOTA_ABILITY_BEHAVIOR_UNIT_TARGET + DOTA_ABILITY_BEHAVIOR_AOE
+return DOTA_ABILITY_BEHAVIOR_UNIT_TARGET
 end
 
 
-function custom_phantom_assassin_stifling_dagger:OnSpellStart(target)
+function custom_phantom_assassin_stifling_dagger:OnSpellStart(new_target)
   
 local caster = self:GetCaster() 
 
-
-
-self.target = self:GetCursorTarget()
-if target ~= nil then 
-  self.target = target
+local target = self:GetCursorTarget()
+if new_target ~= nil then 
+  target = new_target
 end
 
 
-local mod = self.target:FindModifierByName("modifier_custom_phantom_assassin_stifling_legendary_stack")
-
-self:Dagger(self.target, 1)
-
-if self:GetCaster():HasModifier("modifier_phantom_assassin_dagger_heal") and self:GetAutoCastState() == true then
-
-  self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_custom_phantom_assassin_stifling_blink", {duration = self.jump_range/self.jump_speed})
-
-  EmitSoundOnLocationWithCaster( self:GetCaster():GetAbsOrigin(), sound_cast_start, self:GetCaster() )
-
+if caster:HasTalent("modifier_phantom_assassin_dagger_2") and not new_target then 
+  caster:AddNewModifier(caster, self, "modifier_custom_phantom_assassin_stifling_heal", {duration = caster:GetTalentValue("modifier_phantom_assassin_dagger_2", "duration")})
 end
 
-
-if not mod then return end
-
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_custom_phantom_assassin_stifling_legendary_caster", {target = self.target:entindex(), count = mod:GetStackCount()})
-
-
-
+local blur = caster:FindModifierByName("modifier_phantom_assassin_phantom_smoke")
+if blur and not new_target then 
+  blur:SetEnd()
 end
 
-
-
-
-function custom_phantom_assassin_stifling_dagger:Dagger( target, original )
-
-local caster = self:GetCaster()
-self.duration = self:GetSpecialValueFor("duration")
 local projectile_name = "particles/units/heroes/hero_phantom_assassin/phantom_assassin_stifling_dagger.vpcf"
-local projectile_speed = self:GetSpecialValueFor("speed")
-local projectile_vision = 450
-
-if self:GetCaster():HasModifier("modifier_phantom_assassin_persona_custom") then
+if caster:HasModifier("modifier_phantom_assassin_persona_custom") or caster:HasModifier("modifier_phantom_assassin_persona_custom_2") or caster:HasModifier("modifier_phantom_assassin_persona_custom_3") then
   projectile_name = "particles/units/heroes/hero_phantom_assassin_persona/pa_persona_stifling_dagger.vpcf"
-elseif self:GetCaster():HasModifier("modifier_pa_immortal_helmet_custom") then
+elseif caster:HasModifier("modifier_pa_immortal_helmet_custom") then
   projectile_name = "particles/econ/items/phantom_assassin/pa_ti8_immortal_head/pa_ti8_immortal_stifling_dagger.vpcf"
-elseif self:GetCaster():HasModifier("modifier_pa_arcana_custom") then
+elseif caster:HasModifier("modifier_pa_arcana_custom") then
   projectile_name = "particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/phantom_assassin_stifling_dagger_arcana.vpcf"
 end
 
-local j = 0
-local count = self:GetSpecialValueFor("additional_targets") + 1
+local info = 
+{
+  Target = target,
+  Source = caster,
+  Ability = self, 
+  EffectName = projectile_name,
+  iMoveSpeed = self:GetSpecialValueFor("speed"),
+  bReplaceExisting = false,                         
+  bProvidesVision = true,                           
+  iVisionRadius = 450,   
+  bDodgeable = not caster:HasTalent("modifier_phantom_assassin_dagger_5"),     
+  iVisionTeamNumber = caster:GetTeamNumber() ,
+  ExtraData = {}       
+}
+ProjectileManager:CreateTrackingProjectile(info)
 
-if self:GetCaster():HasModifier("modifier_phantom_assassin_dagger_heal") then 
-
-  self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_generic_movespeed", 
-  {
-    duration = self.healing_speed_duration,
-    movespeed = self.healing_speed,
-    effect = "particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf"
-  })
+caster:EmitSound("Hero_PhantomAssassin.Dagger.Cast")
 end
 
 
 
-local more_targets = FindUnitsInRadius(caster:GetTeamNumber(), target:GetAbsOrigin(), nil, self:GetSpecialValueFor("additional_targets_radius"), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_CLOSEST, false)
 
-for _,i in pairs(more_targets) do
-  if (j < count ) and (i:GetUnitName() ~= "npc_teleport") and not i:IsCourier() then 
-    j = j+1
 
-    local main = 0 
 
-    if i == target then 
-      main = 1
-    end 
 
-    local origin = 0
-    if original == 1 and i == target then 
-      origin = 1
-    end
+function custom_phantom_assassin_stifling_dagger:DestroyProj(index)
+if not index or not self.legendary_proj[index] then return end 
 
-    local info = {
-        Target = i,
-        Source = caster,
-        Ability = self, 
-        EffectName = projectile_name,
-        iMoveSpeed = projectile_speed,
-        bReplaceExisting = false,                         
-        bProvidesVision = true,                           
-        iVisionRadius = projectile_vision,        
-        iVisionTeamNumber = caster:GetTeamNumber() ,
-        ExtraData = {original = origin, main = main}       
-      }
-      ProjectileManager:CreateTrackingProjectile(info)
-
-      self:PlayEffects1()
-  end
+ProjectileManager:DestroyLinearProjectile(self.legendary_proj[index])
+self.legendary_proj[index] = nil
 end
-
-
-end
-
-
-function custom_phantom_assassin_stifling_dagger:GetCooldown(iLevel)
-local upgrade_cooldown = 0 
-
-if self:GetCaster():HasModifier("modifier_phantom_assassin_dagger_cd") then 
-  upgrade_cooldown = self.cd_inc[self:GetCaster():GetUpgradeStack("modifier_phantom_assassin_dagger_cd")]
-end
-
- return self.BaseClass.GetCooldown(self, iLevel) - upgrade_cooldown
- 
-  end
-
-
 
 
 function custom_phantom_assassin_stifling_dagger:OnProjectileHit_ExtraData(hTarget, vLocation, table)
-local target = hTarget
-if target==nil then return end
-if target:IsInvulnerable() then return end
-if target:TriggerSpellAbsorb( self ) then return end
-  
-if table.original and table.original == 1 and self:GetCaster():HasModifier("modifier_phantom_assassin_dagger_legendary") then 
-  hTarget:AddNewModifier(self:GetCaster(), self, "modifier_custom_phantom_assassin_stifling_legendary_stack", {duration = self.legendary_duration})
+if not hTarget then 
+  self:DestroyProj(table.legendary_index)
+  return 
 end
 
-local modifier = self:GetCaster():AddNewModifier(self:GetCaster(),self,"modifier_custom_phantom_assassin_stifling_dagger_attack",{main = table.main})
+local caster = self:GetCaster()
 
+if not table.legendary_index then 
+  if hTarget:TriggerSpellAbsorb( self ) then return end
 
-if self:GetCaster():HasModifier("modifier_phantom_assassin_dagger_double") then
-  hTarget:AddNewModifier(self:GetCaster(), self, "modifier_custom_phantom_assassin_stifling_dagger_stackig_damage", {duration = self.incoming_duration})
+  local mod = caster:FindModifierByName("modifier_custom_phantom_assassin_stifling_dagger_tracker")
+  if mod and hTarget:IsRealHero() then 
+    mod:AddStack()
+  end
 end
 
+local duration = self:GetSpecialValueFor("duration")
+local modifier = caster:AddNewModifier(caster,self,"modifier_custom_phantom_assassin_stifling_dagger_attack", {})
 
-if self:GetCaster():HasModifier("modifier_phantom_assassin_dagger_damage") then 
-    local damage = self.poison_init + self.poison_inc*self:GetCaster():GetUpgradeStack("modifier_phantom_assassin_dagger_damage")
-     
-    hTarget:EmitSound("Phantom_Assassin.PoisonImpact")
-    hTarget:AddNewModifier(self:GetCaster(), self, "modifier_custom_phantom_assassin_stifling_dagger_poison", {duration = self.poison_duration, damage = damage/self.poison_duration})
-    hTarget:AddNewModifier(self:GetCaster(), self, "modifier_custom_phantom_assassin_stifling_dagger_poisonstack", {duration = self.poison_duration})
+hTarget:AddNewModifier(caster, caster:BkbAbility(self, caster:HasTalent("modifier_phantom_assassin_dagger_5")) ,"modifier_custom_phantom_assassin_stifling_dagger_slow", {duration = duration* (1-hTarget:GetStatusResistance())})
+
+if caster:GetQuest() == "Phantom.Quest_5" and (hTarget:GetAbsOrigin() - caster:GetAbsOrigin()):Length2D() >= caster.quest.number and hTarget:IsRealHero() then 
+  caster:UpdateQuest(1)
 end
-
-if not hTarget:IsMagicImmune() then 
-    hTarget:AddNewModifier(self:GetCaster(),self,"modifier_custom_phantom_assassin_stifling_dagger_slow",{duration = self.duration* (1-hTarget:GetStatusResistance())})
-end
-
-
-if self:GetCaster():GetQuest() == "Phantom.Quest_5" and (hTarget:GetAbsOrigin() - self:GetCaster():GetAbsOrigin()):Length2D() >= self:GetCaster().quest.number and hTarget:IsRealHero() then 
-  self:GetCaster():UpdateQuest(1)
-end
-
-
-self:GetCaster():PerformAttack(hTarget,true,true,true,false,false,false,true)
-
---ApplyDamage({ victim = hTarget, attacker = self:GetCaster(), ability = self, damage = self:GetCaster():GetAverageTrueAttackDamage(hTarget), damage_type = DAMAGE_TYPE_PHYSICAL})
-
---self:GetCaster():PerformAttack(hTarget, true, true, true, false, false, true, true)
+caster:PerformAttack(hTarget,true,true,true,caster:HasTalent("modifier_phantom_assassin_dagger_5"),false,false,true)
 
 if modifier then 
   modifier:Destroy()
 end
 
 
+hTarget:EmitSound("Hero_PhantomAssassin.Dagger.Target")
 
-self:PlayEffects2( hTarget )
-end
-
-function custom_phantom_assassin_stifling_dagger:PlayEffects1()
- 
-  local sound_cast = "Hero_PhantomAssassin.Dagger.Cast"
-
-  
-  self:GetCaster():EmitSound( sound_cast  )
+self:DestroyProj(table.legendary_index)
 end
 
 
-function custom_phantom_assassin_stifling_dagger:PlayEffects2( target )
-  
-  local sound_target = "Hero_PhantomAssassin.Dagger.Target"
-
-    target:EmitSound( sound_target  )
-end
 
 
 modifier_custom_phantom_assassin_stifling_dagger_attack = class({})
-
-
 function modifier_custom_phantom_assassin_stifling_dagger_attack:IsHidden() return true end
 function modifier_custom_phantom_assassin_stifling_dagger_attack:IsPurgable() return false end
-
-
 function modifier_custom_phantom_assassin_stifling_dagger_attack:OnCreated( kv )
-self.base_damage = self:GetAbility():GetSpecialValueFor( "base_damage" )  
-self.attack_factor = self:GetAbility():GetSpecialValueFor( "attack_factor" )
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-if not IsServer() then return end 
-
-self.main = kv.main
+self.base_damage = self.ability:GetSpecialValueFor( "base_damage" )  
+self.attack_factor = self.ability:GetSpecialValueFor( "attack_factor" )
 
 end
 
 
 function modifier_custom_phantom_assassin_stifling_dagger_attack:DeclareFunctions()
-   return   {
-    MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
-    MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
-
-  }
-
- 
+return   
+{
+  MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
+  MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
+}
 end
 
-
 function modifier_custom_phantom_assassin_stifling_dagger_attack:GetModifierDamageOutgoing_Percentage( params )
-  if IsServer() then
-    return self.attack_factor
-  end
+if not IsServer() then return end
+return self.attack_factor
 end
 
 function modifier_custom_phantom_assassin_stifling_dagger_attack:GetModifierPreAttack_BonusDamage( params )
-  if IsServer() then
-    return self.base_damage * 100/(100+self.attack_factor)
-  end
+if not IsServer() then return end
+return self.base_damage * 100/(100+self.attack_factor)
 end
 
 
 
 
 modifier_custom_phantom_assassin_stifling_dagger_slow = class({})
-
-
 function modifier_custom_phantom_assassin_stifling_dagger_slow:IsHidden() return false end
-
-function modifier_custom_phantom_assassin_stifling_dagger_slow:IsDebuff() return true end
-
-function modifier_custom_phantom_assassin_stifling_dagger_slow:IsPurgable()  return true   end 
-
-
+function modifier_custom_phantom_assassin_stifling_dagger_slow:IsPurgable() return true end 
+function modifier_custom_phantom_assassin_stifling_dagger_slow:GetTexture() return "phantom_assassin_stifling_dagger" end
 function modifier_custom_phantom_assassin_stifling_dagger_slow:OnCreated( kv )
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self.caster:FindAbilityByName("custom_phantom_assassin_stifling_dagger")
+if not self.ability then 
+  self:Destroy()
+  return
+end
 
-self.move_slow = self:GetAbility():GetSpecialValueFor( "move_slow" )
+self.move_slow = self.ability:GetSpecialValueFor( "move_slow" )
 
 if not IsServer() then return end
 
 local particle_name = "particles/units/heroes/hero_phantom_assassin/phantom_assassin_stifling_dagger_debuff.vpcf"
-if self:GetCaster():HasModifier("modifier_phantom_assassin_persona_custom") then
+if self.caster:HasModifier("modifier_phantom_assassin_persona_custom") or self.caster:HasModifier("modifier_phantom_assassin_persona_custom_2") or self.caster:HasModifier("modifier_phantom_assassin_persona_custom_3") then
   particle_name = "particles/units/heroes/hero_phantom_assassin_persona/pa_persona_stifling_dagger_debuff.vpcf"
-elseif self:GetCaster():HasModifier("modifier_pa_immortal_helmet_custom") then
+elseif self.caster:HasModifier("") then
   particle_name = "particles/econ/items/phantom_assassin/pa_ti8_immortal_head/pa_ti8_immortal_dagger_debuff.vpcf"
-elseif self:GetCaster():HasModifier("modifier_pa_arcana_custom") then
+elseif self.caster:HasModifier("modifier_pa_arcana_custom") then
   particle_name = "particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/phantom_assassin_stifling_dagger_debuff_arcana.vpcf"
 end
 
-local particle_debuff = ParticleManager:CreateParticle(particle_name, PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-self:AddParticle(particle_debuff, false, false, -1, false, false)
+self.parent:GenericParticle(particle_name, self)
 
-self:StartIntervalThink(FrameTime())
+if self.caster:HasTalent("modifier_phantom_assassin_dagger_5") then 
+  self.parent:AddNewModifier(self.caster, self.ability, "modifier_custom_phantom_assassin_stifling_vision", {duration = self.caster:GetTalentValue("modifier_phantom_assassin_dagger_5", "duration")})
+else 
+  self:StartIntervalThink(FrameTime())
+end
+
 end
 
 function modifier_custom_phantom_assassin_stifling_dagger_slow:OnIntervalThink()
 if not IsServer() then return end
- AddFOWViewer(self:GetCaster():GetTeamNumber(), self:GetParent():GetAbsOrigin(), 10, FrameTime(), false)
+AddFOWViewer(self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), 10, FrameTime(), false)
 end
-
-function modifier_custom_phantom_assassin_stifling_dagger_slow:OnRefresh( kv )
-
-  self.move_slow = self:GetAbility():GetSpecialValueFor( "move_slow" )  
-end
-
-
 
 function modifier_custom_phantom_assassin_stifling_dagger_slow:DeclareFunctions()
-return {
-    MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-    MODIFIER_PROPERTY_TOOLTIP,
-    MODIFIER_EVENT_ON_ATTACK_LANDED
-  }
-end
-
-function modifier_custom_phantom_assassin_stifling_dagger_slow:OnTooltip() return 
-  self.move_slow  end
-
-function modifier_custom_phantom_assassin_stifling_dagger_slow:GetModifierMoveSpeedBonus_Percentage()
-  return self.move_slow
-end
-
-
-function modifier_custom_phantom_assassin_stifling_dagger_slow:OnAttackLanded(params)
-if not IsServer() then return end
-if self:GetParent() ~= params.target then return end
-if self:GetCaster() ~= params.attacker then return end
-if not self:GetCaster():HasModifier("modifier_phantom_assassin_dagger_aoe") then return end
-
-local heal = self:GetAbility().attack_heal[self:GetCaster():GetUpgradeStack("modifier_phantom_assassin_dagger_aoe")]
-self:GetCaster():Heal(heal, self:GetAbility())
-
-local particle = ParticleManager:CreateParticle( "particles/generic_gameplay/generic_lifesteal.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-ParticleManager:ReleaseParticleIndex( particle )
-
-SendOverheadEventMessage(self:GetCaster(), 10, self:GetCaster(), heal, nil)
-
-end
-
-
-
-
----------------------------------------------------------ТАЛАНТ ЛЕГЕНДАРНЫЙ-----------------------------------------------------------------------------------
-
-modifier_custom_phantom_assassin_stifling_dagger_stackig_damage = class({})
-
-function modifier_custom_phantom_assassin_stifling_dagger_stackig_damage:IsHidden() return false end
-function modifier_custom_phantom_assassin_stifling_dagger_stackig_damage:GetTexture() return "buffs/dagger_heal" end
-function modifier_custom_phantom_assassin_stifling_dagger_stackig_damage:IsPurgable() return true end
-function modifier_custom_phantom_assassin_stifling_dagger_stackig_damage:OnCreated(table)
-if not IsServer() then return end
-self:SetStackCount(1)
-
-self:GetParent():EmitSound("Phantom_Assassin.LegendaryPosison")
-end
-
-function modifier_custom_phantom_assassin_stifling_dagger_stackig_damage:OnRefresh(table)
-if not IsServer() then return end
-if self:GetStackCount() >= self:GetAbility().incoming_max then return end
-self:IncrementStackCount()
-
-
-self:GetParent():EmitSound("Phantom_Assassin.LegendaryPosison")
-end
-
-function modifier_custom_phantom_assassin_stifling_dagger_stackig_damage:DeclareFunctions()
 return 
-{ 
-  MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
-  MODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET,
-  MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE,
-  MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE
+{
+  MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
 }
 end
 
-
-function modifier_custom_phantom_assassin_stifling_dagger_stackig_damage:GetModifierIncomingDamage_Percentage()
-return self:GetStackCount()*self:GetAbility().incoming_damage[self:GetCaster():GetUpgradeStack("modifier_phantom_assassin_dagger_double")]
-end 
-
-function modifier_custom_phantom_assassin_stifling_dagger_stackig_damage:GetModifierLifestealRegenAmplify_Percentage() 
-  return self:GetStackCount()*self:GetAbility().incoming_heal[self:GetCaster():GetUpgradeStack("modifier_phantom_assassin_dagger_double")]
-end
-function modifier_custom_phantom_assassin_stifling_dagger_stackig_damage:GetModifierHealAmplify_PercentageTarget() 
-  return self:GetStackCount()*self:GetAbility().incoming_heal[self:GetCaster():GetUpgradeStack("modifier_phantom_assassin_dagger_double")] 
-end
-function modifier_custom_phantom_assassin_stifling_dagger_stackig_damage:GetModifierHPRegenAmplify_Percentage() 
-  return self:GetStackCount()*self:GetAbility().incoming_heal[self:GetCaster():GetUpgradeStack("modifier_phantom_assassin_dagger_double")]
+function modifier_custom_phantom_assassin_stifling_dagger_slow:GetModifierMoveSpeedBonus_Percentage()
+return self.move_slow
 end
 
 
-
-
-
-
-
-
-
-
-modifier_custom_phantom_assassin_stifling_dagger_poison = class({})
-
-function modifier_custom_phantom_assassin_stifling_dagger_poison:IsHidden() return true end
-
-function modifier_custom_phantom_assassin_stifling_dagger_poison:IsPurgable()
-  return true  end
-
- 
-function modifier_custom_phantom_assassin_stifling_dagger_poison:GetAttributes()
-  return MODIFIER_ATTRIBUTE_MULTIPLE 
-end
-
-
-
-function modifier_custom_phantom_assassin_stifling_dagger_poison:OnCreated(table)
-if not IsServer() then return end
-self.damage = table.damage
-self:StartIntervalThink(1)
-
-end
-
-function modifier_custom_phantom_assassin_stifling_dagger_poison:OnIntervalThink()
-if not IsServer() then return end
-local tik = self.damage
-
-ApplyDamage({ victim = self:GetParent(), attacker = self:GetCaster(), ability = self:GetAbility(), damage = tik, damage_type = DAMAGE_TYPE_MAGICAL})
-
-SendOverheadEventMessage(self:GetParent(), 9, self:GetParent(), tik, nil)
-
-
-end
-
-
-
-function modifier_custom_phantom_assassin_stifling_dagger_poison:OnDestroy()
-if not IsServer() then return end
-  local mod = self:GetParent():FindModifierByName("modifier_custom_phantom_assassin_stifling_dagger_poisonstack")
-  if mod then
-  mod:RemoveStack()
-end
-end
 
 
 
 
 
 modifier_custom_phantom_assassin_stifling_dagger_poisonstack = class({})
-
-
-function modifier_custom_phantom_assassin_stifling_dagger_poisonstack:IsPurgable() return true  end
-
- 
-
-function modifier_custom_phantom_assassin_stifling_dagger_poisonstack:IsDebuff() return true end
-
-
+function modifier_custom_phantom_assassin_stifling_dagger_poisonstack:IsPurgable() return true end
+function modifier_custom_phantom_assassin_stifling_dagger_poisonstack:IsHidden() return false end
 function modifier_custom_phantom_assassin_stifling_dagger_poisonstack:GetTexture() return "buffs/dagger_damage" end
 
 function modifier_custom_phantom_assassin_stifling_dagger_poisonstack:OnCreated(table) 
+
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+
+self.interval = 1
+self.duration = self.caster:GetTalentValue("modifier_phantom_assassin_dagger_3", "duration")
+self.damage = self.interval*(self.caster:GetTalentValue("modifier_phantom_assassin_dagger_3", "damage")/self.duration)
+
+self.damageTable = {victim = self.parent, attacker = self.caster, ability = self.ability, damage_type = DAMAGE_TYPE_MAGICAL}
+
 if not IsServer() then return end
-self:SetStackCount(1)
- end
 
- function modifier_custom_phantom_assassin_stifling_dagger_poisonstack:OnRefresh(table) 
+for i = 1,2 do 
+  self.parent:GenericParticle("particles/units/heroes/hero_venomancer/venomancer_poison_debuff.vpcf", self)
+end 
+
+self:AddStack()
+self:StartIntervalThink(self.interval)
+end
+
+function modifier_custom_phantom_assassin_stifling_dagger_poisonstack:OnIntervalThink()
 if not IsServer() then return end
-self:SetStackCount(self:GetStackCount()+1)
- end
 
- function modifier_custom_phantom_assassin_stifling_dagger_poisonstack:RemoveStack()
+local damage = self.damage*self:GetStackCount()
+self.damageTable.damage = damage
+
+DoDamage(self.damageTable, "modifier_phantom_assassin_dagger_3")
+self.parent:SendNumber(9, damage)
+end
+
+function modifier_custom_phantom_assassin_stifling_dagger_poisonstack:OnRefresh(table) 
 if not IsServer() then return end
-self:SetStackCount(self:GetStackCount()-1)
-if self:GetStackCount() == 0 then self:Destroy() end
- end
+self:AddStack()
+end
 
 
+function modifier_custom_phantom_assassin_stifling_dagger_poisonstack:AddStack()
+if not IsServer() then return end 
+
+self:IncrementStackCount()
+
+local duration = self.duration + FrameTime()
+Timers:CreateTimer(duration, function()
+  if self and not self:IsNull() then 
+    self:DecrementStackCount()
+    if self:GetStackCount() <= 0 then 
+      self:Destroy()
+    end
+  end
+end)
+
+end
 
 
 
@@ -561,353 +357,480 @@ if self:GetStackCount() == 0 then self:Destroy() end
 
 
 modifier_custom_phantom_assassin_stifling_dagger_tracker = class({})
-function modifier_custom_phantom_assassin_stifling_dagger_tracker:IsHidden() return true end
+function modifier_custom_phantom_assassin_stifling_dagger_tracker:IsHidden() return not self:GetParent():HasTalent("modifier_phantom_assassin_dagger_7") end
 function modifier_custom_phantom_assassin_stifling_dagger_tracker:IsPurgable() return false end
+function modifier_custom_phantom_assassin_stifling_dagger_tracker:DestroyOnExpire() return false end
+function modifier_custom_phantom_assassin_stifling_dagger_tracker:RemoveOnDeath() return false end
+
+function modifier_custom_phantom_assassin_stifling_dagger_tracker:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.double_radius = self.parent:GetTalentValue("modifier_phantom_assassin_dagger_4", "radius", true)
+self.auto_delay = self.parent:GetTalentValue("modifier_phantom_assassin_dagger_4", "delay", true)
+
+self.legendary_max = self.parent:GetTalentValue("modifier_phantom_assassin_dagger_7", "stack_max", true)
+self.legendary_timer = self.parent:GetTalentValue("modifier_phantom_assassin_dagger_7", "timer", true)
+self.active = false
+
+self.poison_duration = self.parent:GetTalentValue("modifier_phantom_assassin_dagger_3", "duration", true) + FrameTime()*2
+self.poison_bonus = self.parent:GetTalentValue("modifier_phantom_assassin_dagger_3", "bonus", true)
+
+self.range_bonus = self.parent:GetTalentValue("modifier_phantom_assassin_dagger_5", "range", true)
+
+self.block_cd = self.parent:GetTalentValue("modifier_phantom_assassin_dagger_6", "cd", true)
+self.block_duration = self.parent:GetTalentValue("modifier_phantom_assassin_dagger_6", "duration", true)
+
+if not IsServer() then return end 
+self.parent:AddSpellEvent(self)
+self.parent:AddAttackEvent_out(self)
+end
+
+
 function modifier_custom_phantom_assassin_stifling_dagger_tracker:DeclareFunctions()
 return
 {
-  MODIFIER_PROPERTY_MIN_HEALTH,
-  MODIFIER_EVENT_ON_TAKEDAMAGE
+  MODIFIER_PROPERTY_COOLDOWN_PERCENTAGE,
+  MODIFIER_PROPERTY_CAST_RANGE_BONUS_STACKING,
+  MODIFIER_PROPERTY_ABSORB_SPELL,
 }
 end
 
 
-function modifier_custom_phantom_assassin_stifling_dagger_tracker:GetMinHealth()
 
+function modifier_custom_phantom_assassin_stifling_dagger_tracker:GetAbsorbSpell(params) 
 if not IsServer() then return end
-if not self:GetParent():IsAlive() then return end
-if not self:GetParent():HasModifier("modifier_phantom_assassin_dagger_duration") then return end
-if self:GetParent():HasModifier("modifier_custom_phantom_assassin_stifling_dagger_sleep_cd") then return end
-if self:GetParent():HasModifier("modifier_death") then return end
-if self:GetParent():PassivesDisabled() then return end
+if self.parent:PassivesDisabled() then return end
+if not self.parent:HasTalent("modifier_phantom_assassin_dagger_6") then return end
+if self.parent:HasModifier("modifier_custom_phantom_assassin_stifling_absorb_cd") then return end
+if params.ability:GetCaster():GetTeamNumber() == self.parent:GetTeamNumber() then return end
+if params.ability:GetCaster():IsCreep() then return end
 
-return 1
+local particle = ParticleManager:CreateParticle("particles/blur_linken.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt(particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true)
+ParticleManager:ReleaseParticleIndex(particle)
+
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_custom_phantom_assassin_stifling_absorb_cd", {duration = self.block_cd})
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_custom_phantom_assassin_stifling_absorb", {duration = self.block_duration})
+self.parent:EmitSound("PA.Blur_absorb")
+return 0
 end
 
 
-function modifier_custom_phantom_assassin_stifling_dagger_tracker:OnTakeDamage(params)
-if not IsServer() then return end
-if self:GetParent() ~= params.unit then return end
-if self:GetParent():GetHealth() > 1 then return end
-if self:GetParent():PassivesDisabled() then return end
-if not self:GetParent():HasModifier("modifier_phantom_assassin_dagger_duration") then return end
-if self:GetParent():HasModifier("modifier_custom_phantom_assassin_stifling_dagger_sleep_cd") then return end
-if self:GetParent():HasModifier("modifier_death") then return end
-
-self.caster = self:GetCaster()
-self.radius         = self:GetAbility().sleep_radius
-self.projectile_speed   = 1000
-self.location = self:GetCaster():GetAbsOrigin()
-self.duration       = self.radius / self.projectile_speed
-  
-local heal = self:GetParent():GetMaxHealth()*self:GetAbility().sleep_heal
-
-SendOverheadEventMessage(self:GetParent(), 10, self:GetParent(), heal, nil)
-
-self:GetParent():Heal(heal, self:GetParent())
-
-local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_bloodseeker/bloodseeker_bloodbath.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-ParticleManager:ReleaseParticleIndex( particle )
-
-self:GetCaster():EmitSound("Hero_PhantomAssassin.FanOfKnives.Cast")
-self:GetCaster():EmitSound("Phantom_Assassin.Dagger_Sleep")
-
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_phantom_assassin_stifling_dagger_sleep_cd", {duration = self:GetAbility().sleep_cd})
-CreateModifierThinker(self.caster, self:GetAbility(), "modifier_custom_phantom_assassin_stifling_dagger_sleep_thinker", {duration = self.duration}, self.location, self.caster:GetTeamNumber(), false)
-  
+function modifier_custom_phantom_assassin_stifling_dagger_tracker:GetModifierCastRangeBonusStacking()
+if not self.parent:HasTalent("modifier_phantom_assassin_dagger_5") then return end 
+return self.range_bonus
 end
 
 
 
-modifier_custom_phantom_assassin_stifling_dagger_sleep_thinker = class({})
-
-
-function modifier_custom_phantom_assassin_stifling_dagger_sleep_thinker:OnCreated()
-  self.ability  = self:GetAbility()
-  self.caster   = self:GetCaster()
-  self.parent   = self:GetParent()
-  
-
-  self.radius         = self:GetAbility().sleep_radius
-  if not IsServer() then return end
-  
-  self.particle = ParticleManager:CreateParticle("particles/units/heroes/hero_phantom_assassin/phantom_assassin_shard_fan_of_knives.vpcf", PATTACH_ABSORIGIN, self.parent)
-  ParticleManager:SetParticleControl(self.particle, 0, self:GetParent():GetAbsOrigin())
-  ParticleManager:SetParticleControl(self.particle, 3, self:GetParent():GetAbsOrigin())
-  self:AddParticle(self.particle, false, false, -1, false, false)
-  
-  self.hit_enemies = {}
-  
-  self:StartIntervalThink(FrameTime())
+function modifier_custom_phantom_assassin_stifling_dagger_tracker:GetModifierPercentageCooldown()
+if not self.parent:HasTalent("modifier_phantom_assassin_dagger_4") then return end
+return self.parent:GetTalentValue("modifier_phantom_assassin_dagger_4", "cdr")
 end
 
-function modifier_custom_phantom_assassin_stifling_dagger_sleep_thinker:OnIntervalThink()
-  if not IsServer() then return end
 
-  local radius_pct = math.min((self:GetDuration() - self:GetRemainingTime()) / self:GetDuration(), 1)
-  
-  local enemies = FindUnitsInRadius(self.parent:GetTeamNumber(), self.parent:GetAbsOrigin(), nil, self.radius * radius_pct, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, FIND_ANY_ORDER, false)
-  
-  for _, enemy in pairs(enemies) do
-  
-    local hit_already = false
-  
-    for _, hit_enemy in pairs(self.hit_enemies) do
-      if hit_enemy == enemy then
-        hit_already = true
-        break
-      end
-    end
+function modifier_custom_phantom_assassin_stifling_dagger_tracker:AttackEvent_out(params)
+if not IsServer() then return end 
+if not self.parent:HasTalent("modifier_phantom_assassin_dagger_3") then return end 
+if self.parent ~= params.attacker then return end
+if not params.target:IsUnit() then return end 
 
-    if not hit_already and not enemy:IsMagicImmune() then
+local stack = 1
+if self.parent:HasModifier("modifier_custom_phantom_assassin_stifling_dagger_attack") then 
+  params.target:EmitSound("Phantom_Assassin.PoisonImpact")
+  stack = self.poison_bonus
+end
+
+for i = 1,stack do 
+  params.target:AddNewModifier(self.parent, self.ability, "modifier_custom_phantom_assassin_stifling_dagger_poisonstack", {duration = self.poison_duration})
+end
+
+end
 
 
-      enemy:EmitSound("Hero_PhantomAssassin.Attack")
-      enemy:EmitSound("Phantom_Assassin.Dagger_Sleep_target")
-      local duration = self:GetAbility().sleep_duration*(1 - enemy:GetStatusResistance())
-      enemy:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_custom_phantom_assassin_stifling_dagger_sleep", {duration = duration})
 
-      table.insert(self.hit_enemies, enemy)
-      
+function modifier_custom_phantom_assassin_stifling_dagger_tracker:SpellEvent(params)
+if not IsServer() then return end 
+if not self.parent:HasTalent("modifier_phantom_assassin_dagger_4") then return end
+if params.unit ~= self.parent then return end
 
-    end
+local chance = self.parent:GetTalentValue("modifier_phantom_assassin_dagger_4", "chance")
+if not RollPseudoRandomPercentage(chance, 1923, self.parent) then return end
 
+local target = self.parent:RandomTarget(self.double_radius)
+
+if target then
+  if params.ability == self.ability then  
+    self.parent:AddNewModifier(self.parent, self.ability, "modifier_custom_phantom_assassin_stifling_double_proc", {target = target:entindex(), duration = self.auto_delay})
+  else 
+    self.ability:OnSpellStart(target)
+  end 
+end 
+
+end
+
+
+
+function modifier_custom_phantom_assassin_stifling_dagger_tracker:OnIntervalThink()
+if not IsServer() then return end 
+if not self.parent:HasTalent("modifier_phantom_assassin_dagger_7") then return end
+if self:GetStackCount() <= 0 then return end 
+self.active = false
+
+if self:GetStackCount() > 0 then 
+  self:DecrementStackCount()
+end
+
+self:StartIntervalThink(0.3)
+end
+
+
+function modifier_custom_phantom_assassin_stifling_dagger_tracker:AddStack()
+if not IsServer() then return end 
+if not self.parent:HasTalent("modifier_phantom_assassin_dagger_7") then return end
+
+self.active = true
+self:StartIntervalThink(self.legendary_timer)
+self:SetDuration(self.legendary_timer, true)
+
+if self:GetStackCount() >= self.legendary_max then return end 
+self:IncrementStackCount()
+end
+
+
+
+function modifier_custom_phantom_assassin_stifling_dagger_tracker:OnStackCountChanged()
+if not IsServer() then return end 
+
+if self:GetStackCount() == 0 then 
+  self:SetDuration(-1, true)
+end
+
+if not self.particle then 
+  self.particle = self.parent:GenericParticle("particles/phantom_assassin/dagger_stack.vpcf", self, true)
+end
+
+for i = 1, self.legendary_max do 
+  if i <= self:GetStackCount() then 
+    ParticleManager:SetParticleControl(self.particle, i, Vector(1, 0, 0))   
+  else 
+    ParticleManager:SetParticleControl(self.particle, i, Vector(0, 0, 0))   
   end
+end
 
 end
 
 
 
-modifier_custom_phantom_assassin_stifling_dagger_sleep = class({})
-function modifier_custom_phantom_assassin_stifling_dagger_sleep:IsHidden() return false end
-function modifier_custom_phantom_assassin_stifling_dagger_sleep:IsPurgable() return true end
-function modifier_custom_phantom_assassin_stifling_dagger_sleep:CheckState() return 
-  {[MODIFIER_STATE_STUNNED] = true} 
-end
-function modifier_custom_phantom_assassin_stifling_dagger_sleep:GetEffectName() return "particles/generic_gameplay/generic_sleep.vpcf" end
 
 
-function modifier_custom_phantom_assassin_stifling_dagger_sleep:GetEffectAttachType()
-return PATTACH_OVERHEAD_FOLLOW
+
+
+custom_phantom_assassin_stifling_dagger_legendary = class({})
+
+function custom_phantom_assassin_stifling_dagger_legendary:GetCooldown()
+return self:GetCaster():GetTalentValue("modifier_phantom_assassin_dagger_7", "cd")
 end
 
+function custom_phantom_assassin_stifling_dagger_legendary:GetChannelTime()
+return self:GetDuration() + FrameTime()*2
+end
 
-function modifier_custom_phantom_assassin_stifling_dagger_sleep:DeclareFunctions()
+function custom_phantom_assassin_stifling_dagger_legendary:GetCastAnimation()
+return 0
+end
+
+function custom_phantom_assassin_stifling_dagger_legendary:GetDuration()
+local caster = self:GetCaster()
+local time = caster:GetTalentValue("modifier_phantom_assassin_dagger_7", "cast") 
+local cast_inc = caster:GetTalentValue("modifier_phantom_assassin_dagger_7", "cast_inc")
+
+if caster:HasModifier("modifier_custom_phantom_assassin_stifling_dagger_tracker") then 
+  time = time + cast_inc*caster:GetUpgradeStack("modifier_custom_phantom_assassin_stifling_dagger_tracker")
+end
+
+return time
+end
+
+
+function custom_phantom_assassin_stifling_dagger_legendary:OnSpellStart()
+local caster = self:GetCaster()
+local duration = self:GetDuration()
+local point = self:GetCursorPosition()
+
+if point == caster:GetAbsOrigin() then 
+  point = caster:GetAbsOrigin() + caster:GetForwardVector()*10
+end
+
+local dir = (point - caster:GetAbsOrigin()):Normalized()
+dir.z = 0
+
+caster:SetForwardVector(dir)
+caster:FaceTowards(caster:GetAbsOrigin() + dir*10)
+
+caster:AddNewModifier(caster, self, "modifier_custom_phantom_assassin_stifling_legendary_cast", {})
+end
+
+
+function custom_phantom_assassin_stifling_dagger_legendary:OnChannelFinish(bInterrupted)
+local caster = self:GetCaster()
+local mod = caster:FindModifierByName("modifier_custom_phantom_assassin_stifling_dagger_tracker")
+if mod then 
+  mod:SetStackCount(0)
+end
+caster:RemoveModifierByName("modifier_custom_phantom_assassin_stifling_legendary_cast")
+end
+
+
+modifier_custom_phantom_assassin_stifling_legendary_cast = class({})
+function modifier_custom_phantom_assassin_stifling_legendary_cast:IsHidden() return true end
+function modifier_custom_phantom_assassin_stifling_legendary_cast:IsPurgable() return false end
+function modifier_custom_phantom_assassin_stifling_legendary_cast:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+self.dagger = self.parent:FindAbilityByName("custom_phantom_assassin_stifling_dagger")
+
+if not self.dagger then
+  self:Destroy()
+  self.parent:Interrupt()
+  return
+end
+
+if not IsServer() then return end 
+
+self.speed = self.dagger:GetSpecialValueFor("speed")*(1 + self.ability:GetSpecialValueFor("speed")/100)
+
+self.width = self.ability:GetSpecialValueFor("width")
+self.random_dist = self.ability:GetSpecialValueFor("random_dist")
+self.distance = self.ability:GetSpecialValueFor("AbilityCastRange") + self.parent:GetCastRangeBonus()
+
+self.max = self.parent:GetTalentValue("modifier_phantom_assassin_dagger_7", "max")
+self.max_duration = self.ability:GetDuration()
+
+self.interval = self.max_duration/self.max
+self.anim_rate = math.min(0.35/self.interval, 1.4)
+self.no_anim = false
+
+if self.max_duration <= 1.1 then 
+  self.no_anim = true
+  self.parent:StartGestureWithPlaybackRate(ACT_DOTA_CAST_ABILITY_4, 0.8)
+else
+  self.parent:StartGestureWithPlaybackRate(ACT_DOTA_CAST_ABILITY_1, self.anim_rate)
+end
+
+self:SetStackCount(self.max)
+self:StartIntervalThink(self.interval)
+end
+
+
+
+function modifier_custom_phantom_assassin_stifling_legendary_cast:OnIntervalThink()
+if not IsServer() then return end 
+
+if not self.dagger then
+  self:Destroy()
+  self.parent:Interrupt()
+  return
+end
+
+if not self.no_anim then 
+  self.parent:FadeGesture(ACT_DOTA_CAST_ABILITY_1)
+  self.parent:StartGestureWithPlaybackRate(ACT_DOTA_CAST_ABILITY_1, self.anim_rate)
+end
+
+local start_abs = self.parent:GetAbsOrigin()
+local point = start_abs + self.parent:GetForwardVector() * self.distance
+local index = #self.dagger.legendary_proj + 1
+
+local point = point + RandomVector(RandomInt(1, self.random_dist))
+
+local projectile = 
+{
+  EffectName = "particles/phantom_assassin/dagger_linear.vpcf",
+  Ability = self.dagger,
+  vSpawnOrigin = start_abs + Vector(0,0,130),
+  fStartRadius = self.width,
+  fEndRadius = self.width,
+  vVelocity = (point - start_abs):Normalized() * self.speed,
+  fDistance = self.distance,
+  Source = self.parent,
+  iUnitTargetTeam = DOTA_UNIT_TARGET_TEAM_ENEMY,
+  iUnitTargetType = DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,
+  iUnitTargetFlags = DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES,
+  bProvidesVision = true,
+  bDeleteOnHit    = true,
+  iVisionTeamNumber = self.parent:GetTeamNumber(),
+  iVisionRadius = self.width*2,
+  ExtraData = {legendary_index = index}
+}
+
+self.parent:EmitSound("Hero_PhantomAssassin.Dagger.Cast")
+self.dagger.legendary_proj[index] = ProjectileManager:CreateLinearProjectile(projectile)
+
+
+self:DecrementStackCount()
+if self:GetStackCount() == 0 then 
+  self.parent:Interrupt()
+  self:Destroy()
+end
+
+end
+
+
+
+function modifier_custom_phantom_assassin_stifling_legendary_cast:OnDestroy()
+if not IsServer() then return end
+
+self.parent:FadeGesture(ACT_DOTA_CAST_ABILITY_1)
+end
+
+
+
+
+
+
+
+modifier_custom_phantom_assassin_stifling_double_proc = class({})
+function modifier_custom_phantom_assassin_stifling_double_proc:IsHidden() return true end
+function modifier_custom_phantom_assassin_stifling_double_proc:IsPurgable() return false end
+function modifier_custom_phantom_assassin_stifling_double_proc:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
+function modifier_custom_phantom_assassin_stifling_double_proc:OnCreated(table)
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+if not IsServer() then return end 
+
+self.target = EntIndexToHScript(table.target)
+end
+
+function modifier_custom_phantom_assassin_stifling_double_proc:OnDestroy()
+if not IsServer() then return end 
+if not self.target or self.target:IsNull() then return end 
+
+self.ability:OnSpellStart(self.target)
+end 
+
+
+
+modifier_custom_phantom_assassin_stifling_vision = class({})
+function modifier_custom_phantom_assassin_stifling_vision:IsHidden() return false end
+function modifier_custom_phantom_assassin_stifling_vision:IsPurgable() return false end
+function modifier_custom_phantom_assassin_stifling_vision:GetTexture() return "buffs/odds_mark" end
+function modifier_custom_phantom_assassin_stifling_vision:OnCreated()
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+if not IsServer() then return end 
+self:StartIntervalThink(0.1)
+end
+
+function modifier_custom_phantom_assassin_stifling_vision:OnIntervalThink()
+if not IsServer() then return end
+AddFOWViewer(self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), 50, 0.3, false)
+end
+
+
+
+
+modifier_custom_phantom_assassin_stifling_heal = class({})
+function modifier_custom_phantom_assassin_stifling_heal:IsHidden() return false end
+function modifier_custom_phantom_assassin_stifling_heal:IsPurgable() return false end
+function modifier_custom_phantom_assassin_stifling_heal:GetTexture() return "buffs/phantom_slow" end
+function modifier_custom_phantom_assassin_stifling_heal:OnCreated()
+self.parent = self:GetParent()
+
+self.move = self.parent:GetTalentValue("modifier_phantom_assassin_dagger_2", "move")
+self.regen = self.parent:GetTalentValue("modifier_phantom_assassin_dagger_2", "heal")
+self.max = self.parent:GetTalentValue("modifier_phantom_assassin_dagger_2", "max")
+
+self:SetStackCount(1)
+end
+
+function modifier_custom_phantom_assassin_stifling_heal:OnRefresh()
+if not IsServer() then return end 
+if self:GetStackCount() >= self.max then return end 
+
+self:IncrementStackCount()
+
+if self:GetStackCount() >= self.max then 
+  self.parent:GenericParticle("particles/units/heroes/hero_marci/marci_rebound_allymovespeed.vpcf", self )
+end
+
+end
+
+
+function modifier_custom_phantom_assassin_stifling_heal:DeclareFunctions()
 return
 {
-MODIFIER_EVENT_ON_ATTACK_LANDED
+  MODIFIER_PROPERTY_HEALTH_REGEN_CONSTANT,
+  MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
 }
 end
 
+function modifier_custom_phantom_assassin_stifling_heal:GetModifierConstantHealthRegen()
+return self:GetStackCount()*self.regen
+end
 
-function modifier_custom_phantom_assassin_stifling_dagger_sleep:OnAttackLanded(params)
-if not IsServer() then return end
-if self:GetParent() ~= params.target then return end
-if not params.attacker:IsHero() then return end
-if (self.max_duration - self:GetRemainingTime()) <= self:GetAbility().sleep_delay then return end
- 
- self:Destroy()
+
+function modifier_custom_phantom_assassin_stifling_heal:GetModifierMoveSpeedBonus_Percentage()
+return self:GetStackCount()*self.move
 end
 
 
 
-function modifier_custom_phantom_assassin_stifling_dagger_sleep:OnCreated(table)
-if not IsServer() then return end
-self.max_duration = self:GetRemainingTime()
-self:GetParent():StartGesture(ACT_DOTA_DISABLED)
-end
 
 
 
-function modifier_custom_phantom_assassin_stifling_dagger_sleep:OnDestroy()
-if not IsServer() then return end
-self:GetParent():FadeGesture(ACT_DOTA_DISABLED)
-end
 
-modifier_custom_phantom_assassin_stifling_dagger_sleep_cd = class({})
-function modifier_custom_phantom_assassin_stifling_dagger_sleep_cd:IsHidden() return false end
-function modifier_custom_phantom_assassin_stifling_dagger_sleep_cd:IsPurgable() return false end
-function modifier_custom_phantom_assassin_stifling_dagger_sleep_cd:IsDebuff() return true end 
-function modifier_custom_phantom_assassin_stifling_dagger_sleep_cd:RemoveOnDeath() return false end
-function modifier_custom_phantom_assassin_stifling_dagger_sleep_cd:GetTexture() return "buffs/dagger_sleep" end
-function modifier_custom_phantom_assassin_stifling_dagger_sleep_cd:OnCreated(table)
+
+
+modifier_custom_phantom_assassin_stifling_absorb_cd = class({})
+
+function modifier_custom_phantom_assassin_stifling_absorb_cd:IsPurgable() return false end
+function modifier_custom_phantom_assassin_stifling_absorb_cd:IsHidden() return false end
+function modifier_custom_phantom_assassin_stifling_absorb_cd:GetTexture() return "buffs/sprout_move" end
+function modifier_custom_phantom_assassin_stifling_absorb_cd:IsDebuff() return true end
+function modifier_custom_phantom_assassin_stifling_absorb_cd:OnCreated(table)
 self.RemoveForDuel = true
 end
 
 
 
-modifier_custom_phantom_assassin_stifling_legendary_stack = class({})
-function modifier_custom_phantom_assassin_stifling_legendary_stack:IsHidden() return false end
-function modifier_custom_phantom_assassin_stifling_legendary_stack:IsPurgable() return false end
-function modifier_custom_phantom_assassin_stifling_legendary_stack:GetTexture() return "buffs/dagger_legendary" end
-function modifier_custom_phantom_assassin_stifling_legendary_stack:OnCreated(table)
-if not IsServer() then return end
-
-self.pfx = ParticleManager:CreateParticle("particles/units/heroes/hero_centaur/centaur_shard_buff_strength_counter_stack.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())
-
-self:AddParticle(self.pfx, false, false, -1, false, false)
-
-self:SetStackCount(1)
-end
-
-function modifier_custom_phantom_assassin_stifling_legendary_stack:OnRefresh(table)
-if not IsServer() then return end
-self:IncrementStackCount()
-
-if self:GetStackCount() >= self:GetAbility().legendary_max then 
-  self:Destroy()
-end
-
-end
-
-
-
-
-
-function modifier_custom_phantom_assassin_stifling_legendary_stack:OnStackCountChanged(iStackCount)
-if not IsServer() then return end
-
-ParticleManager:SetParticleControl(self.pfx, 2, Vector(self:GetStackCount(), 0 , 0))
-ParticleManager:SetParticleControlEnt(self.pfx, 3, self:GetParent(), PATTACH_OVERHEAD_FOLLOW, nil , self:GetParent():GetAbsOrigin(), true )
-end
-
-
-
-modifier_custom_phantom_assassin_stifling_legendary_caster = class({})
-function modifier_custom_phantom_assassin_stifling_legendary_caster:IsHidden() return true end
-function modifier_custom_phantom_assassin_stifling_legendary_caster:IsPurgable() return false end
-function modifier_custom_phantom_assassin_stifling_legendary_caster:OnCreated(table)
-if not IsServer() then return end
-self:SetStackCount(table.count)
-self.target = EntIndexToHScript(table.target)
-
-self:StartIntervalThink(self:GetAbility().legendary_interval)
-end
-
-function modifier_custom_phantom_assassin_stifling_legendary_caster:OnIntervalThink()
-if not IsServer() then return end
-if not self.target or self.target:IsNull() or not self.target:IsAlive() then 
-  self:Destroy()
-  return
-end
-
-self:GetAbility():Dagger(self.target, 0)
-self:DecrementStackCount()
-
-if self:GetStackCount() == 0 then 
-  self:Destroy()
-end
-
-end
-
-
-
-
-
-
-
-
-
-
-
-modifier_custom_phantom_assassin_stifling_blink = class({})
-
-function modifier_custom_phantom_assassin_stifling_blink:IsDebuff() return false end
-function modifier_custom_phantom_assassin_stifling_blink:IsHidden() return true end
-function modifier_custom_phantom_assassin_stifling_blink:IsPurgable() return true end
-
-function modifier_custom_phantom_assassin_stifling_blink:OnCreated(kv)
-if not IsServer() then return end
-self.pfx = ParticleManager:CreateParticle("particles/items_fx/force_staff.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-
-self:GetParent():RemoveGesture(ACT_DOTA_CAST_ABILITY_1)
-self:GetParent():StartGesture(ACT_DOTA_CAST_ABILITY_3)
-
-
-local particle_cast_end = "particles/units/heroes/hero_phantom_assassin/phantom_assassin_phantom_strike_start.vpcf"
-if self:GetCaster():GetModelName() == "models/heroes/phantom_assassin/pa_arcana.vmdl" then 
-  particle_cast_end = "particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_phantom_strike_start.vpcf"
-end
-
-local effect_cast_end = ParticleManager:CreateParticle( particle_cast_end, PATTACH_WORLDORIGIN, nil )
-ParticleManager:SetParticleControl( effect_cast_end, 0, self:GetParent():GetAbsOrigin() )
-ParticleManager:ReleaseParticleIndex( effect_cast_end )
-
-
-local sound_cast_start = "Hero_PhantomAssassin.Strike.Start"
-self:GetParent():EmitSound(sound_cast_end)
-
-self.angle = -1*self:GetParent():GetForwardVector():Normalized()
-
-self.distance = self:GetAbility().jump_range / ( self:GetDuration() / FrameTime())
-
-self.targets = {}
-
-if self:ApplyHorizontalMotionController() == false then
-    self:Destroy()
-end
-end
-
-function modifier_custom_phantom_assassin_stifling_blink:DeclareFunctions()
+modifier_custom_phantom_assassin_stifling_absorb = class({})
+function modifier_custom_phantom_assassin_stifling_absorb:IsHidden() return true end
+function modifier_custom_phantom_assassin_stifling_absorb:IsPurgable() return false end
+function modifier_custom_phantom_assassin_stifling_absorb:GetTexture() return "buffs/sprout_move" end
+function modifier_custom_phantom_assassin_stifling_absorb:DeclareFunctions()
 return
 {
-    MODIFIER_PROPERTY_DISABLE_TURNING
+  MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
+  MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
 }
 end
 
+function modifier_custom_phantom_assassin_stifling_absorb:GetModifierStatusResistanceStacking()
+return self.status
+end
 
+function modifier_custom_phantom_assassin_stifling_absorb:GetModifierIncomingDamage_Percentage()
+return self.damage
+end
 
-function modifier_custom_phantom_assassin_stifling_blink:GetModifierDisableTurning() return 1 end
+function modifier_custom_phantom_assassin_stifling_absorb:OnCreated(table)
+self.parent = self:GetParent()
 
-function modifier_custom_phantom_assassin_stifling_blink:GetStatusEffectName() return "particles/status_fx/status_effect_forcestaff.vpcf" end
-function modifier_custom_phantom_assassin_stifling_blink:StatusEffectPriority() return 100 end
-
-function modifier_custom_phantom_assassin_stifling_blink:OnDestroy()
+self.status = self.parent:GetTalentValue("modifier_phantom_assassin_dagger_6", "status")
+self.damage = self.parent:GetTalentValue("modifier_phantom_assassin_dagger_6", "damage_reduce")
 if not IsServer() then return end
+self.parent:GenericParticle("particles/blur_absorb.vpcf", self)
+end
 
+function modifier_custom_phantom_assassin_stifling_absorb:GetStatusEffectName()
+return "particles/status_fx/status_effect_muerta_parting_shot.vpcf"
+end
 
-EmitSoundOnLocationWithCaster( self:GetParent():GetAbsOrigin(), sound_cast_end, self:GetCaster() )
-
-self:GetParent():InterruptMotionControllers( true )
-ParticleManager:DestroyParticle(self.pfx, false)
-ParticleManager:ReleaseParticleIndex(self.pfx)
-
---self:GetParent():FadeGesture(ACT_DOTA_CAST_ABILITY_3)
-
-self:GetParent():Stop()
-
-local dir = self:GetParent():GetForwardVector()
-dir.z = 0
-self:GetParent():SetForwardVector(dir)
-self:GetParent():FaceTowards(self:GetParent():GetAbsOrigin() + dir*10)
-
-ResolveNPCPositions(self:GetParent():GetAbsOrigin(), 128)
-
-local sound_cast_end = "Hero_PhantomAssassin.Strike.End"
-self:GetParent():EmitSound(sound_cast_end)
-
+function modifier_custom_phantom_assassin_stifling_absorb:StatusEffectPriority()
+return MODIFIER_PRIORITY_ULTRA 
 end
 
 
-function modifier_custom_phantom_assassin_stifling_blink:UpdateHorizontalMotion( me, dt )
-if not IsServer() then return end
-local pos = self:GetParent():GetAbsOrigin()
-GridNav:DestroyTreesAroundPoint(pos, 80, false)
-local pos_p = self.angle * self.distance
-local next_pos = GetGroundPosition(pos + pos_p,self:GetParent())
-self:GetParent():SetAbsOrigin(next_pos)
-
-
-end
-
-function modifier_custom_phantom_assassin_stifling_blink:OnHorizontalMotionInterrupted()
-    self:Destroy()
-end
-
-
-function modifier_custom_phantom_assassin_stifling_blink:CheckState()
-return
-{
-  [MODIFIER_STATE_STUNNED] = true
-}
-end

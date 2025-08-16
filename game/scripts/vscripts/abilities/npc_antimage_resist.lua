@@ -15,25 +15,29 @@ function modifier_antimage_resist:IsPurgable() return false end
 function modifier_antimage_resist:DeclareFunctions() return {
 
     MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS,
-    MODIFIER_EVENT_ON_TAKEDAMAGE
 
 } end
 
 
 function modifier_antimage_resist:GetModifierMagicalResistanceBonus() return self:GetAbility():GetSpecialValueFor("resist") end
 
-function modifier_antimage_resist:OnTakeDamage(params)
+
+function modifier_antimage_resist:OnCreated(table)
+self.parent = self:GetParent()
+self.parent:AddDamageEvent_inc(self, true)
+end
+
+function modifier_antimage_resist:DamageEvent_inc(params)
 if not IsServer() then return end
-if self:GetParent() ~= params.unit then return end
-if self:GetParent():HasModifier("modifier_antimage_bkb_cd") then return end
-if self:GetParent():GetHealthPercent() > self:GetAbility():GetSpecialValueFor("health") then return end
-if not self:GetParent():IsAlive() then return end
+if self.parent ~= params.unit then return end
+if self.parent:HasModifier("modifier_antimage_bkb_cd") then return end
+if self.parent:GetHealthPercent() > self:GetAbility():GetSpecialValueFor("health") then return end
+if not self.parent:IsAlive() then return end
 
-self:GetParent():Purge(false, true, false, true, false)
-self:GetParent():EmitSound("DOTA_Item.MinotaurHorn.Cast")
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_generic_debuff_immune", {magic = -50, effect = 1, duration = self:GetAbility():GetSpecialValueFor("bkb")})
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_antimage_bkb_cd", {})
-
+self.parent:Purge(false, true, false, true, false)
+self.parent:EmitSound("DOTA_Item.MinotaurHorn.Cast")
+self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_generic_debuff_immune", {magic = -50, effect = 1, duration = self:GetAbility():GetSpecialValueFor("bkb")})
+self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_antimage_bkb_cd", {})
 end
 
 

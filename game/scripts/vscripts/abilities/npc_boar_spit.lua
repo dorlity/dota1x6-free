@@ -53,7 +53,7 @@ function npc_boar_spit:OnProjectileHit(hTarget, vLocation)
         local duration = self:GetSpecialValueFor("duration")
         local damage = self:GetSpecialValueFor("damage")
         hTarget:AddNewModifier(self:GetCaster(), self,"modifier_stunned", {duration = duration*(1 - hTarget:GetStatusResistance())})
-         ApplyDamage({ victim = hTarget, attacker = self:GetCaster(), ability = self, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL})
+         DoDamage({ victim = hTarget, attacker = self:GetCaster(), ability = self, damage = damage, damage_type = DAMAGE_TYPE_MAGICAL})
     end
     return true
 end

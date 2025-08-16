@@ -1,252 +1,303 @@
 LinkLuaModifier("modifier_custom_puck_waning_rift", "abilities/puck/custom_puck_waning_rift", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_custom_waning_rift_knockback", "abilities/puck/custom_puck_waning_rift", LUA_MODIFIER_MOTION_HORIZONTAL)
-LinkLuaModifier("modifier_custom_puck_waning_rift_legendary", "abilities/puck/custom_puck_waning_rift", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_puck_waning_rift_legendary_charge", "abilities/puck/custom_puck_waning_rift", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_puck_waning_rift_legendary_damage", "abilities/puck/custom_puck_waning_rift", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_custom_puck_waning_rift_tracker", "abilities/puck/custom_puck_waning_rift", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_custom_puck_waning_rift_break", "abilities/puck/custom_puck_waning_rift", LUA_MODIFIER_MOTION_NONE)
 
 
 custom_puck_waning_rift = class({})
 
-custom_puck_waning_rift.shard_damage = 70
-custom_puck_waning_rift.shard_duration = 5	
-custom_puck_waning_rift.shard_radius = 200
-custom_puck_waning_rift.shard_knockback = 0.4 	 	
-
-custom_puck_waning_rift.damage_mana = {0.04, 0.06, 0.08}
-
-custom_puck_waning_rift.cd_inc = {-3, -4, -5}
-
-
-custom_puck_waning_rift.purge_duration = 0.5
-custom_puck_waning_rift.purge_stun = 1
-
-custom_puck_waning_rift.legendary_interval = 0.5
-custom_puck_waning_rift.legendary_max  = 6
-custom_puck_waning_rift.legendary_mana = 0.05
-custom_puck_waning_rift.legendary_damage = 20
-
-
-
-custom_puck_waning_rift.regen_chance = 50
-custom_puck_waning_rift.regen_init = 0.05
-custom_puck_waning_rift.regen_inc = 0.05
-
-
 
 function custom_puck_waning_rift:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-PrecacheResource( "particle", "particles/items3_fx/blink_arcane_start.vpcf", context )
-PrecacheResource( "particle", "particles/items3_fx/blink_arcane_end.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_puck/puck_waning_rift.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_keeper_of_the_light/keeper_chakra_magic.vpcf", context )
-PrecacheResource( "particle", "particles/puck_silence_damage.vpcf", context )
-PrecacheResource( "particle", "particles/econ/items/outworld_devourer/od_shards_exile/od_shards_exile_prison_end.vpcf", context )
-PrecacheResource( "particle", "particles/puck_silence_charges.vpcf", context )
-PrecacheResource( "particle", "particles/generic_gameplay/rune_arcane_owner.vpcf", context )
-
+PrecacheResource( "particle","particles/units/heroes/hero_puck/puck_waning_rift.vpcf", context )
+PrecacheResource( "particle","particles/puck_silence_damage.vpcf", context )
+PrecacheResource( "particle","particles/econ/items/outworld_devourer/od_shards_exile/od_shards_exile_prison_end.vpcf", context )
+PrecacheResource( "particle","particles/puck_silence_charges.vpcf", context )
+PrecacheResource( "particle","particles/generic_gameplay/rune_arcane_owner.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_keeper_of_the_light/keeper_chakra_magic.vpcf", context )
+PrecacheResource( "particle","particles/puck/rift_prepare_radius.vpcf", context )
+PrecacheResource( "particle","particles/puck/rift_legendary_damage.vpcf", context )
+PrecacheResource( "particle","particles/puck/rift_blink_start.vpcf", context )
+PrecacheResource( "particle","particles/puck/rift_blint_end.vpcf", context )
+PrecacheResource( "particle","particles/puck/rift_legendary_max.vpcf", context )
+PrecacheResource( "particle","particles/puck/rift_legendary_start.vpcf", context )
+PrecacheResource( "particle","particles/puck/orb_stack.vpcf", context )
 end
 
 
 function custom_puck_waning_rift:GetIntrinsicModifierName()
+if not self:GetCaster():IsRealHero() then return end
 return "modifier_custom_puck_waning_rift_tracker"
 end
 
 function custom_puck_waning_rift:GetCooldown(iLevel)
-
 local upgrade_cooldown = 0
-
-if self:GetCaster():HasModifier("modifier_puck_rift_cd") then 
-	upgrade_cooldown = self.cd_inc[self:GetCaster():GetUpgradeStack("modifier_puck_rift_cd")]
+if self:GetCaster():HasTalent("modifier_puck_rift_2") then 
+	upgrade_cooldown = self:GetCaster():GetTalentValue("modifier_puck_rift_2", "cd")
 end
-
 return self.BaseClass.GetCooldown(self, iLevel) + upgrade_cooldown
- 
 end
-
-
-function custom_puck_waning_rift:GetCastRange(vLocation, hTarget)
-local max_range = self:GetSpecialValueFor("max_distance")
-if self:GetCaster():HasModifier("modifier_puck_rift_range") then 
-	max_range = max_range + self:GetCaster():GetTalentValue("modifier_puck_rift_range", "range")
-end
-
-if IsClient() then
-	return max_range
-end
-return 99999
-
-end
-
-
-
 
 function custom_puck_waning_rift:GetManaCost(level)
-return self.BaseClass.GetManaCost(self,level) + self:GetCaster():GetMaxMana()*self.legendary_mana*self:GetCaster():GetUpgradeStack("modifier_custom_puck_waning_rift_legendary")
+if self:GetCaster():HasModifier("modifier_custom_puck_waning_rift_legendary_charge") then
+	return 0
+end
+return self.BaseClass.GetManaCost(self,level) 
+end
+
+function custom_puck_waning_rift:GetCastRange(vLocation, hTarget)
+if IsClient() then
+	if not self:GetCaster():HasTalent("modifier_puck_rift_7") then
+		return self:GetMaxRange()
+	else
+		return 0
+	end
+end
+return 99999
+end
+
+function custom_puck_waning_rift:GetBehavior()
+
+if self:GetCaster():HasTalent("modifier_puck_rift_7") and not self:GetCaster():HasModifier("modifier_custom_puck_waning_rift_legendary_charge") then
+	return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IMMEDIATE
+end
+
+return DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_AOE
 end
 
 function custom_puck_waning_rift:GetAOERadius()
-	return self:GetSpecialValueFor("radius") + self:GetCaster():GetTalentValue("modifier_puck_rift_range", "radius")
+return self:GetRadius()
 end
 
-function custom_puck_waning_rift:CastFilterResultTarget(target)
-	return UF_SUCCESS
-end
-
-
-
-
-function custom_puck_waning_rift:OnSpellStart()
-self:GetCaster():EmitSound("Hero_Puck.Waning_Rift")
-
-if self:GetCaster():GetName() == "npc_dota_hero_puck" then
-	self:GetCaster():EmitSound("puck_puck_ability_rift_0"..RandomInt(1, 3))
-end
-
-
-self.max_range = self:GetSpecialValueFor("max_distance") +  self:GetCaster():GetCastRangeBonus()
-if self:GetCaster():HasModifier("modifier_puck_rift_range") then 
-	self.max_range = self.max_range + self:GetCaster():GetTalentValue("modifier_puck_rift_range", "range")
-	self:GetCaster():Purge(false, true, false, false, false)
-	ProjectileManager:ProjectileDodge(self:GetCaster())
-end
-
-
-local old_pos = self:GetCaster():GetAbsOrigin()
-
-if not self:GetCaster():IsRooted() then
-
-	self.position = self:GetCursorPosition()
-	if (self.position - self:GetCaster():GetAbsOrigin()):Length2D() >= self.max_range then 
-		self.position = self:GetCaster():GetAbsOrigin() + self:GetCaster():GetForwardVector()*self.max_range
-	end
-
-	FindClearSpaceForUnit(self:GetCaster(), self.position, true)
+function custom_puck_waning_rift:GetRadius()
+return self:GetSpecialValueFor("radius") + self:GetCaster():GetTalentValue("modifier_puck_rift_5", "radius")
 end
 
 
 
-if self:GetCaster():HasModifier("modifier_custom_puck_waning_rift_legendary") 
-	and self:GetCaster():FindModifierByName("modifier_custom_puck_waning_rift_legendary"):GetStackCount() >= 5 then 
-		self:GetCaster():EmitSound("Puck.Rift_Legendary")
-		local effect = ParticleManager:CreateParticle("particles/items3_fx/blink_arcane_start.vpcf", PATTACH_WORLDORIGIN, nil)
-		ParticleManager:SetParticleControl(effect, 0, old_pos)
-		ParticleManager:ReleaseParticleIndex(effect)
-
-
-
-		effect = ParticleManager:CreateParticle("particles/items3_fx/blink_arcane_end.vpcf", PATTACH_WORLDORIGIN, nil)
-		ParticleManager:SetParticleControl(effect, 0, self:GetCaster():GetAbsOrigin())
-		ParticleManager:ReleaseParticleIndex(effect)
-
+function custom_puck_waning_rift:GetMaxRange(bonus)
+local range = self:GetSpecialValueFor("max_distance")
+local caster = self:GetCaster()
+if caster:HasModifier("modifier_custom_puck_waning_rift_legendary_charge") then 
+	range = range + caster:GetTalentValue("modifier_puck_rift_7", "range")*caster:GetUpgradeStack("modifier_custom_puck_waning_rift_legendary_charge")/100
+end
+if bonus then 
+	range = range + caster:GetCastRangeBonus()
+end
+return range
 end
 
 
-local radius = self:GetSpecialValueFor("radius") + self:GetCaster():GetTalentValue("modifier_puck_rift_range", "radius")
+function custom_puck_waning_rift:OnSpellStart(self_cast)
+local caster = self:GetCaster()
+local mod = caster:FindModifierByName("modifier_custom_puck_waning_rift_legendary_charge")
+
+if caster:HasTalent("modifier_puck_rift_7") and not mod and not self_cast then
+	self:EndCooldown()
+	self:StartCooldown(0.1)
+	caster:AddNewModifier(caster, self, "modifier_custom_puck_waning_rift_legendary_charge", {duration = caster:GetTalentValue("modifier_puck_rift_7", "duration_max")})
+	return
+end
+
+caster:EmitSound("Hero_Puck.Waning_Rift")
+
+if caster:GetName() == "npc_dota_hero_puck" then
+	caster:EmitSound("puck_puck_ability_rift_0"..RandomInt(1, 3))
+end
+
+
+local max_range = self:GetMaxRange(true)
+local point = self:GetCursorPosition()
+local old_pos = caster:GetAbsOrigin()
+
+if (point == old_pos) then 
+	point = old_pos + caster:GetForwardVector()*10
+end
+
+local vec = point - old_pos
+
+if vec:Length2D() > max_range then 
+	point = old_pos + vec:Normalized()*max_range
+end
+
+if caster:HasTalent("modifier_puck_rift_6") then 
+	caster:Purge(false, true, false, false, false)
+end
+
+if not caster:IsRooted() and not caster:IsLeashed() and not self_cast then
+	FindClearSpaceForUnit(caster, point, true)
+	vec.z = 0
+	caster:FaceTowards(point + vec:Normalized()*10)
+	caster:SetForwardVector(vec:Normalized())
+end
+
+
+local radius = self:GetRadius()
+local damage = self:GetSpecialValueFor("damage") + caster:GetTalentValue("modifier_puck_rift_1", "damage")*caster:GetAverageTrueAttackDamage(nil)/100
+local silence = self:GetSpecialValueFor("silence_duration") + caster:GetTalentValue("modifier_puck_rift_3", "duration")
+local creeps_k = self:GetSpecialValueFor("creeps_damage")/100 + 1
+
+local legendary_duration = caster:GetTalentValue("modifier_puck_rift_7", "effect_duration")
+
+local knock_duration = caster:GetTalentValue("modifier_puck_rift_5", "knock_duration")
+local knock_range = caster:GetTalentValue("modifier_puck_rift_5", "knock_range")
+
+local break_duration = caster:GetTalentValue("modifier_puck_rift_6", "duration")
 
 local rift_particle = ParticleManager:CreateParticle("particles/units/heroes/hero_puck/puck_waning_rift.vpcf", PATTACH_WORLDORIGIN, nil)
-ParticleManager:SetParticleControl(rift_particle, 0, self:GetCaster():GetAbsOrigin())
+ParticleManager:SetParticleControl(rift_particle, 0, caster:GetAbsOrigin())
 ParticleManager:SetParticleControl(rift_particle, 1, Vector(radius, 0, 0))
 ParticleManager:ReleaseParticleIndex(rift_particle)
 
+local damageTable = {damage = damage, damage_type= self:GetAbilityDamageType(), attacker = caster, ability = self }
+local origin = caster:GetAbsOrigin()
+local fear = caster:GetTalentValue("modifier_puck_rift_5", "fear")
+local fear_health = caster:GetTalentValue("modifier_puck_rift_5", "health")
+local enemies = caster:FindTargets(radius)
 
-self.damage = self:GetSpecialValueFor("damage")
+for _,enemy in pairs(enemies) do
+	damageTable.victim = enemy
 
-if self:GetCaster():HasModifier("modifier_puck_rift_damage") then 
-	self.damage = self.damage + self:GetCaster():GetMaxMana()*self.damage_mana[self:GetCaster():GetUpgradeStack("modifier_puck_rift_damage")]
-end
-
-
-
-self.silence = self:GetSpecialValueFor("silence_duration")
-
-if self:GetCaster():HasModifier("modifier_puck_rift_purge") then 
-	self.silence = self.silence + self.purge_duration
-end
-
-
-local ulti = self:GetCaster():FindAbilityByName("custom_puck_dream_coil")
-
-if ulti then 
-  ulti:LegendaryProc(self:GetCaster():GetAbsOrigin())
-end
-
-
-if self:GetCaster():HasModifier("modifier_custom_puck_waning_rift_legendary") then 
-	self.damage = self.damage*(1 + self.legendary_damage*self:GetCaster():GetUpgradeStack("modifier_custom_puck_waning_rift_legendary")/100)
-end
-
-
-local enemies = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetCaster():GetAbsOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_ANY_ORDER, false)
-
-for _, enemy in pairs(enemies) do
-
-	local damage = self.damage
-
-	local damageTable = {
-		victim 			= enemy,
-		damage 			= damage,
-		damage_type		= self:GetAbilityDamageType(),
-		damage_flags 	= DOTA_DAMAGE_FLAG_NONE,
-		attacker 		= self:GetCaster(),
-		ability 		= self
-	}
-
-	if not enemy:IsBuilding() then 
-		enemy:AddNewModifier(self:GetCaster(), self, "modifier_custom_puck_waning_rift", {duration = self.silence * (1 - enemy:GetStatusResistance())})
+	if caster:HasTalent("modifier_puck_rift_6") then 
+		enemy:AddNewModifier(caster, self, "modifier_custom_puck_waning_rift_break", {duration = (1 - enemy:GetStatusResistance())*break_duration})
 	end
 
-	ApplyDamage(damageTable)
-	
+	if (mod and mod.max and mod:GetStackCount() >= mod.max) or self_cast then 
+		enemy:AddNewModifier(caster, self, "modifier_custom_puck_waning_rift_legendary_damage", {duration = legendary_duration})
+	end
 
+	enemy:AddNewModifier(caster, self, "modifier_custom_puck_waning_rift", {duration = silence * (1 - enemy:GetStatusResistance())})
+
+	local real_damage = damage
+	if enemy:IsCreep() then
+		real_damage = real_damage * creeps_k
+	end
+	damageTable.damage = real_damage
+
+	DoDamage(damageTable)
+
+	if caster:HasTalent("modifier_puck_rift_5") then
+		local enemy_direction = (enemy:GetOrigin() - origin):Normalized()
+		local point = origin + enemy_direction*(radius + 10) 
+		local distance = math.min(knock_range, (point - enemy:GetAbsOrigin()):Length2D())
+
+		local knock = enemy:AddNewModifier(caster, self,
+		"modifier_generic_knockback",
+		{
+			duration = knock_duration,
+			distance = distance,
+			height = 0,
+			direction_x = enemy_direction.x,
+			direction_y = enemy_direction.y,
+		})
+
+		if enemy:GetHealthPercent() <= fear_health then
+			enemy:GenericParticle("particles/econ/items/outworld_devourer/od_shards_exile/od_shards_exile_prison_end.vpcf")
+			enemy:EmitSound("BS.Rupture_fear")
+			enemy:AddNewModifier(caster, self, "modifier_nevermore_requiem_fear", {duration = fear * (1 - enemy:GetStatusResistance())})
+		end
+	end
+end
+
+
+if (mod and mod.max and mod:GetStackCount() >= mod.max) or self_cast then 
+	EmitSoundOnLocationWithCaster(old_pos, "Puck.Rift_Legendary", caster)
+
+	local effect = ParticleManager:CreateParticle("particles/puck/rift_blink_start.vpcf", PATTACH_WORLDORIGIN, nil)
+	ParticleManager:SetParticleControl(effect, 0, old_pos)
+	ParticleManager:ReleaseParticleIndex(effect)
+
+	caster:GenericParticle("particles/puck/rift_blint_end.vpcf")
+	local max = caster:GetTalentValue("modifier_puck_rift_7", "max")
+
+	if #enemies > 0 then
+		local shift_mod = caster:FindModifierByName("modifier_custom_puck_phase_shift_tracker")
+		local orb_mod = caster:FindModifierByName("modifier_puck_coil_orb_tracker")
+
+		for i = 1, max do
+			if shift_mod then
+				shift_mod:PuckAttackProc()
+			end
+
+			if orb_mod then
+				orb_mod:PuckAttackProc()
+			end
+		end
+	end
+end
+
+if mod or self_cast then 
+	self:StartCd()
+end
+
+if mod and not self_cast then 
+	mod:Destroy()
+end
 
 end
 
 
 
-end
+
 
 modifier_custom_puck_waning_rift = class({})
 
-function modifier_custom_puck_waning_rift:GetEffectName()
-	if not self:GetParent():IsCreep() then
-		return "particles/generic_gameplay/generic_silenced.vpcf"
-	else
-		return "particles/generic_gameplay/generic_silenced_lanecreeps.vpcf"
-	end
-end
-
-function modifier_custom_puck_waning_rift:GetEffectAttachType()
-	return PATTACH_OVERHEAD_FOLLOW
-end
-
-
+function modifier_custom_puck_waning_rift:IsHidden() return false end
+function modifier_custom_puck_waning_rift:IsPurgable() return true end
 function modifier_custom_puck_waning_rift:CheckState()
-	return {[MODIFIER_STATE_SILENCED] = true}
+return 
+{
+	[MODIFIER_STATE_SILENCED] = true
+}
 end
-
-
 
 function modifier_custom_puck_waning_rift:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_TAKEDAMAGE
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
+  MODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET,
+  MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE,
+  MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE
 }
 end
 
-function modifier_custom_puck_waning_rift:OnTakeDamage(params)
-if not IsServer() then return end
-if not self:GetCaster():HasModifier("modifier_puck_rift_tick") then return end
-if params.unit ~= self:GetParent() then return end
-self.damage = self.damage + params.damage
+function modifier_custom_puck_waning_rift:GetModifierLifestealRegenAmplify_Percentage() 
+if not self.caster:HasTalent("modifier_puck_rift_4") then return end
+return self.heal_reduce
+end
+function modifier_custom_puck_waning_rift:GetModifierHealAmplify_PercentageTarget() 
+if not self.caster:HasTalent("modifier_puck_rift_4") then return end
+return self.heal_reduce
+end
+function modifier_custom_puck_waning_rift:GetModifierHPRegenAmplify_Percentage()
+if not self.caster:HasTalent("modifier_puck_rift_4") then return end
+return self.heal_reduce
+end
 
+function modifier_custom_puck_waning_rift:GetModifierMoveSpeedBonus_Percentage()
+if not self.caster:HasTalent("modifier_puck_rift_3") then return end
+return self.slow
 end
 
 
 function modifier_custom_puck_waning_rift:OnCreated(table)
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+
+self.slow = self.caster:GetTalentValue("modifier_puck_rift_3", "slow")
+
+self.damage = self.caster:GetTalentValue("modifier_puck_rift_4", "damage")/100
+self.heal_reduce = self.caster:GetTalentValue("modifier_puck_rift_4", "heal_reduce")
+
+self.heal = self.caster:GetTalentValue("modifier_puck_rift_1", "heal")/100
+
 if not IsServer() then return end
+self.parent:GenericParticle("particles/generic_gameplay/generic_silenced.vpcf", self ,true)
 
-self.damage = 0
-
-if self:GetCaster():GetQuest() == "Puck.Quest_6" and self:GetParent():IsRealHero() and not self:GetCaster():QuestCompleted() then 
+if self.caster:GetQuest() == "Puck.Quest_6" and self.parent:IsRealHero() and not self.caster:QuestCompleted() then 
 	self:StartIntervalThink(0.1)
 end
 
@@ -254,184 +305,28 @@ end
 
 function modifier_custom_puck_waning_rift:OnIntervalThink()
 if not IsServer() then return end
-
-self:GetCaster():UpdateQuest(0.1)
+self.caster:UpdateQuest(0.1)
 end
+
 
 
 function modifier_custom_puck_waning_rift:OnDestroy()
 if not IsServer() then return end
-if not self:GetParent():IsAlive() then return end
+if not self.parent:IsAlive() then return end
 
-
-if self.damage > 0 and self:GetCaster():HasModifier("modifier_puck_rift_tick") and not self:GetParent():IsMagicImmune() then 
-	local damage_number = self.damage*self:GetCaster():GetTalentValue("modifier_puck_rift_tick", "damage")/100
-
+if self:GetStackCount() > 0 and self.caster:HasTalent("modifier_puck_rift_4") then 
 	
-	self:GetParent():EmitSound("Puck.Rift_Damage")
-	local effect = ParticleManager:CreateParticle("particles/puck_silence_damage.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-	ParticleManager:ReleaseParticleIndex(effect)
+	local effect_cast = ParticleManager:CreateParticle( "particles/puck_silence_damage.vpcf", PATTACH_CUSTOMORIGIN_FOLLOW, self.parent )
+	ParticleManager:SetParticleControlEnt(effect_cast, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetOrigin(),true)
+	ParticleManager:ReleaseParticleIndex(effect_cast)
 
-	local damage = ApplyDamage({ victim = self:GetParent(), attacker = self:GetCaster(), ability = self:GetAbility(), damage = damage_number, damage_type = DAMAGE_TYPE_MAGICAL})
+	self.parent:EmitSound("Puck.Rift_Damage")
 
-	if damage then 
-		local k = self:GetCaster():GetTalentValue("modifier_puck_rift_tick", "heal")/100
-
-		if self:GetParent():IsCreep() then 
-			k = k*self:GetCaster():GetTalentValue("modifier_puck_rift_tick", "heal_creeps")
-		end
-
-		self:GetCaster():GenericHeal(damage*k, self:GetAbility())
-
-
-		SendOverheadEventMessage(self:GetParent(), 6, self:GetParent(), damage, nil)
-	end
-
-end
-
-if not self:GetCaster():HasModifier("modifier_puck_rift_purge") then return end
-if self:GetRemainingTime() < 0.1 then return end
-
-
-local part = ParticleManager:CreateParticle("particles/econ/items/outworld_devourer/od_shards_exile/od_shards_exile_prison_end.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-ParticleManager:ReleaseParticleIndex(part)
-
-self:GetParent():EmitSound("Puck.Rift_Stun")
-self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_stunned", {duration = (1 - self:GetParent():GetStatusResistance())*self:GetAbility().purge_stun})
-
-end
-
-
-modifier_custom_waning_rift_knockback = class({})
-
-function modifier_custom_waning_rift_knockback:IsHidden() return true end
-
-function modifier_custom_waning_rift_knockback:OnCreated(params)
-  if not IsServer() then return end
-  
-  self.ability        = self:GetAbility()
-  self.caster         = self:GetCaster()
-  self.parent         = self:GetParent()
-  self:GetParent():StartGesture(ACT_DOTA_FLAIL)
-  
-  self.knockback_duration   = self.ability.knockback_duration
-
-  --self.knockback_distance   = math.max(self.ability.knockback_distance - (self.caster:GetAbsOrigin() - self.parent:GetAbsOrigin()):Length2D(), 50)
-  
-  self.knockback_distance = self.ability.shard_radius
-
-  self.knockback_speed    = self.ability.shard_radius / self.ability.shard_knockback
-  
-  self.position = GetGroundPosition(Vector(params.x, params.y, 0), nil)
-  
-  if self:ApplyHorizontalMotionController() == false then 
-    self:Destroy()
-    return
-  end
-end
-
-function modifier_custom_waning_rift_knockback:UpdateHorizontalMotion( me, dt )
-  if not IsServer() then return end
-
-  local distance = (me:GetOrigin() - self.position):Normalized()
-  
-  me:SetOrigin( me:GetOrigin() + distance * self.knockback_speed * dt )
-
-  GridNav:DestroyTreesAroundPoint( self.parent:GetOrigin(), self.parent:GetHullRadius(), true )
-end
-
-function modifier_custom_waning_rift_knockback:DeclareFunctions()
-  local decFuncs = {
-    MODIFIER_PROPERTY_OVERRIDE_ANIMATION
-    }
-
-    return decFuncs
-end
-
-function modifier_custom_waning_rift_knockback:GetOverrideAnimation()
-   return ACT_DOTA_FLAIL
-end
-
-
-function modifier_custom_waning_rift_knockback:OnDestroy()
-  if not IsServer() then return end
- self.parent:RemoveHorizontalMotionController( self )
-  self:GetParent():FadeGesture(ACT_DOTA_FLAIL)
-end
-
-
-
-
-modifier_custom_puck_waning_rift_legendary = class({})
-function modifier_custom_puck_waning_rift_legendary:IsHidden() return false end
-function modifier_custom_puck_waning_rift_legendary:IsPurgable() return false end
-function modifier_custom_puck_waning_rift_legendary:RemoveOnDeath() return false end
-function modifier_custom_puck_waning_rift_legendary:OnCreated(table)
-if not IsServer() then return end
-	self:SetStackCount(0)
-	self.stack = 1
-	self:StartIntervalThink(self:GetAbility().legendary_interval)
-
-	self.particle = ParticleManager:CreateParticle("particles/puck_silence_charges.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())
-	self:AddParticle(self.particle, false, false, -1, false, false)
-
-	CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'puck_charge_change',  {max = self:GetAbility().legendary_max, rage = 0})
-
-end
-
-function modifier_custom_puck_waning_rift_legendary:OnIntervalThink()
-if not IsServer() then return end
-if self:GetCaster():HasModifier("modifier_custom_puck_waning_rift_legendary_freeze") then return end
-
-if self.stack == 1 and self:GetStackCount() == self:GetAbility().legendary_max then 
-	self.stack = -1
-end
-
-if self.stack == -1 and self:GetStackCount() == 0 then 
-	self.stack = 1
-end
-
-self:SetStackCount(self:GetStackCount() + self.stack)
-
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'puck_charge_change',  {max = self:GetAbility().legendary_max, rage = self:GetStackCount()})
-
-
-if self:GetStackCount() == 5 and  self.hands == nil then 
-	self.hands = ParticleManager:CreateParticle("particles/generic_gameplay/rune_arcane_owner.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-	self:AddParticle(self.particle, false, false, -1, false, false)
-end
-
-if self:GetStackCount() == 4 and self.hands ~= nil then 
-	ParticleManager:DestroyParticle(self.hands, false)
-	ParticleManager:ReleaseParticleIndex(self.hands)
-	self.hands = nil
-end
-
-
-for i = 1,6 do 
-	
-	if i <= self:GetStackCount() then 
-		ParticleManager:SetParticleControl(self.particle, i, Vector(1, 0, 0))	
-	else 
-		ParticleManager:SetParticleControl(self.particle, i, Vector(0, 0, 0))	
-	end
+	local damage = DoDamage({ victim = self.parent, attacker = self.caster, ability = self.ability, damage = self:GetStackCount(), damage_type = DAMAGE_TYPE_MAGICAL}, "modifier_puck_rift_4")
+	self.parent:SendNumber(6, damage)
 end
 
 end
-
-function modifier_custom_puck_waning_rift_legendary:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_TOOLTIP
-}
-
-end
-
-
-function modifier_custom_puck_waning_rift_legendary:OnTooltip()
-return self:GetCaster():GetMaxMana()*self:GetStackCount()*self:GetAbility().legendary_mana
-end
-
 
 
 
@@ -439,48 +334,221 @@ end
 modifier_custom_puck_waning_rift_tracker = class({})
 function modifier_custom_puck_waning_rift_tracker:IsHidden() return true end
 function modifier_custom_puck_waning_rift_tracker:IsPurgable() return false end
+function modifier_custom_puck_waning_rift_tracker:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.heal_creeps = self.parent:GetTalentValue("modifier_puck_rift_1", "creeps", true)
+
+self.parent:AddDamageEvent_out(self)
+end
+
 function modifier_custom_puck_waning_rift_tracker:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_ABILITY_EXECUTED
+	MODIFIER_PROPERTY_CAST_RANGE_BONUS_STACKING
 }
 end
 
+function modifier_custom_puck_waning_rift_tracker:GetModifierCastRangeBonusStacking()
+if not self.parent:HasTalent("modifier_puck_rift_2") then return end 
+return self.parent:GetTalentValue("modifier_puck_rift_2", "range")
+end
 
 
+function modifier_custom_puck_waning_rift_tracker:DamageEvent_out(params)
+if not IsServer() then return end 
+if self.parent ~= params.attacker then return end
+if not params.unit:IsUnit() then return end
+
+local mod = params.unit:FindModifierByName("modifier_custom_puck_waning_rift")
+
+if not mod then return end
 
 
-function modifier_custom_puck_waning_rift_tracker:OnAbilityExecuted( params )
+if self.parent:HasTalent("modifier_puck_rift_1") and mod.heal and self.parent:CheckLifesteal(params, 0) then 
+	local heal = params.damage*mod.heal
+	if params.unit:IsCreep() then
+		heal = heal/self.heal_creeps
+	end
+	self.parent:GenericHeal(heal, self.ability, true, nil, "modifier_puck_rift_1")
+end
+
+if self.parent:HasTalent("modifier_puck_rift_4") and mod.damage then
+	local damage = params.damage*mod.damage
+	mod:SetStackCount(mod:GetStackCount() + damage)
+end
+
+end
+
+
+modifier_custom_puck_waning_rift_legendary_charge = class({})
+function modifier_custom_puck_waning_rift_legendary_charge:IsHidden() return false end
+function modifier_custom_puck_waning_rift_legendary_charge:IsPurgable() return false end
+function modifier_custom_puck_waning_rift_legendary_charge:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+self.RemoveForDuel = true
+
+self.slow = self.parent:GetTalentValue("modifier_puck_rift_7", "slow")
+self.duration = self.parent:GetTalentValue("modifier_puck_rift_7", "duration")
+
+self.max = 100
+self.interval = 0.05
+self.stack_inc = (self.max/self.duration)*self.interval
+self.stack = 0
+self.visual = 5
+
 if not IsServer() then return end
-if not self:GetParent():HasModifier("modifier_puck_rift_mana") then return end
-if params.unit~=self:GetParent() then return end
-if not params.ability then return end
-if params.ability:IsItem() or params.ability:IsToggle() then return end
 
-local name = params.ability:GetName()
+self.parent:EmitSound("Puck.Rift_Legendary_charge")
+self.parent:EmitSound("Puck.Rift_Legendary_charge_start")
 
-if UnvalidAbilities[name] then return end
-if name == "custom_puck_ethereal_jaunt" or name == "custom_puck_illusory_barrier" then return end
+self.min_radius = self.ability:GetMaxRange(true)
+self.max_radius = self.ability:GetSpecialValueFor("max_distance") + self.parent:GetCastRangeBonus() + self.parent:GetTalentValue("modifier_puck_rift_7", "range")
+self.speed = (self.max_radius - self.min_radius)/self.duration
+self.parent:GenericParticle("particles/puck/rift_legendary_start.vpcf", self)
+self.effect_cast = self.parent:GenericParticle("particles/puck/orb_stack.vpcf", self, true)
+for i = 1,self.visual do  
+  ParticleManager:SetParticleControl(self.effect_cast, i, Vector(0, 0, 0)) 
+end
 
-local chance = self:GetCaster():GetTalentValue("modifier_puck_rift_mana", "chance")
-local random = RollPseudoRandomPercentage(chance,123,self:GetCaster())
+self.particle = ParticleManager:CreateParticleForPlayer("particles/puck/rift_prepare_radius.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent, self.parent:GetPlayerOwner())
+ParticleManager:SetParticleControl(self.particle, 0, self.parent:GetAbsOrigin())
+ParticleManager:SetParticleControl(self.particle, 1, Vector(self.ability:GetMaxRange(true), self.speed, 1))
+self:AddParticle(self.particle, false, false, -1, false, false)
 
-if random then 
-  local mana = self:GetCaster():GetMaxMana()*self:GetCaster():GetTalentValue("modifier_puck_rift_mana", "mana")/100
-  local heal = mana
-  
+self:StartIntervalThink(self.interval)
+end
 
-	local mana_particle = ParticleManager:CreateParticle("particles/units/heroes/hero_keeper_of_the_light/keeper_chakra_magic.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
-	ParticleManager:SetParticleControl(mana_particle, 0, self:GetCaster():GetAbsOrigin())
-	ParticleManager:SetParticleControl(mana_particle, 1, self:GetCaster():GetAbsOrigin())
-	ParticleManager:ReleaseParticleIndex(mana_particle)
-	self:GetCaster():EmitSound("Puck.Rift_Mana")
+function modifier_custom_puck_waning_rift_legendary_charge:OnIntervalThink()
+if not IsServer() then return end
 
-  self:GetCaster():GenericHeal(heal, self:GetAbility())
-  self:GetCaster():GiveMana(mana)
+local radius = self.ability:GetMaxRange(true)
+
+if self.stack < self.max then 
+	self.stack = self.stack + self.stack_inc
+	self:SetStackCount(self.stack)
+else 
+	if self.particle then 
+		ParticleManager:SetParticleControl(self.particle, 1, Vector(self.ability:GetMaxRange(true), self.speed, 0))
+	end
+
+	if not self.hands then 
+		self.parent:EmitSound("Puck.Rift_Legendary_charge_end")
+		self.hands = self.parent:GenericParticle("particles/puck/rift_legendary_max.vpcf", self)
+	end
+end
+
+if self.effect_cast then 
+	for i = 1,self.visual do 
+	  if i <= math.floor(self:GetStackCount()/(self.max/self.visual)) then 
+	    ParticleManager:SetParticleControl(self.effect_cast, i, Vector(1, 0, 0)) 
+	  else 
+	    ParticleManager:SetParticleControl(self.effect_cast, i, Vector(0, 0, 0)) 
+	  end
+	end
+end
+
+self.parent:UpdateUIshort({max_time = self.duration, time = math.min(self.duration, self:GetElapsedTime()), active = self:GetElapsedTime() >= self.duration, stack = tostring(math.floor(self.stack)).."%", priority = 1, style = "PuckRift"})
+AddFOWViewer(self.parent:GetTeamNumber(), self.parent:GetAbsOrigin(), radius*1.2, self.interval*2, false)
+end
+
+
+
+
+function modifier_custom_puck_waning_rift_legendary_charge:OnDestroy()
+if not IsServer() then return end 
+
+if self:GetRemainingTime() <= 0.1 then 
+	self.ability:OnSpellStart(true)
+end
+
+self.parent:StopSound("Puck.Rift_Legendary_charge")
+self.parent:StopSound("Puck.Rift_Legendary_charge_start")
+
+if self.particle then 
+	ParticleManager:DestroyParticle(self.particle, true)
+	ParticleManager:ReleaseParticleIndex(self.particle)
+end
+
+self.parent:UpdateUIshort({hide = 1, priority = 1, style = "PuckRift"})
+end
+
+function modifier_custom_puck_waning_rift_legendary_charge:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
+}
+end
+
+function modifier_custom_puck_waning_rift_legendary_charge:GetModifierMoveSpeedBonus_Percentage()
+return self.slow
+end
+
+
+
+modifier_custom_puck_waning_rift_legendary_damage = class({})
+function modifier_custom_puck_waning_rift_legendary_damage:IsHidden() return true end
+function modifier_custom_puck_waning_rift_legendary_damage:IsPurgable() return false end
+function modifier_custom_puck_waning_rift_legendary_damage:GetTexture() return "buffs/bolt_items" end
+function modifier_custom_puck_waning_rift_legendary_damage:OnCreated()
+self.max = self:GetCaster():GetTalentValue("modifier_puck_rift_7", "max")
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+if not IsServer() then return end
+
+--[[
+self.particle = ParticleManager:CreateParticle("particles/puck/rift_legendary_damage.vpcf", PATTACH_CUSTOMORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt( self.particle, 0, self.parent, PATTACH_OVERHEAD_FOLLOW, "", self.parent:GetOrigin(), true )
+ParticleManager:SetParticleControlEnt( self.particle, 1, self.parent, PATTACH_ABSORIGIN_FOLLOW, "", self.parent:GetOrigin(), true )
+self:AddParticle(self.particle, false, false, -1, false, false)
+]]
+self.parent:EmitSound("Puck.Rift_legendary_damage")
+
+self.count = 0
+self:StartIntervalThink(0.2)
+end
+
+function modifier_custom_puck_waning_rift_legendary_damage:OnIntervalThink()
+if not IsServer() then return end
+
+if self.caster:HasTalent("modifier_puck_shift_4") then
+	local mod = self.caster:FindModifierByName("modifier_custom_puck_phase_shift_tracker")
+	if mod and mod.proc_chance then
+		if RollPseudoRandomPercentage(mod.proc_chance, 5059, self.caster) then 
+			mod:ProcDamage(self.parent)
+		end
+	end
+end
+
+self.caster:PerformAttack(self.parent, true, true, true, true, true, false, false)
+
+self.count = self.count + 1
+if self.count >= self.max then
+	self:Destroy()
+	return
 end
 
 end
 
 
+modifier_custom_puck_waning_rift_break = class({})
+function modifier_custom_puck_waning_rift_break:IsHidden() return true end
+function modifier_custom_puck_waning_rift_break:IsPurgable() return false end
+function modifier_custom_puck_waning_rift_break:CheckState() return {[MODIFIER_STATE_PASSIVES_DISABLED] = true} end
+function modifier_custom_puck_waning_rift_break:GetEffectName() return "particles/items3_fx/silver_edge.vpcf" end
+function modifier_custom_puck_waning_rift_break:OnCreated()
+self.speed = self:GetCaster():GetTalentValue("modifier_puck_rift_6", "speed")
+end
 
+function modifier_custom_puck_waning_rift_break:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
+}
+end
+
+function modifier_custom_puck_waning_rift_break:GetModifierAttackSpeedBonus_Constant()
+return self.speed
+end

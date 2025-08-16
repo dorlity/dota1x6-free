@@ -225,6 +225,10 @@ end
 return true
 end
 
+
+
+
+
 function Spawn( entityKeyValues )
     if not IsServer() then
         return
@@ -236,7 +240,6 @@ function Spawn( entityKeyValues )
     thisEntity.tower = nil
     thisEntity.ability = nil
     thisEntity.abilityBehavior = ''
-
     for i = 0,thisEntity:GetAbilityCount()-1 do
     	local a = thisEntity:GetAbilityByIndex(i)
     	if not a  then break end
@@ -268,71 +271,52 @@ end
 
 function bevavior()
 if not IsValidEntity(thisEntity) then return end
-if thisEntity.ally == nil and not thisEntity.summoned then
-    return 0.5
-end
+if thisEntity.ally == nil and not thisEntity.summoned then return 0.5 end
+if GameRules:IsGamePaused() == true then return 0.5 end
+if thisEntity:IsChanneling() then return 0.5 end
 
-
-if (not thisEntity:IsAlive()) then
-    return -1
-end
-if GameRules:IsGamePaused() == true then
-    return 0.5
-end
 
 if not thisEntity.init then
     thisEntity.init = true
 
-    local tower = FindUnitsInRadius(thisEntity:GetTeamNumber(), thisEntity:GetAbsOrigin(), nil, FIND_UNITS_EVERYWHERE, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_BUILDING, 0, FIND_CLOSEST, false)
-    for _, t in ipairs(tower) do
-        if IsValidEntity(t) and (t:GetUnitName() == "npc_towerradiant" or t:GetUnitName() == "npc_towerdire") then
-            thisEntity.tower_location = t:GetAbsOrigin()
-            thisEntity.tower = t
+    thisEntity.start_abs = thisEntity:GetAbsOrigin()
+
+    local towers = FindUnitsInRadius(thisEntity:GetTeamNumber(), thisEntity:GetAbsOrigin(), nil, FIND_UNITS_EVERYWHERE, DOTA_UNIT_TARGET_TEAM_BOTH, DOTA_UNIT_TARGET_BUILDING, 0, FIND_CLOSEST, false)
+    for _, tower in pairs(towers) do
+        if IsValidEntity(tower) and (tower:GetUnitName() == "npc_towerradiant" or tower:GetUnitName() == "npc_towerdire") then
+            thisEntity.tower_location = tower:GetAbsOrigin()
+            thisEntity.tower = tower
             break
         end
     end
-
-
-
-
 end
-	if not IsValidEntity(thisEntity.tower) then return -1 end
-    if not thisEntity.tower:IsAlive() then thisEntity:ForceKill(false)
-    return -1 end
 
+if thisEntity:HasModifier("modifier_return_to_path") then return 0.3 end
+local path_dist = thisEntity:GetPathPoint(true)
+if path_dist >= 700 then
+    thisEntity:AddNewModifier(thisEntity, nil, "modifier_return_to_path", {duration = 6})
+    return 1
+end
 
-    if thisEntity:IsChanneling() then
-    	return 0.5
-    end
-
-
-
-
+if (not thisEntity:IsAlive()) then return -1 end
+if not IsValidEntity(thisEntity.tower) then return -1 end
+if not thisEntity.tower:IsAlive() then thisEntity:ForceKill(false) return -1 end
 
 
 ---------------------------------------------------------------------------------------------------
-
-
 
 local enemy_for_ability = nil
 local friends_for_ability = nil
 local enemy_for_attack = nil
 
-
 enemy_for_ability = FindUnitsInRadius(thisEntity:GetTeamNumber(), thisEntity:GetAbsOrigin(), nil, 1000, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE , FIND_CLOSEST, false)
 friends_for_ability = FindUnitsInRadius(thisEntity:GetTeamNumber(), thisEntity:GetAbsOrigin(), nil, 1000, DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE , FIND_ANY_ORDER, false)
 enemy_for_attack = FindUnitsInRadius(thisEntity:GetTeamNumber(), thisEntity:GetAbsOrigin(), nil, 1000, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_INVULNERABLE + DOTA_UNIT_TARGET_FLAG_OUT_OF_WORLD, FIND_CLOSEST, false)
-
-
-
-
 
 local control = false
 if thisEntity:IsSilenced() or thisEntity:IsHexed() then
     control = true
 end
-
-
 
 
 if thisEntity.ability ~= nil and control == false then
@@ -341,7 +325,6 @@ local nReturn = thisEntity.ability:GetCastPoint()*1.5
 if check_return(thisEntity.ability) ~= -1 then nReturn = check_return(thisEntity.ability) end
 
 if thisEntity.ability:IsFullyCastable() then
-
 
 	if thisEntity.abilityBehavior == "TargetEnemy" then
 
@@ -354,7 +337,6 @@ if thisEntity.ability:IsFullyCastable() then
             then
 
 			thisEntity:CastAbilityOnTarget(enemy_for_ability[1], thisEntity.ability, 1)
-
     		return nReturn
 		end
 	end
@@ -402,7 +384,7 @@ if thisEntity.ability:IsFullyCastable() then
     if check_order(thisEntity) then
 
         if IsValidEntity(friends_for_ability[1]) then
-            for _,friend in ipairs(friends_for_ability) do
+            for _,friend in pairs(friends_for_ability) do
 
 
                 if friend:GetHealthPercent() <= thisEntity.ability:GetSpecialValueFor("thealth") and friend:GetUnitName() ~= "npc_psi_blades_crystal" and friend:GetUnitName() ~= "npc_psi_blades_crystal_mini"

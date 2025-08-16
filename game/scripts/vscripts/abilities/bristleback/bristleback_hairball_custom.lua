@@ -2,25 +2,18 @@
 
 bristleback_hairball_custom              = class({})
 
+
+function bristleback_hairball_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_hairball.vpcf", context )
+
+end
+
+
 function bristleback_hairball_custom:GetAOERadius() 
 return self:GetSpecialValueFor("radius")
 end
 
-function bristleback_hairball_custom:OnInventoryContentsChanged()
-if self:GetCaster():HasShard() then
-    self:SetHidden(false)   
-    if not self:IsTrained() then      
-      self:SetLevel(1)
-    end
-else
-  self:SetHidden(true)
-end
-
-end
-
-function bristleback_hairball_custom:OnHeroCalculateStatBonus()
-  self:OnInventoryContentsChanged()
-end
 
 function bristleback_hairball_custom:OnSpellStart()
 

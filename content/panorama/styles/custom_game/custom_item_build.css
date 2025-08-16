@@ -1,0 +1,354 @@
+/* Prettified by Source 2 Viewer 14.1.0.0 - https://valveresourceformat.github.io */
+
+#CustomItemBuildIcons
+{
+	width: 100%;
+	flow-children: down-wrap;
+}
+
+.ItemBuildButton
+{
+	border: 1px solid black;
+	width: 55px;
+	height: 55px;
+}
+
+.ItemBuildButtonSmall
+{
+	border: 1px solid black;
+	width: 40px;
+	height: 40px;
+	margin-right: 2px;
+}
+
+.ItemBuildBackButton
+{
+	horizontal-align: right;
+	margin: 0px 2px;
+	width: 100%;
+	text-align: center;
+}
+
+.ItemBuildButton:hover
+{
+	brightness: 2;
+}
+
+#CustomItemBuildIconsTop_Texture
+{
+	background-image: url("s2r://panorama/images/hud/facets/ripple_texture_png.vtex");
+	background-size: cover;
+	background-position: center;
+	-s2-mix-blend-mode: screen;
+	opacity: 0.15;
+	height: 100%;
+	width: 100%;
+	wash-color: #ed9600;
+	ignore-parent-flow: true;
+}
+
+#CustomItemBuildIconsTop_TextureBack
+{
+	height: 100%;
+	width: 100%;
+}
+
+#CustomItemBuildIconsTop_Content
+{
+	width: 100%;
+	height: 100%;
+	flow-children: down;
+}
+
+#CustomItemBuildIconsTop
+{
+	width: 100%;
+	height: 75px;
+	box-shadow: 1px 1px -1px 1px black;
+	border: 1px solid #807851;
+}
+
+#CustomItemBuildIconsTop_TextHeader
+{
+	width: 100%;
+	font-family: Radiance;
+	font-weight: bold;
+	color: #e7e7e7;
+	text-shadow: 2px 2px 2px black;
+	font-size: 20px;
+	text-align: center;
+	margin-top: 10px;
+	text-transform: uppercase;
+}
+
+.CustomItemBuildIconsTop_TextHeaderSmall
+{
+	width: 100%;
+	font-family: Radiance;
+	font-style: italic;
+	color: #96a4b0;
+	text-shadow: 2px 2px 2px black;
+	font-size: 13px;
+	text-align: right;
+	margin-right: 8px;
+	margin-top: 2px;
+	text-overflow: shrink;
+}
+
+.CustomItemBuildIconsTop_TextHeaderSmall_Standart
+{
+	width: 100%;
+	font-family: Radiance;
+	font-style: italic;
+	color: #96a4b0;
+	text-shadow: 2px 2px 2px black;
+	font-size: 15px;
+	text-align: center;
+	margin-top: 5px;
+}
+
+.CustomItemBuildText
+{
+	width: 100%;
+	font-family: Radiance;
+	font-weight: bold;
+	color: #e7e7e7;
+	font-size: 30px;
+	text-align: center;
+	margin-top: 7px;
+	text-transform: uppercase;
+	text-shadow: 0px 0px 3px 1.5 #807851;
+}
+
+#CustomItemBuildLabel
+{
+	width: 98%;
+	font-family: Radiance;
+	font-weight: semi-bold;
+	color: #bcbcbc;
+	text-shadow: 2px 2px 2px black;
+	font-size: 17px;
+	text-align: center;
+	margin-top: 20px;
+}
+
+#Label
+{
+	width: 100%;
+	margin-top: 0px;
+}
+
+#Icons
+{
+	horizontal-align: center;
+	margin-top: 10px;
+}
+
+.IconsBig
+{
+	flow-children: down-wrap;
+}
+
+.IconsSmall
+{
+	flow-children: right;
+	opacity: 0;
+	height: 5px;
+}
+
+.Anim
+{
+	box-shadow: fill #eb6a23 0px 0px 8px -3px;
+}
+
+.Anim:hover
+{
+	animation-name: LegendaryAspectAnim;
+	animation-iteration-count: infinite;
+	animation-duration: 1.3s;
+	transition-property: opacity, transform;
+	transition-duration: .24s;
+}
+
+.CustomItemBuildPanel
+{
+	width: 110px;
+	height: 55px;
+	margin-top: 8px;
+	flow-children: right;
+}
+
+@keyframes 'LegendaryAspectAnim'
+{
+	0%
+	{
+		box-shadow: fill #eb6a23 0px 0px 10px -3px;
+	}
+	
+	50%
+	{
+		box-shadow: fill #eb6a23 0px 0px 5px -3px;
+	}
+	
+	100%
+	{
+		box-shadow: fill #eb6a23 0px 0px 10px -3px;
+	}
+	
+}
+
+@keyframes 'LegendaryAspectAnimInactive'
+{
+	0%
+	{
+		box-shadow: fill #eb6a23 0px 0px 3px -3px;
+	}
+	
+	50%
+	{
+		box-shadow: fill #eb6a23 0px 0px 10px -3px;
+	}
+	
+	100%
+	{
+		box-shadow: fill #eb6a23 0px 0px 3px -3px;
+	}
+	
+}
+
+.Hidden
+{
+	visibility: collapse;
+}
+
+.Inactive
+{
+	wash-color: #666666FF;
+	saturation: 0.1;
+}
+
+#BackBuildLabel
+{
+	width: 100%;
+	font-family: Radiance;
+	font-style: italic;
+	font-weight: semi-bold;
+	color: #ccc;
+	text-shadow: 2px 2px 2px black;
+	font-size: 17px;
+	text-align: center;
+	margin-right: 6px;
+	margin-top: 40px;
+}
+
+#BackBuildLabel:hover
+{
+	brightness: 2;
+}
+
+#ShowBuildLabel
+{
+	width: 100%;
+	font-family: Radiance;
+	font-style: italic;
+	font-weight: semi-bold;
+	color: #ccc;
+	text-shadow: 2px 2px 2px black;
+	font-size: 17px;
+	text-align: left;
+	margin-left: 4px;
+	margin-top: 40px;
+}
+
+#ShowBuildLabel:hover
+{
+	brightness: 2;
+}
+
+#CustomItemBuildShowStandart
+{
+	horizontal-align: right;
+	margin: 0px 2px;
+	width: 100%;
+	text-align: center;
+}
+
+#ItemBuildContent
+{
+	width: 100%;
+	height: 100%;
+}
+
+#ItemBuildContentBottom
+{
+	width: 100%;
+	height: 70px;
+	align: center bottom;
+}
+
+#CustomItemBuildTitle
+{
+	width: 100%;
+	margin-bottom: 2px;
+	flow-children: right;
+	height: 30px;
+}
+
+#CustomItemBuildHeroImage
+{
+	width: 30px;
+	height: 30px;
+	margin-top: 1px;
+	visibility: collapse;
+}
+
+#CustomBuildTitle
+{
+	font-size: 20px;
+	color: #bbb;
+	text-shadow: 2px 2px 5px 2 black;
+	font-weight: semi-bold;
+	text-align: left;
+	vertical-align: center;
+	horizontal-align: left;
+	font-family: Radiance;
+	margin-left: 6px;
+	text-overflow: shrink;
+}
+
+#CustomItemBuildAbilityImage
+{
+	width: 28px;
+	height: 28px;
+	horizontal-align: right;
+	border: 1px solid #eb6a23;
+}
+
+.ButtonBuySubscribe
+{
+	width: 85%;
+	height: 40px;
+	align: center bottom;
+	background-color: gradient( linear, 0% 0%, 90% 100%, from( #d62c00 ), to( #ff7f00 ) ) flow-children: down;
+	margin-bottom: 26%;
+	box-shadow: fill #f9e0bb 0px 0px 3px -1px;
+}
+
+.ButtonBuySubscribe:hover
+{
+	brightness: 1.2;
+	box-shadow: fill #f9e0bb 0px 0px 5px -1px;
+}
+
+.ButtonBuySubscribeLabel
+{
+	font-size: 20px;
+	color: white;
+	text-shadow: 0px 0px 5px 2.5 black;
+	align: center center;
+	font-weight: bold;
+	letter-spacing: 1.5px;
+	text-transform: uppercase;
+	font-family: Radiance;
+}
+

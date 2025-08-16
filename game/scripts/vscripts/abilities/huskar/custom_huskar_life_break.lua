@@ -13,22 +13,29 @@ LinkLuaModifier("modifier_custom_huskar_life_legendary_root", "abilities/huskar/
 custom_huskar_life_break = class({})
 
 
+function custom_huskar_life_break:CreateTalent()
 
+self:GetCaster():FindAbilityByName("custom_huskar_sacred_earth"):SetHidden(false)
+end
 
 
 
 function custom_huskar_life_break:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
 PrecacheResource( "particle", "particles/huskar/huskar_life_break.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_huskar/huskar_life_break_spellstart.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_huskar/huskar_life_break_cast.vpcf", context )
-PrecacheResource( "particle", "particles/status_fx/status_effect_huskar_lifebreak.vpcf", context )
-PrecacheResource( "particle", "particles/status_fx/status_effect_beserkers_call.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_ogre_magi/ogre_magi_fire_shield.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_egg.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_streaks.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf", context )
+PrecacheResource( "particle", "particles/huskar_earth_hit.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_snapfire/hero_snapfire_ultimate_calldown.vpcf", context )
 PrecacheResource( "particle", "particles/huskar_earth_hit.vpcf", context )
 PrecacheResource( "particle", "particles/huskar_earth_stack.vpcf", context )
 PrecacheResource( "particle", "particles/huskar_fire.vpcf", context )
-
+PrecacheResource( "particle", "particles/huskar/break_root.vpcf", context )
 end
 
 
@@ -49,8 +56,8 @@ end
 function custom_huskar_life_break:GetCooldown(iLevel)
  
 local upgrade = 0
-if self:GetCaster():HasModifier("modifier_huskar_leap_cd") then 
-  upgrade = self:GetCaster():GetTalentValue("modifier_huskar_leap_cd", "cd")
+if self:GetCaster():HasTalent("modifier_huskar_leap_2") then 
+  upgrade = self:GetCaster():GetTalentValue("modifier_huskar_leap_2", "cd")
 end
 return self.BaseClass.GetCooldown(self, iLevel) + upgrade
 
@@ -59,8 +66,8 @@ end
 
 function custom_huskar_life_break:GetCastPoint()
 local bonus = 0
-if self:GetCaster():HasModifier("modifier_huskar_leap_immune") then 
-  bonus = self:GetCaster():GetTalentValue("modifier_huskar_leap_immune", "cast")
+if self:GetCaster():HasTalent("modifier_huskar_leap_6") then 
+  bonus = self:GetCaster():GetTalentValue("modifier_huskar_leap_6", "cast")
 end
 return self:GetSpecialValueFor("AbilityCastPoint") + bonus
 end
@@ -68,7 +75,7 @@ end
 
 
 function custom_huskar_life_break:GetBehavior()
-if self:GetCaster():HasModifier("modifier_huskar_leap_resist") then
+if self:GetCaster():HasTalent("modifier_huskar_leap_5") then
   return DOTA_ABILITY_BEHAVIOR_UNIT_TARGET + DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_AOE
 end
 return DOTA_ABILITY_BEHAVIOR_UNIT_TARGET + DOTA_ABILITY_BEHAVIOR_AOE
@@ -87,8 +94,8 @@ local upgrade = 0
 if self:GetCaster():HasScepter() then 
   upgrade = upgrade + self:GetSpecialValueFor("scepter_range")
 end
-if self:GetCaster():HasModifier("modifier_huskar_leap_resist") then 
-  upgrade = upgrade + self:GetCaster():GetTalentValue("modifier_huskar_leap_resist", "range")
+if self:GetCaster():HasTalent("modifier_huskar_leap_5") then 
+  upgrade = upgrade + self:GetCaster():GetTalentValue("modifier_huskar_leap_5", "range")
 end
 
 return self.BaseClass.GetCastRange(self , vLocation , hTarget) + upgrade 
@@ -97,13 +104,12 @@ end
 
 
 
-function custom_huskar_life_break:OnSpellStart(target)
+function custom_huskar_life_break:OnSpellStart(new_target)
 if not IsServer() then return end
 
-if target == nil then 
-  enemy = self:GetCursorTarget()
-else 
-  enemy = target
+local enemy = self:GetCursorTarget()
+if new_target then 
+  enemy = new_target
 end
 
 self:GetCaster():EmitSound("Hero_Huskar.Life_Break")
@@ -111,8 +117,12 @@ self:GetCaster():EmitSound("Hero_Huskar.Life_Break")
 self:GetCaster():Purge(false, true, false, false, false)
 
 local life_break_charge_max_duration = 5
-
 local point = self:GetCursorPosition()
+
+
+if enemy and enemy:TriggerSpellAbsorb(self) then
+  return
+end
 
 
 if enemy then 
@@ -144,18 +154,18 @@ self.health_cost_percent  = self.ability:GetSpecialValueFor("tooltip_health_cost
 self.heroes_damage      = self.ability:GetSpecialValueFor("tooltip_health_damage")/100
 self.creeps_damage = self.ability:GetSpecialValueFor("creeps_damage")/100
 
-self.charge_speed     = self.ability:GetSpecialValueFor("charge_speed") * (1 + self:GetCaster():GetTalentValue("modifier_huskar_leap_cd", "speed")/100)
+self.charge_speed     = self.ability:GetSpecialValueFor("charge_speed") * (1 + self:GetCaster():GetTalentValue("modifier_huskar_leap_2", "speed")/100)
 self.taunt_duration       = self.ability:GetSpecialValueFor("scepter_taunt")
 
 self.aoe_radius = self.ability:GetSpecialValueFor("aoe_radius")
 
 self.damage_type = DAMAGE_TYPE_MAGICAL
 
-self.legendary_damage = self.caster:GetTalentValue("modifier_huskar_leap_legendary", "damage_inc", true)/100
+self.legendary_damage = self.caster:GetTalentValue("modifier_huskar_leap_7", "damage_inc", true)/100
 
-if self:GetCaster():HasModifier("modifier_huskar_leap_legendary") then 
+if self:GetCaster():HasTalent("modifier_huskar_leap_7") then 
   self.damage_type = DAMAGE_TYPE_PURE
-  self.heroes_damage = self:GetCaster():GetTalentValue("modifier_huskar_leap_legendary", "damage")/100
+  self.heroes_damage = self:GetCaster():GetTalentValue("modifier_huskar_leap_7", "damage")/100
 end 
 
 if not IsServer() then return end
@@ -194,7 +204,7 @@ else
 end
 
 
-if self.caster:HasModifier("modifier_huskar_leap_resist") then
+if self.caster:HasTalent("modifier_huskar_leap_5") then
 
   local point
   if self.target then 
@@ -202,7 +212,7 @@ if self.caster:HasModifier("modifier_huskar_leap_resist") then
   else 
     point = self.point
   end 
-  self.root = self.caster:GetTalentValue("modifier_huskar_leap_resist", "root")
+  self.root = self.caster:GetTalentValue("modifier_huskar_leap_5", "root")
   local targets = self.caster:FindTargets(self.aoe_radius, point)
 
   if #targets > 0 then 
@@ -266,10 +276,6 @@ else
 end
 
 if (self.target and (self.target:GetAbsOrigin() - self.parent:GetOrigin()):Length2D() <= 128) or (self.point and (self.point - self.parent:GetOrigin()):Length2D() <= 30) then
- 
-  if self.target and self.target:TriggerSpellAbsorb(self.ability) then
-    return nil
-  end
 
   if self.target then
     self.parent:StartGesture(ACT_DOTA_CAST_LIFE_BREAK_END)
@@ -292,10 +298,10 @@ if (self.target and (self.target:GetAbsOrigin() - self.parent:GetOrigin()):Lengt
     ability     = self.ability,
     damage_flags  = DOTA_DAMAGE_FLAG_NON_LETHAL
   }
-  local self_damage = ApplyDamage(damageTable_self)
+  local self_damage = DoDamage(damageTable_self)
 
   for _,unit in pairs(self.caster:FindTargets(self.aoe_radius, target)) do 
-    if unit == self.target or self.caster:HasModifier("modifier_huskar_leap_resist") then 
+    if unit == self.target or self.caster:HasTalent("modifier_huskar_leap_5") then 
       self:ImpactEffect(unit)
     end 
     
@@ -303,12 +309,12 @@ if (self.target and (self.target:GetAbsOrigin() - self.parent:GetOrigin()):Lengt
 
   end 
 
-  if self:GetParent():HasModifier("modifier_huskar_leap_damage") then 
-    self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_huskar_life_heal", {duration = self:GetCaster():GetTalentValue("modifier_huskar_leap_damage", "duration")})
+  if self:GetParent():HasTalent("modifier_huskar_leap_1") then 
+    self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_huskar_life_heal", {duration = self:GetCaster():GetTalentValue("modifier_huskar_leap_1", "duration")})
   end
 
-  if self.parent:HasModifier("modifier_huskar_leap_immune")  then
-    self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_huskar_life_break_incoming", {duration = self:GetCaster():GetTalentValue("modifier_huskar_leap_immune", "duration"), stack = self:GetCaster():GetTalentValue("modifier_huskar_leap_immune", "damage_reduce")*(1 - self:GetParent():GetHealthPercent()/100)})
+  if self.parent:HasTalent("modifier_huskar_leap_6")  then
+    self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_custom_huskar_life_break_incoming", {duration = self:GetCaster():GetTalentValue("modifier_huskar_leap_6", "duration"), stack = self:GetCaster():GetTalentValue("modifier_huskar_leap_6", "damage_reduce")*(1 - self:GetParent():GetHealthPercent()/100)})
   end
 
   if self.target then 
@@ -333,8 +339,8 @@ ParticleManager:ReleaseParticleIndex(particle)
 local duration = self.ability:GetDuration()
 target:AddNewModifier(self.parent, self.ability, "modifier_custom_huskar_life_break_slow", {duration = duration * (1 - target:GetStatusResistance() ) })
 
-if self:GetCaster():HasModifier("modifier_huskar_leap_shield") then 
-  target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_custom_huskar_life_legendary_double", {duration = self:GetCaster():GetTalentValue("modifier_huskar_leap_shield", "duration")})
+if self:GetCaster():HasTalent("modifier_huskar_leap_4") then 
+  target:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_custom_huskar_life_legendary_double", {duration = self:GetCaster():GetTalentValue("modifier_huskar_leap_4", "duration")})
 end
 
 if self.caster:HasScepter() and target:IsHero() and not target:HasModifier("modifier_monkey_king_wukongs_command_custom_soldier") then
@@ -357,7 +363,7 @@ if mod then
   target:RemoveModifierByName("modifier_custom_huskar_life_legendary_stack")
 end
 
-if self.caster:HasModifier("modifier_huskar_leap_legendary") then 
+if self.caster:HasTalent("modifier_huskar_leap_7") then 
   health = target:GetMaxHealth()
 end 
 
@@ -367,7 +373,7 @@ if target:IsCreep() then
   damage = (self.creeps_damage + stack*self.legendary_damage)*self.caster:GetMaxHealth()
 end 
 
-ApplyDamage({victim = target, attacker = self.parent, damage = damage, damage_type = self.damage_type, ability = self.ability})
+DoDamage({victim = target, attacker = self.parent, damage = damage, damage_type = self.damage_type, ability = self.ability})
 
 end
 
@@ -452,8 +458,8 @@ self.parent   = self:GetParent()
 self.attackspeed = self.ability:GetSpecialValueFor("attack_speed")
 self.movespeed  = self.ability:GetSpecialValueFor("movespeed")
 
-self.status = self:GetCaster():GetTalentValue("modifier_huskar_leap_double", "status")
-self.damage = self:GetCaster():GetTalentValue("modifier_huskar_leap_double", "damage")
+self.status = self:GetCaster():GetTalentValue("modifier_huskar_leap_3", "status")
+self.damage = self:GetCaster():GetTalentValue("modifier_huskar_leap_3", "damage")
 end
 
 function modifier_custom_huskar_life_break_slow:OnRefresh()
@@ -479,12 +485,12 @@ return self.movespeed * (-1)
 end
 
 function modifier_custom_huskar_life_break_slow:GetModifierStatusResistanceStacking()
-if not self:GetCaster():HasModifier("modifier_huskar_leap_double") then return end
+if not self:GetCaster():HasTalent("modifier_huskar_leap_3") then return end
 return self.status
 end
 
 function modifier_custom_huskar_life_break_slow:GetModifierIncomingDamage_Percentage(params)
-if not self:GetCaster():HasModifier("modifier_huskar_leap_double") then return end
+if not self:GetCaster():HasTalent("modifier_huskar_leap_3") then return end
 if not params.inflictor then return end
 
 return self.damage
@@ -525,7 +531,7 @@ end
 function modifier_custom_huskar_life_break_taunt:CheckState()
 return 
 {
-  [MODIFIER_STATE_COMMAND_RESTRICTED] = true,
+  --[MODIFIER_STATE_COMMAND_RESTRICTED] = true,
   [MODIFIER_STATE_TAUNTED] = true
 }
 end
@@ -548,7 +554,7 @@ self:SetStackCount(table.stack)
 self.particle_1 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff.vpcf"
 self.particle_2 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_egg.vpcf"
 self.particle_3 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_streaks.vpcf"
-self.sound = "Hero_Pangolier.TailThump.Shield"
+self.sound = "UI.Generic_shield"
 self.buff_particles = {}
 
 self.buff_particles[1] = ParticleManager:CreateParticle(self.particle_1, PATTACH_ABSORIGIN_FOLLOW, self:GetCaster())
@@ -591,7 +597,7 @@ function modifier_custom_huskar_life_heal:IsHidden() return false end
 function modifier_custom_huskar_life_heal:IsPurgable() return true end
 function modifier_custom_huskar_life_heal:GetTexture() return "buffs/lifebreak_heal" end
 function modifier_custom_huskar_life_heal:OnCreated(table)
-self.regen = self:GetCaster():GetTalentValue("modifier_huskar_leap_damage", "heal")/self:GetCaster():GetTalentValue("modifier_huskar_leap_damage", "duration")
+self.regen = self:GetCaster():GetTalentValue("modifier_huskar_leap_1", "heal")/self:GetCaster():GetTalentValue("modifier_huskar_leap_1", "duration")
 end
 
 function modifier_custom_huskar_life_heal:GetEffectName()
@@ -632,8 +638,8 @@ end
 
 function custom_huskar_sacred_earth:GetCooldown(iLevel)
 
-local max = self:GetCaster():GetTalentValue("modifier_huskar_leap_legendary", "cd_max")
-local upgrade = (max - self:GetCaster():GetTalentValue("modifier_huskar_leap_legendary", "cd_min"))*(1 - self:GetCaster():GetHealthPercent()/100)
+local max = self:GetCaster():GetTalentValue("modifier_huskar_leap_7", "cd_max")
+local upgrade = (max - self:GetCaster():GetTalentValue("modifier_huskar_leap_7", "cd_min"))*(1 - self:GetCaster():GetHealthPercent()/100)
 
 return max - upgrade
 end
@@ -703,7 +709,7 @@ end
 
 if #enemies > 0 then 
   local heal = self:GetCaster():GetMaxHealth()*self:GetAbility():GetSpecialValueFor("heal")/100
-  self:GetCaster():GenericHeal(heal, self:GetAbility())
+  self:GetCaster():GenericHeal(heal, self:GetAbility(), nil, nil, "modifier_huskar_leap_7")
 end
 
 end
@@ -804,9 +810,9 @@ function modifier_custom_huskar_life_legendary_double:IsPurgable() return false 
 function modifier_custom_huskar_life_legendary_double:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_custom_huskar_life_legendary_double:OnCreated(table)
 
-self.heal_reduce = self:GetCaster():GetTalentValue("modifier_huskar_leap_shield", "heal_reduce")
-self.damage = self:GetCaster():GetTalentValue("modifier_huskar_leap_shield", "damage")/100
-self.creeps = self:GetCaster():GetTalentValue("modifier_huskar_leap_shield", "creeps")
+self.heal_reduce = self:GetCaster():GetTalentValue("modifier_huskar_leap_4", "heal_reduce")
+self.damage = self:GetCaster():GetTalentValue("modifier_huskar_leap_4", "damage")/100
+self.creeps = self:GetCaster():GetTalentValue("modifier_huskar_leap_4", "creeps")
 end
 
 
@@ -847,7 +853,7 @@ if target:IsCreep() then
 end 
 
 local damageTable_self = {victim = self:GetParent(), attacker = self:GetCaster(), damage = damage, damage_type = DAMAGE_TYPE_PURE, ability = self:GetAbility(),}
-local real = ApplyDamage(damageTable_self)
+local real = DoDamage(damageTable_self, "modifier_huskar_leap_4")
 self:GetParent():SendNumber(6, real)
 
 target:EmitSound("Hero_Huskar.Life_Break.Impact")

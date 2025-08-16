@@ -6,27 +6,26 @@ item_black_king_bar_custom = class({})
 function item_black_king_bar_custom:GetIntrinsicModifierName() return "modifier_item_black_king_bar_custom" end
 
 
-   
+function item_black_king_bar_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/items_fx/black_king_bar_avatar.vpcf", context )
+PrecacheResource( "particle","particles/status_fx/status_effect_avatar.vpcf", context )
+end
 
 
 function item_black_king_bar_custom:OnSpellStart()
-if not IsServer() then return end
-
---if tostring(PlayerResource:GetSteamAccountID(self:GetCaster():GetPlayerOwnerID())) == "181517303" then 
-  --  CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), "CreateIngameErrorMessage", {message = "#huy_tebe"})
-   -- self:EndCooldown()
-  --  self:GetCaster():GiveMana(50)
- --   return
---end
-
+local caster = self:GetCaster()
 
 local duration = self:GetSpecialValueFor("duration")
-self:GetCaster():EmitSound("DOTA_Item.BlackKingBar.Activate")
-self:GetCaster():Purge(false, true, false, false, false)
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_item_black_king_bar_custom_active", {duration = duration})
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_generic_debuff_immune", {magic_damage = self:GetSpecialValueFor("magic_resist"), duration = duration})
 
+if not IsSoloMode() then
+    duration = self:GetSpecialValueFor("duration_duo")
+end
 
+caster:EmitSound("DOTA_Item.BlackKingBar.Activate")
+caster:Purge(false, true, false, false, false)
+caster:AddNewModifier(caster, self, "modifier_item_black_king_bar_custom_active", {duration = duration})
+caster:AddNewModifier(caster, self, "modifier_generic_debuff_immune", {magic_damage = self:GetSpecialValueFor("magic_resist"), duration = duration})
 end
 
 modifier_item_black_king_bar_custom = class({})
@@ -55,12 +54,14 @@ modifier_item_black_king_bar_custom_active = class({})
 function modifier_item_black_king_bar_custom_active:IsPurgable() return false end
 
 function modifier_item_black_king_bar_custom_active:OnCreated()
-    if not IsServer() then return end
-    if not self:GetAbility() then 
-        self:Destroy() 
-    end
+self.parent = self:GetParent()
+if not IsServer() then return end
 
-    self.RemoveForDuel = true
+if not self:GetAbility() then 
+    self:Destroy() 
+end
+
+self.RemoveForDuel = true
 end
 
 function modifier_item_black_king_bar_custom_active:OnRefresh()
@@ -76,17 +77,6 @@ function modifier_item_black_king_bar_custom_active:GetEffectAttachType()
     return PATTACH_ABSORIGIN_FOLLOW
 end
 
-function modifier_item_black_king_bar_custom_active:CheckState()
-    return {
-       -- [MODIFIER_STATE_MAGIC_IMMUNE] = true,
-
-       -- [MODIFIER_STATE_DEBUFF_IMMUNE] = true
-    }
-end
-
-
-
-
 
 
 function modifier_item_black_king_bar_custom_active:DeclareFunctions()
@@ -96,9 +86,11 @@ function modifier_item_black_king_bar_custom_active:DeclareFunctions()
 end
 
 function modifier_item_black_king_bar_custom_active:GetModifierModelScale()
-    if self:GetAbility() then 
-        return self:GetAbility():GetSpecialValueFor("model_scale") 
-    end
+if self.parent:HasModifier("modifier_primal_beast_innate_custom") then return end
+if self:GetAbility() then 
+    return self:GetAbility():GetSpecialValueFor("model_scale") 
+end
+
 end
 
 function modifier_item_black_king_bar_custom_active:GetStatusEffectName()
@@ -106,7 +98,7 @@ function modifier_item_black_king_bar_custom_active:GetStatusEffectName()
 end
 
 function modifier_item_black_king_bar_custom_active:StatusEffectPriority()
-    return 99998
+    return MODIFIER_PRIORITY_ULTRA 
 end
 
 

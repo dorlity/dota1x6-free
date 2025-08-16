@@ -5,35 +5,46 @@ LinkLuaModifier("modifier_razor_unstable_current_custom_legendary", "abilities/r
 LinkLuaModifier("modifier_razor_unstable_current_custom_legendary_charge", "abilities/razor/razor_unstable_current_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_razor_unstable_current_custom_damage", "abilities/razor/razor_unstable_current_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_razor_unstable_current_custom_heal", "abilities/razor/razor_unstable_current_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("modifier_razor_unstable_current_custom_heal_count", "abilities/razor/razor_unstable_current_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_razor_unstable_current_custom_stun_cd", "abilities/razor/razor_unstable_current_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("modifier_razor_unstable_current_custom_stats", "abilities/razor/razor_unstable_current_custom", LUA_MODIFIER_MOTION_NONE)
 
 razor_unstable_current_custom = class({})
 
 
-function razor_unstable_current_custom:Precache(context)
+function razor_unstable_current_custom:CreateTalent()
 
-PrecacheResource( "particle", "particles/razor/surge_stacks.vpcf", context )
-PrecacheResource( "particle", "particles/razor/surge_range.vpcf", context )
-PrecacheResource( "particle", "particles/razor/surge_speed.vpcf", context )
-PrecacheResource( "particle", "particles/razor/surge_damage_stack.vpcf", context )
+CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetCaster():GetPlayerOwnerID()), "ability_razor_current",  {})
+end
+
+function razor_unstable_current_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+
+PrecacheResource( "particle","particles/units/heroes/hero_razor/razor_unstable_current.vpcf", context )
+PrecacheResource( "particle","particles/econ/items/zeus/zeus_immortal_2021/zeus_immortal_2021_static_field.vpcf", context )
+PrecacheResource( "particle","particles/razor/surge_stacks.vpcf", context )
+PrecacheResource( "particle","particles/razor/surge_range.vpcf", context )
+PrecacheResource( "particle","particles/units/heroes/hero_arc_warden/arc_warden_flux_cast.vpcf", context )
+PrecacheResource( "particle","particles/razor/surge_speed.vpcf", context )
+PrecacheResource( "particle","particles/status_fx/status_effect_forcestaff.vpcf", context )
+PrecacheResource( "particle","particles/razor/surge_damage_stack.vpcf", context )
 
 end
 
-function razor_unstable_current_custom:GetAbilityTextureName()
-    if self:GetCaster():HasModifier("modifier_razor_unstable_current_custom_legendary") then 
-        return "unstable_current_stop"
-    end 
-    if self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
-        return "razor/arcana/razor_unstable_current_alt2"
-    end
-    if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
-        return "razor/arcana/razor_unstable_current_alt1"
-    end
-    return "razor_unstable_current"
-end 
 
+
+function razor_unstable_current_custom:GetAbilityTextureName()
+local caster = self:GetCaster()
+if caster:HasModifier("modifier_razor_unstable_current_custom_legendary") then 
+    return "unstable_current_stop"
+end 
+if caster:HasModifier("modifier_razor_arcana_v2_custom") then
+    return "razor/arcana/razor_unstable_current_alt2"
+end
+if caster:HasModifier("modifier_razor_arcana_custom") then
+    return "razor/arcana/razor_unstable_current_alt1"
+end
+return "razor_unstable_current"
+end 
 
 function razor_unstable_current_custom:GetIntrinsicModifierName()
 if not self:GetCaster():IsRealHero() then return end
@@ -41,13 +52,10 @@ return "modifier_razor_unstable_current_custom"
 end
 
 function razor_unstable_current_custom:GetBehavior()
-
-if self:GetCaster():HasModifier("modifier_razor_current_7") then 
+if self:GetCaster():HasTalent("modifier_razor_current_7") then 
 	return DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IMMEDIATE + DOTA_ABILITY_BEHAVIOR_ROOT_DISABLES
-else 
-	return DOTA_ABILITY_BEHAVIOR_PASSIVE
 end 
-
+return DOTA_ABILITY_BEHAVIOR_PASSIVE
 end 
 
 function razor_unstable_current_custom:GetCastRange(vLocation, hTarget)
@@ -58,48 +66,25 @@ end
 end 
 
 function razor_unstable_current_custom:GetCooldown(iLevel)
-
-if self:GetCaster():HasModifier("modifier_razor_current_7") then 
+if self:GetCaster():HasTalent("modifier_razor_current_7") then 
 	return self:GetCaster():GetTalentValue("modifier_razor_current_7", "cd")
 end
-
+return
 end 
 
 function razor_unstable_current_custom:OnSpellStart()
-
-local mod = self:GetCaster():FindModifierByName("modifier_razor_unstable_current_custom_legendary")
+local caster = self:GetCaster()
+local mod = caster:FindModifierByName("modifier_razor_unstable_current_custom_legendary")
 
 if mod then 
 	mod:Destroy()
 else 
-	local duration = self:GetCaster():GetTalentValue("modifier_razor_current_7", "duration")
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_razor_unstable_current_custom_legendary", {duration = duration})
+	local duration = caster:GetTalentValue("modifier_razor_current_7", "duration")
+	caster:AddNewModifier(caster, self, "modifier_razor_unstable_current_custom_legendary", {duration = duration})
 	self:EndCooldown()
 	self:StartCooldown(0.3)
 end 
 
-
-end 
-
-
-function razor_unstable_current_custom:GetDamage(target, k)
-if not IsServer() then return end
-
-local damage = self:GetSpecialValueFor("strike_damage")
-
-if target then 
-	local mod = target:FindModifierByName("modifier_razor_unstable_current_custom_damage")
-
-	if mod then 
-		damage = damage + self:GetCaster():GetTalentValue("modifier_razor_current_4", "damage")*mod:GetStackCount()
-	end 
-end 
-
-if k then 
-	damage = damage*k
-end 
-
-return damage
 end 
 
 
@@ -109,46 +94,49 @@ if not IsServer() then return end
 local duration = self:GetSpecialValueFor("strike_slow_duration")
 
 target:AddNewModifier(self:GetCaster(), self, "modifier_razor_unstable_current_custom_slow", {duration = (1 - target:GetStatusResistance())*duration})
-
 end 
 
 
 modifier_razor_unstable_current_custom = class({})
-function modifier_razor_unstable_current_custom:IsHidden() return not self:GetParent():HasModifier("modifier_razor_current_4")
-and not self:GetParent():HasModifier("modifier_razor_current_5") end
+function modifier_razor_unstable_current_custom:IsHidden() return not self.parent:HasTalent("modifier_razor_current_4") and not self.parent:HasTalent("modifier_razor_current_5") end
 function modifier_razor_unstable_current_custom:IsPurgable() return false end
 function modifier_razor_unstable_current_custom:GetTexture() return "razor_unstable_current" end
 
 function modifier_razor_unstable_current_custom:OnCreated(table)
 
-self.caster = self:GetCaster()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-self.move = self:GetAbility():GetSpecialValueFor("self_movement_speed_pct")
-self.chance = self:GetAbility():GetSpecialValueFor("strike_pct_chance")
-self.count  = self:GetAbility():GetSpecialValueFor("strike_target_count")
-self.radius = self:GetAbility():GetSpecialValueFor("strike_search_radius")
-self.cd = self:GetAbility():GetSpecialValueFor("strike_internal_cd")
+self.parent:AddAttackEvent_inc(self)
+self.parent:AddSpellEvent(self)
 
-self.damage_duration = self:GetCaster():GetTalentValue("modifier_razor_current_4", "duration", true)
-self.heal_duration = self:GetCaster():GetTalentValue("modifier_razor_current_2", "duration", true)
+self.move = self.ability:GetSpecialValueFor("self_movement_speed_pct")
+self.chance = self.ability:GetSpecialValueFor("strike_pct_chance")
+self.count  = self.ability:GetSpecialValueFor("strike_target_count")
+self.radius = self.ability:GetSpecialValueFor("strike_search_radius")
+self.cd = self.ability:GetSpecialValueFor("strike_internal_cd")
+self.damage = self.ability:GetSpecialValueFor("strike_damage")
 
-self.stun_duration = self:GetCaster():GetTalentValue("modifier_razor_current_6", "stun", true)
-self.stun_cd = self:GetCaster():GetTalentValue("modifier_razor_current_6", "cd", true)
+self.damage_duration = self.parent:GetTalentValue("modifier_razor_current_4", "duration", true)
+self.heal_duration = self.parent:GetTalentValue("modifier_razor_current_2", "duration", true)
 
-self.max_move = self:GetCaster():GetTalentValue("modifier_razor_current_5", "speed_max", true)
-self.move_bonus = self:GetCaster():GetTalentValue("modifier_razor_current_5", "speed_bonus", true)
+self.stun_cd = self.parent:GetTalentValue("modifier_razor_current_6", "cd", true)
+self.stun_duration = self.parent:GetTalentValue("modifier_razor_current_6", "stun", true)
+self.cd_inc = self.parent:GetTalentValue("modifier_razor_current_6", "cd_inc", true)
 
-self.distance_move = self.caster:GetTalentValue("modifier_razor_current_4", "distance", true)
+self.distance_move = self.parent:GetTalentValue("modifier_razor_current_4", "distance", true)
 
-self.cd_items = self.caster:GetTalentValue("modifier_razor_current_5", "cd", true)
+self.cd_items = self.parent:GetTalentValue("modifier_razor_current_5", "cd", true)
 
-self.stats_stack = self.caster:GetTalentValue("modifier_razor_current_3", "spell", true)
-self.stats_duration = self.caster:GetTalentValue("modifier_razor_current_3", "duration", true)
+self.legendary_cd = self.parent:GetTalentValue("modifier_razor_current_7", "cd_inc", true)
+
+self.stats_stack = self.parent:GetTalentValue("modifier_razor_current_3", "spell", true)
+self.stats_duration = self.parent:GetTalentValue("modifier_razor_current_3", "duration", true)
 
 if not IsServer() then return end 
 
 self:SetStackCount(0)
-self.old_pos = self.caster:GetAbsOrigin()
+self.old_pos = self.parent:GetAbsOrigin()
 self:StartIntervalThink(1)
 end 
 
@@ -160,15 +148,14 @@ end
 
 function modifier_razor_unstable_current_custom:OnIntervalThink()
 if not IsServer() then return end 
-if not self.caster:HasModifier("modifier_razor_current_4") and not self.caster:HasModifier("modifier_razor_current_5") then 
-	self.old_pos = self.caster:GetAbsOrigin()
+if not self.parent:HasTalent("modifier_razor_current_4") and not self.parent:HasTalent("modifier_razor_current_5") then 
+	self.old_pos = self.parent:GetAbsOrigin()
 	return 
 end 
 
-local new_pos = self.caster:GetAbsOrigin()
+local new_pos = self.parent:GetAbsOrigin()
 local dist = (new_pos - self.old_pos):Length2D()
-
-local targets = self.caster:FindTargets(self.radius)
+local targets = self.parent:FindTargets(self.radius)
 
 if #targets > 0 then 
 	self:SetStackCount(self:GetStackCount() + dist)
@@ -176,45 +163,42 @@ if #targets > 0 then
 	if self:GetStackCount() >= self.distance_move then 
 		self:SetStackCount(0)
 
-		if self.caster:HasModifier("modifier_razor_current_4") then 
+		if self.parent:HasTalent("modifier_razor_current_4") then 
 			self:PassiveProc(nil, true)
 		end 
 
-		if self.caster:HasModifier("modifier_razor_current_5") then 
-			self.caster:CdItems(self.cd_items)
+		if self.parent:HasTalent("modifier_razor_current_5") then 
+			self.parent:CdItems(self.cd_items)
 		end 
 	end 
 end 
 
 self.old_pos = new_pos
-
-
 self:StartIntervalThink(0.1)
 end 
 
 
-
 function modifier_razor_unstable_current_custom:PassiveProc(attacker, no_cd, spell)
 if not IsServer() then return end
-if self.caster:PassivesDisabled() then return end
+if self.parent:PassivesDisabled() then return end
 
-local cd = self.cd + self:GetCaster():GetTalentValue("modifier_razor_current_1", "cd")
+local cd = self.cd
+if self.parent:HasTalent("modifier_razor_current_6") then
+	cd = cd + self.cd_inc
+end
 
-if self.caster:HasModifier("modifier_razor_current_2") then 
-
-	self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_razor_unstable_current_custom_heal", {duration = self.heal_duration})
-	--self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_razor_unstable_current_custom_heal_count", {duration = self.heal_duration})
+if self.parent:HasTalent("modifier_razor_current_2") then 
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_razor_unstable_current_custom_heal", {duration = self.heal_duration})
 end 
 
-
-self.caster:EmitSound("Hero_Razor.UnstableCurrent.Strike")
+self.parent:EmitSound("Hero_Razor.UnstableCurrent.Strike")
 
 if not no_cd then 
-	self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_razor_unstable_current_custom_cd", {duration = cd})
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_razor_unstable_current_custom_cd", {duration = cd})
 end 
 
-local heroes = FindUnitsInRadius( self.caster:GetTeamNumber(), self.caster:GetOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_CLOSEST, false )
-local creeps = FindUnitsInRadius( self.caster:GetTeamNumber(), self.caster:GetOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_CLOSEST, false )
+local heroes = FindUnitsInRadius( self.parent:GetTeamNumber(), self.parent:GetOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_CLOSEST, false )
+local creeps = FindUnitsInRadius( self.parent:GetTeamNumber(), self.parent:GetOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES + DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE, FIND_CLOSEST, false )
 
 local targets = {}
 
@@ -243,47 +227,47 @@ for _,creep in pairs(creeps) do
 end 
 
 local count = 0
+local ability_name = nil
+if no_cd then 
+	ability_name = "modifier_razor_current_4"
+end 
 
-local damage_table = {attacker = self.caster, ability = self:GetAbility(), damage_type = DAMAGE_TYPE_MAGICAL}
+local damage_table = {attacker = self.parent, ability = self.ability, damage_type = DAMAGE_TYPE_MAGICAL, damage = self.damage + self.parent:GetTalentValue("modifier_razor_current_1", "damage")}
 local particle_name = "particles/units/heroes/hero_razor/razor_unstable_current.vpcf"
-if self:GetCaster():HasModifier("modifier_razor_arcana_custom") then
+if self.parent:HasModifier("modifier_razor_arcana_custom") then
     particle_name = "particles/econ/items/razor/razor_arcana/razor_arcana_unstable_current.vpcf"
-elseif self:GetCaster():HasModifier("modifier_razor_arcana_v2_custom") then
+elseif self.parent:HasModifier("modifier_razor_arcana_v2_custom") then
     particle_name = "particles/econ/items/razor/razor_arcana/razor_arcana_v2_unstable_current.vpcf"
 end
+
 for _,target in pairs(targets) do 
-
-    
-
-	local effect_cast = ParticleManager:CreateParticle( particle_name, PATTACH_CUSTOMORIGIN_FOLLOW, self.caster )
-	ParticleManager:SetParticleControlEnt(effect_cast, 0, self.caster, PATTACH_POINT_FOLLOW, "attach_hitloc", self.caster:GetAbsOrigin(), true)
+	local effect_cast = ParticleManager:CreateParticle( particle_name, PATTACH_CUSTOMORIGIN_FOLLOW, self.parent )
+	ParticleManager:SetParticleControlEnt(effect_cast, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true)
 	ParticleManager:SetParticleControlEnt(effect_cast, 1, target, PATTACH_POINT_FOLLOW, "attach_hitloc", target:GetAbsOrigin(), true)
 	ParticleManager:ReleaseParticleIndex( effect_cast )
 
-	damage_table.damage = self:GetAbility():GetDamage(target)
 	damage_table.victim = target
 
-	self:GetAbility():ApplySlow(target)
+	self.ability:ApplySlow(target)
 
-	if spell and attacker and attacker == target and not target:HasModifier("modifier_razor_unstable_current_custom_stun_cd") and self.caster:HasModifier("modifier_razor_current_6") then 
-		attacker:AddNewModifier(self.caster, self:GetAbility(), "modifier_stunned", {duration = (1 - attacker:GetStatusResistance())*self.stun_duration})
-		attacker:AddNewModifier(self.caster, self:GetAbility(), "modifier_razor_unstable_current_custom_stun_cd", {duration = self.stun_cd})
+	if spell and attacker and attacker == target and not target:HasModifier("modifier_razor_unstable_current_custom_stun_cd") and self.parent:HasTalent("modifier_razor_current_6") then 
+		attacker:AddNewModifier(self.parent, self.ability, "modifier_stunned", {duration = (1 - attacker:GetStatusResistance())*self.stun_duration})
+		attacker:AddNewModifier(self.parent, self.ability, "modifier_razor_unstable_current_custom_stun_cd", {duration = self.stun_cd})
 		
 		ParticleManager:ReleaseParticleIndex( ParticleManager:CreateParticle( "particles/econ/items/zeus/zeus_immortal_2021/zeus_immortal_2021_static_field.vpcf", PATTACH_ABSORIGIN_FOLLOW, attacker) )
-
 		attacker:EmitSound("Razor.Surge_stun")
 	end 
 
-	local real_damage = ApplyDamage(damage_table)	
+	local real_damage = DoDamage(damage_table, ability_name)	
 
-	if self.caster:GetQuest() == "Razor.Quest_7" and target:IsRealHero() then 
-		self.caster:UpdateQuest(1)
+	if self.parent:GetQuest() == "Razor.Quest_7" and target:IsRealHero() then 
+		self.parent:UpdateQuest(1)
 	end 
 
 	target:EmitSound("Hero_Razor.UnstableCurrent.Target")
 
-	if self.caster:HasModifier("modifier_razor_current_4") and no_cd then 
-		target:AddNewModifier(self.caster, self:GetAbility(), "modifier_razor_unstable_current_custom_damage", {duration = self.damage_duration})
+	if self.parent:HasTalent("modifier_razor_current_4") then 
+		target:AddNewModifier(self.parent, self.ability, "modifier_razor_unstable_current_custom_damage", {duration = self.damage_duration})
 	end 
 
 	count = count + 1 
@@ -292,101 +276,44 @@ for _,target in pairs(targets) do
 	end 
 end 
 
-if #targets > 0 and self.caster:HasModifier("modifier_razor_current_7") and not self.caster:HasModifier("modifier_razor_unstable_current_custom_legendary") then 
-	self.caster:CdAbility(self:GetAbility(), self.caster:GetTalentValue("modifier_razor_current_7", "cd_inc"))
+if #targets > 0 and self.parent:HasTalent("modifier_razor_current_7") and not self.parent:HasModifier("modifier_razor_unstable_current_custom_legendary") then 
+	self.parent:CdAbility(self.ability, self.legendary_cd)
 end 
 
 end 
 
 
-function modifier_razor_unstable_current_custom:DeclareFunctions()
-return
-{
-	MODIFIER_EVENT_ON_ATTACK_LANDED,
-	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-    MODIFIER_PROPERTY_MOVESPEED_LIMIT,
-    MODIFIER_PROPERTY_MOVESPEED_MAX,
-    MODIFIER_PROPERTY_IGNORE_MOVESPEED_LIMIT,
-	MODIFIER_EVENT_ON_ABILITY_FULLY_CAST
-}
-end
-
-
-function modifier_razor_unstable_current_custom:GetModifierMoveSpeedBonus_Percentage()
-if self:GetParent():PassivesDisabled() then return end
-local bonus = 0 
-
-if self:GetCaster():HasModifier("modifier_razor_current_5") then 
-	bonus = self.move_bonus
-end 
-
-return self.move + bonus
-end
-
-
-
-function modifier_razor_unstable_current_custom:GetModifierIgnoreMovespeedLimit( params )
-if self:GetCaster():HasModifier("modifier_razor_current_5") then 
-  return 1
-end
-    return 0
-end
-
-function modifier_razor_unstable_current_custom:GetModifierMoveSpeed_Max( params )
-if self:GetCaster():HasModifier("modifier_razor_current_5") then 
-  return self.max_move
-end
-
-return 
-end
-
-function modifier_razor_unstable_current_custom:GetModifierMoveSpeed_Limit()
-if self:GetCaster():HasModifier("modifier_razor_current_5") then 
-  return self.max_move
-end
-
-return 
-end
-
-
-
-
-
-function modifier_razor_unstable_current_custom:OnAbilityFullyCast(params)
+function modifier_razor_unstable_current_custom:SpellEvent(params)
 if not IsServer() then return end
-if not params.ability then return end
-if not params.ability:GetCaster() then return end
-if params.ability:GetCaster():GetTeamNumber() == self:GetParent():GetTeamNumber() then return end
-if not params.target then return end
-if params.target and params.target ~= self:GetParent() then return end
+if params.unit:GetTeamNumber() == self.parent:GetTeamNumber() then return end
+if not params.target then return end 
+if params.target ~= self.parent then return end
 
-if self.caster:HasModifier("modifier_razor_current_3") then 
-
+if self.parent:HasTalent("modifier_razor_current_3") then 
 	for i = 1,self.stats_stack do 
-		self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_razor_unstable_current_custom_stats", {duration = self.stats_duration})
+		self.parent:AddNewModifier(self.parent, self.ability, "modifier_razor_unstable_current_custom_stats", {duration = self.stats_duration})
 	end
 end 
 
-if params.ability:IsItem() and not self.caster:HasModifier("modifier_razor_current_6") then return end
-if self.caster:HasModifier("modifier_razor_unstable_current_custom_cd") then return end
+if params.ability:IsItem() and not self.parent:HasTalent("modifier_razor_current_6") then return end
+if self.parent:HasModifier("modifier_razor_unstable_current_custom_cd") then return end
 
-self:PassiveProc(params.ability:GetCaster(), false, true)
+self:PassiveProc(params.unit, false, true)
 end 
 
-function modifier_razor_unstable_current_custom:OnAttackLanded(params)
+function modifier_razor_unstable_current_custom:AttackEvent_inc(params)
 if not IsServer() then return end 
-if self.caster  ~= params.target then return end 
-if not params.attacker:IsHero() and not params.attacker:IsCreep() then return end 
+if self.parent  ~= params.target then return end 
+if not params.attacker:IsUnit() then return end 
 
-if self.caster:HasModifier("modifier_razor_current_3") then 
-	self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_razor_unstable_current_custom_stats", {duration = self.stats_duration})
+if self.parent:HasTalent("modifier_razor_current_3") then 
+	self.parent:AddNewModifier(self.parent, self.ability, "modifier_razor_unstable_current_custom_stats", {duration = self.stats_duration})
 end 
 
+if self.parent:HasModifier("modifier_razor_unstable_current_custom_cd") then return end
+local chance = self.chance + self.parent:GetTalentValue("modifier_razor_current_2", "chance")
 
-if self.caster:HasModifier("modifier_razor_unstable_current_custom_cd") then return end
-local chance = self.chance + self.caster:GetTalentValue("modifier_razor_current_1", "chance")
-
-if RollPseudoRandomPercentage(chance ,3180,self.caster) then 
+if RollPseudoRandomPercentage(chance ,3180,self.parent) then 
 	self:PassiveProc(params.attacker)
 end 
 
@@ -394,12 +321,14 @@ end
 
 
 
+
+
+
+
 modifier_razor_unstable_current_custom_slow = class({})
 function modifier_razor_unstable_current_custom_slow:IsHidden() return false end
 function modifier_razor_unstable_current_custom_slow:IsPurgable() return true end
 function modifier_razor_unstable_current_custom_slow:OnCreated()
-
-
 self.slow = self:GetAbility():GetSpecialValueFor("strike_move_slow_pct")*-1
 end 
 
@@ -422,34 +351,27 @@ function modifier_razor_unstable_current_custom_cd:IsDebuff() return true end
 
 
 
+
 modifier_razor_unstable_current_custom_legendary = class({})
 function modifier_razor_unstable_current_custom_legendary:IsHidden() return true end
 function modifier_razor_unstable_current_custom_legendary:IsPurgable() return false end
 function modifier_razor_unstable_current_custom_legendary:OnCreated()
 
-self.slow = self:GetCaster():GetTalentValue("modifier_razor_current_7", "slow")
-self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+self.parent = self:GetParent()
 
+self.slow = self.parent:GetTalentValue("modifier_razor_current_7", "slow")
 self.full_time = self:GetDuration()
 
-
-self.max_distance = self:GetCaster():GetTalentValue("modifier_razor_current_7", "max_distance")
-self.speed = self:GetCaster():GetTalentValue("modifier_razor_current_7", "charge_speed")
+self.max_distance = self.parent:GetTalentValue("modifier_razor_current_7", "max_distance")
+self.speed = self.parent:GetTalentValue("modifier_razor_current_7", "charge_speed")
 
 if not IsServer() then return end
 
-self.caster:EmitSound("Razor.Surge_cast")
-self.caster:EmitSound("Razor.Surge_cast_loop")
+self.parent:EmitSound("Razor.Surge_cast")
+self.parent:EmitSound("Razor.Surge_cast_loop")
 
-self.particle = ParticleManager:CreateParticle("particles/razor/surge_stacks.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())
-self:AddParticle(self.particle, false, false, -1, false, false)
-
-
-
-self.aim_particle = ParticleManager:CreateParticleForTeam("particles/razor/surge_range.vpcf", PATTACH_OVERHEAD_FOLLOW, self.caster, self.caster:GetTeamNumber())
-self:Particle()
-self:AddParticle(self.aim_particle, false, false, -1, false, false)
-
+self.particle = self.parent:GenericParticle("particles/razor/surge_stacks.vpcf", self, true)
 
 self.visual_count = 6
 self:VisualStack()
@@ -458,7 +380,7 @@ self.stack = (self.full_time) / self.visual_count
 self.count = 0
 self.interval = 0.01
 
-self.effect_stack = 0.2
+self.effect_stack = 0.3
 self.effect_count = 0
 
 self:StartIntervalThink(self.interval)
@@ -477,13 +399,11 @@ if not self.aim_particle then return end
 
 local distance = (self:GetElapsedTime()/self.full_time) * self.max_distance
 
-local point = self.caster:GetAbsOrigin() + self.caster:GetForwardVector()*distance
+local point = self.parent:GetAbsOrigin() + self.parent:GetForwardVector()*distance
 
-ParticleManager:SetParticleControl(self.aim_particle, 0, self.caster:GetAbsOrigin())
+ParticleManager:SetParticleControl(self.aim_particle, 0, self.parent:GetAbsOrigin())
 ParticleManager:SetParticleControl(self.aim_particle, 1, point)
 end 
-
-
 
 
 function modifier_razor_unstable_current_custom_legendary:VisualStack()
@@ -500,11 +420,8 @@ end
 
 end 
 
-
 function modifier_razor_unstable_current_custom_legendary:OnIntervalThink()
 if not IsServer() then return end 
-
-self:Particle()
 
 self.count = self.count + self.interval
 
@@ -514,29 +431,25 @@ if self.count >= self.stack then
 	self:VisualStack()
 end 
 
-
 self.effect_count = self.effect_count + self.interval 
 
 if self.effect_count < self.effect_stack then return end 
 self.effect_count = 0
 
+self.parent:EmitSound("Razor.Surge_cast_lightning")
 
-self:GetParent():EmitSound("Razor.Surge_cast_lightning")
+AddFOWViewer(self.parent:GetTeamNumber(), self.parent:GetAbsOrigin(), self.max_distance, self.effect_stack, false)
 
-AddFOWViewer(self.caster:GetTeamNumber(), self.caster:GetAbsOrigin(), self.max_distance, self.effect_stack, false)
-
-local point = self.caster:GetAbsOrigin() + RandomVector(150)
+local point = self.parent:GetAbsOrigin() + RandomVector(150)
 
 local cast_particle = ParticleManager:CreateParticle("particles/units/heroes/hero_arc_warden/arc_warden_flux_cast.vpcf", PATTACH_WORLDORIGIN, nil)
 ParticleManager:SetParticleControl(cast_particle, 0, point)
-ParticleManager:SetParticleControl(cast_particle, 1, self.caster:GetAbsOrigin() + Vector(0,0,150))
+ParticleManager:SetParticleControl(cast_particle, 1, self.parent:GetAbsOrigin() + Vector(0,0,150))
 ParticleManager:SetParticleControl(cast_particle, 2, point)
 ParticleManager:ReleaseParticleIndex(cast_particle)
 
-ParticleManager:ReleaseParticleIndex( ParticleManager:CreateParticle( "particles/econ/items/zeus/zeus_immortal_2021/zeus_immortal_2021_static_field.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.caster) )
-
+self.parent:GenericParticle("particles/econ/items/zeus/zeus_immortal_2021/zeus_immortal_2021_static_field.vpcf")
 end 
-
 
 function modifier_razor_unstable_current_custom_legendary:DeclareFunctions()
 return
@@ -552,67 +465,66 @@ end
 
 function modifier_razor_unstable_current_custom_legendary:OnDestroy()
 if not IsServer() then return end
+self.parent:StopSound("Razor.Surge_cast_loop")
+self.parent:StopSound("Razor.Surge_cast")
 
-
-self:GetParent():StopSound("Razor.Surge_cast_loop")
-self:GetParent():StopSound("Razor.Surge_cast")
-
-self:GetAbility():EndCooldown()
-self:GetAbility():UseResources(false, false, false, true)
+self.ability:EndCooldown()
+self.ability:UseResources(false, false, false, true)
 
 local distance = (self:GetElapsedTime()/self.full_time) * self.max_distance
 
 local duration = distance/self.speed
-
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_razor_unstable_current_custom_legendary_charge", {distance = distance, duration = duration})
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_razor_unstable_current_custom_legendary_charge", {distance = distance, duration = duration})
 end
 
 
 
 
 
-modifier_razor_unstable_current_custom_legendary_charge = class({})
 
-function modifier_razor_unstable_current_custom_legendary_charge:IsDebuff() return false end
+modifier_razor_unstable_current_custom_legendary_charge = class({})
 function modifier_razor_unstable_current_custom_legendary_charge:IsHidden() return true end
 function modifier_razor_unstable_current_custom_legendary_charge:IsPurgable() return false end
 
 function modifier_razor_unstable_current_custom_legendary_charge:OnCreated(kv)
 if not IsServer() then return end
 
-self.caster = self:GetCaster()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-self.pfx = ParticleManager:CreateParticle("particles/razor/surge_speed.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.caster)
-ParticleManager:SetParticleControl(self.pfx, 0, self.caster:GetAbsOrigin())
-ParticleManager:SetParticleControl(self.pfx, 1, self.caster:GetAbsOrigin())
+self.parent:AddOrderEvent(self)
+
+self.pfx = ParticleManager:CreateParticle("particles/razor/surge_speed.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControl(self.pfx, 0, self.parent:GetAbsOrigin())
+ParticleManager:SetParticleControl(self.pfx, 1, self.parent:GetAbsOrigin())
 self:AddParticle( self.pfx, false, false, -1, false, false )
 
-self.caster:EmitSound("Razor.Surge_charge_1")
-self.caster:EmitSound("Razor.Surge_charge_2")
+self.parent:EmitSound("Razor.Surge_charge_1")
+self.parent:EmitSound("Razor.Surge_charge_2")
 
-self.caster:StartGesture(ACT_DOTA_RUN)
+self.parent:StartGesture(ACT_DOTA_RUN)
 
-self.speed = self:GetCaster():GetTalentValue("modifier_razor_current_7", "charge_speed")
-self.stun = self:GetCaster():GetTalentValue("modifier_razor_current_7", "stun")
-self.stun_knock = self:GetCaster():GetTalentValue("modifier_razor_current_7", "stun_knock")
-self.max_distance = self:GetCaster():GetTalentValue("modifier_razor_current_7", "max_distance")
+self.speed = self.parent:GetTalentValue("modifier_razor_current_7", "charge_speed")
+self.stun = self.parent:GetTalentValue("modifier_razor_current_7", "stun")
+self.stun_knock = self.parent:GetTalentValue("modifier_razor_current_7", "stun_knock")
+self.max_distance = self.parent:GetTalentValue("modifier_razor_current_7", "max_distance")
 
-self.k = math.min(1, kv.distance/self.max_distance) * self:GetCaster():GetTalentValue("modifier_razor_current_7", "max_damage") /100
+self.k = math.min(1, kv.distance/self.max_distance) * self.parent:GetTalentValue("modifier_razor_current_7", "max_damage") /100
 
-self.damage_table = {attacker = self.caster, ability = self:GetAbility(), damage_type = DAMAGE_TYPE_MAGICAL}
+self.damage_table = {attacker = self.parent, ability = self.ability, damage_type = DAMAGE_TYPE_MAGICAL}
 
 self.dt = 0.01
 self.aoe = 150
 
 self.distance = (kv.distance)/(kv.duration/self.dt)
 
-self.angle = self:GetParent():GetForwardVector():Normalized()
-self.origin = self.caster:GetAbsOrigin()
+self.angle = self.parent:GetForwardVector():Normalized()
+self.origin = self.parent:GetAbsOrigin()
 
 self.targets = {}
 
 self.effect_count = 0 
-self.effect_stack = 0.07
+self.effect_stack = 0.1
 
 self:StartIntervalThink(self.dt)
 end
@@ -621,8 +533,8 @@ end
 function modifier_razor_unstable_current_custom_legendary_charge:OnIntervalThink()
 if not IsServer() then return end
 
-if self.caster:IsCurrentlyVerticalMotionControlled() or self.caster:IsCurrentlyHorizontalMotionControlled() 
-	or self.caster:IsHexed() or self.caster:IsStunned() then 
+if self.parent:IsCurrentlyVerticalMotionControlled() or self.parent:IsCurrentlyHorizontalMotionControlled() 
+	or self.parent:IsHexed() or self.parent:IsStunned() then 
 	self:Destroy()
 	return
 end
@@ -636,15 +548,15 @@ if self.effect_count < self.effect_stack then return end
 
 self.effect_count = 0
 
-local point = self.caster:GetAbsOrigin() + RandomVector(150)
+local point = self.parent:GetAbsOrigin() + RandomVector(150)
 
-local cast_particle = ParticleManager:CreateParticle("particles/units/heroes/hero_arc_warden/arc_warden_flux_cast.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.caster)
-ParticleManager:SetParticleControlEnt(cast_particle, 0, self.caster, PATTACH_POINT_FOLLOW, "attach_hitloc", self.caster:GetAbsOrigin(), true)
+local cast_particle = ParticleManager:CreateParticle("particles/units/heroes/hero_arc_warden/arc_warden_flux_cast.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+ParticleManager:SetParticleControlEnt(cast_particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true)
 ParticleManager:SetParticleControl(cast_particle, 1, point)
-ParticleManager:SetParticleControlEnt(cast_particle, 2, self.caster, PATTACH_POINT_FOLLOW, "attach_hitloc", self.caster:GetAbsOrigin(), true)
+ParticleManager:SetParticleControlEnt(cast_particle, 2, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true)
 ParticleManager:ReleaseParticleIndex(cast_particle)
 
-ParticleManager:ReleaseParticleIndex( ParticleManager:CreateParticle( "particles/econ/items/zeus/zeus_immortal_2021/zeus_immortal_2021_static_field.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.caster) )
+ParticleManager:ReleaseParticleIndex( ParticleManager:CreateParticle( "particles/econ/items/zeus/zeus_immortal_2021/zeus_immortal_2021_static_field.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent) )
 
 end 
 
@@ -653,13 +565,13 @@ end
 function modifier_razor_unstable_current_custom_legendary_charge:Motion()
 if not IsServer() then return end
 
-local pos = self.caster:GetAbsOrigin()
+local pos = self.parent:GetAbsOrigin()
 GridNav:DestroyTreesAroundPoint(pos, 80, false)
 
 local pos_p = self.angle * self.distance
 
-local next_pos = GetGroundPosition(pos + pos_p,self.caster)
-self.caster:SetAbsOrigin(next_pos)
+local next_pos = GetGroundPosition(pos + pos_p,self.parent)
+self.parent:SetAbsOrigin(next_pos)
 
 end
 
@@ -667,7 +579,7 @@ end
 function modifier_razor_unstable_current_custom_legendary_charge:CheckTargets()
 if not IsServer() then return end 
 
-local targets = self.caster:FindTargets(self.aoe)
+local targets = self.parent:FindTargets(self.aoe)
 
 for _,target in pairs(targets) do 
 	if not self.targets[target] then 
@@ -678,36 +590,34 @@ for _,target in pairs(targets) do
 		ParticleManager:ReleaseParticleIndex( ParticleManager:CreateParticle( "particles/econ/items/zeus/zeus_immortal_2021/zeus_immortal_2021_static_field.vpcf", PATTACH_ABSORIGIN_FOLLOW, target) )
 
 		self.damage_table.victim = target
-		self.damage_table.damage = self:GetAbility():GetDamage(target, self.k)
-		self:GetAbility():ApplySlow(target)
+		self.damage_table.damage = self.parent:GetAverageTrueAttackDamage(nil)*self.k
+		self.ability:ApplySlow(target)
 
-		ApplyDamage(self.damage_table)
+		DoDamage(self.damage_table, "modifier_razor_current_7")
 		if not (target:IsCurrentlyHorizontalMotionControlled() or target:IsCurrentlyVerticalMotionControlled()) then
 
-			local direction = target:GetOrigin()-self.caster:GetAbsOrigin()
+			local direction = target:GetOrigin()-self.parent:GetAbsOrigin()
 			direction.z = 0
 			direction = direction:Normalized()
 
 			local knockbackProperties =
 			{
-			  center_x = self.caster:GetOrigin().x,
-			  center_y = self.caster:GetOrigin().y,
-			  center_z = self.caster:GetOrigin().z,
+			  center_x = self.parent:GetOrigin().x,
+			  center_y = self.parent:GetOrigin().y,
+			  center_z = self.parent:GetOrigin().z,
 			  duration = self.stun,
 			  knockback_duration = self.stun,
 			  knockback_distance = self.stun_knock,
 			  knockback_height = 30,
 			  should_stun = 1,
 			}
-			target:AddNewModifier( self:GetCaster(), self, "modifier_knockback", knockbackProperties )
+			target:AddNewModifier( self.parent, self, "modifier_knockback", knockbackProperties )
 		end
 
 	end 
 end 
 
-
 end 
-
 
 function modifier_razor_unstable_current_custom_legendary_charge:CheckState()
 return
@@ -721,13 +631,10 @@ return
 {
  	MODIFIER_PROPERTY_TRANSLATE_ACTIVITY_MODIFIERS,
     MODIFIER_PROPERTY_DISABLE_TURNING,
-	MODIFIER_EVENT_ON_ORDER,
 }
 end
 
-
-function modifier_razor_unstable_current_custom_legendary_charge:OnOrder( params )
-if params.unit~=self:GetParent() then return end
+function modifier_razor_unstable_current_custom_legendary_charge:OrderEvent( params )
 
 if params.order_type==DOTA_UNIT_ORDER_STOP or params.order_type==DOTA_UNIT_ORDER_HOLD_POSITION then
 	self:Destroy()
@@ -735,50 +642,48 @@ end
 
 end
 
-
-function modifier_razor_unstable_current_custom_legendary_charge:GetActivityTranslationModifiers()
-    return "haste"
-end
-
-
+function modifier_razor_unstable_current_custom_legendary_charge:GetActivityTranslationModifiers() return "haste" end
 function modifier_razor_unstable_current_custom_legendary_charge:GetModifierDisableTurning() return 1 end
-
 function modifier_razor_unstable_current_custom_legendary_charge:GetEffectName() return "" end
 function modifier_razor_unstable_current_custom_legendary_charge:GetStatusEffectName() return "particles/status_fx/status_effect_forcestaff.vpcf" end
-function modifier_razor_unstable_current_custom_legendary_charge:StatusEffectPriority() return 100 end
+function modifier_razor_unstable_current_custom_legendary_charge:StatusEffectPriority() return MODIFIER_PRIORITY_HIGH end
 
 function modifier_razor_unstable_current_custom_legendary_charge:OnDestroy()
 if not IsServer() then return end
 
-self.caster:FadeGesture(ACT_DOTA_RUN)
+self.parent:FadeGesture(ACT_DOTA_RUN)
 
-local dir = self:GetParent():GetForwardVector()
+local dir = self.parent:GetForwardVector()
 dir.z = 0
-self:GetParent():SetForwardVector(dir)
-self:GetParent():FaceTowards(self:GetParent():GetAbsOrigin() + dir*10)
+self.parent:SetForwardVector(dir)
+self.parent:FaceTowards(self.parent:GetAbsOrigin() + dir*10)
 
-ResolveNPCPositions(self:GetParent():GetAbsOrigin(), 128)
+ResolveNPCPositions(self.parent:GetAbsOrigin(), 128)
 
 end
+
+
 
 
 
 
 
 modifier_razor_unstable_current_custom_damage = class({})
-function modifier_razor_unstable_current_custom_damage:IsHidden() return true end
+function modifier_razor_unstable_current_custom_damage:IsHidden() return false end
 function modifier_razor_unstable_current_custom_damage:IsPurgable() return false end
+function modifier_razor_unstable_current_custom_damage:GetTexture() return "buffs/bolt_items" end
 function modifier_razor_unstable_current_custom_damage:OnCreated()
+
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.damage = self.caster:GetTalentValue("modifier_razor_current_4", "damage")
+self.max = self.caster:GetTalentValue("modifier_razor_current_4", "max")
 if not IsServer() then return end 
 
 self:SetStackCount(1)
-self.parent = self:GetParent()
-
 self.particle = ParticleManager:CreateParticle("particles/razor/surge_damage_stack.vpcf", PATTACH_OVERHEAD_FOLLOW, self.parent)
 ParticleManager:SetParticleControl(self.particle, 1, Vector(0, self:GetStackCount(), 0))
 self:AddParticle(self.particle, false, false, -1, false, false)
-
-self.max = self:GetCaster():GetTalentValue("modifier_razor_current_4", "max")
 end 
 
 function modifier_razor_unstable_current_custom_damage:OnRefresh()
@@ -793,6 +698,17 @@ end
 
 end 
 
+function modifier_razor_unstable_current_custom_damage:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE
+}
+end
+
+function modifier_razor_unstable_current_custom_damage:GetModifierIncomingDamage_Percentage()
+return self.damage*self:GetStackCount()
+end
+
 
 
 
@@ -803,15 +719,12 @@ modifier_razor_unstable_current_custom_heal = class({})
 function modifier_razor_unstable_current_custom_heal:IsHidden() return false end
 function modifier_razor_unstable_current_custom_heal:IsPurgable() return false end
 function modifier_razor_unstable_current_custom_heal:GetTexture() return "buffs/surge_heal" end
---function modifier_razor_unstable_current_custom_heal:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-
 function modifier_razor_unstable_current_custom_heal:DeclareFunctions()
 return
 {
 	MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE
 }
 end
-
 
 function modifier_razor_unstable_current_custom_heal:OnCreated()
 self.heal = self:GetCaster():GetTalentValue("modifier_razor_current_2", "heal")/self:GetCaster():GetTalentValue("modifier_razor_current_2", "duration")
@@ -822,47 +735,15 @@ return self.heal
 end
 
 
-
-
-modifier_razor_unstable_current_custom_heal_count = class({})
-function modifier_razor_unstable_current_custom_heal_count:GetTexture() return "buffs/surge_heal" end
-function modifier_razor_unstable_current_custom_heal_count:IsHidden() return false end
-function modifier_razor_unstable_current_custom_heal_count:IsPurgable() return false end
-function modifier_razor_unstable_current_custom_heal_count:OnCreated(table)
-
-self.heal = self:GetCaster():GetTalentValue("modifier_razor_current_2", "heal")/self:GetCaster():GetTalentValue("modifier_razor_current_2", "duration")
-if not IsServer() then return end
-self:SetStackCount(1)
-end
-
-function modifier_razor_unstable_current_custom_heal_count:OnRefresh(table)
-if not IsServer() then return end
-
-self:IncrementStackCount()
-end
-
-function modifier_razor_unstable_current_custom_heal_count:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_TOOLTIP
-}
-end
-
-function modifier_razor_unstable_current_custom_heal_count:OnTooltip()
-return self:GetStackCount()*self.heal
-end
-
-
-
 modifier_razor_unstable_current_custom_stun_cd = class({})
 function modifier_razor_unstable_current_custom_stun_cd:IsHidden() return true end
 function modifier_razor_unstable_current_custom_stun_cd:IsPurgable() return false end
 function modifier_razor_unstable_current_custom_stun_cd:OnCreated()
-
 self.RemoveForDuel = true 
 end
 
 function modifier_razor_unstable_current_custom_stun_cd:RemoveOnDeath() return false end
+
 
 
 modifier_razor_unstable_current_custom_stats = class({})
@@ -870,15 +751,14 @@ function modifier_razor_unstable_current_custom_stats:IsHidden() return false en
 function modifier_razor_unstable_current_custom_stats:IsPurgable() return false end
 function modifier_razor_unstable_current_custom_stats:GetTexture() return "buffs/surge_stats" end
 function modifier_razor_unstable_current_custom_stats:OnCreated()
-
-self.max = self:GetCaster():GetTalentValue("modifier_razor_current_3", 'max')
-self.agi = self:GetCaster():GetTalentValue("modifier_razor_current_3", "agi")
-self.str = self:GetCaster():GetTalentValue("modifier_razor_current_3", "str")
+self.parent = self:GetParent()
+self.max = self.parent:GetTalentValue("modifier_razor_current_3", "max")
+self.agi = self.parent:GetTalentValue("modifier_razor_current_3", "agi")
+self.str = self.parent:GetTalentValue("modifier_razor_current_3", "str")
 
 if not IsServer() then return end 
-
 self:SetStackCount(1)
-self:GetCaster():CalculateStatBonus(true)
+self.parent:CalculateStatBonus(true)
 end 
 
 function modifier_razor_unstable_current_custom_stats:OnRefresh()
@@ -886,9 +766,8 @@ if not IsServer() then return end
 if self:GetStackCount() >= self.max then return end 
 
 self:IncrementStackCount()
-self:GetCaster():CalculateStatBonus(true)
+self.parent:CalculateStatBonus(true)
 end 
-
 
 function modifier_razor_unstable_current_custom_stats:DeclareFunctions()
 return

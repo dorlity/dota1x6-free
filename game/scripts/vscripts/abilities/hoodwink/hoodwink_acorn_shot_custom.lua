@@ -14,15 +14,34 @@ LinkLuaModifier( "modifier_hoodwink_acorn_shot_custom_status", "abilities/hoodwi
 hoodwink_acorn_shot_custom = class({})
 
 
+function hoodwink_acorn_shot_custom:CreateTalent()
+
+if self:GetAutoCastState() then 
+	self:ToggleAutoCast()
+end 
+self:UpdateVectorValues()
+
+end
+
+
 
 function hoodwink_acorn_shot_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+ 
 
-    
+
+PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_acorn_shot_tracking.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_acorn_shot_impact.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_acorn_shot_tracking.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_sniper/sniper_headshot_slow.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_acorn_shot_slow.vpcf", context )
+PrecacheResource( "particle", "particles/hoodwink/acorn_tree.vpcf", context )
 PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_acorn_shot_tree.vpcf", context )
 PrecacheResource( "particle", "particles/tree_fx/tree_simple_explosion.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_acorn_shot_tracking.vpcf", context )
+PrecacheResource( "particle", "particles/general/generic_armor_reduction.vpcf", context )
+PrecacheResource( "particle", "particles/items_fx/desolator_projectile.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_hoodwink/hoodwink_acorn_shot_tracking.vpcf", context )
 
 end
 
@@ -33,7 +52,7 @@ end
 function hoodwink_acorn_shot_custom:GetCooldown(level)
 local bonus = 0
 
-if self:GetCaster():HasModifier("modifier_hoodwink_acorn_4") then
+if self:GetCaster():HasTalent("modifier_hoodwink_acorn_4") then
 	bonus = self:GetCaster():GetTalentValue("modifier_hoodwink_acorn_4", "cd")
 end
 
@@ -45,7 +64,7 @@ function hoodwink_acorn_shot_custom:GetManaCost(level)
 
 local bonus = 0
 
-if self:GetCaster():HasModifier("modifier_hoodwink_acorn_6") then
+if self:GetCaster():HasTalent("modifier_hoodwink_acorn_6") then
 	return self:GetCaster():GetTalentValue("modifier_hoodwink_acorn_6", "mana")
 end
 
@@ -73,7 +92,7 @@ return "modifier_hoodwink_acorn_shot_custom_tracker"
 end
 
 function hoodwink_acorn_shot_custom:GetBehavior()
-if self:GetCaster():HasModifier("modifier_hoodwink_acorn_legendary") then
+if self:GetCaster():HasTalent("modifier_hoodwink_acorn_legendary") then
 	return DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_VECTOR_TARGETING + DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING
 end
 return DOTA_ABILITY_BEHAVIOR_UNIT_TARGET + DOTA_ABILITY_BEHAVIOR_POINT + DOTA_ABILITY_BEHAVIOR_IGNORE_BACKSWING + DOTA_ABILITY_BEHAVIOR_AUTOCAST
@@ -103,7 +122,7 @@ end
 function hoodwink_acorn_shot_custom:CastBuffs()
 if not IsServer() then return end 
 
-if self:GetCaster():HasModifier("modifier_hoodwink_acorn_4") then 
+if self:GetCaster():HasTalent("modifier_hoodwink_acorn_4") then 
 	self:GetCaster():RemoveModifierByName("modifier_hoodwink_acorn_shot_custom_armor_caster")
 	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_hoodwink_acorn_shot_custom_armor_caster", {duration = self:GetCaster():GetTalentValue("modifier_hoodwink_acorn_4", "duration")})
 end
@@ -207,11 +226,12 @@ ParticleManager:SetParticleControlEnt( particle, 0, target, PATTACH_POINT_FOLLOW
 ParticleManager:ReleaseParticleIndex( particle )
 
 
-if self:GetCaster():HasModifier("modifier_hoodwink_acorn_5") and first then
+if self:GetCaster():HasTalent("modifier_hoodwink_acorn_5") and first then
 	target:AddNewModifier( caster, self, "modifier_stunned", { duration = caster:GetTalentValue("modifier_hoodwink_acorn_5", "stun")*(1 - target:GetStatusResistance()) } )
 end
 
-caster:PerformAttack( target, true, true, true, true, false, false, false )
+
+caster:PerformAttack( target, true, true, true, true, false, false, not caster:IsRangedAttacker() )
 if mod then
 	mod:Destroy()
 end
@@ -469,7 +489,6 @@ function modifier_hoodwink_acorn_shot_custom:GetModifierTotalDamageOutgoing_Perc
 if not IsServer() then return end
 if self.creeps == 0 then return end 
 
-print(self.creeps_damage)
 
 return self.creeps_damage
 end
@@ -556,7 +575,7 @@ self.vision =  self:GetAbility():GetSpecialValueFor("tree_vision")
 
 self.aura_radius = self:GetCaster():GetTalentValue("modifier_hoodwink_acorn_3", "radius", true)
 
-if self:GetCaster():HasModifier("modifier_hoodwink_acorn_3") then 
+if self:GetCaster():HasTalent("modifier_hoodwink_acorn_3") then 
 	self.particle = ParticleManager:CreateParticle("particles/hoodwink/acorn_tree.vpcf", PATTACH_WORLDORIGIN, nil)
 	ParticleManager:SetParticleControl(self.particle, 0, GetGroundPosition(self.tree:GetAbsOrigin(), nil))
 	ParticleManager:SetParticleControl(self.particle, 1, Vector(self.aura_radius,self.aura_radius,self.aura_radius))
@@ -598,7 +617,7 @@ end
 
 
 
-function modifier_hoodwink_acorn_shot_custom_thinker_tree:IsAura() return self:GetCaster():HasModifier("modifier_hoodwink_acorn_3") end
+function modifier_hoodwink_acorn_shot_custom_thinker_tree:IsAura() return self:GetCaster():HasTalent("modifier_hoodwink_acorn_3") end
 
 function modifier_hoodwink_acorn_shot_custom_thinker_tree:GetAuraSearchTeam()
 	return DOTA_UNIT_TARGET_TEAM_ENEMY end
@@ -745,7 +764,7 @@ self:IncrementStackCount()
 if self:GetStackCount() >= self.max then 
 
 	self:GetParent():EmitSound("Hoodwink.Acorn_armor")
- 	self.particle_peffect = ParticleManager:CreateParticle("particles/items3_fx/star_emblem.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())	
+ 	self.particle_peffect = ParticleManager:CreateParticle("particles/general/generic_armor_reduction.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())	
 	ParticleManager:SetParticleControl(self.particle_peffect, 0, self:GetParent():GetAbsOrigin())
 	self:AddParticle(self.particle_peffect, false, false, -1, false, true)
 end
@@ -803,22 +822,17 @@ end
 modifier_hoodwink_acorn_shot_custom_tracker = class({})
 function modifier_hoodwink_acorn_shot_custom_tracker:IsHidden() return true end
 function modifier_hoodwink_acorn_shot_custom_tracker:IsPurgable() return false end
-function modifier_hoodwink_acorn_shot_custom_tracker:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
 function modifier_hoodwink_acorn_shot_custom_tracker:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_ABILITY_START,
-  MODIFIER_EVENT_ON_ABILITY_EXECUTED,
-  MODIFIER_EVENT_ON_ATTACK,
-  MODIFIER_EVENT_ON_ATTACK_FAIL,
-  MODIFIER_EVENT_ON_ATTACK_LANDED,
+  MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
   MODIFIER_PROPERTY_ATTACK_RANGE_BONUS
 }
 end
 
 
 function modifier_hoodwink_acorn_shot_custom_tracker:GetModifierAttackRangeBonus()
-if not self:GetCaster():HasModifier("modifier_hoodwink_acorn_1") then return end 
+if not self:GetCaster():HasTalent("modifier_hoodwink_acorn_1") then return end 
 
 return self:GetCaster():GetTalentValue("modifier_hoodwink_acorn_1", "range")
 end
@@ -828,6 +842,11 @@ end
 function modifier_hoodwink_acorn_shot_custom_tracker:OnCreated()
 
 self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.parent:AddSpellEvent(self)
+self.parent:AddAttackStartEvent_out(self)
+self.parent:AddRecordDestroyEvent(self)
 
 self.cd_inc = self.parent:GetTalentValue("modifier_hoodwink_acorn_6", "cd", true)
 self.damage_duration = self.parent:GetTalentValue("modifier_hoodwink_acorn_2", "duration", true)
@@ -836,10 +855,10 @@ self.armor_duration = self.parent:GetTalentValue("modifier_hoodwink_acorn_4", "d
 self.attack_records = {}
 end 
 
-function modifier_hoodwink_acorn_shot_custom_tracker:OnAttack(params)
+function modifier_hoodwink_acorn_shot_custom_tracker:AttackStartEvent_out(params)
 if not IsServer() then return end 
 if self.parent ~= params.attacker then return end 
-if not params.target:IsHero() and not params.target:IsCreep() then return end
+if not params.target:IsUnit() then return end
 if params.no_attack_cooldown then return end
 
 local mod = self.parent:FindModifierByName("modifier_hoodwink_acorn_shot_custom_armor_caster")
@@ -855,59 +874,51 @@ end
 end 
 
 
-function modifier_hoodwink_acorn_shot_custom_tracker:OnAttackFail(params)
+function modifier_hoodwink_acorn_shot_custom_tracker:RecordDestroyEvent(params)
 if not IsServer() then return end 
+if not self.attack_records[params.record] then return end
 
 self.attack_records[params.record] = nil
-
 end 
 
 
-function modifier_hoodwink_acorn_shot_custom_tracker:OnAttackLanded(params)
+function modifier_hoodwink_acorn_shot_custom_tracker:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end 
 if self.parent ~= params.attacker then return end
 if self.attack_records[params.record] == nil then return end 
 if params.no_attack_cooldown then return end
 
-self.attack_records[params.record] = nil
 
 local heal = self.parent:GetMaxHealth()*self.parent:GetTalentValue("modifier_hoodwink_acorn_4", "heal")/100
-self.parent:GenericHeal(heal, self:GetAbility())
+self.parent:GenericHeal(heal, self:GetAbility(), nil, nil, "modifier_hoodwink_acorn_4")
 params.target:AddNewModifier(self.parent, self:GetAbility(), "modifier_hoodwink_acorn_shot_custom_armor_count", {duration = self.armor_duration})
 params.target:EmitSound("Item_Desolator.Target")
 end 
 
 
-function modifier_hoodwink_acorn_shot_custom_tracker:OnAbilityExecuted(params)
-if params.unit~=self:GetParent() then return end
-if not params.ability then return end
-if params.ability:IsItem() or params.ability:IsToggle() then return end
-if UnvalidAbilities[params.ability:GetName()] then return end
 
-if self.parent:HasModifier("modifier_hoodwink_acorn_2") then 
-	self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_hoodwink_acorn_shot_custom_damage", {duration = self.damage_duration})
-end 
+function modifier_hoodwink_acorn_shot_custom_tracker:SpellEvent(params)
+if not IsServer() then return end
+local ability = params.ability
 
-if not self:GetParent():HasModifier("modifier_hoodwink_acorn_6") then return end
-if params.ability == self:GetAbility() then return end
-self.parent:CdAbility(self:GetAbility(), self.cd_inc)
+if self.parent == params.unit and not ability:IsItem() then
+
+	if self.parent:HasTalent("modifier_hoodwink_acorn_2") then 
+		self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_hoodwink_acorn_shot_custom_damage", {duration = self.damage_duration})
+	end 
+
+	if self.parent:HasTalent("modifier_hoodwink_acorn_6") and ability ~= self.ability then
+			self.parent:CdAbility(self.ability, self.cd_inc)
+	end
 end
 
-
-function modifier_hoodwink_acorn_shot_custom_tracker:OnAbilityStart(params)
-if not IsServer() then return end
-if not params.ability then return end
-if not params.ability:GetCaster() then return end
-
-local enemy_caster = params.ability:GetCaster()
-
-if not self:GetCaster():HasModifier("modifier_hoodwink_acorn_5") then return end
-if enemy_caster:HasModifier("modifier_hoodwink_acorn_shot_custom_auto_cd") then return end
-if enemy_caster == self:GetParent() then return end
+if not self.parent:HasTalent("modifier_hoodwink_acorn_5") then return end
+if params.unit:HasModifier("modifier_hoodwink_acorn_shot_custom_auto_cd") then return end
+if params.unit:GetTeamNumber() == self.parent:GetTeamNumber() then return end
 if not params.target then return end
-if params.target and params.target ~= self:GetParent() then return end
+if params.target ~= self.parent then return end
 
-enemy_caster:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_hoodwink_acorn_shot_custom_auto_cd", {duration = self.stun_cd})
+params.unit:AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_hoodwink_acorn_shot_custom_auto_cd", {duration = self.stun_cd})
 
 local caster = self:GetCaster()
 local parent = self:GetParent()
@@ -1045,7 +1056,7 @@ function modifier_hoodwink_acorn_shot_custom_status:IsHidden() return false end
 function modifier_hoodwink_acorn_shot_custom_status:IsPurgable() return false end
 function modifier_hoodwink_acorn_shot_custom_status:GetTexture() return "buffs/acorn_slow" end
 function modifier_hoodwink_acorn_shot_custom_status:OnCreated()
-self.status = self:GetCaster():GetTalentValue("modifier_hoodwink_acorn_3", "status")
+self.slow = self:GetCaster():GetTalentValue("modifier_hoodwink_acorn_3", "slow")
 self.speed = self:GetCaster():GetTalentValue("modifier_hoodwink_acorn_3", "speed")
 
 end
@@ -1054,13 +1065,13 @@ function modifier_hoodwink_acorn_shot_custom_status:DeclareFunctions()
 return
 {
 	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING
+	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
 }
 end
 
 
-function modifier_hoodwink_acorn_shot_custom_status:GetModifierStatusResistanceStacking() 
-return self.status   
+function modifier_hoodwink_acorn_shot_custom_status:GetModifierMoveSpeedBonus_Percentage()
+return self.slow   
 end 
 
 function modifier_hoodwink_acorn_shot_custom_status:GetModifierAttackSpeedBonus_Constant()

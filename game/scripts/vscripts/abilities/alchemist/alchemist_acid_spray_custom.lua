@@ -1,20 +1,54 @@
 LinkLuaModifier( "modifier_alchemist_acid_spray_custom_thinker", "abilities/alchemist/alchemist_acid_spray_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_alchemist_acid_spray_custom_thinker_red", "abilities/alchemist/alchemist_acid_spray_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_alchemist_acid_spray_custom_thinker_purple", "abilities/alchemist/alchemist_acid_spray_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_alchemist_acid_spray_custom_aura", "abilities/alchemist/alchemist_acid_spray_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_alchemist_acid_spray_custom_aura_red", "abilities/alchemist/alchemist_acid_spray_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_alchemist_acid_spray_custom_aura_purple", "abilities/alchemist/alchemist_acid_spray_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_alchemist_acid_spray_custom_mixing", "abilities/alchemist/alchemist_acid_spray_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_alchemist_acid_spray_custom_silence_timer", "abilities/alchemist/alchemist_acid_spray_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_alchemist_acid_spray_custom_silence", "abilities/alchemist/alchemist_acid_spray_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_alchemist_acid_spray_custom_tracker", "abilities/alchemist/alchemist_acid_spray_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_alchemist_acid_spray_custom_effects", "abilities/alchemist/alchemist_acid_spray_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_alchemist_acid_spray_custom_armor", "abilities/alchemist/alchemist_acid_spray_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_alchemist_acid_spray_custom_root_cd", "abilities/alchemist/alchemist_acid_spray_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_alchemist_acid_spray_custom_root", "abilities/alchemist/alchemist_acid_spray_custom", LUA_MODIFIER_MOTION_NONE )
 
 
-alchemist_acid_spray_custom = class({})
-alchemist_acid_spray_red_custom = class({})
-alchemist_acid_spray_purple_custom = class({})
 
 
+alchemist_acid_spray_class = class({})
+
+function alchemist_acid_spray_class:GetAOERadius()
+return self:GetSpecialValueFor( "radius" ) + self:GetCaster():GetTalentValue("modifier_alchemist_spray_4", "radius")
+end
+
+function alchemist_acid_spray_class:GetCooldown(level)
+local bonus = 0
+if self:GetCaster():HasTalent("modifier_alchemist_spray_2") then
+	bonus = self:GetCaster():GetTalentValue("modifier_alchemist_spray_2", "cd")
+end
+return self.BaseClass.GetCooldown( self, level ) + bonus
+end
+
+function alchemist_acid_spray_class:OnSpellStart()
+local ability = self:GetCaster():FindAbilityByName("alchemist_acid_spray_custom")
+ability:CreateSpray(self:GetCursorPosition(), self)
+end
+
+alchemist_acid_spray_custom = class(alchemist_acid_spray_class)
+alchemist_acid_spray_red_custom = class(alchemist_acid_spray_class)
+alchemist_acid_spray_purple_custom = class(alchemist_acid_spray_class)
+
+
+
+function alchemist_acid_spray_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+
+PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_acid_spray.vpcf", context )
+PrecacheResource( "particle", "particles/alch_spray_red.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_acid_spray.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_acid_spray_debuff.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_acid_spray_debuff.vpcf", context )
+PrecacheResource( "particle", "particles/alch_root_timer.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_timer.vpcf", context )
+PrecacheResource( "particle", "particles/generic_gameplay/generic_silenced.vpcf", context )
+end
 
 
 
@@ -23,710 +57,387 @@ if not self:GetCaster():IsRealHero() then return end
 return "modifier_alchemist_acid_spray_custom_tracker"
 end 
 
-function alchemist_acid_spray_custom:Precache(context)
-
-    
-PrecacheResource( "particle", "particles/units/heroes/hero_meepo/meepo_ransack.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_acid_spray.vpcf", context )
-PrecacheResource( "particle", "particles/alch_spray_red.vpcf", context )
-PrecacheResource( "particle", "particles/alch_armor.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_acid_spray_debuff.vpcf", context )
-PrecacheResource( "particle", "particles/alch_root_timer.vpcf", context )
-PrecacheResource( "particle", "particles/alch_root.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_timer.vpcf", context )
-
-end
-
-
-
-function alchemist_acid_spray_custom:GetAOERadius()
-	return self:GetSpecialValueFor( "radius" ) + self:GetCaster():GetTalentValue("modifier_alchemist_spray_6", "radius")
-end
-
-function alchemist_acid_spray_custom:GetCooldown(level)
-local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_alchemist_spray_1") then
-	bonus = self:GetCaster():GetTalentValue("modifier_alchemist_spray_1", "cd")
-end
-
-return self.BaseClass.GetCooldown( self, level ) + bonus
-end
-
-
-function alchemist_acid_spray_custom:GetManaCost(level)
-
-local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_alchemist_spray_1") then
-	bonus = self:GetCaster():GetTalentValue("modifier_alchemist_spray_1", "mana")
-end
-
-return self.BaseClass.GetManaCost(self,level) + bonus
-end
-
-
-function alchemist_acid_spray_custom:OnSpellStart()
-if not IsServer() then return end
-local point = self:GetCursorPosition()
-self:CreateSpray("modifier_alchemist_acid_spray_custom_thinker", point, self)
-end
-
-
-function alchemist_acid_spray_custom:CreateSpray(name, point, ability)
+function alchemist_acid_spray_custom:CreateSpray(point, ability)
 if not IsServer() then return end
 local duration = self:GetSpecialValueFor("duration")
-
-CreateModifierThinker( self:GetCaster(), ability, name, { duration = duration }, point, self:GetCaster():GetTeamNumber(), false )
+CreateModifierThinker( self:GetCaster(), ability, "modifier_alchemist_acid_spray_custom_thinker", {duration = duration}, point, self:GetCaster():GetTeamNumber(), false )
 end
-
-
-
 
 function alchemist_acid_spray_custom:DoDamage(target)
 if not IsServer() then return end
+local caster = self:GetCaster()
 local damage = self:GetSpecialValueFor( "damage" )
 
-if self:GetCaster():HasModifier("modifier_alchemist_spray_3") then
-	damage = damage + self:GetCaster():GetTalentValue("modifier_alchemist_spray_3", "damage")
+if caster:HasTalent("modifier_alchemist_spray_1") then
+	local bonus = target:GetMaxHealth()*caster:GetTalentValue("modifier_alchemist_spray_1", "damage")/100
+	bonus = target:IsCreep() and math.min(bonus, caster:GetTalentValue("modifier_alchemist_spray_1", "creeps_max")) or bonus
+	damage = damage + bonus
 end
 
-local damageTable = {victim = target, attacker = self:GetCaster(), damage = damage, damage_type = self:GetAbilityDamageType(), ability = self, damage_flags = DOTA_DAMAGE_FLAG_BYPASSES_BLOCK }
+if caster:HasTalent("modifier_alchemist_spray_legendary") then
+	damage = damage*(1 + caster:GetTalentValue("modifier_alchemist_spray_legendary", "creeps")/100)
+end
 
-ApplyDamage( damageTable )
+local damage_type = caster:HasTalent("modifier_alchemist_unstable_legendary") and DAMAGE_TYPE_MAGICAL or DAMAGE_TYPE_PHYSICAL
+local damageTable = {victim = target, attacker = self:GetCaster(), damage = damage, damage_type = damage_type, ability = self, damage_flags = DOTA_DAMAGE_FLAG_BYPASSES_PHYSICAL_BLOCK }
+
+DoDamage(damageTable)
+target:AddNewModifier(caster, self, "modifier_alchemist_acid_spray_custom_effects", {duration = 1})
+
+if caster:HasTalent("modifier_alchemist_spray_4") and not target:HasModifier("modifier_alchemist_acid_spray_custom_root_cd") and not target:IsDebuffImmune() then
+	target:EmitSound("Alch.Root_target")
+	target:AddNewModifier(caster, self, "modifier_alchemist_acid_spray_custom_root_cd", {duration = caster:GetTalentValue("modifier_alchemist_spray_4", "cd")})
+	target:AddNewModifier(caster, self, "modifier_alchemist_acid_spray_custom_root", {duration = caster:GetTalentValue("modifier_alchemist_spray_4", "root")*(1 - target:GetStatusResistance())})
+end
+
 target:EmitSound("Hero_Alchemist.AcidSpray.Damage")
-
 end
 
 
 
 
-function alchemist_acid_spray_red_custom:GetAOERadius()
-	return self:GetSpecialValueFor( "radius" ) + self:GetCaster():GetTalentValue("modifier_alchemist_spray_6", "radius")
-end
-
-
-
-function alchemist_acid_spray_red_custom:GetCooldown(level)
-local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_alchemist_spray_1") then
-	bonus = self:GetCaster():GetTalentValue("modifier_alchemist_spray_1", "cd")
-end
-
-return self.BaseClass.GetCooldown( self, level ) + bonus
-end
-
-
-
-
-function alchemist_acid_spray_red_custom:GetManaCost(level)
-
-local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_alchemist_spray_1") then
-	bonus = self:GetCaster():GetTalentValue("modifier_alchemist_spray_1", "mana")
-end
-
-return self.BaseClass.GetManaCost(self,level) + bonus
-end
-
-
-
-function alchemist_acid_spray_red_custom:OnSpellStart()
-if not IsServer() then return end
-local ability = self:GetCaster():FindAbilityByName("alchemist_acid_spray_custom")
-local point = self:GetCursorPosition()
-
-ability:CreateSpray("modifier_alchemist_acid_spray_custom_thinker_red", point, self)
-end
-
-
-
-
-
-
-function alchemist_acid_spray_purple_custom:GetAOERadius()
-	return self:GetSpecialValueFor( "radius" ) + self:GetCaster():GetTalentValue("modifier_alchemist_spray_6", "radius")
-end
-
-
-function alchemist_acid_spray_purple_custom:GetCooldown(level)
-local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_alchemist_spray_1") then
-	bonus = self:GetCaster():GetTalentValue("modifier_alchemist_spray_1", "cd")
-end
-
-return self.BaseClass.GetCooldown( self, level ) + bonus
-end
-
-
-
-
-function alchemist_acid_spray_purple_custom:GetManaCost(level)
-
-local bonus = 0
-
-if self:GetCaster():HasModifier("modifier_alchemist_spray_1") then
-	bonus = self:GetCaster():GetTalentValue("modifier_alchemist_spray_1", "mana")
-end
-
-return self.BaseClass.GetManaCost(self,level) + bonus
-end
-
-
-
-
-
-
-
-function alchemist_acid_spray_purple_custom:OnSpellStart()
-if not IsServer() then return end
-local ability = self:GetCaster():FindAbilityByName("alchemist_acid_spray_custom")
-local point = self:GetCursorPosition()
-
-ability:CreateSpray("modifier_alchemist_acid_spray_custom_thinker_purple", point, self)
-end
-
-
-
-
-
-
-
-
-modifier_alchemist_acid_spray_custom_thinker = class({})
-
+modifier_alchemist_acid_spray_custom_thinker = class(mod_hidden)
 function modifier_alchemist_acid_spray_custom_thinker:OnCreated()
 if not IsServer() then return end
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+self.caster = self:GetCaster()
 
-self.radius = self:GetAbility():GetSpecialValueFor("radius") + self:GetCaster():GetTalentValue("modifier_alchemist_spray_6", "radius")
-self.main_ability = self:GetCaster():FindAbilityByName("alchemist_acid_spray_custom")
+self.aura_mod = "modifier_alchemist_acid_spray_custom_aura"
+local effect_name = "particles/units/heroes/hero_alchemist/alchemist_acid_spray.vpcf"
+local color_vec = Vector(0, 0, 0)
 
-local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_alchemist/alchemist_acid_spray.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-ParticleManager:SetParticleControl( particle, 0, self:GetParent():GetOrigin() )
+local ability_name = self.ability:GetName()
+if ability_name == "alchemist_acid_spray_red_custom" then
+	self.aura_mod = "modifier_alchemist_acid_spray_custom_aura_red"
+	color_vec = Vector( 220, 20, 60 )
+elseif ability_name == "alchemist_acid_spray_purple_custom" then
+	self.aura_mod = "modifier_alchemist_acid_spray_custom_aura_purple"
+	color_vec = Vector( 180, 92, 179 )
+end
+
+self.radius = self.ability:GetAOERadius()
+
+AddFOWViewer(self.caster:GetTeamNumber(), self.parent:GetAbsOrigin(), self.radius, 3, false)
+
+local particle = ParticleManager:CreateParticle( effect_name, PATTACH_WORLDORIGIN, nil )
+ParticleManager:SetParticleControl( particle, 0, self.parent:GetOrigin() )
 ParticleManager:SetParticleControl( particle, 1, Vector( self.radius, 1, 1 ) )
+ParticleManager:SetParticleControl( particle, 15, color_vec )
+ParticleManager:SetParticleControl( particle, 16, Vector( ability_name ~= "alchemist_acid_spray_custom" and 1 or 0, 0, 0 ) )
 self:AddParticle( particle, false, false, -1, false, false )
 
-self:GetParent():EmitSound("Hero_Alchemist.AcidSpray")
-
-end
-
-
-
-function modifier_alchemist_acid_spray_custom_thinker:IsAura()
-	return true
-end
-
-function modifier_alchemist_acid_spray_custom_thinker:GetModifierAura()
-	return "modifier_alchemist_acid_spray_custom_aura"
-end
-
-function modifier_alchemist_acid_spray_custom_thinker:GetAuraRadius()
-	return self.radius
-end
-
-function modifier_alchemist_acid_spray_custom_thinker:GetAuraDuration()
-	return 0.5
-end
-
-function modifier_alchemist_acid_spray_custom_thinker:GetAuraSearchTeam()
-return DOTA_UNIT_TARGET_TEAM_ENEMY + DOTA_UNIT_TARGET_TEAM_FRIENDLY
-end
-
-
-function modifier_alchemist_acid_spray_custom_thinker:GetAuraSearchType()
-	return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC
-end
-
-function modifier_alchemist_acid_spray_custom_thinker:GetAuraSearchFlags()
-	return 0
+self.parent:EmitSound("Hero_Alchemist.AcidSpray")
 end
 
 function modifier_alchemist_acid_spray_custom_thinker:OnDestroy()
 if not IsServer() then return end
-self:GetParent():StopSound("Hero_Alchemist.AcidSpray")
-UTIL_Remove( self:GetParent() )
+self.parent:StopSound("Hero_Alchemist.AcidSpray")
+UTIL_Remove( self.parent )
 end
 
+function modifier_alchemist_acid_spray_custom_thinker:IsAura() return true end
+function modifier_alchemist_acid_spray_custom_thinker:GetModifierAura() return self.aura_mod end
+function modifier_alchemist_acid_spray_custom_thinker:GetAuraRadius() return self.radius end
+function modifier_alchemist_acid_spray_custom_thinker:GetAuraDuration() return 0.5 end
+function modifier_alchemist_acid_spray_custom_thinker:GetAuraSearchTeam() return DOTA_UNIT_TARGET_TEAM_ENEMY + DOTA_UNIT_TARGET_TEAM_FRIENDLY end
+function modifier_alchemist_acid_spray_custom_thinker:GetAuraSearchType() return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC end
+function modifier_alchemist_acid_spray_custom_thinker:GetAuraSearchFlags() return 0 end
 
 
 
-
-
-
-
-modifier_alchemist_acid_spray_custom_thinker_red = class({})
-
-function modifier_alchemist_acid_spray_custom_thinker_red:OnCreated()
-if not IsServer() then return end
-
-self.radius = self:GetAbility():GetSpecialValueFor("radius") + self:GetCaster():GetTalentValue("modifier_alchemist_spray_6", "radius")
-
-self.main_ability = self:GetCaster():FindAbilityByName("alchemist_acid_spray_custom")
-
-local particle = ParticleManager:CreateParticle( "particles/alch_spray_red.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-ParticleManager:SetParticleControl( particle, 0, self:GetParent():GetOrigin() )
-ParticleManager:SetParticleControl( particle, 1, Vector( self.radius, 1, 1 ) )
---ParticleManager:SetParticleControl( particle, 15, Vector( 180, 92, 179 ) )
-ParticleManager:SetParticleControl( particle, 15, Vector( 220, 20, 60 ) )
-ParticleManager:SetParticleControl( particle, 16, Vector( 1, 0, 0 ) )
-self:AddParticle( particle, false, false, -1, false, false )
-
-self:GetParent():EmitSound("Hero_Alchemist.AcidSpray")
-
-end
-
-
-
-function modifier_alchemist_acid_spray_custom_thinker_red:IsAura()
-	return true
-end
-
-function modifier_alchemist_acid_spray_custom_thinker_red:GetModifierAura()
-	return "modifier_alchemist_acid_spray_custom_aura_red"
-end
-
-function modifier_alchemist_acid_spray_custom_thinker_red:GetAuraRadius()
-	return self.radius
-end
-
-function modifier_alchemist_acid_spray_custom_thinker_red:GetAuraDuration()
-	return 0.5
-end
-
-function modifier_alchemist_acid_spray_custom_thinker_red:GetAuraSearchTeam()
-return DOTA_UNIT_TARGET_TEAM_ENEMY + DOTA_UNIT_TARGET_TEAM_FRIENDLY
-end 
-
-function modifier_alchemist_acid_spray_custom_thinker_red:GetAuraSearchType()
-	return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC
-end
-
-function modifier_alchemist_acid_spray_custom_thinker_red:GetAuraSearchFlags()
-	return 0
-end
-
-function modifier_alchemist_acid_spray_custom_thinker_red:OnDestroy()
-if not IsServer() then return end
-self:GetParent():StopSound("Hero_Alchemist.AcidSpray")
-
-UTIL_Remove( self:GetParent() )
-end
-
-
-
-
-
-
-
-modifier_alchemist_acid_spray_custom_thinker_purple = class({})
-
-function modifier_alchemist_acid_spray_custom_thinker_purple:OnCreated()
-if not IsServer() then return end
-
-self.radius = self:GetAbility():GetSpecialValueFor("radius") + self:GetCaster():GetTalentValue("modifier_alchemist_spray_6", "radius")
-
-self.main_ability = self:GetCaster():FindAbilityByName("alchemist_acid_spray_custom")
-
-local particle = ParticleManager:CreateParticle( "particles/units/heroes/hero_alchemist/alchemist_acid_spray.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-ParticleManager:SetParticleControl( particle, 0, self:GetParent():GetOrigin() )
-ParticleManager:SetParticleControl( particle, 1, Vector( self.radius, 1, 1 ) )
-ParticleManager:SetParticleControl( particle, 15, Vector( 180, 92, 179 ) )
---ParticleManager:SetParticleControl( particle, 15, Vector( 220, 20, 60 ) )
-ParticleManager:SetParticleControl( particle, 16, Vector( 1, 0, 0 ) )
-self:AddParticle( particle, false, false, -1, false, false )
-
-self:GetParent():EmitSound("Hero_Alchemist.AcidSpray")
-
-end
-
-
-
-function modifier_alchemist_acid_spray_custom_thinker_purple:IsAura()
-	return true
-end
-
-function modifier_alchemist_acid_spray_custom_thinker_purple:GetModifierAura()
-	return "modifier_alchemist_acid_spray_custom_aura_purple"
-end
-
-function modifier_alchemist_acid_spray_custom_thinker_purple:GetAuraRadius()
-	return self.radius
-end
-
-function modifier_alchemist_acid_spray_custom_thinker_purple:GetAuraDuration()
-	return 0.5
-end
-
-function modifier_alchemist_acid_spray_custom_thinker_purple:GetAuraSearchTeam()
-return DOTA_UNIT_TARGET_TEAM_ENEMY + DOTA_UNIT_TARGET_TEAM_FRIENDLY
-end
-
-function modifier_alchemist_acid_spray_custom_thinker_purple:GetAuraSearchType()
-	return DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC
-end
-
-function modifier_alchemist_acid_spray_custom_thinker_purple:GetAuraSearchFlags()
-	return 0
-end
-
-function modifier_alchemist_acid_spray_custom_thinker_purple:OnDestroy()
-if not IsServer() then return end
-self:GetParent():StopSound("Hero_Alchemist.AcidSpray")
-UTIL_Remove( self:GetParent() )
-end
-
-
-
-
-
-
-
-
-
-
-modifier_alchemist_acid_spray_custom_aura = class({})
-
-
-function modifier_alchemist_acid_spray_custom_aura:IsHidden() return self:GetCaster():GetTeamNumber() == self:GetParent():GetTeamNumber() end 
-
-function modifier_alchemist_acid_spray_custom_aura:IsPurgable() return false end
-
-function modifier_alchemist_acid_spray_custom_aura:GetTexture() return "alchemist_acid_spray" end
-
-function modifier_alchemist_acid_spray_custom_aura:OnCreated()
+acid_spray_aura_class = class({})
+function acid_spray_aura_class:IsHidden() return not self.is_enemy end 
+function acid_spray_aura_class:IsPurgable() return false end
+function acid_spray_aura_class:OnCreated()
 
 self.caster = self:GetCaster()
 self.parent = self:GetParent()
+self.ability = self.caster:FindAbilityByName("alchemist_acid_spray_custom")
 
-self.armor = -self:GetAbility():GetSpecialValueFor( "armor_reduction" ) + self:GetCaster():GetTalentValue("modifier_alchemist_spray_3", "armor")
+self.is_enemy = self.parent:GetTeamNumber() ~= self.caster:GetTeamNumber()
 
-
-self.legendary_damage = self:GetCaster():GetTalentValue("modifier_alchemist_spray_legendary", "damage")
-self.heal_reduce = self:GetCaster():GetTalentValue("modifier_alchemist_spray_2", "heal_reduce")
-
-self.main_ability = self:GetCaster():FindAbilityByName("alchemist_acid_spray_custom")
-
-
-self.interval = 1
-
-
-if self.caster:GetTeamNumber() == self.parent:GetTeamNumber() then return end 
-
-if self:GetParent():HasModifier("modifier_alchemist_acid_spray_custom_aura") and self:GetParent():HasModifier("modifier_alchemist_acid_spray_custom_aura_red") and 
-	self:GetParent():HasModifier("modifier_alchemist_acid_spray_custom_aura_purple") and IsServer() then 
-
-	self:GetParent():EmitSound("Alch.Triple")
+if self.is_enemy then
+	self.armor = -self.ability:GetSpecialValueFor( "armor_reduction" )
+	self.magic_resist = 0
+	if self.caster:HasTalent("modifier_alchemist_unstable_legendary") then
+		self.armor = 0
+		self.magic_resist = self.caster:GetTalentValue("modifier_alchemist_unstable_legendary", "magic_resist")
+	end
+	self.damage_reduce = self.caster:GetTalentValue("modifier_alchemist_spray_legendary", "damage_reduce")
+	self.status_reduce = self.caster:GetTalentValue("modifier_alchemist_spray_legendary", "status_reduce")
+else
+	self.armor = 0
+	self.damage_reduce = 0
+	self.status_reduce = 0
 end
 
-self.main_ability:DoDamage(self.parent)
-
-self:StartIntervalThink(self.interval)
-end
-
-
-
-
-function modifier_alchemist_acid_spray_custom_aura:OnIntervalThink()
 if not IsServer() then return end
 
-self.main_ability:DoDamage(self.parent)
+self.armor_duration = self.caster:GetTalentValue("modifier_alchemist_spray_3", "duration", true)
 
+if self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura") 
+	and self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura_red") 
+	and self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura_purple") and self.is_enemy then
 
-if self.caster:GetQuest() == "Alch.Quest_5" and not self.caster:QuestCompleted() and self.parent:IsRealHero() then
-	self:GetCaster():UpdateQuest(self.interval)
+	self.parent:EmitSound("Alch.Triple")
 end
 
-if self.caster:HasModifier("modifier_alchemist_spray_6") and not self.parent:HasModifier("modifier_alchemist_acid_spray_custom_silence")  then 
-
-	self.parent:AddNewModifier(self.caster, self:GetAbility(), "modifier_alchemist_acid_spray_custom_silence_timer", {duration = self.interval + 0.2})
-end 
-
-if self.caster:HasModifier("modifier_alchemist_spray_5") then
-
-
-	local ability = self.caster:FindAbilityByName("alchemist_corrosive_weaponry_custom")
-
-	if self.caster:HasModifier("modifier_alchemist_spray_5") and ability and ability:GetLevel() > 0 then 
-		ability:AddStack(self.parent)
-	end 
+self:StartIntervalThink(0.1)
 end
 
+function acid_spray_aura_class:OnIntervalThink()
+if not IsServer() then return end
 
+if self.is_enemy then
+	self.ability:DoDamage(self.parent)
 end
 
-
-
-function modifier_alchemist_acid_spray_custom_aura:GetEffectName()
-if self.caster:GetTeamNumber() ~= self.parent:GetTeamNumber() then
-	return "particles/units/heroes/hero_alchemist/alchemist_acid_spray_debuff.vpcf"
+if self.caster:HasTalent("modifier_alchemist_spray_3") then
+	self.parent:AddNewModifier(self.caster, self.caster:BkbAbility(self.ability, true), "modifier_alchemist_acid_spray_custom_armor", {duration = self.armor_duration})
 end
 
+self:StartIntervalThink(1)
+end
+
+function acid_spray_aura_class:GetEffectName()
+return self.is_enemy and "particles/units/heroes/hero_alchemist/alchemist_acid_spray_debuff.vpcf" or nil
 end
 
 
 
+modifier_alchemist_acid_spray_custom_aura = class(acid_spray_aura_class)
+function modifier_alchemist_acid_spray_custom_aura:GetTexture() return "alchemist_acid_spray" end
 function modifier_alchemist_acid_spray_custom_aura:DeclareFunctions()
-if self:GetParent():GetTeamNumber() == self:GetCaster():GetTeamNumber() then return end
-local funcs = {
+return 
+{
 	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
-	MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
-	MODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET,
-	MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE,
-	MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE,
+	MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS
 }
-return funcs
 end
-
-
-function modifier_alchemist_acid_spray_custom_aura:GetModifierLifestealRegenAmplify_Percentage() 
-if not self:GetCaster():HasModifier("modifier_alchemist_spray_2") then return end
-
-return self.heal_reduce
-end
-
-function modifier_alchemist_acid_spray_custom_aura:GetModifierHealAmplify_PercentageTarget() 
-if not self:GetCaster():HasModifier("modifier_alchemist_spray_2") then return end
-
-return self.heal_reduce
-end
-
-function modifier_alchemist_acid_spray_custom_aura:GetModifierHPRegenAmplify_Percentage() 
-if not self:GetCaster():HasModifier("modifier_alchemist_spray_2") then return end
-
-return self.heal_reduce
-end
-
-
 
 function modifier_alchemist_acid_spray_custom_aura:GetModifierPhysicalArmorBonus()
-	return self.armor
+return self.armor
 end
 
-
-function modifier_alchemist_acid_spray_custom_aura:GetModifierIncomingDamage_Percentage()
-if not self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura_red") or 
-	not self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura_purple") then return end
-
-
-	return self.legendary_damage
+function modifier_alchemist_acid_spray_custom_aura:GetModifierMagicalResistanceBonus()
+return self.magic_resist
 end
 
-
-
-
-
-
-
-modifier_alchemist_acid_spray_custom_aura_red = class({})
-
-function modifier_alchemist_acid_spray_custom_aura_red:IsHidden() return self:GetCaster():GetTeamNumber() == self:GetParent():GetTeamNumber() end 
-
-function modifier_alchemist_acid_spray_custom_aura_red:IsPurgable() return false end
-
-function modifier_alchemist_acid_spray_custom_aura_red:OnCreated()
-
-
-self.caster = self:GetCaster()
-self.parent = self:GetParent()
-self.damage_reduce = self:GetCaster():GetTalentValue("modifier_alchemist_spray_legendary", "damage_reduce")
-
-
-self.main_ability = self:GetCaster():FindAbilityByName("alchemist_acid_spray_custom")
-self.heal_reduce = self:GetCaster():GetTalentValue("modifier_alchemist_spray_2", "heal_reduce")
-
-
-self.interval = 1
-
-if self.caster:GetTeamNumber() == self.parent:GetTeamNumber() then return end 
-
-
-if self:GetParent():HasModifier("modifier_alchemist_acid_spray_custom_aura") and self:GetParent():HasModifier("modifier_alchemist_acid_spray_custom_aura_red") and 
-	self:GetParent():HasModifier("modifier_alchemist_acid_spray_custom_aura_purple") and IsServer() then 
-
-	self:GetParent():EmitSound("Alch.Triple")
-end
-
-
-self.main_ability:DoDamage(self.parent)
-self:StartIntervalThink(self.interval)
+function modifier_alchemist_acid_spray_custom_aura:CheckState()
+if not self.is_enemy then return end
+if not self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura_red") or not self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura_purple") then return end
+return
+{
+	[MODIFIER_STATE_TETHERED] = true
+}
 end
 
 
 
-function modifier_alchemist_acid_spray_custom_aura_red:OnIntervalThink()
-if not IsServer() then return end
-
-self.main_ability:DoDamage(self.parent)
-
-if self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura") then return end
-
-if self.caster:HasModifier("modifier_alchemist_spray_6") and not self.parent:HasModifier("modifier_alchemist_acid_spray_custom_silence")  then 
-	self.parent:AddNewModifier(self.caster, self:GetAbility(), "modifier_alchemist_acid_spray_custom_silence_timer", {duration = self.interval + 0.2})
-end 
-
-
-if self.caster:GetQuest() == "Alch.Quest_5" and not self.caster:QuestCompleted() and self.parent:IsRealHero() then
-	
-	self:GetCaster():UpdateQuest(self.interval)
-end
-
-
-if not self.caster:HasModifier("modifier_alchemist_spray_5") then end
-
-local ability = self.caster:FindAbilityByName("alchemist_corrosive_weaponry_custom")
-
-if self.caster:HasModifier("modifier_alchemist_spray_5") and ability and ability:GetLevel() > 0 then 
-	
-	ability:AddStack(self.parent)
-end 
-
-
-end
-
-
-
-
+modifier_alchemist_acid_spray_custom_aura_red = class(acid_spray_aura_class)
+function modifier_alchemist_acid_spray_custom_aura_red:GetTexture() return "spray_red" end
 function modifier_alchemist_acid_spray_custom_aura_red:DeclareFunctions()
-if self:GetParent():GetTeamNumber() == self:GetCaster():GetTeamNumber() then return end
-local funcs = 
+return 
 {
 	MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
 	MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
-	MODIFIER_PROPERTY_HEAL_AMPLIFY_PERCENTAGE_TARGET,
-	MODIFIER_PROPERTY_HP_REGEN_AMPLIFY_PERCENTAGE,
-	MODIFIER_PROPERTY_LIFESTEAL_AMPLIFY_PERCENTAGE,
 }
-return funcs
 end
-
-
-
-function modifier_alchemist_acid_spray_custom_aura_red:GetModifierLifestealRegenAmplify_Percentage() 
-if not self:GetCaster():HasModifier("modifier_alchemist_spray_2") then return end
-if self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura") then return end
-
-return self.heal_reduce
-end
-
-function modifier_alchemist_acid_spray_custom_aura_red:GetModifierHealAmplify_PercentageTarget() 
-if not self:GetCaster():HasModifier("modifier_alchemist_spray_2") then return end
-if self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura") then return end
-
-return self.heal_reduce
-end
-
-function modifier_alchemist_acid_spray_custom_aura_red:GetModifierHPRegenAmplify_Percentage() 
-if not self:GetCaster():HasModifier("modifier_alchemist_spray_2") then return end
-if self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura") then return end
-
-return self.heal_reduce
-end
-
-
-
-
-
 
 function modifier_alchemist_acid_spray_custom_aura_red:GetModifierSpellAmplify_Percentage()
-if self.parent:GetTeamNumber() == self:GetCaster():GetTeamNumber() then return end
-  return self.damage_reduce
+return self.damage_reduce
 end
-
-
 
 function modifier_alchemist_acid_spray_custom_aura_red:GetModifierDamageOutgoing_Percentage()
-if self.parent:GetTeamNumber() == self:GetCaster():GetTeamNumber() then return end
-  return self.damage_reduce
+return self.damage_reduce
 end
 
 
 
-
-
-
-
-
-modifier_alchemist_acid_spray_custom_aura_purple = class({})
-
-
-function modifier_alchemist_acid_spray_custom_aura_purple:IsHidden() return self:GetCaster():GetTeamNumber() == self:GetParent():GetTeamNumber() end 
-
-function modifier_alchemist_acid_spray_custom_aura_purple:IsPurgable() return false end
-function modifier_alchemist_acid_spray_custom_aura_purple:OnCreated()
-
-self.caster = self:GetCaster()
-self.parent = self:GetParent()
-
-self.main_ability = self:GetCaster():FindAbilityByName("alchemist_acid_spray_custom")
-
-
-self.slow = self:GetCaster():GetTalentValue("modifier_alchemist_spray_legendary", "slow")
-self.heal_reduce = self:GetCaster():GetTalentValue("modifier_alchemist_spray_2", "heal_reduce")
-
-self.main_ability = self.caster:FindAbilityByName("alchemist_acid_spray_custom")
-
-self.interval = 1
-
-if self.caster:GetTeamNumber() == self.parent:GetTeamNumber() then return end 
-
-if self:GetParent():HasModifier("modifier_alchemist_acid_spray_custom_aura") and self:GetParent():HasModifier("modifier_alchemist_acid_spray_custom_aura_red") and 
-	self:GetParent():HasModifier("modifier_alchemist_acid_spray_custom_aura_purple") and IsServer() then 
-		self:GetParent():EmitSound("Alch.Triple")
+modifier_alchemist_acid_spray_custom_aura_purple = class(acid_spray_aura_class)
+function modifier_alchemist_acid_spray_custom_aura_purple:GetTexture() return "spray_purple" end
+function modifier_alchemist_acid_spray_custom_aura_purple:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING,
+}
 end
 
-self.main_ability:DoDamage(self.parent)
-self:StartIntervalThink(self.interval)
+function modifier_alchemist_acid_spray_custom_aura_purple:GetModifierStatusResistanceStacking()
+return self.status_reduce
 end
 
 
 
-function modifier_alchemist_acid_spray_custom_aura_purple:OnIntervalThink()
+alchemist_acid_spray_mixing = class({})
+
+alchemist_acid_spray_mixing.current_spray = 1
+
+function alchemist_acid_spray_mixing:CreateTalent()
+self:SetLevel(1)
+self:SetHidden(false)
+end
+
+function alchemist_acid_spray_mixing:OnSpellStart()
+local caster = self:GetCaster()
+caster:StartGesture(ACT_DOTA_ALCHEMIST_CONCOCTION)
+caster:AddNewModifier(caster, self, "modifier_alchemist_acid_spray_custom_mixing", { duration = caster:GetTalentValue("modifier_alchemist_spray_legendary", "delay") } )
+end
+
+
+modifier_alchemist_acid_spray_custom_mixing = class(mod_visible)
+function modifier_alchemist_acid_spray_custom_mixing:OnCreated( kv )
 if not IsServer() then return end
 
-self.main_ability:DoDamage(self.parent)
+self.ability = self:GetAbility()
+self.parent = self:GetParent()
+
+self.parent:EmitSound("Alch.Mix")
+
+self.abilities = {"alchemist_acid_spray_custom", "alchemist_acid_spray_red_custom", "alchemist_acid_spray_purple_custom"}
+
+for _,name in pairs(self.abilities) do
+	local ability = self.parent:FindAbilityByName(name)
+	if ability then
+		ability:SetActivated(false)
+	end
+end
+
+self.ability:SetActivated(false)
+self.ability:StartCooldown(self:GetRemainingTime())
+end
+
+function modifier_alchemist_acid_spray_custom_mixing:OnDestroy()
+if not IsServer() then return end
+
+self.parent:FadeGesture(ACT_DOTA_ALCHEMIST_CONCOCTION)
+self.ability:SetActivated(true)
+
+self.parent:StopSound("Alch.Mix")
+
+for _,name in pairs(self.abilities) do
+	local ability = self.parent:FindAbilityByName(name)
+	if ability then
+		ability:SetActivated(true)
+	end
+end
+
+local current = self.ability.current_spray
+local next = self.ability.current_spray >= #self.abilities and 1 or self.ability.current_spray + 1
+
+self.parent:SwapAbilities(self.abilities[current], self.abilities[next], false, true )
+self.ability.current_spray = next
+end
 
 
 
-if self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura") then return end
-if self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura_red") then return end
 
-if self.caster:HasModifier("modifier_alchemist_spray_6") and not self.parent:HasModifier("modifier_alchemist_acid_spray_custom_silence")  then 
+modifier_alchemist_acid_spray_custom_tracker = class(mod_hidden)
+function modifier_alchemist_acid_spray_custom_tracker:OnCreated()
 
-	self.parent:AddNewModifier(self.caster, self:GetAbility(), "modifier_alchemist_acid_spray_custom_silence_timer", {duration = self.interval + 0.2})
+self.parent = self:GetParent()
+
+self.mana_reduce = self.parent:GetTalentValue("modifier_alchemist_spray_2", "mana")
+
+self.regen = self.parent:GetTalentValue("modifier_alchemist_hero_5", "heal")
+
+if not IsServer() then return end
+self:SetHasCustomTransmitterData(true)
+self:UpdateTalent()
 end 
+
+
+function modifier_alchemist_acid_spray_custom_tracker:UpdateTalent(name)
+if not IsServer() then return end
+
+if name == "modifier_alchemist_spray_2" or self.parent:HasTalent("modifier_alchemist_spray_2") then
+	self.mana_reduce = self.parent:GetTalentValue("modifier_alchemist_spray_2", "mana")
+end
+
+if name == "modifier_alchemist_hero_5" or self.parent:HasTalent("modifier_alchemist_hero_5") then
+	self.PercentStr = self.parent:GetTalentValue("modifier_alchemist_hero_5", "str")/100
+	self.regen = self.parent:GetTalentValue("modifier_alchemist_hero_5", "heal")
+end
+
+self:SendBuffRefreshToClients()
+end
+
+function modifier_alchemist_acid_spray_custom_tracker:AddCustomTransmitterData() 
+return 
+{
+  mana_reduce = self.mana_reduce,
+  regen = self.regen
+} 
+end
+
+function modifier_alchemist_acid_spray_custom_tracker:HandleCustomTransmitterData(data)
+self.mana_reduce = data.mana_reduce
+self.regen = data.regen
+end
+
+function modifier_alchemist_acid_spray_custom_tracker:DeclareFunctions()
+return
+{
+  MODIFIER_PROPERTY_MANACOST_PERCENTAGE_STACKING,
+  MODIFIER_PROPERTY_HEALTH_REGEN_PERCENTAGE
+}
+end
+
+function modifier_alchemist_acid_spray_custom_tracker:GetModifierPercentageManacostStacking()
+return self.mana_reduce
+end
+
+function modifier_alchemist_acid_spray_custom_tracker:GetModifierHealthRegenPercentage()
+local regen = (self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura")
+	or self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura_red")
+	or self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura_purple")) and self.regen or 0
+
+if IsServer() then
+	if regen > 0 and not self.heal_effect then
+		self.heal_effect = self.parent:GenericParticle("particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf", self)
+	end
+	if regen <= 0 and self.heal_effect then
+		ParticleManager:Delete(self.heal_effect, 1)
+		self.heal_effect = nil
+	end
+end
+
+return regen
+end
+
+
+
+modifier_alchemist_acid_spray_custom_effects = class(mod_hidden)
+function modifier_alchemist_acid_spray_custom_effects:OnCreated()
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
+self.ability = self:GetAbility()
+
+self.slow = self.caster:GetTalentValue("modifier_alchemist_hero_1", "slow")
+self.heal_reduce = self.caster:GetTalentValue("modifier_alchemist_hero_1", "heal_reduce")
+
+if not IsServer() then return end
+self.interval = 1
+self.passive = self.caster:FindAbilityByName("alchemist_corrosive_weaponry_custom")
+self:StartIntervalThink(1)
+end
+
+
+function modifier_alchemist_acid_spray_custom_effects:OnIntervalThink()
+if not IsServer() then return end
+
+if self.passive and not self.passive:IsNull() then
+	self.passive:AddStack(self.parent, 1)
+end
 
 if self.caster:GetQuest() == "Alch.Quest_5" and not self.caster:QuestCompleted() and self.parent:IsRealHero() then
-	
-	self:GetCaster():UpdateQuest(self.interval)
+	self.caster:UpdateQuest(self.interval)
 end
-
-if not self.caster:HasModifier("modifier_alchemist_spray_5") then end
-
-
-local ability = self.caster:FindAbilityByName("alchemist_corrosive_weaponry_custom")
-
-if self.caster:HasModifier("modifier_alchemist_spray_5")	and ability and ability:GetLevel() > 0 then 
-	ability:AddStack(self.parent)
-end 
-
 
 end
 
-
-function modifier_alchemist_acid_spray_custom_aura_purple:GetEffectName()
-	return "particles/units/heroes/hero_alchemist/alchemist_acid_spray_debuff.vpcf"
-end
-
-function modifier_alchemist_acid_spray_custom_aura_purple:GetEffectAttachType()
-	return PATTACH_ABSORIGIN_FOLLOW
-end
-
-
-function modifier_alchemist_acid_spray_custom_aura_purple:DeclareFunctions()
-if self:GetParent():GetTeamNumber() == self:GetCaster():GetTeamNumber() then return end
+function modifier_alchemist_acid_spray_custom_effects:DeclareFunctions()
 return
 {
 	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
@@ -736,309 +447,88 @@ return
 }
 end
 
-
-function modifier_alchemist_acid_spray_custom_aura_purple:GetModifierLifestealRegenAmplify_Percentage() 
-if not self:GetCaster():HasModifier("modifier_alchemist_spray_2") then return end
-if self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura") then return end
-if self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura_red") then return end
-
+function modifier_alchemist_acid_spray_custom_effects:GetModifierLifestealRegenAmplify_Percentage() 
 return self.heal_reduce
 end
 
-function modifier_alchemist_acid_spray_custom_aura_purple:GetModifierHealAmplify_PercentageTarget() 
-if not self:GetCaster():HasModifier("modifier_alchemist_spray_2") then return end
-if self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura") then return end
-if self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura_red") then return end
-
+function modifier_alchemist_acid_spray_custom_effects:GetModifierHealAmplify_PercentageTarget() 
 return self.heal_reduce
 end
 
-function modifier_alchemist_acid_spray_custom_aura_purple:GetModifierHPRegenAmplify_Percentage() 
-if not self:GetCaster():HasModifier("modifier_alchemist_spray_2") then return end
-if self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura") then return end
-if self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura_red") then return end
-
+function modifier_alchemist_acid_spray_custom_effects:GetModifierHPRegenAmplify_Percentage() 
 return self.heal_reduce
 end
 
-
-
-
-function modifier_alchemist_acid_spray_custom_aura_purple:GetModifierMoveSpeedBonus_Percentage()
-  return self.slow
+function modifier_alchemist_acid_spray_custom_effects:GetModifierMoveSpeedBonus_Percentage()
+return self.slow
 end
 
 
 
+modifier_alchemist_acid_spray_custom_armor = class(mod_visible)
+function modifier_alchemist_acid_spray_custom_armor:GetTexture() return "buffs/alchemist/spray_3" end
+function modifier_alchemist_acid_spray_custom_armor:OnCreated()
+self.parent = self:GetParent()
+self.caster = self:GetCaster()
 
+self.max = self.caster:GetTalentValue("modifier_alchemist_spray_3", "max")
+self.armor = self.caster:HasTalent("modifier_alchemist_unstable_legendary") and 0 or self.caster:GetTalentValue("modifier_alchemist_spray_3", "armor")/self.max
+self.magic = self.caster:HasTalent("modifier_alchemist_unstable_legendary") and self.caster:GetTalentValue("modifier_alchemist_spray_3", "magic")/self.max or 0
 
+self.is_enemy = self.caster:GetTeamNumber() ~= self.parent:GetTeamNumber()
 
+if self.is_enemy then
+	self.armor = self.armor*-1
+	self.magic = self.magic*-1
+end
 
-
-
-
-
-
-
-modifier_alchemist_acid_spray_custom_silence_timer = class({})
-function modifier_alchemist_acid_spray_custom_silence_timer:IsHidden() return true end
-function modifier_alchemist_acid_spray_custom_silence_timer:IsPurgable() return false end
-function modifier_alchemist_acid_spray_custom_silence_timer:OnCreated(table)
 if not IsServer() then return end
-
-self.max = self:GetCaster():GetTalentValue("modifier_alchemist_spray_6", "timer")
-self.silence = self:GetCaster():GetTalentValue("modifier_alchemist_spray_6", "silence")
-
-self:SetStackCount(1)
-self.effect_cast = ParticleManager:CreateParticle( "particles/alch_root_timer.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent() )
-ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( 0,self:GetStackCount(), 0 ) )
-self:AddParticle(self.effect_cast,false, false, -1, false, false)
-
+self.RemoveForDuel = true
+self:StartIntervalThink(1)
 end
 
-
-function modifier_alchemist_acid_spray_custom_silence_timer:OnRefresh(table)
+function modifier_alchemist_acid_spray_custom_armor:OnIntervalThink()
 if not IsServer() then return end
+if not self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura") 
+	and not self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura_red")
+	and not self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura_purple") then return end
+
+if self:GetStackCount() >= self.max then return end
+
 self:IncrementStackCount()
 
-if self.effect_cast then
-	ParticleManager:SetParticleControl( self.effect_cast, 1, Vector( 0,self:GetStackCount(), 0 ) )
-end 
-
-if self:GetStackCount() >= self.max then 
-
-	self:GetParent():EmitSound("Sniper.Shrapnel_Silence")
-	self:GetParent():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_alchemist_acid_spray_custom_silence", {duration = (1 - self:GetParent():GetStatusResistance())*self.silence})
-
-	self:Destroy()
-end 
-
+if self.is_enemy and self:GetStackCount() >= self.max then
+	self.parent:EmitSound("Hoodwink.Acorn_armor")
+	self.parent:GenericParticle("particles/general/generic_armor_reduction.vpcf", self, true)
+end
 
 end
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
--- Способность Замешивание для легендарного таланта
-
-alchemist_acid_spray_mixing = class({})
-
-function alchemist_acid_spray_mixing:Spawn()
-    if not IsServer() then return end
-    if self and not self:IsTrained() then
-        self:SetLevel(1)
-        self:SetActivated(false)
-        self:SetHidden(true) 
-    end
-end
-
-function alchemist_acid_spray_mixing:GetIntrinsicModifierName()
-	return "modifier_alchemist_acid_spray_custom_mixing_visual"
-end
-
-function alchemist_acid_spray_mixing:OnSpellStart()
-if not IsServer() then return end
-
-self:EndCooldown()
-self:GetCaster():StartGesture(ACT_DOTA_ALCHEMIST_CONCOCTION)
-
-self:GetCaster():AddNewModifier( self:GetCaster(), self, "modifier_alchemist_acid_spray_custom_mixing", { duration = self:GetCaster():GetTalentValue("modifier_alchemist_spray_legendary", "delay") } )
-end
-
-
-
-
-modifier_alchemist_acid_spray_custom_mixing = class({})
-
-function modifier_alchemist_acid_spray_custom_mixing:IsHidden()
-	return true
-end
-
-function modifier_alchemist_acid_spray_custom_mixing:IsPurgable()
-	return false
-end
-
-function modifier_alchemist_acid_spray_custom_mixing:OnCreated( kv )
-if not IsServer() then return end
-
-self.t = -1
-self.timer = self:GetCaster():GetTalentValue("modifier_alchemist_spray_legendary", "delay")*2
-
-self:GetParent():EmitSound("Alch.Mix")
-
-local ability_acid = self:GetParent():FindAbilityByName("alchemist_acid_spray_custom")
-local ability_acid_red = self:GetParent():FindAbilityByName("alchemist_acid_spray_red_custom")
-local ability_acid_purple = self:GetParent():FindAbilityByName("alchemist_acid_spray_purple_custom")
-
-if ability_acid then
-	ability_acid:SetActivated(false)
-end
-if ability_acid_red then
-	ability_acid_red:SetActivated(false)
-end
-if ability_acid_purple then
-	ability_acid_purple:SetActivated(false)
-end
-
-self:GetAbility():SetActivated(false)
-self:GetAbility():StartCooldown(self:GetRemainingTime())
-end
-
-function modifier_alchemist_acid_spray_custom_mixing:OnDestroy()
-	if not IsServer() then return end
-	self:GetCaster():FadeGesture(ACT_DOTA_ALCHEMIST_CONCOCTION)
-	self:GetAbility():SetActivated(true)
-
-	self:GetParent():StopSound("Alch.Mix")
-
-	local ability_acid = self:GetParent():FindAbilityByName("alchemist_acid_spray_custom")
-	local ability_acid_red = self:GetParent():FindAbilityByName("alchemist_acid_spray_red_custom")
-	local ability_acid_purple = self:GetParent():FindAbilityByName("alchemist_acid_spray_purple_custom")
-
-
-	
-	if ability_acid then
-		ability_acid:SetActivated(true) 
-	end
-	if ability_acid_red then
-		ability_acid_red:SetActivated(true)
-	end
-	if ability_acid_purple then
-		ability_acid_purple:SetActivated(true)
-	end
-	
-
-
-	if not ability_acid:IsHidden() then 
-		self:GetParent():SwapAbilities("alchemist_acid_spray_custom", "alchemist_acid_spray_red_custom", false, true)
-		ability_acid:SetHidden(true)
-		ability_acid_red:SetHidden(false)
-		return
-	end
-
-	if not ability_acid_red:IsHidden() then 
-		self:GetParent():SwapAbilities("alchemist_acid_spray_red_custom", "alchemist_acid_spray_purple_custom", false, true)
-		ability_acid_red:SetHidden(true)
-		ability_acid_purple:SetHidden(false)
-		return
-	end
-
-	if not ability_acid_purple:IsHidden() then 
-		self:GetParent():SwapAbilities("alchemist_acid_spray_purple_custom", "alchemist_acid_spray_custom", false, true)
-		ability_acid_purple:SetHidden(true)
-		ability_acid:SetHidden(false)
-		return
-	end
-
-end
-
-
-
-
-function modifier_alchemist_acid_spray_custom_mixing:OnIntervalThink()
-if not IsServer() then return end
-self.t = self.t + 1
-local caster = self:GetParent()
-
-local number = (self.timer-self.t)/2 
-local int = 0
-int = number
-if number % 1 ~= 0 then int = number - 0.5  end
-
-local digits = math.floor(math.log10(number)) + 2
-
-local decimal = number % 1
-
-if decimal == 0.5 then
-	decimal = 8
-else 
-	decimal = 1
-end
-
-local particleName = "particles/units/heroes/hero_alchemist/alchemist_unstable_concoction_timer.vpcf"
-local particle = ParticleManager:CreateParticle(particleName, PATTACH_OVERHEAD_FOLLOW, caster)
-ParticleManager:SetParticleControl(particle, 0, caster:GetAbsOrigin())
-ParticleManager:SetParticleControl(particle, 1, Vector(0, int, decimal))
-ParticleManager:SetParticleControl(particle, 2, Vector(digits, 0, 0))
-ParticleManager:ReleaseParticleIndex(particle)
-
-end
-
-
-
-
-modifier_alchemist_acid_spray_custom_tracker = class({})
-function modifier_alchemist_acid_spray_custom_tracker:IsHidden() return true end
-function modifier_alchemist_acid_spray_custom_tracker:IsPurgable() return false end
-function modifier_alchemist_acid_spray_custom_tracker:DeclareFunctions()
+function modifier_alchemist_acid_spray_custom_armor:DeclareFunctions()
 return
 {
-	MODIFIER_EVENT_ON_TAKEDAMAGE
+	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
+	MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS
 }
 end
 
-function modifier_alchemist_acid_spray_custom_tracker:OnCreated()
-
-self.parent = self:GetParent()
-self.heal_creeps = self:GetParent():GetTalentValue("modifier_alchemist_spray_2", "heal_creeps", true)
-end 
-
-
-function modifier_alchemist_acid_spray_custom_tracker:OnTakeDamage(params)
-if not IsServer() then return end 
-if not params.attacker then return end 
-if self.parent  ~= params.attacker then return end 
-if not self.parent:HasModifier("modifier_alchemist_spray_2") then return end 
-if not self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura") and not self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura_red")
-	and not self.parent:HasModifier("modifier_alchemist_acid_spray_custom_aura_purple") then return end 
-
-if not params.unit:IsCreep() and not params.unit:IsHero() then return end 
-if params.unit:IsIllusion() then return end
-
-local heal = params.damage*self.parent:GetTalentValue("modifier_alchemist_spray_2", "heal")/100
-if params.unit:IsCreep() then 
-	heal = heal/self.heal_creeps
+function modifier_alchemist_acid_spray_custom_armor:GetModifierPhysicalArmorBonus()
+return self:GetStackCount()*self.armor
 end
 
-self.parent:GenericHeal(heal, self:GetAbility(), true)
-end 
-
-
-
-
-modifier_alchemist_acid_spray_custom_silence = class({})
-
-function modifier_alchemist_acid_spray_custom_silence:IsHidden() return true end
-function modifier_alchemist_acid_spray_custom_silence:IsPurgable() return true end
-function modifier_alchemist_acid_spray_custom_silence:GetTexture() return "silencer_last_word" end
-
-
-function modifier_alchemist_acid_spray_custom_silence:CheckState()
-return
-{
-	[MODIFIER_STATE_SILENCED] = true,
-}
+function modifier_alchemist_acid_spray_custom_armor:GetModifierMagicalResistanceBonus()
+return self:GetStackCount()*self.magic
 end
 
 
-function modifier_alchemist_acid_spray_custom_silence:GetEffectName() return "particles/generic_gameplay/generic_silenced.vpcf" end
 
-function modifier_alchemist_acid_spray_custom_silence:ShouldUseOverheadOffset() return true end
-function modifier_alchemist_acid_spray_custom_silence:GetEffectAttachType() return PATTACH_OVERHEAD_FOLLOW end
+modifier_alchemist_acid_spray_custom_root = class({})
+function modifier_alchemist_acid_spray_custom_root:IsHidden() return true end
+function modifier_alchemist_acid_spray_custom_root:IsPurgable() return true end
+function modifier_alchemist_acid_spray_custom_root:CheckState() return {[MODIFIER_STATE_ROOTED] = true} end
+function modifier_alchemist_acid_spray_custom_root:GetEffectName() return "particles/alch_root.vpcf" end
+
+
+
+modifier_alchemist_acid_spray_custom_root_cd = class(mod_hidden)

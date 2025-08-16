@@ -1,1 +1,2 @@
 generic_talent = class({})
+

@@ -7,6 +7,13 @@ function npc_necro_range_passive:GetIntrinsicModifierName()
 return "modifier_npc_necro_range_passive"
 end
 
+function npc_necro_range_passive:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle", "particles/generic_gameplay/generic_manaburn.vpcf", context )
+
+end
+
+
 modifier_npc_necro_range_passive = class({})
 
 function modifier_npc_necro_range_passive:IsHidden() return true end
@@ -30,12 +37,12 @@ end
 function modifier_npc_necro_range_passive:DeclareFunctions()
 return
 {
-    MODIFIER_EVENT_ON_ATTACK_LANDED
+    MODIFIER_PROPERTY_PROCATTACK_FEEDBACK
 }
 
 end
 
-function modifier_npc_necro_range_passive:OnAttackLanded(params)
+function modifier_npc_necro_range_passive:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end
 if self:GetParent() ~= params.attacker then return end
 if params.target:IsBuilding() or params.target:IsMagicImmune() then return end

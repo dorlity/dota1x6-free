@@ -1,67 +1,66 @@
 LinkLuaModifier("item_shadow_blade_custom_surge", "abilities/items/item_shadow_blade_custom", LUA_MODIFIER_MOTION_NONE)
 LinkLuaModifier("item_shadow_blade_custom_passive", "abilities/items/item_shadow_blade_custom", LUA_MODIFIER_MOTION_NONE)
-LinkLuaModifier("item_shadow_blade_custom_slow", "abilities/items/item_shadow_blade_custom", LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("item_shadow_blade_custom_damage_reduce", "abilities/items/item_shadow_blade_custom", LUA_MODIFIER_MOTION_NONE)
 
 item_shadow_blade_custom = class({})
 
-
-function item_shadow_blade_custom:OnSpellStart()
-if not IsServer() then return end
-    self:GetCaster():EmitSound("DOTA_Item.InvisibilitySword.Activate")
-    self:GetCaster():AddNewModifier(self:GetCaster(), self, "item_shadow_blade_custom_surge", {duration = self:GetSpecialValueFor("duration")})
-
-
+function item_shadow_blade_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/silver_edge_speed_.vpcf", context )
+PrecacheResource( "particle","particles/items3_fx/silver_edge.vpcf", context )
 end
 
+function item_shadow_blade_custom:GetIntrinsicModifierName() 
+return "item_shadow_blade_custom_passive"
+end
 
-function item_shadow_blade_custom:GetIntrinsicModifierName() return  
-"item_shadow_blade_custom_passive"
+function item_shadow_blade_custom:OnSpellStart()
+
+local caster = self:GetCaster()
+caster:EmitSound("DOTA_Item.InvisibilitySword.Activate")
+caster:AddNewModifier(caster, self, "item_shadow_blade_custom_surge", {duration = self:GetSpecialValueFor("duration")})
 end
 
 
 
 item_shadow_blade_custom_surge = class({})
-
-
-
 function item_shadow_blade_custom_surge:GetEffectName() return "particles/silver_edge_speed_.vpcf" end
 function item_shadow_blade_custom_surge:IsHidden()     return false end
 function item_shadow_blade_custom_surge:IsPurgable()   return false end
 
 function item_shadow_blade_custom_surge:OnCreated(table)
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-self.slow_duration = self:GetAbility():GetSpecialValueFor("slow_duration")
-self.speed = self:GetAbility():GetSpecialValueFor("movement_speed")
-self.damage = self:GetAbility():GetSpecialValueFor("windwalk_bonus_damage")
+self.duration = self.ability:GetSpecialValueFor("damage_reduce_duration")
+self.speed = self.ability:GetSpecialValueFor("movement_speed")
+self.damage = self.ability:GetSpecialValueFor("windwalk_bonus_damage")
 end
 
-function item_shadow_blade_custom_surge:CheckState() return 
-{[MODIFIER_STATE_NO_UNIT_COLLISION] = true}
+function item_shadow_blade_custom_surge:CheckState() 
+return 
+{
+    [MODIFIER_STATE_NO_UNIT_COLLISION] = true
+}
 end
 
 function item_shadow_blade_custom_surge:DeclareFunctions()
 return
 {
     MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE,
-   MODIFIER_PROPERTY_PROCATTACK_BONUS_DAMAGE_PHYSICAL
+    MODIFIER_PROPERTY_PROCATTACK_BONUS_DAMAGE_PHYSICAL
 }
 end
 
-
-
-function item_shadow_blade_custom_surge:GetModifierMoveSpeedBonus_Percentage() return self.speed end
+function item_shadow_blade_custom_surge:GetModifierMoveSpeedBonus_Percentage() 
+return self.speed 
+end
 
 function item_shadow_blade_custom_surge:GetModifierProcAttack_BonusDamage_Physical(params)
-if params.target:IsBuilding() then return end
-if params.attacker == self:GetParent() then 
-
-	if not params.target:IsMagicImmune() then 
-		params.target:AddNewModifier(self:GetCaster(), self:GetAbility(), "item_shadow_blade_custom_slow", {duration = (1 - params.target:GetStatusResistance())*self.slow_duration})
-	end
-
-    self:Destroy()
-    return self.damage
-end
+if not params.target:IsUnit() then return end
+params.target:AddNewModifier(self.parent, self.ability, "item_shadow_blade_custom_damage_reduce", {duration = self.duration})
+self:Destroy()
+return self.damage
 end
 
 
@@ -77,40 +76,47 @@ function item_shadow_blade_custom_passive:DeclareFunctions()
 return
 {
     MODIFIER_PROPERTY_PREATTACK_BONUS_DAMAGE,
-   MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
-    
+    MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT  
 }
 end
-function item_shadow_blade_custom_passive:GetModifierPreAttack_BonusDamage() return
-self:GetAbility():GetSpecialValueFor("bonus_damage")
+
+function item_shadow_blade_custom_passive:GetModifierPreAttack_BonusDamage() 
+return self.damage
+end
+
+function item_shadow_blade_custom_passive:GetModifierAttackSpeedBonus_Constant()
+return self.speed
+end
+
+function item_shadow_blade_custom_passive:OnCreated()
+self.ability = self:GetAbility()
+self.damage = self.ability:GetSpecialValueFor("bonus_damage")
+self.speed = self.ability:GetSpecialValueFor("bonus_attack_speed")
 end
 
 
-function item_shadow_blade_custom_passive:GetModifierAttackSpeedBonus_Constant() return
-self:GetAbility():GetSpecialValueFor("bonus_attack_speed")
-end
 
 
-
-
-
-item_shadow_blade_custom_slow = class({})
-function item_shadow_blade_custom_slow:IsHidden() return false end
-function item_shadow_blade_custom_slow:IsPurgable() return true end
-function item_shadow_blade_custom_slow:GetEffectName() return "particles/items3_fx/silver_edge.vpcf" end
-
-function item_shadow_blade_custom_slow:DeclareFunctions()
+item_shadow_blade_custom_damage_reduce = class({})
+function item_shadow_blade_custom_damage_reduce:IsHidden() return false end
+function item_shadow_blade_custom_damage_reduce:IsPurgable() return true end
+function item_shadow_blade_custom_damage_reduce:GetEffectName() return "particles/items3_fx/silver_edge.vpcf" end
+function item_shadow_blade_custom_damage_reduce:DeclareFunctions()
 return
 {
-  MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
+  MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
+  MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE
 }
 end
 
-function item_shadow_blade_custom_slow:OnCreated(table)
-self.speed = self:GetAbility():GetSpecialValueFor("move_slow")
-if not IsServer() then return end
+function item_shadow_blade_custom_damage_reduce:OnCreated(table)
+self.damage = self:GetAbility():GetSpecialValueFor("damage_reduce")
 end
 
-function item_shadow_blade_custom_slow:GetModifierMoveSpeedBonus_Percentage()
-return self.speed
+function item_shadow_blade_custom_damage_reduce:GetModifierDamageOutgoing_Percentage()
+return self.damage 
+end
+
+function item_shadow_blade_custom_damage_reduce:GetModifierSpellAmplify_Percentage() 
+return self.damage 
 end

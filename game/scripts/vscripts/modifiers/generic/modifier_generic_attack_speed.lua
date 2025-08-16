@@ -32,7 +32,7 @@ function modifier_generic_attack_speed:DeclareFunctions()
 return
 {
   MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
-  MODIFIER_EVENT_ON_ATTACK_LANDED
+  MODIFIER_PROPERTY_PROCATTACK_FEEDBACK
 }
 end
 
@@ -42,7 +42,7 @@ return self.attack_speed
 end
 
 
-function modifier_generic_attack_speed:OnAttackLanded(params)
+function modifier_generic_attack_speed:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end
 if self.attacks_count == nil then return end
 if self:GetParent() ~= params.attacker then return end

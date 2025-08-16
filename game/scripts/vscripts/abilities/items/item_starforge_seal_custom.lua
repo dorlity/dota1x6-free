@@ -7,6 +7,15 @@ LinkLuaModifier("modifier_item_starforge_seal_custom_thinker", "abilities/items/
 
 item_starforge_seal_custom                 = class({})
 
+function item_starforge_seal_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle","particles/items/devastator_aoe.vpcf", context )
+PrecacheResource( "particle","particles/items/devastator/devastator_blast.vpcf", context )
+PrecacheResource( "particle","particles/items/devastator/devastator_impact.vpcf", context )
+PrecacheResource( "particle","particles/items4_fx/meteor_hammer_spell_debuff.vpcf", context )
+PrecacheResource( "particle","particles/generic_gameplay/generic_stunned.vpcf", context )
+end
+
 
 function item_starforge_seal_custom:GetIntrinsicModifierName()
 return "modifier_item_starforge_seal_custom_stats"
@@ -17,6 +26,13 @@ function item_starforge_seal_custom:GetAOERadius()
 end
 
 
+function item_starforge_seal_custom:GetCooldown(iLevel)
+local cd = self:GetSpecialValueFor("AbilityCooldown")
+if not IsSoloMode() then
+    cd = self:GetSpecialValueFor("cd_duo")
+end
+return cd
+end
 
 
 function item_starforge_seal_custom:OnSpellStart()
@@ -105,7 +121,7 @@ local damage_table = {
 
 for _, enemy in pairs(enemies) do
     damage_table.victim = enemy
-    ApplyDamage(damage_table)
+    DoDamage(damage_table)
     enemy:AddNewModifier(self.caster, self.ability, "modifier_item_starforge_seal_custom_burn", {duration = self.burn_duration + 2*FrameTime()})
     enemy:AddNewModifier(self.caster, self.ability, "modifier_item_starforge_seal_custom_stun", {radius = self.impact_radius, x = self.position.x, y = self.position.y, duration = self.stun_duration*(1 - enemy:GetStatusResistance())})                         
   
@@ -167,7 +183,7 @@ if not IsServer() then return end
 
 self.damage_table.damage = (self.inc_damage + self.parent:GetMaxHealth()*self.health_damage)*self.burn_interval
 
-local damage = ApplyDamage(self.damage_table)
+local damage = DoDamage(self.damage_table)
 self.parent:SendNumber(4, damage)
 end
 
@@ -285,13 +301,6 @@ end
 
 
 
-
-
-
-
-
-
-
 modifier_item_starforge_seal_custom_stats = class({})
 function modifier_item_starforge_seal_custom_stats:IsHidden() return true end
 function modifier_item_starforge_seal_custom_stats:IsPurgable() return false end
@@ -302,7 +311,6 @@ return
     MODIFIER_PROPERTY_STATS_STRENGTH_BONUS,
     MODIFIER_PROPERTY_STATS_INTELLECT_BONUS,
     MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE,
-    MODIFIER_PROPERTY_SPELL_LIFESTEAL_AMPLIFY_PERCENTAGE,
     MODIFIER_PROPERTY_MP_REGEN_AMPLIFY_PERCENTAGE 
 }
 
@@ -310,12 +318,12 @@ end
 
 
 function modifier_item_starforge_seal_custom_stats:OnCreated()
+self.parent = self:GetParent()
 self.agi = self:GetAbility():GetSpecialValueFor("stats_agi")
 self.str = self:GetAbility():GetSpecialValueFor("stats_str")
 self.int = self:GetAbility():GetSpecialValueFor("stats_int")
 self.amp = self:GetAbility():GetSpecialValueFor("spell_amp")
 self.regen = self:GetAbility():GetSpecialValueFor("mana_regen_multiplier")
-self.amp_heal = self:GetAbility():GetSpecialValueFor("spell_lifesteal_amp")
 end 
 
 
@@ -324,33 +332,18 @@ function modifier_item_starforge_seal_custom_stats:GetModifierBonusStats_Strengt
 function modifier_item_starforge_seal_custom_stats:GetModifierBonusStats_Intellect() return self.int end
 
 function modifier_item_starforge_seal_custom_stats:GetModifierSpellAmplify_Percentage() 
-if self:GetParent():HasModifier("modifier_item_yasha_and_kaya") then return end 
-if self:GetParent():HasModifier("modifier_item_kaya_and_sange") then return end 
-if self:GetParent():HasModifier("modifier_item_kaya") then return end
-if self:GetParent():HasModifier("modifier_item_meteor_hammer_custom_stats") then return end  
+if self.parent:HasModifier("modifier_item_yasha_and_kaya") then return end 
+if self.parent:HasModifier("modifier_item_kaya_and_sange_custom") then return end 
+if self.parent:HasModifier("modifier_item_kaya") then return end 
 
 return self.amp
 end
 
 
 function modifier_item_starforge_seal_custom_stats:GetModifierMPRegenAmplify_Percentage()
-if self:GetParent():HasModifier("modifier_item_yasha_and_kaya") then return end 
-if self:GetParent():HasModifier("modifier_item_kaya_and_sange") then return end 
-if self:GetParent():HasModifier("modifier_item_kaya") then return end  
-if self:GetParent():HasModifier("modifier_item_meteor_hammer_custom_stats") then return end 
+if self.parent:HasModifier("modifier_item_yasha_and_kaya") then return end 
+if self.parent:HasModifier("modifier_item_kaya_and_sange_custom") then return end 
+if self.parent:HasModifier("modifier_item_kaya") then return end  
 
 return self.regen
 end
-
-
-function modifier_item_starforge_seal_custom_stats:GetModifierSpellLifestealRegenAmplify_Percentage() 
-if self:GetParent():HasModifier("modifier_item_yasha_and_kaya") then return end 
-if self:GetParent():HasModifier("modifier_item_kaya_and_sange") then return end 
-if self:GetParent():HasModifier("modifier_item_kaya") then return end 
-if self:GetParent():HasModifier("modifier_item_meteor_hammer_custom_stats") then return end 
-
-return self.amp_heal
-end
-
-
-

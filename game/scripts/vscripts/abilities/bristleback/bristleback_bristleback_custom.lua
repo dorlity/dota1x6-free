@@ -17,21 +17,39 @@ LinkLuaModifier("modifier_bristleback_bristleback_custom_timer", "abilities/bris
 bristleback_bristleback_custom  = class({})
 
 
+function bristleback_bristleback_custom:CreateTalent(name)
 
+if name == "modifier_bristle_back_7" then 
+  self:GetCaster():FindAbilityByName("bristleback_bristleback_custom_legendary"):SetHidden(false)
+end
 
-function bristleback_bristleback_custom:Precache(context)
-
-PrecacheResource( "particle", "particles/units/heroes/hero_tinker/tinker_defense_matrix_ball_sphere_rings.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_back_dmg.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_back_lrg_dmg.vpcf", context )
-PrecacheResource( "particle", "particles/bristle_back_buff_.vpcf", context )
-PrecacheResource( "particle", "particles/back_stack_brist.vpcf", context )
-PrecacheResource( "particle", "particles/status_fx/status_effect_beserkers_call.vpcf", context )
-PrecacheResource( "particle", "particles/units/heroes/hero_oracle/oracle_false_promise_heal.vpcf", context )
-
+if name == "modifier_bristle_back_6" then
+  self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_bristleback_bristleback_custom_taunt_cd", {})
+end
 
 end
 
+
+
+function bristleback_bristleback_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
+PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_back_dmg.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_quill_spray_impact.vpcf", context )
+PrecacheResource( "particle", "particles/pangolier/linken_proc.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_back_dmg.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_back_lrg_dmg.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_bristleback/bristleback_back_dmg.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_egg.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_streaks.vpcf", context )
+PrecacheResource( "particle", "particles/pangolier/linken_active.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_oracle/oracle_false_promise_heal.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_oracle/oracle_purifyingflames.vpcf", context )
+PrecacheResource( "particle", "particles/bristle_back_buff_.vpcf", context )
+PrecacheResource( "particle", "particles/general/generic_armor_reduction.vpcf", context )
+PrecacheResource( "particle", "particles/bristleback/armor_buff.vpcf", context )
+
+end
 
 
 
@@ -40,13 +58,10 @@ function bristleback_bristleback_custom:ResetToggleOnRespawn()  return true end
 
 
 
-
-
 function bristleback_bristleback_custom:GetBehavior()
 if self:GetCaster():HasScepter() then
-    return DOTA_ABILITY_BEHAVIOR_POINT 
+  return DOTA_ABILITY_BEHAVIOR_POINT 
 end
-
 return DOTA_ABILITY_BEHAVIOR_PASSIVE 
 end
 
@@ -82,7 +97,7 @@ end
 
 
 function bristleback_bristleback_custom:IsFacingBack(attacker)
-
+if attacker:IsBuilding() then return false end
 
 local forwardVector     = self:GetCaster():GetForwardVector()
 local forwardAngle      = math.deg(math.atan2(forwardVector.x, forwardVector.y))
@@ -108,27 +123,30 @@ function bristleback_bristleback_custom:IncStacks(add_stack)
 local stack = add_stack
 local mod = self:GetCaster():FindModifierByName("modifier_bristleback_bristleback_custom_custom")
   
-  
-local quill_release_threshold  = self:GetSpecialValueFor("quill_release_threshold") + self:GetCaster():GetTalentValue("modifier_bristle_back_spray", "damage")
+local quill_release_threshold  = self:GetSpecialValueFor("quill_release_threshold") + self:GetCaster():GetTalentValue("modifier_bristle_back_1", "damage")
 
 if self:GetCaster():HasModifier("modifier_bristleback_bristleback_custom_legendary_active") then 
-  quill_release_threshold = quill_release_threshold + self:GetCaster():GetTalentValue("modifier_bristle_back_legendary", "spray_damage")
+  quill_release_threshold = quill_release_threshold + self:GetCaster():GetTalentValue("modifier_bristle_back_7", "spray_damage")
 end
 
 
 if not mod then return end
 
-while stack > 0 do 
-  mod:SetStackCount(mod:GetStackCount() + stack)
+local final = mod:GetStackCount() + stack
 
-  if mod:GetStackCount() < quill_release_threshold then 
-    stack = 0
-  else 
-    stack =  mod:GetStackCount() - quill_release_threshold
-    mod:SetStackCount(0)
+if final >= quill_release_threshold then 
+
+  local delta = math.floor(final/quill_release_threshold)
+
+  for i = 1, delta do 
     self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_bristleback_bristleback_custom_make_spray", {})
-  end
-end
+  end 
+
+  mod:SetStackCount(final - delta*quill_release_threshold)
+else 
+  mod:SetStackCount(final)
+end 
+
 
 end
 
@@ -156,19 +174,21 @@ self.front_damage_reduction   = 0
 self.side_angle         = self.ability:GetSpecialValueFor("side_angle")
 self.back_angle         = self.ability:GetSpecialValueFor("back_angle")
 
-self.reflect_cd = self:GetCaster():GetTalentValue("modifier_bristle_back_reflect", "cd", true)
-self.reflect_duration = self:GetCaster():GetTalentValue("modifier_bristle_back_reflect", "duration", true)
+self.reflect_cd = self.parent:GetTalentValue("modifier_bristle_back_5", "cd", true)
+self.reflect_duration = self.parent:GetTalentValue("modifier_bristle_back_5", "duration", true)
 
-self.damage_interval = self:GetCaster():GetTalentValue("modifier_bristle_back_damage", "interval", true)
-self.damage_radius = self:GetCaster():GetTalentValue("modifier_bristle_back_damage", "radius", true)
+self.damage_interval = self.parent:GetTalentValue("modifier_bristle_back_4", "interval", true)
+self.damage_radius = self.parent:GetTalentValue("modifier_bristle_back_4", "radius", true)
 
-self.armor_duration = self:GetCaster():GetTalentValue("modifier_bristle_back_return", "duration", true)
-self.armor_radius = self:GetCaster():GetTalentValue("modifier_bristle_back_return", "radius", true)
+self.armor_duration = self.parent:GetTalentValue("modifier_bristle_back_2", "duration", true)
+self.armor_radius = self.parent:GetTalentValue("modifier_bristle_back_2", "radius", true)
 
-self.shield_timer = self:GetCaster():GetTalentValue("modifier_bristle_back_heal", "timer", true)
+self.shield_timer = self.parent:GetTalentValue("modifier_bristle_back_3", "timer", true)
 
 self.interval = 0.1
 self.count = 0
+
+self.parent:AddDamageEvent_inc(self)
 
 self:StartIntervalThink(self.interval)
 end
@@ -179,16 +199,16 @@ end
 
 function modifier_bristleback_bristleback_custom_custom:OnIntervalThink()
 if not IsServer() then return end 
-if not self:GetParent():IsAlive() then return end
+if not self.parent:IsAlive() then return end
 
-if self.caster:HasModifier("modifier_bristle_back_heal") then 
+if self.caster:HasTalent("modifier_bristle_back_3") then 
   if self.caster:IsAlive() and not self.caster:HasModifier("modifier_bristleback_bristleback_custom_shield") and not self.caster:HasModifier("modifier_bristleback_bristleback_custom_timer") then 
-    self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_bristleback_bristleback_custom_timer", {duration = self.shield_timer})
+    self.caster:AddNewModifier(self.caster, self.ability, "modifier_bristleback_bristleback_custom_timer", {duration = self.shield_timer})
   end
 end 
 
 
-if not self.caster:HasModifier("modifier_bristle_back_damage") and not self.caster:HasModifier("modifier_bristle_back_return") then return end 
+if not self.caster:HasTalent("modifier_bristle_back_4") and not self.caster:HasTalent("modifier_bristle_back_2") then return end 
 
 self.count = self.count + self.interval
 if self.count < self.damage_interval then 
@@ -198,17 +218,17 @@ end
 
 self.count = 0
 
-local damage = self.caster:GetStrength()*self.caster:GetTalentValue("modifier_bristle_back_damage", "damage")/100
+local damage = self.caster:GetStrength()*self.caster:GetTalentValue("modifier_bristle_back_4", "damage")/100
 
 for _,target in pairs(self.caster:FindTargets(self.armor_radius)) do 
 
-  if self.caster:HasModifier("modifier_bristle_back_return") then 
-    target:AddNewModifier(self.caster, self:GetAbility(), "modifier_bristleback_bristleback_custom_armor", {duration = self.armor_duration + 2*FrameTime()})
+  if self.caster:HasTalent("modifier_bristle_back_2") then 
+    target:AddNewModifier(self.caster, self.ability, "modifier_bristleback_bristleback_custom_armor", {duration = self.armor_duration + 2*FrameTime()})
   end 
 
-  if (target:GetAbsOrigin() - self.caster:GetAbsOrigin()):Length2D() <= self.damage_radius and self.caster:HasModifier("modifier_bristle_back_damage") then 
+  if (target:GetAbsOrigin() - self.caster:GetAbsOrigin()):Length2D() <= self.damage_radius and self.caster:HasTalent("modifier_bristle_back_4") then 
 
-    ApplyDamage({victim = target, attacker = self.caster, ability = self:GetAbility(), damage = damage, damage_type = DAMAGE_TYPE_PHYSICAL, damage_flags  = DOTA_DAMAGE_FLAG_BYPASSES_BLOCK})
+    DoDamage({victim = target, attacker = self.caster, ability = self.ability, damage = damage, damage_type = DAMAGE_TYPE_PHYSICAL, damage_flags  = DOTA_DAMAGE_FLAG_BYPASSES_PHYSICAL_BLOCK}, "modifier_bristle_back_4")
 
     target:EmitSound("BB.Back_damage")
 
@@ -235,15 +255,14 @@ end
 function modifier_bristleback_bristleback_custom_custom:DeclareFunctions()
 return {
   MODIFIER_PROPERTY_INCOMING_DAMAGE_PERCENTAGE,
-  MODIFIER_EVENT_ON_TAKEDAMAGE,
   MODIFIER_PROPERTY_ABSORB_SPELL
 }
 end
 
 function modifier_bristleback_bristleback_custom_custom:GetAbsorbSpell(params)
 if not IsServer() then return end
-if params.ability and params.ability:GetCaster() == self:GetParent() then return end
-if not self:GetParent():HasModifier("modifier_bristle_back_reflect") then return end
+if params.ability and params.ability:GetCaster() == self.parent then return end
+if not self.parent:HasTalent("modifier_bristle_back_5") then return end
 
 
 local mod = self.caster:FindModifierByName("modifier_bristleback_bristleback_custom_reflect_ready")
@@ -252,8 +271,8 @@ if mod and not mod.blocked then
 
   mod.blocked = true
 
-  local particle = ParticleManager:CreateParticle("particles/pangolier/linken_proc.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
-  ParticleManager:SetParticleControlEnt(particle, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_hitloc", self:GetParent():GetAbsOrigin(), true)
+  local particle = ParticleManager:CreateParticle("particles/pangolier/linken_proc.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
+  ParticleManager:SetParticleControlEnt(particle, 0, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true)
   ParticleManager:ReleaseParticleIndex(particle)
 
   if mod.particle then 
@@ -261,20 +280,20 @@ if mod and not mod.blocked then
     ParticleManager:ReleaseParticleIndex(mod.particle)
   end 
 
-  self:GetCaster():EmitSound("DOTA_Item.LinkensSphere.Activate")
+  self.parent:EmitSound("DOTA_Item.LinkensSphere.Activate")
 
   return 1 
 end 
 
 
-if self:GetParent():PassivesDisabled() and not self:GetParent():HasModifier("modifier_bristleback_bristleback_custom_scepter") then return end
+if self.parent:PassivesDisabled() and not self.parent:HasModifier("modifier_bristleback_bristleback_custom_scepter") then return end
 
 
-if self:GetAbility():IsFacingBack(params.ability:GetCaster()) and not self:GetParent():HasModifier("modifier_bristleback_bristleback_custom_reflect_cd") then 
+if self.ability:IsFacingBack(params.ability:GetCaster()) and not self.parent:HasModifier("modifier_bristleback_bristleback_custom_reflect_cd") then 
       
-    self:GetCaster():EmitSound("BB.Back_reflect")
-    self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_bristleback_bristleback_custom_reflect_ready", {duration = self.reflect_duration})
-    self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_bristleback_bristleback_custom_reflect_cd", {duration = self.reflect_cd})
+    self.parent:EmitSound("BB.Back_reflect")
+    self.parent:AddNewModifier(self.parent, self.ability, "modifier_bristleback_bristleback_custom_reflect_ready", {duration = self.reflect_duration})
+    self.parent:AddNewModifier(self.parent, self.ability, "modifier_bristleback_bristleback_custom_reflect_cd", {duration = self.reflect_cd})
 
 end
 
@@ -286,7 +305,7 @@ end
 function modifier_bristleback_bristleback_custom_custom:GetModifierIncomingDamage_Percentage(params)
 if not IsServer() then return end 
 
-if self.parent:PassivesDisabled() and not self:GetParent():HasModifier("modifier_bristleback_bristleback_custom_scepter") then return end 
+if self.parent:PassivesDisabled() and not self.parent:HasModifier("modifier_bristleback_bristleback_custom_scepter") then return end 
 if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end 
 if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_HPLOSS) == DOTA_DAMAGE_FLAG_HPLOSS then return  end
 
@@ -300,11 +319,11 @@ local difference = math.abs(forwardAngle - reverseEnemyAngle)
 
 self.front_damage_reduction   = 0
 
-self.side_damage_reduction    = self.ability:GetSpecialValueFor("side_damage_reduction") + self.parent:GetTalentValue("modifier_bristle_back_spray", "damage_reduce")
-self.back_damage_reduction    = self.ability:GetSpecialValueFor("back_damage_reduction") + self.parent:GetTalentValue("modifier_bristle_back_spray", "damage_reduce")
+self.side_damage_reduction    = self.ability:GetSpecialValueFor("side_damage_reduction") + self.parent:GetTalentValue("modifier_bristle_back_1", "damage_reduce")
+self.back_damage_reduction    = self.ability:GetSpecialValueFor("back_damage_reduction") + self.parent:GetTalentValue("modifier_bristle_back_1", "damage_reduce")
 
 
-if (difference <= (self.back_angle / 1)) or (difference >= (360 - (self.back_angle / 1))) or self:GetParent():HasModifier("modifier_bristleback_bristleback_custom_legendary_active") then
+if (difference <= (self.back_angle / 1)) or (difference >= (360 - (self.back_angle / 1))) or self.parent:HasModifier("modifier_bristleback_bristleback_custom_legendary_active") then
 
   local particle = ParticleManager:CreateParticle("particles/units/heroes/hero_bristleback/bristleback_back_dmg.vpcf", PATTACH_ABSORIGIN_FOLLOW, self.parent)
   ParticleManager:SetParticleControl(particle, 1, self.parent:GetAbsOrigin())
@@ -317,13 +336,11 @@ if (difference <= (self.back_angle / 1)) or (difference >= (360 - (self.back_ang
   
   self.parent:EmitSound("Hero_Bristleback.Bristleback")
 
-  if self:GetParent():GetQuest() == "Brist.Quest_7" and params.attacker:IsRealHero() then 
-    self:GetParent():UpdateQuest(math.floor(params.original_damage))
+  if self.parent:GetQuest() == "Brist.Quest_7" and params.attacker:IsRealHero() then 
+    self.parent:UpdateQuest(math.floor(params.original_damage))
   end
 
-
   return self.back_damage_reduction * (-1)
-
 
 elseif (difference <= (self.side_angle)) or (difference >= (360 - (self.side_angle))) then 
 
@@ -332,15 +349,12 @@ elseif (difference <= (self.side_angle)) or (difference >= (360 - (self.side_ang
   ParticleManager:SetParticleControlEnt(particle, 1, self.parent, PATTACH_POINT_FOLLOW, "attach_hitloc", self.parent:GetAbsOrigin(), true)
   ParticleManager:ReleaseParticleIndex(particle)
 
-
   return self.side_damage_reduction * (-1)
 else
 
-
-  if self.caster:HasModifier("modifier_bristle_back_heal") and not self.caster:HasModifier("modifier_bristleback_bristleback_custom_shield") then 
-    self.caster:AddNewModifier(self.caster, self:GetAbility(), "modifier_bristleback_bristleback_custom_timer", {duration = self.shield_timer})
+  if self.caster:HasTalent("modifier_bristle_back_3") and not self.caster:HasModifier("modifier_bristleback_bristleback_custom_shield") then 
+    self.caster:AddNewModifier(self.caster, self.ability, "modifier_bristleback_bristleback_custom_timer", {duration = self.shield_timer})
   end
-
   return self.front_damage_reduction * (-1)
 end
 
@@ -350,21 +364,18 @@ end
 
 
 
-function modifier_bristleback_bristleback_custom_custom:OnTakeDamage( params )
+function modifier_bristleback_bristleback_custom_custom:DamageEvent_inc( params )
 if params.attacker == nil then return end
 if params.unit ~= self.parent then return end
-if self.parent:PassivesDisabled() and not self:GetParent():HasModifier("modifier_bristleback_bristleback_custom_scepter") then return end  
+if self.parent:PassivesDisabled() and not self.parent:HasModifier("modifier_bristleback_bristleback_custom_scepter") then return end  
 if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_REFLECTION) == DOTA_DAMAGE_FLAG_REFLECTION then return end 
 if bit.band(params.damage_flags, DOTA_DAMAGE_FLAG_HPLOSS) == DOTA_DAMAGE_FLAG_HPLOSS  then return end 
 if not self.parent:HasAbility("bristleback_quill_spray_custom") then return end 
 if not self.parent:FindAbilityByName("bristleback_quill_spray_custom"):IsTrained() then return end
 
 
-
-if self:GetAbility():IsFacingBack(params.attacker)  then
-      
-  self:GetAbility():IncStacks(params.damage)
-
+if self.ability:IsFacingBack(params.attacker)  then
+  self.ability:IncStacks(params.damage)
 end
 
 end
@@ -386,7 +397,6 @@ modifier_bristleback_bristleback_custom_legendary_active = class({})
 
 function modifier_bristleback_bristleback_custom_legendary_active:IsHidden() return false end
 function modifier_bristleback_bristleback_custom_legendary_active:IsPurgable() return false end
---function modifier_bristleback_bristleback_custom_legendary_active:CheckState() return {[MODIFIER_STATE_DISARMED] = true} end
 function modifier_bristleback_bristleback_custom_legendary_active:GetTexture() return "buffs/Blade_fury_shield" end
 
 
@@ -397,7 +407,7 @@ if not IsServer() then return end
 self.particle_1 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff.vpcf"
 self.particle_2 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_egg.vpcf"
 self.particle_3 = "particles/units/heroes/hero_pangolier/pangolier_tailthump_buff_streaks.vpcf"
-self.sound = "Hero_Pangolier.TailThump.Shield"
+self.sound = "UI.Generic_shield"
 self.buff_particles = {}
 
 self:GetCaster():EmitSound( self.sound)
@@ -427,7 +437,7 @@ function modifier_bristleback_bristleback_custom_reflect_ready:IsPurgable() retu
 function modifier_bristleback_bristleback_custom_reflect_ready:GetTexture() return "buffs/back_reflect" end
 function modifier_bristleback_bristleback_custom_reflect_ready:OnCreated()
 
-self.heal = self:GetCaster():GetTalentValue("modifier_bristle_back_reflect", "heal")/self:GetCaster():GetTalentValue("modifier_bristle_back_reflect", "duration")
+self.heal = self:GetCaster():GetTalentValue("modifier_bristle_back_5", "heal")/self:GetCaster():GetTalentValue("modifier_bristle_back_5", "duration")
 
 if not IsServer() then return end
 
@@ -487,7 +497,7 @@ function modifier_bristleback_bristleback_custom_str_count:GetEffectName() retur
 
 function modifier_bristleback_bristleback_custom_str_count:OnCreated(table)
 
-self.str = self:GetCaster():GetTalentValue("modifier_bristle_back_damage", "str")
+self.str = self:GetCaster():GetTalentValue("modifier_bristle_back_4", "str")
 
 if not IsServer() then return end
 self:SetStackCount(1)
@@ -548,9 +558,9 @@ function modifier_bristleback_bristleback_custom_taunt_attack:GetTexture() retur
 
 function modifier_bristleback_bristleback_custom_taunt_attack:OnCreated(table)
 
-self.taunt_duration = self:GetCaster():GetTalentValue("modifier_bristle_back_ground", "taunt", true)
-self.range = self:GetCaster():GetTalentValue("modifier_bristle_back_ground", "range", true)
-self.taunt_cd = self:GetCaster():GetTalentValue("modifier_bristle_back_ground", "cd", true)
+self.taunt_duration = self:GetCaster():GetTalentValue("modifier_bristle_back_6", "taunt", true)
+self.range = self:GetCaster():GetTalentValue("modifier_bristle_back_6", "range", true)
+self.taunt_cd = self:GetCaster():GetTalentValue("modifier_bristle_back_6", "cd", true)
 
 if not IsServer() then return end
 self:GetParent():EmitSound("BB.Taunt_ready")
@@ -565,25 +575,25 @@ end
 function modifier_bristleback_bristleback_custom_taunt_attack:DeclareFunctions()
 return
 {
-  MODIFIER_EVENT_ON_ATTACK_LANDED,
+  MODIFIER_PROPERTY_PROCATTACK_FEEDBACK,
   MODIFIER_PROPERTY_ATTACK_RANGE_BONUS
 }
 end
 
 
-function modifier_bristleback_bristleback_custom_taunt_attack:OnAttackLanded(params)
+function modifier_bristleback_bristleback_custom_taunt_attack:GetModifierProcAttack_Feedback(params)
 if not IsServer() then return end
 if self.parent:PassivesDisabled() then return end
 if self.parent ~= params.attacker then return end
 if params.no_attack_cooldown then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end 
+if not params.target:IsUnit() then return end 
 
 self.parent:EmitSound("Item.BM_heal")
 params.target:AddNewModifier(self.parent, self:GetAbility(), "modifier_generic_taunt", {duration = (1 -params.target:GetStatusResistance())*self.taunt_duration})
 
 
 
-local mod = self:GetParent():FindModifierByName('modifier_bristleback_bristleback_custom_taunt_cd')
+local mod = self:GetParent():FindModifierByName("modifier_bristleback_bristleback_custom_taunt_cd")
 if mod then 
   mod:SetStackCount(self.taunt_cd)
 end 
@@ -605,11 +615,11 @@ function modifier_bristleback_bristleback_custom_taunt_cd:RemoveOnDeath() return
 function modifier_bristleback_bristleback_custom_taunt_cd:GetTexture() return "buffs/back_taunt" end
 function modifier_bristleback_bristleback_custom_taunt_cd:OnCreated(table)
 
-self.max = self:GetCaster():GetTalentValue("modifier_bristle_back_ground", "cd")
+self.parent = self:GetParent()
+self.max = self.parent:GetTalentValue("modifier_bristle_back_6", "cd")
 if not IsServer() then return end
 
 self:SetStackCount(0)
-
 self:StartIntervalThink(FrameTime())
 end
 
@@ -618,15 +628,12 @@ function modifier_bristleback_bristleback_custom_taunt_cd:OnIntervalThink()
 if not IsServer() then return end 
 
 if self:GetStackCount() <= 0 then 
-
-  if not self:GetParent():HasModifier("modifier_bristleback_bristleback_custom_taunt_attack") then 
-    self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_bristleback_bristleback_custom_taunt_attack", {})
+  if not self.parent:HasModifier("modifier_bristleback_bristleback_custom_taunt_attack") then 
+    self.parent:AddNewModifier(self.parent, self:GetAbility(), "modifier_bristleback_bristleback_custom_taunt_attack", {})
   end 
-
 else 
   self:DecrementStackCount()
 end 
-
 
 end 
 
@@ -635,9 +642,8 @@ end
 
 function modifier_bristleback_bristleback_custom_taunt_cd:OnStackCountChanged(iStackCount)
 if not IsServer() then return end 
-
-CustomGameEventManager:Send_ServerToPlayer(PlayerResource:GetPlayer(self:GetParent():GetPlayerOwnerID()), 'bristle_taunt_change',  {max = self.max, damage = self.max - self:GetStackCount()})
-
+local stack = self.max - self:GetStackCount()
+self.parent:UpdateUIlong({max = self.max, stack = stack, style = "BristTaunt", override_stack = self:GetStackCount(), hide_number = stack >= self.max, no_min = true})
 
 if self:GetStackCount() <= 0 then 
   self:StartIntervalThink(FrameTime())
@@ -659,17 +665,17 @@ function modifier_bristleback_bristleback_custom_make_spray:IsPurgable() return 
 function modifier_bristleback_bristleback_custom_make_spray:OnCreated(table)
 if not IsServer() then return end
 
-self.taunt_cd_reduce = self:GetCaster():GetTalentValue("modifier_bristle_back_ground", "cd_reduce", true)
-self.taunt_cd = self:GetCaster():GetTalentValue("modifier_bristle_back_ground", "cd", true)
+self.taunt_cd_reduce = self:GetCaster():GetTalentValue("modifier_bristle_back_6", "cd_reduce", true)
+self.taunt_cd = self:GetCaster():GetTalentValue("modifier_bristle_back_6", "cd", true)
 
-self.damage_duration = self:GetCaster():GetTalentValue("modifier_bristle_back_damage", "duration")
+self.damage_duration = self:GetCaster():GetTalentValue("modifier_bristle_back_4", "duration")
 
 self.parent = self:GetParent()
 
 self:SetStackCount(1)
 self:Proc()
 
-self:StartIntervalThink(0.1)
+self:StartIntervalThink(0.15)
 end
 
 function modifier_bristleback_bristleback_custom_make_spray:Proc()
@@ -684,14 +690,14 @@ local warpath = self:GetParent():FindModifierByName("modifier_custom_bristleback
 if not quill_spray_ability then return end
 if not quill_spray_ability:IsTrained() then return end
 
-quill_spray_ability:MakeSpray(self:GetParent():GetAbsOrigin(), true)
+quill_spray_ability:MakeSpray(nil, true)
   
 if warpath then 
   warpath:IncStacks()
 end
 
 
-if self:GetParent():HasModifier("modifier_bristle_back_damage") then 
+if self:GetParent():HasTalent("modifier_bristle_back_4") then 
   self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_bristleback_bristleback_custom_str", {duration = self.damage_duration})    
   self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), "modifier_bristleback_bristleback_custom_str_count", {duration = self.damage_duration})
 end
@@ -753,7 +759,7 @@ if self.quill_spray_ability and self.quill_spray_ability:IsTrained() then
 
   self.parent:FadeGesture(ACT_DOTA_CAST_ABILITY_2)
   self.parent:StartGesture(ACT_DOTA_CAST_ABILITY_2)
-  self.quill_spray_ability:MakeSpray(self.parent:GetAbsOrigin(), false ,true)
+  self.quill_spray_ability:MakeSpray(nil, false ,true)
 
   if self.ulti_mod then 
     self.ulti_mod:IncStacks()
@@ -785,13 +791,13 @@ end
 bristleback_bristleback_custom_legendary = class({})
 
 function bristleback_bristleback_custom_legendary:GetCooldown(iLevel)
-return self:GetCaster():GetTalentValue("modifier_bristle_back_legendary", "cd")
+return self:GetCaster():GetTalentValue("modifier_bristle_back_7", "cd")
 end 
 
 function bristleback_bristleback_custom_legendary:OnSpellStart()
 local caster = self:GetCaster()
 
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_bristleback_bristleback_custom_legendary_active", {duration = self:GetCaster():GetTalentValue("modifier_bristle_back_legendary", "duration")})
+self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_bristleback_bristleback_custom_legendary_active", {duration = self:GetCaster():GetTalentValue("modifier_bristle_back_7", "duration")})
 
 end
 
@@ -807,9 +813,9 @@ function modifier_bristleback_bristleback_custom_armor:IsPurgable() return false
 function modifier_bristleback_bristleback_custom_armor:GetTexture() return "buffs/moment_armor" end
 function modifier_bristleback_bristleback_custom_armor:OnCreated()
 
-self.armor = self:GetCaster():GetTalentValue("modifier_bristle_back_return", "armor")
-self.slow = self:GetCaster():GetTalentValue("modifier_bristle_back_return", "slow")
-self.max = self:GetCaster():GetTalentValue("modifier_bristle_back_return", "max")
+self.armor = self:GetCaster():GetTalentValue("modifier_bristle_back_2", "armor")
+self.slow = self:GetCaster():GetTalentValue("modifier_bristle_back_2", "slow")
+self.max = self:GetCaster():GetTalentValue("modifier_bristle_back_2", "max")
 
 self:SetStackCount(1)
 end
@@ -823,7 +829,7 @@ self:IncrementStackCount()
 if self:GetStackCount() >= self.max then 
 
   self:GetParent():EmitSound("Hoodwink.Acorn_armor")
-  self.particle_peffect = ParticleManager:CreateParticle("particles/items3_fx/star_emblem.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent()) 
+  self.particle_peffect = ParticleManager:CreateParticle("particles/general/generic_armor_reduction.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent()) 
   ParticleManager:SetParticleControl(self.particle_peffect, 0, self:GetParent():GetAbsOrigin())
   self:AddParticle(self.particle_peffect, false, false, -1, false, true)
 end 
@@ -866,8 +872,10 @@ function modifier_bristleback_bristleback_custom_shield:IsHidden() return true e
 function modifier_bristleback_bristleback_custom_shield:IsPurgable() return false end
 function modifier_bristleback_bristleback_custom_shield:OnCreated(table)
 
-self.max_shield = self:GetCaster():GetTalentValue("modifier_bristle_back_heal", "shield")*self:GetCaster():GetMaxHealth()/100
-self.timer = self:GetCaster():GetTalentValue("modifier_bristle_back_heal", "timer")
+self.parent = self:GetParent()
+self.shield_talent = "modifier_bristle_back_3"
+self.max_shield = self:GetCaster():GetTalentValue("modifier_bristle_back_3", "shield")*self:GetCaster():GetMaxHealth()/100
+self.timer = self:GetCaster():GetTalentValue("modifier_bristle_back_3", "timer")
 
 
 if not IsServer() then return end
@@ -905,30 +913,21 @@ if self:GetParent() == params.attacker then return end
 
 self:StartIntervalThink(self.timer)
 
-local back_damage_reduction    = self:GetAbility():GetSpecialValueFor("back_damage_reduction") + self:GetParent():GetTalentValue("modifier_bristle_back_spray", "damage_reduce")
+local back_damage_reduction  = self:GetAbility():GetSpecialValueFor("back_damage_reduction") + self:GetParent():GetTalentValue("modifier_bristle_back_1", "damage_reduce")
+local damage = math.min(params.damage, self:GetStackCount())
 
-if self:GetStackCount() > params.damage then
-    self:SetStackCount(self:GetStackCount() - params.damage)
-    local i = params.damage
-
-    if self:GetAbility():IsFacingBack(params.attacker)  then    
-      self:GetAbility():IncStacks(i*(1 - back_damage_reduction/100))
-    end
-
-    return -i
-else
-    
-    local i = self:GetStackCount()
-
-    if self:GetAbility():IsFacingBack(params.attacker)  then    
-      self:GetAbility():IncStacks(i*(1 - back_damage_reduction/100))
-    end
-
-    self:SetStackCount(0)
-    self:Destroy()
-    return -i
+if self:GetAbility():IsFacingBack(params.attacker)  then    
+  self:GetAbility():IncStacks(damage*(1 - back_damage_reduction/100))
 end
 
+self.parent:AddShieldInfo({shield_mod = self, healing = damage, healing_type = "shield"})
+
+self:SetStackCount(self:GetStackCount() - damage)
+if self:GetStackCount() <= 0 then
+  self:Destroy()
+end
+
+return -damage
 end
 
 

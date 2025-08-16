@@ -13,6 +13,10 @@ else return true end end
 
 function modifier_feral_passive:IsPurgable() return false end
 function modifier_feral_passive:OnCreated(table)
+
+self.parent = self:GetParent()
+self.parent:AddDeathEvent(self)
+    
 self.speed = self:GetAbility():GetSpecialValueFor("speed")
 self.armor = self:GetAbility():GetSpecialValueFor("armor")
 self.magic = self:GetAbility():GetSpecialValueFor("magic")
@@ -20,7 +24,6 @@ end
 
 function modifier_feral_passive:DeclareFunctions() return {
 
-    MODIFIER_EVENT_ON_DEATH,
     MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
     MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
     MODIFIER_PROPERTY_TOOLTIP,
@@ -29,7 +32,7 @@ function modifier_feral_passive:DeclareFunctions() return {
     MODIFIER_PROPERTY_MODEL_SCALE
 } end
 
-function modifier_feral_passive:OnDeath( param )
+function modifier_feral_passive:DeathEvent( param )
 if not IsServer() then end 
 if param.unit:GetUnitName() == "npc_psi_blades_crystal" or param.unit:GetUnitName() == "npc_psi_blades_crystal_mini" then return end
     if param.unit:GetTeamNumber() == self:GetParent():GetTeamNumber()

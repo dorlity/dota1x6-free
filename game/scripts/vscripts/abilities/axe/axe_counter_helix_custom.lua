@@ -2,336 +2,342 @@ LinkLuaModifier( "modifier_axe_counter_helix_custom", "abilities/axe/axe_counter
 LinkLuaModifier( "modifier_axe_counter_helix_custom_shard_debuff", "abilities/axe/axe_counter_helix_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_axe_counter_helix_custom_legendary", "abilities/axe/axe_counter_helix_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_axe_counter_helix_custom_cd", "abilities/axe/axe_counter_helix_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_axe_counter_helix_custom_attack", "abilities/axe/axe_counter_helix_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_axe_counter_helix_custom_attack_count", "abilities/axe/axe_counter_helix_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_axe_counter_helix_custom_slow", "abilities/axe/axe_counter_helix_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_axe_counter_helix_custom_armor_count", "abilities/axe/axe_counter_helix_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_axe_counter_helix_custom_count", "abilities/axe/axe_counter_helix_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_axe_counter_helix_custom_count_self", "abilities/axe/axe_counter_helix_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_axe_counter_helix_custom_damage", "abilities/axe/axe_counter_helix_custom", LUA_MODIFIER_MOTION_NONE )
 LinkLuaModifier( "modifier_axe_counter_helix_custom_attack_speed", "abilities/axe/axe_counter_helix_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_axe_counter_helix_custom_root_cd", "abilities/axe/axe_counter_helix_custom", LUA_MODIFIER_MOTION_NONE )
-LinkLuaModifier( "modifier_axe_counter_helix_custom_root", "abilities/axe/axe_counter_helix_custom", LUA_MODIFIER_MOTION_NONE )
-
+LinkLuaModifier( "modifier_axe_counter_helix_custom_legendary_active", "abilities/axe/axe_counter_helix_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_axe_counter_helix_custom_stun_cd", "abilities/axe/axe_counter_helix_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_axe_counter_helix_custom_shield", "abilities/axe/axe_counter_helix_custom", LUA_MODIFIER_MOTION_NONE )
+LinkLuaModifier( "modifier_axe_counter_helix_custom_shield_cd", "abilities/axe/axe_counter_helix_custom", LUA_MODIFIER_MOTION_NONE )
 
 
 axe_counter_helix_custom = class({})
 
 
-
-
-
-
-
-
 function axe_counter_helix_custom:Precache(context)
+if self:GetCaster() and self:GetCaster():IsIllusion() then return end
 
-    
 PrecacheResource( "particle", "particles/units/heroes/hero_axe/axe_counterhelix.vpcf", context )
-PrecacheResource( "particle", "particles/econ/items/axe/axe_weapon_bloodchaser/axe_attack_blur_counterhelix_bloodchaser.vpcf", context )
+PrecacheResource( "particle", "particles/items4_fx/ascetic_cap.vpcf", context )
 PrecacheResource( "particle", "particles/axe_spin.vpcf", context )
+PrecacheResource( "particle", "particles/items2_fx/sange_maim.vpcf", context )
+PrecacheResource( "particle", "particles/items3_fx/hook_root.vpcf", context )
+PrecacheResource( "particle", "particles/axe/axe_charge.vpcf", context )
+PrecacheResource( "particle", "particles/axe/helix_legendary_effect.vpcf", context )
+PrecacheResource( "particle", "particles/units/heroes/hero_primal_beast/primal_beast_onslaught_impact.vpcf", context )
+PrecacheResource( "particle", "particles/axe/helix_shield.vpcf", context )
 
+PrecacheResource( "particle", "particles/econ/items/axe/axe_weapon_bloodchaser/axe_attack_blur_counterhelix_bloodchaser.vpcf", context )
 end
 
-function axe_counter_helix_custom:GetCastRange(vLocation, hTarget)
-return self:GetSpecialValueFor( "radius" ) + self:GetCaster():GetTalentValue("modifier_axe_helix_6", "radius")
+function axe_counter_helix_custom:GetAbilityTextureName()
+if self:GetCaster():HasModifier("modifier_axe_persona_custom") then
+    return "axe_counter_helix_unleashed"
 end
-
+return "axe_counter_helix"
+end
 
 function axe_counter_helix_custom:GetIntrinsicModifierName()
-	return "modifier_axe_counter_helix_custom"
+return "modifier_axe_counter_helix_custom"
 end
 
 function axe_counter_helix_custom:GetCooldown(level)
-	if self:GetCaster():HasModifier("modifier_axe_helix_legendary") then 
-		return self:GetCaster():GetTalentValue("modifier_axe_helix_legendary", "cd")
-	end
-    return self.BaseClass.GetCooldown( self, level )
+local caster = self:GetCaster()
+if caster:HasTalent("modifier_axe_helix_legendary") then 
+	return caster:GetTalentValue("modifier_axe_helix_legendary", "talent_cd")
+end
+if caster:HasScepter() then 
+	return 0
+end
+return self.BaseClass.GetCooldown( self, level )
 end
 
 
 function axe_counter_helix_custom:GetBehavior()
-  if self:GetCaster():HasModifier("modifier_axe_helix_legendary") then
-    return  DOTA_ABILITY_BEHAVIOR_NO_TARGET + DOTA_ABILITY_BEHAVIOR_IMMEDIATE
-  end
- return DOTA_ABILITY_BEHAVIOR_PASSIVE
+return self:GetCaster():HasTalent("modifier_axe_helix_legendary") and DOTA_ABILITY_BEHAVIOR_NO_TARGET or DOTA_ABILITY_BEHAVIOR_PASSIVE
 end
-
 
 
 function axe_counter_helix_custom:OnSpellStart()
+local caster = self:GetCaster()
+local duration = caster:GetTalentValue("modifier_axe_helix_legendary", "duration")
+
+caster:AddNewModifier(caster, self, "modifier_axe_counter_helix_custom_legendary", {duration = duration})
+end
+
+
+
+function axe_counter_helix_custom:Spin(use_cd, ability)
 if not IsServer() then return end
 
-local duration = 0
+local caster = self:GetCaster()
+local anim_k = ability == "modifier_axe_helix_legendary" and 1.2 or 1
 
-for _,mod_c in pairs(self:GetCaster():FindAllModifiersByName("modifier_axe_counter_helix_custom_attack")) do
-	mod_c:Destroy()
+if ability ~= "modifier_axe_helix_legendary" then
+	caster:FadeGesture(ACT_DOTA_CAST_ABILITY_3)
 end
 
-self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_axe_counter_helix_custom_legendary", { })
+caster:StartGestureWithPlaybackRate(ACT_DOTA_CAST_ABILITY_3, anim_k)
 
+local radius = self:GetSpecialValueFor( "radius" ) + caster:GetTalentValue("modifier_axe_helix_2", "radius")
+local damage = self:GetSpecialValueFor("damage")
+local scepter_duration = self:GetSpecialValueFor("scepter_duration")
+
+local mod = caster:FindModifierByName("modifier_axe_counter_helix_custom_damage")
+if mod then
+	damage = damage + mod:GetStackCount()*caster:GetTalentValue("modifier_axe_helix_3", "damage")
 end
 
-function axe_counter_helix_custom:Spin(k_damage, use_cd)
-if not IsServer() then return end
-self:GetCaster():FadeGesture(ACT_DOTA_CAST_ABILITY_3)
-self:GetCaster():StartGesture(ACT_DOTA_CAST_ABILITY_3)
-
-local radius = self:GetSpecialValueFor( "radius" ) + self:GetCaster():GetTalentValue("modifier_axe_helix_6", "radius")
-local damage = self:GetSpecialValueFor("damage") + self:GetCaster():GetTalentValue("modifier_axe_helix_1", "damage")
-
-
-
-if self:GetCaster():HasModifier("modifier_axe_helix_5") then 
-
-	local heal = self:GetCaster():GetTalentValue("modifier_axe_helix_5", "heal")
-
-	if self:GetCaster():GetHealthPercent() <= self:GetCaster():GetTalentValue("modifier_axe_helix_5", "health") then 
-		heal = heal + self:GetCaster():GetTalentValue("modifier_axe_helix_5", "bonus")
-	end 
-
-	self:GetCaster():GenericHeal(heal*self:GetCaster():GetMaxHealth()/100, self)
-
+local shield_cd = caster:FindModifierByName("modifier_axe_counter_helix_custom_shield_cd")
+if shield_cd then
+	shield_cd:ReduceCd()
 end
 
+local damage_ability = nil
+if ability then 
+	damage_ability = ability
+end 
 
-local illusion = 1
-if self:GetCaster():IsIllusion() then 
-	illusion = self:GetSpecialValueFor("damage_illusions")
+if caster:HasTalent("modifier_axe_helix_3") then 
+	local heal = caster:GetTalentValue("modifier_axe_helix_3", "heal")*damage/100
+	caster:GenericHeal(heal, self, nil, nil, "modifier_axe_helix_3")
 end
 
+local damageTable = {attacker = caster, damage = damage, damage_type = DAMAGE_TYPE_PURE, ability = self}
 
-
-local armor_duration = self:GetCaster():GetTalentValue("modifier_axe_helix_3", "duration")
-
-local damageTable = { attacker = self:GetCaster(), damage = damage*k_damage/illusion, damage_type = DAMAGE_TYPE_PURE, ability = self, damage_flags = DOTA_DAMAGE_FLAG_NONE, }
-
-if self:GetCaster():HasModifier("modifier_axe_helix_3") then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_axe_counter_helix_custom_armor_count", {duration = armor_duration})
+if caster:HasTalent("modifier_axe_helix_1") or caster:HasTalent("modifier_axe_hero_3") then 
+	caster:AddNewModifier(caster, self, "modifier_axe_counter_helix_custom_attack_speed", {duration = caster:GetTalentValue("modifier_axe_helix_1", "duration", true)})
 end
 
-if self:GetCaster():HasModifier("modifier_axe_helix_4") then 
-	self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_axe_counter_helix_custom_attack_speed", {duration = self:GetCaster():GetTalentValue("modifier_axe_helix_4", "duration")})
+local hit_type = 0
+local proc_stun = false
+local stun_duration = caster:GetTalentValue("modifier_axe_helix_4", "stun")
+if caster:HasTalent("modifier_axe_helix_4") and not caster:HasBasher() and not caster:HasModifier("modifier_axe_counter_helix_custom_stun_cd") then
+	proc_stun = RollPseudoRandomPercentage(caster:GetTalentValue("modifier_axe_helix_4", "chance"), 1969, caster)
+	if proc_stun then
+		caster:AddNewModifier(caster, self, "modifier_axe_counter_helix_custom_stun_cd", {duration = caster:GetTalentValue("modifier_axe_helix_4", "talent_cd")})
+	end
 end
 
-local slow_duration = self:GetCaster():GetTalentValue("modifier_axe_helix_2", "duration")
-
-local pull_duration = self:GetCaster():GetTalentValue("modifier_axe_helix_6", "pull_duration")
-local root_cd = self:GetCaster():GetTalentValue("modifier_axe_helix_6", "cd")
-local root_duration = self:GetCaster():GetTalentValue("modifier_axe_helix_6", "root")
-
-local enemies = FindUnitsInRadius( self:GetCaster():GetTeamNumber(), self:GetCaster():GetOrigin(), nil, radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES, 0, false )
-for _,enemy in pairs(enemies) do
+for _,enemy in pairs(caster:FindTargets(radius)) do
 	damageTable.victim = enemy
-	ApplyDamage( damageTable )
+	DoDamage( damageTable, damage_ability )
 
-	if self:GetCaster():HasModifier("modifier_axe_helix_6") and not enemy:HasModifier("modifier_axe_counter_helix_custom_root_cd") then 
-		enemy:AddNewModifier(self:GetCaster(), self, "modifier_axe_counter_helix_custom_root_cd", {duration = root_cd})
-
-		local dir = (self:GetCaster():GetAbsOrigin() - enemy:GetAbsOrigin()):Normalized()
-		local point = self:GetCaster():GetAbsOrigin() - dir*50
-		local distance = (point - enemy:GetAbsOrigin()):Length2D()
-
-		distance = math.max(50, distance)
-		point = enemy:GetAbsOrigin() + dir*distance
-
-		local mod = enemy:AddNewModifier( self:GetCaster(),  self,  "modifier_generic_arc",  
-		{
-		  target_x = point.x,
-		  target_y = point.y,
-		  distance = distance,
-		  duration = pull_duration,
-		  height = 0,
-		  fix_end = false,
-		  isStun = true,
-		  activity = ACT_DOTA_FLAIL,
-		})
-
-
-		if mod then 
-			mod:SetEndCallback(function()
-				enemy:AddNewModifier(self:GetCaster(), self, "modifier_axe_counter_helix_custom_root", {duration = (1 - enemy:GetStatusResistance())*root_duration})
-			end)
-
-		end
-
-	end 
-
-	if self:GetCaster():HasModifier("modifier_axe_helix_2") then 
-		enemy:AddNewModifier(self:GetCaster(), self, "modifier_axe_counter_helix_custom_slow", {duration = slow_duration*(1 - enemy:GetStatusResistance())})
+	if hit_type == 0 then
+		hit_type = 1
+	end
+	if enemy:IsRealHero() then
+		hit_type = 2
 	end
 
-	if self:GetCaster():HasShard() then
-		enemy:AddNewModifier(self:GetCaster(), self, "modifier_axe_counter_helix_custom_shard_debuff", {duration = self:GetSpecialValueFor("shard_duration") })
+	if proc_stun then
+		enemy:EmitSound("DOTA_Item.SkullBasher")
+		local hit_effect = ParticleManager:CreateParticle("particles/units/heroes/hero_monkey_king/monkey_king_quad_tap_hit.vpcf", PATTACH_CUSTOMORIGIN, enemy)
+		ParticleManager:SetParticleControlEnt(hit_effect, 0, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), false) 
+		ParticleManager:SetParticleControlEnt(hit_effect, 1, enemy, PATTACH_POINT_FOLLOW, "attach_hitloc", enemy:GetAbsOrigin(), false) 
+		ParticleManager:Delete(hit_effect, 1)
+		enemy:AddNewModifier(caster, self, "modifier_bashed", {duration = (1 - enemy:GetStatusResistance())*stun_duration})
+	end
+
+	if caster:HasScepter() then
+		enemy:AddNewModifier(caster, self, "modifier_axe_counter_helix_custom_shard_debuff", {duration = scepter_duration })
 	end
 end
 
-local effect_cast = ParticleManager:CreateParticle( "particles/units/heroes/hero_axe/axe_counterhelix.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-ParticleManager:ReleaseParticleIndex( effect_cast )
+if caster:HasTalent("modifier_axe_helix_3") and hit_type > 0 then 
+	local duration = hit_type == 2 and caster:GetTalentValue("modifier_axe_helix_3", "duration") or caster:GetTalentValue("modifier_axe_helix_3", "duration_creeps")
+	caster:AddNewModifier(caster, self, "modifier_axe_counter_helix_custom_damage", {duration = duration})
+end
 
+local sound = "Hero_Axe.CounterHelix"
+local particle_name = "particles/units/heroes/hero_axe/axe_counterhelix.vpcf"
+if caster:HasModifier("modifier_blood_chaser_axe_custom") or proc_stun then
+    sound = "Hero_Axe.CounterHelix_Blood_Chaser"
+    particle_name = "particles/econ/items/axe/axe_weapon_bloodchaser/axe_attack_blur_counterhelix_bloodchaser.vpcf"
+end
+if caster:HasModifier("modifier_axe_persona_custom") then
+    particle_name = "particles/econ/items/axe/ti9_jungle_axe/ti9_jungle_axe_attack_blur_counterhelix.vpcf"
+end
+caster:GenericParticle(particle_name)
+caster:EmitSound(sound)
 
-self:GetCaster():EmitSound("Hero_Axe.CounterHelix")
-
-if use_cd == 1 and not self:GetCaster():HasShard() then 
-
-	if self:GetCaster():HasModifier("modifier_axe_helix_legendary") then 
-		self:GetCaster():AddNewModifier(self:GetCaster(), self, "modifier_axe_counter_helix_custom_cd", {duration = self:GetSpecialValueFor("cooldown")*self:GetCaster():GetCooldownReduction()})
+if use_cd == 1 and not caster:HasScepter() then 
+	if caster:HasTalent("modifier_axe_helix_legendary") then 
+		caster:AddNewModifier(caster, self, "modifier_axe_counter_helix_custom_cd", {duration = self:GetSpecialValueFor("cooldown")*caster:GetCooldownReduction()})
 	else 
 		self:UseResources( false, false, false, true )
 	end
 end
 
-
-
 end
 
 
 
 
-
-
-
-
-
-
-modifier_axe_counter_helix_custom = class({})
-
-function modifier_axe_counter_helix_custom:IsPurgable()
-	return false
-end
-
-function modifier_axe_counter_helix_custom:GetTexture()
-	return "buffs/helix_heal"
-end
-
-
-function modifier_axe_counter_helix_custom:IsHidden() 
-if not self:GetParent():HasModifier("modifier_axe_helix_5") then return true end
-	return self:GetParent():GetHealthPercent() > self:GetCaster():GetTalentValue("modifier_axe_helix_5", "health")
-end
-
-
-function modifier_axe_counter_helix_custom:DeclareFunctions()
-	local funcs = {
-		MODIFIER_EVENT_ON_ATTACK_LANDED,
-		MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
-		MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
-		MODIFIER_PROPERTY_MOVESPEED_BONUS_CONSTANT
-	}
-
-	return funcs
-end
-
+modifier_axe_counter_helix_custom = class(mod_hidden)
 function modifier_axe_counter_helix_custom:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-self.legendary_count = self:GetCaster():GetTalentValue("modifier_axe_helix_legendary", "count", true)
-self.legendary_timer = self:GetCaster():GetTalentValue("modifier_axe_helix_legendary", "timer", true)
+self.parent:AddAttackEvent_out(self, true)
+self.parent:AddAttackEvent_inc(self, true)
+
+self.attack_range = self.parent:GetTalentValue("modifier_axe_helix_2", "attack_range")
+
+self.has_shield = self.parent:HasTalent("modifier_axe_hero_7")
+self.shield_duration = self.parent:GetTalentValue("modifier_axe_hero_7", "duration", true)
+self.shield_health = self.parent:GetTalentValue("modifier_axe_hero_7", "health", true)
+
+if not IsServer() then return end
+self:SetHasCustomTransmitterData(true)
+self:UpdateTalent()
 end 
 
-function modifier_axe_counter_helix_custom:GetModifierAttackRangeBonus()
-if not self:GetParent():HasModifier("modifier_axe_helix_2") then return end
 
-return self:GetCaster():GetTalentValue("modifier_axe_helix_2", "range")
-end
-
-function modifier_axe_counter_helix_custom:GetModifierPhysicalArmorBonus()
-if not self:GetParent():HasModifier("modifier_axe_helix_3") then return end
-local bonus = self:GetCaster():GetTalentValue("modifier_axe_helix_3", "armor")
-
-if self:GetCaster():HasModifier("modifier_axe_counter_helix_custom_armor_count") then 
- 	bonus = bonus*(self:GetCaster():GetUpgradeStack("modifier_axe_counter_helix_custom_armor_count") + 1)
-end
-
-return bonus
-end
-
-
-function modifier_axe_counter_helix_custom:GetModifierMoveSpeedBonus_Constant()
-if not self:GetParent():HasModifier("modifier_axe_helix_3") then return end
-local bonus = self:GetCaster():GetTalentValue("modifier_axe_helix_3", "move")
-
-if self:GetCaster():HasModifier("modifier_axe_counter_helix_custom_armor_count") then 
- 	bonus = bonus*(self:GetCaster():GetUpgradeStack("modifier_axe_counter_helix_custom_armor_count") + 1)
-end
-
-return bonus
-end
-
-
-
-
-
-
-function modifier_axe_counter_helix_custom:OnAttackLanded( params )
+function modifier_axe_counter_helix_custom:UpdateTalent(name)
 if not IsServer() then return end
-if not params.target:IsHero() and not params.target:IsCreep() then return end 
+
+if name == "modifier_axe_helix_2" or self.parent:HasTalent("modifier_axe_helix_2") then
+	self.attack_range = self.parent:GetTalentValue("modifier_axe_helix_2", "attack_range")
+end
+
+if name == "modifier_axe_hero_7" or self.parent:HasTalent("modifier_axe_hero_7") then
+	self.has_shield = true
+	self.parent:AddDamageEvent_inc(self, true)
+end
+
+self:SendBuffRefreshToClients()
+end
+
+function modifier_axe_counter_helix_custom:AddCustomTransmitterData() 
+return 
+{
+  attack_range = self.attack_range,
+} 
+end
+
+function modifier_axe_counter_helix_custom:HandleCustomTransmitterData(data)
+self.attack_range = data.attack_range
+end
+
+function modifier_axe_counter_helix_custom:DeclareFunctions()
+return 
+{
+	MODIFIER_PROPERTY_ATTACK_RANGE_BONUS,
+}
+end
+
+function modifier_axe_counter_helix_custom:GetModifierAttackRangeBonus()
+return self.attack_range
+end
+
+
+function modifier_axe_counter_helix_custom:DamageEvent_inc(params)
+if not IsServer() then return end
+if not self.has_shield then return end
+if self.parent ~= params.unit then return end
+if self.parent:PassivesDisabled() then return end
+if self.parent:GetHealthPercent() > self.shield_health then return end
+if self.parent:HasModifier("modifier_death") then return end
+if self.parent:HasModifier("modifier_axe_counter_helix_custom_shield_cd") then return end
+
+self.parent:Purge(false, true, false, false, false)
+self.parent:RemoveModifierByName("modifier_axe_counter_helix_custom_shield")
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_axe_counter_helix_custom_shield", {duration = self.shield_duration})
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_axe_counter_helix_custom_shield_cd", {})
+end
+
+function modifier_axe_counter_helix_custom:AttackEvent_out(params)
+if not IsServer() then return end
+if not params.target:IsUnit() then return end 
+if self.parent ~= params.attacker then return end
+
+local mod = self.parent:FindModifierByName("modifier_axe_counter_helix_custom_legendary")
+if mod then 
+	mod:IncrementStackCount()
+end
+
+if not self.parent:HasScepter() then return end
+self:CheckStack()
+end
+
+function modifier_axe_counter_helix_custom:AttackEvent_inc(params)
+if not IsServer() then return end
+if self.parent ~= params.target then return end
 if params.attacker:GetTeamNumber()==params.target:GetTeamNumber() then return end
-
-if self:GetCaster() == params.attacker and self:GetParent():HasModifier("modifier_axe_helix_legendary") then 
-
-	self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_axe_counter_helix_custom_attack_count", {duration = self.legendary_timer})
-
-	local mod = self:GetCaster():FindModifierByName("modifier_axe_counter_helix_custom_attack_count")
-
-	if mod and mod:GetStackCount() > self.legendary_count then 
-
-		for _,all_counts in ipairs(self:GetCaster():FindAllModifiersByName("modifier_axe_counter_helix_custom_attack")) do 
-	     	 all_counts:Destroy()
-	      	break
-	    end
-	end
-
-	self:GetCaster():AddNewModifier(self:GetCaster(), self:GetAbility(), "modifier_axe_counter_helix_custom_attack", {duration = self.legendary_timer})
+self:CheckStack()
 end
 
 
-if self:GetCaster():PassivesDisabled() then return end
-if self:GetParent():HasModifier("modifier_axe_helix_legendary") and self:GetParent():HasModifier("modifier_axe_counter_helix_custom_cd") then return end
-if not self:GetParent():HasModifier("modifier_axe_helix_legendary") and not self:GetAbility():IsFullyCastable() then return end
-if self:GetParent():HasModifier("modifier_axe_counter_helix_custom_legendary") then return end
+function modifier_axe_counter_helix_custom:CheckStack()
+if not IsServer() then return end
+if self.parent:PassivesDisabled() then return end
+if self.parent:HasModifier("modifier_axe_counter_helix_custom_legendary_active") then return end
 
-local name = 0
-
-if self:GetParent() == params.target then 
-	name = "modifier_axe_counter_helix_custom_count"
+if self.parent:HasTalent("modifier_axe_helix_legendary") then
+	if self.parent:HasModifier("modifier_axe_counter_helix_custom_cd") then return end
+else
+	if not self.ability:IsFullyCastable() then return end
 end
 
-if self:GetParent() == params.attacker and self:GetParent():HasModifier("modifier_axe_helix_4") then 
-	name = "modifier_axe_counter_helix_custom_count_self"
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_axe_counter_helix_custom_count", {})
 end
 
-if name == 0 then return end
 
-self:GetParent():AddNewModifier(self:GetParent(), self:GetAbility(), name, {})
-
+function modifier_axe_counter_helix_custom:OnDestroy()
+if not IsServer() then return end
+self.parent:RemoveModifierByName("modifier_axe_counter_helix_custom_count")
 end
+
+
+
+modifier_axe_counter_helix_custom_count = class(mod_visible)
+function modifier_axe_counter_helix_custom_count:OnCreated(table)
+if not IsServer() then return end
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.max = self.ability:GetSpecialValueFor("trigger_attacks") + self.parent:GetTalentValue("modifier_axe_helix_4", "count")
+self:SetStackCount(1)
+end
+
+function modifier_axe_counter_helix_custom_count:OnRefresh(table)
+if not IsServer() then return end
+
+self:IncrementStackCount()
+
+if self:GetStackCount() < self.max then return end
+self.ability:Spin(1)
+self:Destroy()
+end
+
+
 
 
 
 
 modifier_axe_counter_helix_custom_shard_debuff = class({})
-
 function modifier_axe_counter_helix_custom_shard_debuff:IsPurgable() return true end
 
 function modifier_axe_counter_helix_custom_shard_debuff:OnCreated()
-	self.damage_reduction = self:GetAbility():GetSpecialValueFor("shard_damage")
+self.damage_reduction = self:GetAbility():GetSpecialValueFor("scepter_damage")
+self.max = self:GetAbility():GetSpecialValueFor("scepter_max")
 if not IsServer() then return end
-	self:SetStackCount(1)
+self:SetStackCount(1)
 end
 
 function modifier_axe_counter_helix_custom_shard_debuff:OnRefresh()
 if not IsServer() then return end
-
-	if self:GetStackCount() < self:GetAbility():GetSpecialValueFor("shard_max") then
-		self:IncrementStackCount()
-	end
-
+if self:GetStackCount() >= self.max then return end
+self:IncrementStackCount()
 end
 
 function modifier_axe_counter_helix_custom_shard_debuff:DeclareFunctions() 
-	return {
-		MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
-    MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE
-	}
+return 
+{
+	MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE,
+	MODIFIER_PROPERTY_SPELL_AMPLIFY_PERCENTAGE
+}
 end
 
 function modifier_axe_counter_helix_custom_shard_debuff:GetModifierDamageOutgoing_Percentage()
@@ -343,313 +349,162 @@ return self:GetStackCount() * self.damage_reduction
 end
 
 
-modifier_axe_counter_helix_custom_legendary = class({})
-function modifier_axe_counter_helix_custom_legendary:IsHidden() return false end
-function modifier_axe_counter_helix_custom_legendary:IsPurgable() return false end
 
+
+modifier_axe_counter_helix_custom_legendary = class(mod_hidden)
 function modifier_axe_counter_helix_custom_legendary:OnCreated(table)
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+self.max_time = self.parent:GetTalentValue("modifier_axe_helix_legendary", "duration")
 
-self.resist = self:GetCaster():GetTalentValue("modifier_axe_helix_legendary", "status")
-self.count = self:GetCaster():GetTalentValue("modifier_axe_helix_legendary", "max")
-
+self.speed = self.parent:GetTalentValue("modifier_axe_helix_legendary", "speed")
 if not IsServer() then return end
+self.parent:GenericParticle("particles/axe/helix_legendary_effect.vpcf", self, true)
+self.parent:GenericParticle("particles/axe/calling_legendary_cast.vpcf")
+self.parent:EmitSound("Axe.Helix_legendary1")
+self.parent:EmitSound("Axe.Helix_legendary2")
+
 self.RemoveForDuel = true
-
-local particle = ParticleManager:CreateParticle( "particles/items4_fx/ascetic_cap.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent() )
-self:AddParticle( particle, false, false, -1, false, false  )
-
-
 self:OnIntervalThink()
-self:StartIntervalThink(self:GetCaster():GetTalentValue("modifier_axe_helix_legendary", "interval"))
+self:StartIntervalThink(0.1)
 end
 
 function modifier_axe_counter_helix_custom_legendary:OnIntervalThink()
 if not IsServer() then return end
-local effect_cast = ParticleManager:CreateParticle( "particles/econ/items/axe/axe_weapon_bloodchaser/axe_attack_blur_counterhelix_bloodchaser.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetCaster() )
-ParticleManager:ReleaseParticleIndex( effect_cast )
 
-self:GetAbility():Spin(1, 0)
-
-self:IncrementStackCount()
-if self:GetStackCount() >= self.count then 
-	self:Destroy()
-	return
-end 
-
+self.parent:UpdateUIshort({max_time = self.max_time, time = self:GetElapsedTime(), stack = self:GetStackCount(), style = "AxeHelix"})
 end
 
-function modifier_axe_counter_helix_custom_legendary:CheckState()
-return
-{
-	[MODIFIER_STATE_DISARMED] = true,
-	[MODIFIER_STATE_UNSLOWABLE] = true
-}
+function modifier_axe_counter_helix_custom_legendary:GetStatusEffectName()
+return "particles/status_fx/status_effect_beserkers_call.vpcf"
+end
+
+function modifier_axe_counter_helix_custom_legendary:StatusEffectPriority()
+return MODIFIER_PRIORITY_ULTRA 
+end
+
+function modifier_axe_counter_helix_custom_legendary:OnDestroy()
+if not IsServer() then return end
+
+if not self.parent:IsAlive() or self:GetStackCount() <= 0 then
+	self.parent:UpdateUIshort({hide = 1, style = "AxeHelix"})
+	return 
+end
+
+self.parent:Purge(false, true, false, true, false)
+self.parent:AddNewModifier(self.parent, self.ability, "modifier_axe_counter_helix_custom_legendary_active", {stack = self:GetStackCount()})
 end
 
 function modifier_axe_counter_helix_custom_legendary:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_STATUS_RESISTANCE_STACKING
+	MODIFIER_PROPERTY_MODEL_SCALE,
+	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
 }
 end
 
-function modifier_axe_counter_helix_custom_legendary:GetModifierStatusResistanceStacking()
-return self.resist
+function modifier_axe_counter_helix_custom_legendary:GetModifierModelScale()
+return 20
 end
 
-
-function modifier_axe_counter_helix_custom_legendary:GetStatusEffectName()
-	return "particles/status_fx/status_effect_beserkers_call.vpcf"
+function modifier_axe_counter_helix_custom_legendary:GetModifierAttackSpeedBonus_Constant()
+return self.speed
 end
 
-
-
-function modifier_axe_counter_helix_custom_legendary:StatusEffectPriority()
-	return 9999999
-end
-
-
-
-
-modifier_axe_counter_helix_custom_cd = class({})
-function modifier_axe_counter_helix_custom_cd:IsHidden() return true end
-function modifier_axe_counter_helix_custom_cd:IsPurgable() return false end
-function modifier_axe_counter_helix_custom_cd:IsDebuff() return true end
-
-
-
-
-
-modifier_axe_counter_helix_custom_attack = class({})
-function modifier_axe_counter_helix_custom_attack:IsHidden() return true end
-function modifier_axe_counter_helix_custom_attack:IsPurgable() return false end
-function modifier_axe_counter_helix_custom_attack:GetAttributes() return MODIFIER_ATTRIBUTE_MULTIPLE end
-function modifier_axe_counter_helix_custom_attack:OnDestroy()
-if not IsServer() then return end
-
-local mod = self:GetParent():FindModifierByName("modifier_axe_counter_helix_custom_attack_count")
-if mod then 
-	mod:DecrementStackCount()
-
-	if mod:GetStackCount() < self:GetCaster():GetTalentValue("modifier_axe_helix_legendary", "count") then 
-		self:GetAbility():SetActivated(false)
-	end
-
-	if mod:GetStackCount() == 0 then 
-		mod:Destroy()
-	end
-end
-
-
-end
-
-modifier_axe_counter_helix_custom_attack_count = class({})
-function modifier_axe_counter_helix_custom_attack_count:IsHidden() return true end
-function modifier_axe_counter_helix_custom_attack_count:IsPurgable() return false end
-function modifier_axe_counter_helix_custom_attack_count:GetTexture() return "buffs/helix_attack" end
-function modifier_axe_counter_helix_custom_attack_count:OnCreated(table)
-if not IsServer() then return end
-
-self.particle = ParticleManager:CreateParticle("particles/axe_spin.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())
-self:AddParticle(self.particle, false, false, -1, false, false)
-
-self.max = self:GetCaster():GetTalentValue("modifier_axe_helix_legendary", "count")
-
-self:SetStackCount(1)
-
-end
-
-function modifier_axe_counter_helix_custom_attack_count:OnRefresh(table)
-if not IsServer() then return end
-self:IncrementStackCount()
-
-if self:GetStackCount() == self.max then 
-	self:GetAbility():SetActivated(true)
-end
-
-
-
-end
-
-
-function modifier_axe_counter_helix_custom_attack_count:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_TOOLTIP
-}
-
-end
-function modifier_axe_counter_helix_custom_attack_count:OnTooltip() return self:GetStackCount() end
-
-function modifier_axe_counter_helix_custom_attack_count:OnDestroy()
-if not IsServer() then return end
-self:GetAbility():SetActivated(false)
-end
-
-function modifier_axe_counter_helix_custom_attack_count:OnStackCountChanged(iStackCount)
-if self:GetStackCount() == 0 then return end
-if not self.particle then return end
-
-local max = 6
-local stack = math.min(math.floor(self:GetStackCount()), max)
-
-
-for i = 1,max do 
-	
-	if i <= stack then 
-		ParticleManager:SetParticleControl(self.particle, i, Vector(1, 0, 0))	
-	else 
-		ParticleManager:SetParticleControl(self.particle, i, Vector(0, 0, 0))	
-	end
-end
-
-end
-
-
-
-
-
-
-
-
-
-
-
-modifier_axe_counter_helix_custom_slow = class({})
-function modifier_axe_counter_helix_custom_slow:IsHidden() return true end
-function modifier_axe_counter_helix_custom_slow:IsPurgable() return true end
-function modifier_axe_counter_helix_custom_slow:OnCreated(table)
-
-self.slow = self:GetCaster():GetTalentValue("modifier_axe_helix_2", "slow")
+modifier_axe_counter_helix_custom_legendary_active = class(mod_hidden)
+function modifier_axe_counter_helix_custom_legendary_active:OnCreated(table)
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
 if not IsServer() then return end
-self:GetParent():EmitSound("DOTA_Item.Maim")
+self:SetStackCount(table.stack)
+
+self.interval = self.parent:GetTalentValue("modifier_axe_helix_legendary", "interval")
+self.bkb = self.parent:AddNewModifier(self.parent, self.ability, "modifier_generic_debuff_immune", {})
+
+self.max_stack = table.stack
+
+self:OnIntervalThink()
+self:StartIntervalThink(self.interval)
 end
 
-
-function modifier_axe_counter_helix_custom_slow:DeclareFunctions()
-return
-{
-	MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE
-}
-end
-
-function modifier_axe_counter_helix_custom_slow:GetModifierMoveSpeedBonus_Percentage()
-return self.slow
-end
-
-
-function modifier_axe_counter_helix_custom_slow:GetEffectName()
-	return "particles/items2_fx/sange_maim.vpcf"
-end
-
-
-
-
-
-
-
-
-modifier_axe_counter_helix_custom_armor_count = class({})
-function modifier_axe_counter_helix_custom_armor_count:IsHidden() return false end
-function modifier_axe_counter_helix_custom_armor_count:IsPurgable() return false end
-function modifier_axe_counter_helix_custom_armor_count:GetTexture() return "buffs/helix_armor" end
-function modifier_axe_counter_helix_custom_armor_count:OnCreated(table)
-
-self.max = self:GetCaster():GetTalentValue("modifier_axe_helix_3", "max")
-
+function modifier_axe_counter_helix_custom_legendary_active:OnIntervalThink()
 if not IsServer() then return end
-self:SetStackCount(1)
-end
+self.parent:GenericParticle("particles/econ/items/axe/axe_weapon_bloodchaser/axe_attack_blur_counterhelix_bloodchaser.vpcf")
+self.ability:Spin(0, "modifier_axe_helix_legendary")
 
-function modifier_axe_counter_helix_custom_armor_count:OnRefresh(table)
-if not IsServer() then return end
-if self:GetStackCount() >= self.max then return end 
-self:IncrementStackCount()
-end
+self:DecrementStackCount()
+self.parent:UpdateUIshort({max_time = self.max_stack, time = self:GetStackCount(), stack = self:GetStackCount(), priority = 1, style = "AxeHelix"})
 
-
-
-modifier_axe_counter_helix_custom_count = class({})
-function modifier_axe_counter_helix_custom_count:IsHidden() return false end
-function modifier_axe_counter_helix_custom_count:IsPurgable() return false end
-function modifier_axe_counter_helix_custom_count:OnCreated(table)
-if not IsServer() then return end
-
-self.low_health = self:GetCaster():GetTalentValue("modifier_axe_helix_5", "health")
-self.low_count = self:GetCaster():GetTalentValue("modifier_axe_helix_5", "count")
-
-self.max = self:GetAbility():GetSpecialValueFor("trigger_attacks")
-
-if self:GetParent():HasModifier("modifier_axe_helix_5") and self:GetParent():GetHealthPercent() <= self.low_health then 
-	self.max = self.max + self.low_count
-end
-
-self:SetStackCount(1)
-end
-
-function modifier_axe_counter_helix_custom_count:OnRefresh(table)
-if not IsServer() then return end
-
-self:IncrementStackCount()
-
-if self:GetStackCount() >= self.max then
-	self:GetAbility():Spin(1, 1)
+if self:GetStackCount() <= 0 then
 	self:Destroy()
 end
 
 end
 
-
-modifier_axe_counter_helix_custom_count_self = class({})
-function modifier_axe_counter_helix_custom_count_self:IsHidden() return true end
-function modifier_axe_counter_helix_custom_count_self:IsPurgable() return false end
-function modifier_axe_counter_helix_custom_count_self:OnCreated(table)
+function modifier_axe_counter_helix_custom_legendary_active:OnDestroy()
 if not IsServer() then return end
+self.parent:UpdateUIshort({hide = 1, priority = 1, style = "AxeHelix"})
 
-self.max = self:GetCaster():GetTalentValue("modifier_axe_helix_4", "count")
-
-self:SetStackCount(1)
+if not IsValid(self.bkb) then return end
+self.bkb:Destroy()
 end
 
-function modifier_axe_counter_helix_custom_count_self:OnRefresh(table)
-if not IsServer() then return end
-
-self:IncrementStackCount()
-
-if self:GetStackCount() >= self.max then
-	self:GetAbility():Spin(1, 1)
-	self:Destroy()
+function modifier_axe_counter_helix_custom_legendary_active:CheckState()
+return
+{
+	[MODIFIER_STATE_DISARMED] = true,
+}
 end
 
+function modifier_axe_counter_helix_custom_legendary_active:GetStatusEffectName()
+return "particles/status_fx/status_effect_beserkers_call.vpcf"
+end
+
+function modifier_axe_counter_helix_custom_legendary_active:StatusEffectPriority()
+return MODIFIER_PRIORITY_ULTRA 
+end
+
+function modifier_axe_counter_helix_custom_legendary_active:DeclareFunctions()
+return
+{
+	MODIFIER_PROPERTY_MODEL_SCALE
+}
+end
+
+function modifier_axe_counter_helix_custom_legendary_active:GetModifierModelScale()
+return 20
 end
 
 
 
-modifier_axe_counter_helix_custom_attack_speed = class({})
-function modifier_axe_counter_helix_custom_attack_speed:IsHidden() return false end
-function modifier_axe_counter_helix_custom_attack_speed:IsPurgable() return false end
-function modifier_axe_counter_helix_custom_attack_speed:GetTexture() return "buffs/helix_speed" end
+
+modifier_axe_counter_helix_custom_attack_speed = class(mod_visible)
+function modifier_axe_counter_helix_custom_attack_speed:GetTexture() return "buffs/axe/helix_1" end
 function modifier_axe_counter_helix_custom_attack_speed:OnCreated(table)
+self.parent = self:GetParent()
 
-self.max = self:GetCaster():GetTalentValue("modifier_axe_helix_4", "max")
-self.speed = self:GetCaster():GetTalentValue("modifier_axe_helix_4", "speed")
+self.max = self.parent:GetTalentValue("modifier_axe_helix_1", "max", true)
+self.speed = self.parent:GetTalentValue("modifier_axe_helix_1", "speed")/self.max
+self.armor = self.parent:GetTalentValue("modifier_axe_hero_3", "armor")/self.max
+self.magic = self.parent:GetTalentValue("modifier_axe_hero_3", "magic")/self.max
 
 if not IsServer() then return end
-
 self:SetStackCount(1)
 end
+
 function modifier_axe_counter_helix_custom_attack_speed:OnRefresh(table)
 if not IsServer() then return end
 if self:GetStackCount() >= self.max then return end
-
 self:IncrementStackCount()
 end
 
 function modifier_axe_counter_helix_custom_attack_speed:DeclareFunctions()
 return
 {
-	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT
+	MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT,
+	MODIFIER_PROPERTY_PHYSICAL_ARMOR_BONUS,
+	MODIFIER_PROPERTY_MAGICAL_RESISTANCE_BONUS
 }
 end
 
@@ -657,35 +512,112 @@ function modifier_axe_counter_helix_custom_attack_speed:GetModifierAttackSpeedBo
 return self:GetStackCount()*self.speed
 end
 
+function modifier_axe_counter_helix_custom_attack_speed:GetModifierPhysicalArmorBonus()
+return self:GetStackCount()*self.armor
+end
 
-modifier_axe_counter_helix_custom_root_cd = class({})
-function modifier_axe_counter_helix_custom_root_cd:IsHidden() return true end
-function modifier_axe_counter_helix_custom_root_cd:IsPurgable() return false end
-function modifier_axe_counter_helix_custom_root_cd:RemoveOnDeath() return false end
+function modifier_axe_counter_helix_custom_attack_speed:GetModifierMagicalResistanceBonus()
+return self:GetStackCount()*self.magic
+end
 
 
 
-modifier_axe_counter_helix_custom_root = class({})
-function modifier_axe_counter_helix_custom_root:IsHidden() return true end
-function modifier_axe_counter_helix_custom_root:IsPurgable() return true end
+modifier_axe_counter_helix_custom_damage = class(mod_visible)
+function modifier_axe_counter_helix_custom_damage:GetTexture() return "buffs/axe/helix_3" end
+function modifier_axe_counter_helix_custom_damage:OnCreated()
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
 
-function modifier_axe_counter_helix_custom_root:CheckState()
+self.max = self.parent:GetTalentValue("modifier_axe_helix_3", "max")
+if not IsServer() then return end
+self:SetStackCount(1)
+end
+
+function modifier_axe_counter_helix_custom_damage:OnRefresh()
+if not IsServer() then return end
+if self:GetStackCount() >= self.max then return end
+self:IncrementStackCount()
+end
+
+
+
+
+
+modifier_axe_counter_helix_custom_shield = class(mod_hidden)
+function modifier_axe_counter_helix_custom_shield:GetEffectName() return "particles/axe/helix_shield.vpcf" end
+function modifier_axe_counter_helix_custom_shield:OnCreated(table)
+self.RemoveForDuel = true
+self.parent = self:GetParent()
+self.ability = self:GetAbility()
+
+self.max_shield = self.parent:GetTalentValue("modifier_axe_hero_7", "shield")*self.parent:GetMaxHealth()/100
+
+if not IsServer() then return end
+self.shield_talent = "modifier_axe_hero_7"
+self:SetStackCount(self.max_shield )
+self.parent:EmitSound("Axe.Helix_shield")
+end
+
+function modifier_axe_counter_helix_custom_shield:DeclareFunctions()
 return
 {
-    [MODIFIER_STATE_ROOTED] = true
+  MODIFIER_PROPERTY_INCOMING_DAMAGE_CONSTANT,
 }
 end
 
+function modifier_axe_counter_helix_custom_shield:GetModifierIncomingDamageConstant( params )
 
+if IsClient() then 
+  if params.report_max then 
+    return self.max_shield
+  else 
+      return self:GetStackCount()
+    end 
+end
 
-function modifier_axe_counter_helix_custom_root:OnCreated(table)
 if not IsServer() then return end
-self:GetParent():EmitSound("Pudge.Hook_Root")
 
-local parent = self:GetParent()
+local damage = math.min(params.damage, self:GetStackCount())
+self.parent:AddShieldInfo({shield_mod = self, healing = damage, healing_type = "shield"})
 
-self.nFXIndex = ParticleManager:CreateParticle( "particles/items3_fx/hook_root.vpcf", PATTACH_ABSORIGIN_FOLLOW, parent)
-ParticleManager:SetParticleControl( self.nFXIndex, 0, parent:GetAbsOrigin() )
-self:AddParticle(self.nFXIndex, false, false, -1, false, false)
+self:SetStackCount(self:GetStackCount() - damage)
+if self:GetStackCount() <= 0 then
+  self:Destroy()
+end
+
+return -damage
+end
+
+
+modifier_axe_counter_helix_custom_shield_cd = class(mod_cd)
+function modifier_axe_counter_helix_custom_shield_cd:GetTexture() return "buffs/axe/hero_7" end
+function modifier_axe_counter_helix_custom_shield_cd:OnCreated()
+self.parent = self:GetParent()
+self.RemoveForDuel = true
+
+if not IsServer() then return end
+self:SetStackCount(self.parent:GetTalentValue("modifier_axe_hero_7", "talent_cd"))
+self:StartIntervalThink(1)
+end
+
+function modifier_axe_counter_helix_custom_shield_cd:OnIntervalThink()
+if not IsServer() then return end
+self:ReduceCd()
+end
+
+function modifier_axe_counter_helix_custom_shield_cd:ReduceCd() 
+if not IsServer() then return end
+
+self:DecrementStackCount()
+if self:GetStackCount() <= 0 then
+	self:Destroy()
+end
 
 end
+
+
+
+modifier_axe_counter_helix_custom_stun_cd = class(mod_hidden)
+
+modifier_axe_counter_helix_custom_cd = class(mod_hidden)
+function modifier_axe_counter_helix_custom_cd:IsDebuff() return true end

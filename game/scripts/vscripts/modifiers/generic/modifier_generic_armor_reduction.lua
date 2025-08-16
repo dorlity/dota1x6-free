@@ -7,7 +7,7 @@ function modifier_generic_armor_reduction:GetTexture() return "buffs/moment_armo
 function modifier_generic_armor_reduction:OnCreated(table)
 if not IsServer() then return end
 self.armor_reduction = table.armor_reduction
-self.particle_peffect = ParticleManager:CreateParticle("particles/items3_fx/star_emblem.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())	
+self.particle_peffect = ParticleManager:CreateParticle("particles/general/generic_armor_reduction.vpcf", PATTACH_OVERHEAD_FOLLOW, self:GetParent())	
 ParticleManager:SetParticleControl(self.particle_peffect, 0, self:GetParent():GetAbsOrigin())
 self:AddParticle(self.particle_peffect, false, false, -1, false, true)
 

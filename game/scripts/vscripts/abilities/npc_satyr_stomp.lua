@@ -27,9 +27,9 @@ function npc_satyr_stomp:OnSpellStart()
     ParticleManager:ReleaseParticleIndex(trail_pfx)  
     local enemy = FindUnitsInRadius(self:GetCaster():GetTeamNumber(), self:GetCaster():GetAbsOrigin(), nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0 , FIND_CLOSEST, false)
     if #enemy > 0 then 
-        for _,i in ipairs(enemy) do
+        for _,i in pairs(enemy) do
             if not i:IsMagicImmune() then 
-                ApplyDamage({ victim = i, attacker = self:GetCaster(), ability = self, damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL}) 
+                DoDamage({ victim = i, attacker = self:GetCaster(), ability = self, damage = self.damage, damage_type = DAMAGE_TYPE_MAGICAL}) 
                 i:AddNewModifier(self:GetCaster(), self, "modifier_stomp_break", {duration = self.duration*(1 - i:GetStatusResistance())})
             end
         end
