@@ -158,7 +158,7 @@ function HTTP.FillOfflineServerData()
 			local player_tips = {0,0,0,0,0,0,0}
 
 
-			local sub = 0
+			local sub = 1
 			if test then 
 				sub = 1
 			end
@@ -871,6 +871,9 @@ HTTP.Request( "/match_start", {
 				player_items_onequip = items,
                 chest_opened = chest_opened,
 			}
+
+			player_data.subData.subscribed = 1
+			player_data.subData.sub_time = 1000
 		end
 	end
 

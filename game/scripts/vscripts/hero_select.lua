@@ -41,12 +41,12 @@ DUO_BANNED =
 
 NO_BANNED_HEROES = 
 { 
-    "npc_dota_hero_tinker",
+    -- "npc_dota_hero_tinker",
 }
 
 DONATE_HEROES = 
 {
-    "npc_dota_hero_tinker",
+    -- "npc_dota_hero_tinker",
 }
 --[[PRO_MOD_ALLOWED =
 {

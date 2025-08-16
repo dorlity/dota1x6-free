@@ -35,6 +35,8 @@ mklink /j content "%dota2_path%\content\dota_addons\%custom_game_folder%"
 ## Ветки
 free - ветка с правками
 
+free-2025 - ветка с правками. Сделана, чтобы не ломаться на free ветке и не force пушить во free
+
 main - оригинал от авторов
 
 ## Сжатие видео ffmpeg в panorama/videos/custom_game (bash)

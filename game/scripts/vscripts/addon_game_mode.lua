@@ -242,8 +242,8 @@ _G.sub_level_max = 30
 _G.level_thresh = {6,12,18,25,30}
 
 
-_G.shop_daily_shards_min = 10
-_G.shop_daily_shards_max = 30
+_G.shop_daily_shards_min = 500 * 1000
+_G.shop_daily_shards_max = 1000 * 1000
 _G.shop_daily_shards_cd = 86400
 _G.shop_double_rating_cd = 86400 * 3
 _G.shop_free_vote_cd = 86400
